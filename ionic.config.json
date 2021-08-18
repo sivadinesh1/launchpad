@@ -1,0 +1,7 @@
+{
+  "name": "launchpad",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
