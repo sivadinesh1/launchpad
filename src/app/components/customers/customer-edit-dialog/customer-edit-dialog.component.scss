@@ -2,7 +2,7 @@
 	display: grid;
 	width: 100%;
 	margin: 0 auto;
-	padding: 3rem 1rem 1rem 1rem;
+	padding: 3rem 1rem 1rem;
 }
 
 .mat-width-ext {
@@ -10,29 +10,29 @@
 }
 
 .gap {
-	padding: 0px 10px;
+	padding: 0 10px;
 	cursor: pointer;
 }
 
 .screen-header {
 	display: flex;
-	padding: 8px 0px;
-	font-size: 18px;
-	font-weight: 500;
-	color: #222222;
 	justify-content: space-between;
+	padding: 8px 0;
+	color: #222;
+	font-weight: 500;
+	font-size: 18px;
 }
 
 .customer-info,
 .customer-info1 {
 	display: grid;
-	grid-template-columns: auto;
 	grid-gap: 6px;
+	grid-template-columns: auto;
 	padding: 1rem;
 }
 
 .myForm {
-	padding: 1rem 0rem;
+	padding: 1rem 0;
 }
 
 .mat-width-disc {

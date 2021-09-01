@@ -1,19 +1,19 @@
 .screen-header {
 	display: flex;
-	width: 100%;
-	padding: 16px 16px 10px 10px;
-	font-size: 0.9rem;
-	font-weight: 500;
-	color: #222222;
 	justify-content: space-between;
-	margin: 0px;
+	width: 100%;
+	margin: 0;
+	padding: 16px 16px 10px 10px;
+	color: #222;
+	font-weight: 500;
+	font-size: 0.9rem;
 	background-color: #fff;
 }
 
 .customer-info {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	padding: 5px 0px 5px 0px;
+	padding: 5px 0;
 }
 
 .header {
@@ -34,8 +34,8 @@
 
 .action-row {
 	display: flex;
-	justify-content: space-between;
-	padding: 10px 0px 5px 6px;
-	border-bottom: 1px solid #e2e2e2;
 	align-items: center;
+	justify-content: space-between;
+	padding: 10px 0 5px 6px;
+	border-bottom: 1px solid #e2e2e2;
 }

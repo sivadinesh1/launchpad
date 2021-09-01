@@ -6,135 +6,134 @@
 	.row1 {
 		display: grid;
 		grid-template-columns: 200px 1fr 40px;
-		padding-left: 41px;
-		padding-right: 20px;
 		padding-top: 12px;
+		padding-right: 20px;
+		padding-left: 41px;
 
 		.close {
 			display: grid;
-			justify-content: center;
 			align-self: center;
+			justify-content: center;
 			cursor: pointer;
 		}
 	}
+
 	.header-row {
 		display: grid;
 		grid-template-columns: 40px 1fr 1fr 100px 100px 100px 50px;
-		border-bottom: 1px solid #0a0a0a;
-		width: 90%;
-		padding: 16px 10px 10px 10px;
-		max-height: 44px;
-		justify-self: center;
 		align-items: center;
+		justify-self: center;
+		width: 90%;
+		max-height: 44px;
+		padding: 16px 10px 10px;
+		border-bottom: 1px solid #0a0a0a;
 	}
 
 	.header-row-customer {
 		display: grid;
 		grid-template-columns: 40px 1fr 1fr 1fr;
-		border-bottom: 1px solid #0a0a0a;
-		width: 90%;
-		padding: 16px 10px 10px 10px;
-		max-height: 44px;
-		justify-self: center;
 		align-items: center;
+		justify-self: center;
+		width: 90%;
+		max-height: 44px;
+		padding: 16px 10px 10px;
+		border-bottom: 1px solid #0a0a0a;
 	}
 
 	.header-row-vendor {
 		display: grid;
 		grid-template-columns: 40px 1fr 1fr 1fr;
-		border-bottom: 1px solid #0a0a0a;
-		width: 90%;
-		padding: 16px 10px 10px 10px;
-		max-height: 44px;
-		justify-self: center;
 		align-items: center;
+		justify-self: center;
+		width: 90%;
+		max-height: 44px;
+		padding: 16px 10px 10px;
+		border-bottom: 1px solid #0a0a0a;
 	}
+
 	.header-row-brand {
 		display: grid;
 		grid-template-columns: 40px 1fr;
-		border-bottom: 1px solid #0a0a0a;
-		width: 90%;
-		padding: 16px 10px 10px 10px;
-		max-height: 44px;
-		justify-self: center;
 		align-items: center;
+		justify-self: center;
+		width: 90%;
+		max-height: 44px;
+		padding: 16px 10px 10px;
+		border-bottom: 1px solid #0a0a0a;
 	}
 
 	.row2 {
 		display: grid;
-		overflow-y: auto;
-		overflow-x: hidden;
 		align-content: flex-start;
+		overflow-x: hidden;
+		overflow-y: auto;
 
 		.list-item {
 			display: grid;
 			grid-template-columns: 40px 1fr 1fr 100px 100px 100px 50px;
+			align-items: center;
 			align-self: center;
-			padding: 16px 10px 10px 10px;
+			justify-self: center;
 
 			width: 90%;
-			justify-self: center;
-			align-items: center;
-
+			padding: 16px 10px 10px;
 			transition: 0.3s;
 		}
 	}
+
 	.row2-customer {
 		display: grid;
-		overflow-y: auto;
-		overflow-x: hidden;
 		align-content: flex-start;
+		overflow-x: hidden;
+		overflow-y: auto;
 
 		.list-item {
 			display: grid;
 			grid-template-columns: 40px 1fr 1fr 1fr;
+			align-items: center;
 			align-self: center;
-			padding: 16px 10px 10px 10px;
+			justify-self: center;
 
 			width: 90%;
-			justify-self: center;
-			align-items: center;
-
+			padding: 16px 10px 10px;
 			transition: 0.3s;
 		}
 	}
 
 	.row2-vendor {
 		display: grid;
-		overflow-y: auto;
-		overflow-x: hidden;
 		align-content: flex-start;
+		overflow-x: hidden;
+		overflow-y: auto;
 
 		.list-item {
 			display: grid;
 			grid-template-columns: 40px 1fr 1fr 1fr;
+			align-items: center;
 			align-self: center;
-			padding: 16px 10px 10px 10px;
+			justify-self: center;
 
 			width: 90%;
-			justify-self: center;
-			align-items: center;
-
+			padding: 16px 10px 10px;
 			transition: 0.3s;
 		}
 	}
 
 	.row2-brand {
 		display: grid;
-		overflow-y: auto;
-		overflow-x: hidden;
 		align-content: flex-start;
+		overflow-x: hidden;
+		overflow-y: auto;
 
 		.list-item {
 			display: grid;
 			grid-template-columns: 40px 1fr;
+			align-items: center;
 			align-self: center;
-			padding: 16px 10px 10px 10px;
+			justify-self: center;
 
 			width: 90%;
-			justify-self: center;
-			align-items: center;
-
+			padding: 16px 10px 10px;
 			transition: 0.3s;
 		}
 	}
@@ -144,8 +143,8 @@
 		justify-content: space-between;
 
 		.scan {
-			width: 240px;
 			align-self: center;
+			width: 240px;
 		}
 	}
 }
@@ -159,11 +158,11 @@
 
 .scan-btn {
 	width: 150px;
-	text-align: center;
 	padding: 8px;
-	border-radius: 5px;
 	color: rgb(236, 37, 37);
+	text-align: center;
 	border: 1px solid rgb(236, 37, 37);
+	border-radius: 5px;
 }
 
 .row-cnt {
@@ -188,6 +187,7 @@
 	.side {
 		background-color: #f4f4f4;
 	}
+
 	.main {
 		width: 100%;
 	}

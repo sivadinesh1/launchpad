@@ -1,19 +1,19 @@
 .screen-header {
 	display: flex;
+	justify-content: space-between;
 	width: 100%;
+	padding: 6px;
+	color: #222;
+	font-weight: 500;
 
 	font-size: 0.9rem;
-	font-weight: 500;
-	color: #222222;
-	justify-content: space-between;
-	padding: 6px;
 	background-color: #f8f8fb;
 }
 
 .customer-info {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	padding: 5px 0px 5px 0px;
+	padding: 5px 0;
 }
 
 .header {
@@ -33,18 +33,18 @@
 
 .action-row {
 	display: flex;
-	justify-content: space-between;
-	padding: 10px 0px 5px 6px;
-	border-bottom: 1px solid #e2e2e2;
 	align-items: center;
+	justify-content: space-between;
+	padding: 10px 0 5px 6px;
+	border-bottom: 1px solid #e2e2e2;
 }
 
 .head {
 	display: grid;
 	grid-template-columns: 1fr 60px 110px 110px;
-	font-size: 16px;
 	padding: 6px;
 	font-weight: 500;
+	font-size: 16px;
 	background-color: #f8f8fb;
 	border-bottom: 1px solid grey;
 }

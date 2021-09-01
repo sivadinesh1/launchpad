@@ -9,6 +9,7 @@
 	display: grid;
 	grid-template-columns: 1fr 100px;
 }
+
 .actions {
 	align-self: center;
 	justify-self: center;
@@ -17,15 +18,15 @@
 .header {
 	display: flex;
 	justify-content: space-between;
-	padding: 0px 0px 10px 0px;
+	padding: 0 0 10px;
+	color: #222;
 	font-size: 20px;
-	color: #222222;
 }
 
 .center-message {
-	text-align: center;
 	padding-top: 20px;
 	padding-bottom: 20px;
+	text-align: center;
 }
 
 tr.example-element-row:not(.example-expanded-row):hover {
@@ -49,9 +50,11 @@ td.mat-column-actions {
 	&:hover {
 		background-color: #e9f3ff;
 	}
+
 	a {
 		color: #3e75ff;
 		text-decoration: none;
+
 		&:hover {
 			text-decoration: underline;
 		}
@@ -83,19 +86,21 @@ td.mat-column-actions {
 
 	.mat-table {
 		background: transparent;
+
 		* {
 			box-sizing: border-box;
 		}
 
 		.mat-row {
-			display: block;
-			overflow: hidden;
-			height: auto;
 			position: relative;
+			display: block;
 			clear: both;
-			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+			height: auto;
+			overflow: hidden;
 			background-color: #fff;
 			border-radius: 3px;
+			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+
 			+ .mat-row {
 				margin-top: 24px;
 			}
@@ -104,20 +109,24 @@ td.mat-column-actions {
 		.mat-cell {
 			display: block;
 			width: 100%;
-			padding: 0 16px;
 			margin: 16px 0;
+			padding: 0 16px;
 			border: 0 none;
+
 			&:first-child {
 				padding: 0 48px 0 16px;
+
 				a {
-					font-size: 20px;
 					// font-weight: 400;
 					color: inherit;
+					font-size: 20px;
 				}
-				&:before {
+
+				&::before {
 					display: none;
 				}
 			}
+
 			&.m-card-sub-title {
 				margin-top: -8px;
 				padding: 0 48px 0 16px;
@@ -126,21 +135,22 @@ td.mat-column-actions {
 		}
 
 		.has_label_on_mobile {
-			&:before {
-				content: attr(data-label);
+			&::before {
 				display: inline;
 				font-weight: normal;
+				content: attr(data-label);
 			}
 		}
 
 		.mat-column-actions {
-			width: auto;
-			padding: 8px 0 0 !important;
-			margin: 0;
 			position: absolute;
 			top: 0;
 			right: 0;
-			&:before {
+			width: auto;
+			margin: 0;
+			padding: 8px 0 0 !important;
+
+			&::before {
 				display: none;
 			}
 		}
@@ -154,30 +164,30 @@ td.mat-column-actions {
 // new table
 .content {
 	display: grid;
-	width: 90%;
 	grid-template-columns: 40px 100px 1fr 80px 80px 100px 1fr 100px 100px 1fr;
-	align-items: center;
-	border-bottom: 2px solid rgb(173, 173, 173);
-	color: #666666;
-	background-color: #f5f5f5;
-	margin: 0 auto;
-	padding: 8px 5px 8px 5px;
 	gap: 10px;
-	font-size: 14px;
+	align-items: center;
+	width: 90%;
+	margin: 0 auto;
+	padding: 8px 5px;
+	color: #666;
 	font-weight: 400;
+	font-size: 14px;
+	background-color: #f5f5f5;
+	border-bottom: 2px solid rgb(173, 173, 173);
 }
 
 .list-item {
 	display: grid;
-	width: 90%;
 	grid-template-columns: 40px 100px 1fr 80px 80px 100px 1fr 100px 100px 1fr;
-	align-self: center;
-	border-bottom: 1px solid #e0d9d9;
-	font-size: 13px;
-	padding: 5px 5px 10px 5px;
-	margin: 0 auto;
-	align-items: end;
 	gap: 10px;
+	align-items: end;
+	align-self: center;
+	width: 90%;
+	margin: 0 auto;
+	padding: 5px 5px 10px;
+	font-size: 13px;
+	border-bottom: 1px solid #e0d9d9;
 }
 
 .txt-pad {
@@ -185,29 +195,29 @@ td.mat-column-actions {
 }
 
 .headstyl-left {
-	text-align: left;
-	font-size: 16px;
+	color: #666;
 	font-weight: 500;
-	color: #666666;
+	font-size: 16px;
+	text-align: left;
 }
 
 .headstyl-right {
-	text-align: right;
-	font-size: 16px;
+	color: #666;
 	font-weight: 500;
-	color: #666666;
+	font-size: 16px;
+	text-align: right;
 }
 
 .headstyl-center {
-	text-align: center;
-	font-size: 16px;
+	color: #666;
 	font-weight: 500;
-	color: #666666;
+	font-size: 16px;
+	text-align: center;
 }
 
 .num-format-cell-style {
-	padding-right: 10px;
 	align-self: center;
+	padding-right: 10px;
 }
 
 .example-chip-list {

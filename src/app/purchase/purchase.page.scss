@@ -1,9 +1,9 @@
 .screen-header {
 	display: flex;
-	font-weight: 400;
-	padding: 1rem;
 	width: 100%;
-	margin: 0px;
+	margin: 0;
+	padding: 1rem;
+	font-weight: 400;
 }
 
 .vendor {
@@ -11,10 +11,10 @@
 
 	grid-template-columns: 1fr 1fr;
 	gap: 60px;
-	padding: 2rem 1rem;
 	width: 99%;
 	margin: 0 auto;
-	border: 0px solid;
+	padding: 2rem 1rem;
+	border: 0 solid;
 }
 
 .vendor-left {
@@ -26,23 +26,23 @@
 .purchase-wrap {
 	display: grid;
 	width: 96%;
-	margin: 0 auto;
 	height: auto;
+	margin: 0 auto;
 	padding-bottom: 100px;
 
 	.left {
 		display: grid;
 		grid-template-rows: 40px 1fr;
-		padding: 10px 10px 50px 10px;
+		padding: 10px 10px 50px;
 
 		.row1 {
 			display: grid;
 			grid-template-columns: 30px 40px 130px minmax(150px, 450px) 80px 80px 80px 80px 80px 80px;
+			gap: 10px;
 			align-items: center;
-			border-bottom: 2px solid rgb(173, 173, 173);
 			color: '#a5a5a6';
 			background-color: #f5f5f5;
-			gap: 10px;
+			border-bottom: 2px solid rgb(173, 173, 173);
 		}
 
 		.row2 {
@@ -53,12 +53,12 @@
 			.list-item {
 				display: grid;
 				grid-template-columns: 30px 40px 130px minmax(250px, 450px) 80px 80px 80px 80px 80px 80px;
-				align-self: center;
-				border-bottom: 1px solid #e0d9d9;
-				font-size: 13px;
-				padding: 5px 5px 10px 5px;
-				align-items: end;
 				gap: 10px;
+				align-items: end;
+				align-self: center;
+				padding: 5px 5px 10px;
+				font-size: 13px;
+				border-bottom: 1px solid #e0d9d9;
 			}
 		}
 
@@ -75,13 +75,14 @@
 		.row3 {
 			display: flex;
 			justify-content: space-around;
+			padding: 5px;
 			border-top: 2px solid #acacac;
 			border-bottom: 2px solid #acacac;
-			padding: 5px;
 
 			.item {
 				text-align: center;
 			}
+
 			.label {
 			}
 		}
@@ -108,15 +109,15 @@
 
 .styl-txt-box-small {
 	width: 70px !important;
-	border: 1px solid #d1d1d1;
 	padding: 4px;
+	border: 1px solid #d1d1d1;
 	border-radius: 5px;
 }
 
 .iconSize {
-	font-size: 24px;
-	color: rgba(121, 121, 121, 1);
 	padding: 5px;
+	color: rgba(121, 121, 121, 1);
+	font-size: 24px;
 }
 
 .txt-pad {
@@ -124,69 +125,69 @@
 }
 
 .headstyl-left {
-	text-align: left;
-	font-size: 16px;
 	font-weight: 500;
+	font-size: 16px;
+	text-align: left;
 }
 
 .headstyl-right {
-	text-align: right;
-	font-size: 16px;
 	font-weight: 500;
+	font-size: 16px;
+	text-align: right;
 }
 
 .headstyl-center {
-	text-align: center;
-	font-size: 16px;
 	font-weight: 500;
+	font-size: 16px;
+	text-align: center;
 }
 
 .tax-style {
-	padding: 0px 20px;
+	padding: 0 20px;
 	font-size: 14px;
 }
 
 .num-format-cell-style {
-	padding-right: 10px;
 	align-self: center;
+	padding-right: 10px;
 }
 
 .desc {
-	font-size: 14px;
 	color: grey;
 	font-weight: 400;
+	font-size: 14px;
 }
 
 .add-actn {
-	text-align: center;
-	font-size: 22px;
 	color: #3d31e6;
+	font-size: 22px;
+	text-align: center;
 }
 
 .overview {
+	color: #0012ff;
+	font-size: 16px;
 	letter-spacing: 1px;
 	text-transform: uppercase;
-	font-size: 16px;
-	color: #0012ff;
 }
 
 .change {
-	font-size: 12px;
-	color: #797979;
 	padding-right: 2px;
+	color: #797979;
+	font-size: 12px;
 }
 
 .purchase-wrap1 {
 	display: grid;
-	width: 100%;
-
-	align-content: start;
-	height: fit-content;
 
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr;
 	grid-gap: 20px;
-	padding: 3rem 1rem 1rem 1rem;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+
+	align-content: start;
+	width: 100%;
+	height: fit-content;
+	padding: 3rem 1rem 1rem;
 }
 
 .txt-align {
@@ -204,9 +205,9 @@
 // }
 
 .sub-menu {
-	font-size: 13px;
-	color: #797979;
 	padding-left: 4px;
+	color: #797979;
+	font-size: 13px;
 }
 
 .acton-btns {
@@ -216,34 +217,34 @@
 .main-add {
 	display: grid;
 	grid-template-columns: 2fr minmax(300px, 350px);
-
 	background-color: #7e8bb1;
 
 	.left {
 		display: grid;
+		grid-gap: 10px;
 		grid-template-columns: 1fr 80px minmax(80px, 100px) minmax(80px, 100px) 100px;
 		align-items: center;
-		grid-gap: 10px;
-		background-color: #ffffee;
-		padding: 1.2rem;
 		align-self: center;
+		padding: 1.2rem;
+		background-color: #ffe;
 	}
+
 	.right {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		background-color: #efefef;
 		padding: 1rem;
+		background-color: #efefef;
 	}
 }
 
 .footer {
-	display: flex;
 	position: fixed;
+	bottom: 0;
+	display: flex;
 	justify-content: space-between;
-	bottom: 0px;
-	padding: 0.5rem 80px 0.5rem 1rem;
 	width: calc(100vw - 176px);
 	height: auto;
+	padding: 0.5rem 80px 0.5rem 1rem;
 	background-color: #f7f9fd;
 	border-top: 1px solid #e6e6e6;
 }
@@ -251,6 +252,7 @@
 .example-full-width {
 	width: 100%;
 }
+
 .mat-input-wrapper {
 	width: 150px;
 }
@@ -266,9 +268,9 @@
 // }
 
 .example-viewport {
+	width: 100%;
 	min-height: 100px;
 	max-height: auto;
-	width: 100%;
 }
 
 .example-item {

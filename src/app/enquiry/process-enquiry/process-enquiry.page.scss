@@ -1,18 +1,18 @@
 .screen-header {
 	display: flex;
-	font-weight: 400;
-
-	padding: 10px;
 
 	width: 100%;
+
+	padding: 10px;
+	font-weight: 400;
 	font-size: 14px;
 }
 
 .row1 {
 	display: grid;
+	grid-template-columns: 1fr 200px 100px;
 	width: 90%;
 	margin: 0 auto;
-	grid-template-columns: 1fr 200px 100px;
 }
 
 .actions {
@@ -28,33 +28,32 @@
 
 	.cust-header {
 		display: grid;
-		padding: 10px 5px;
 		grid-template-columns: 1fr 1fr 1fr 1fr;
+		padding: 10px 5px;
 	}
 }
 
 .avlstock {
-	font-size: 12px;
 	color: #0e0c99;
+	font-size: 12px;
 }
 
 .styl-txt-box-small {
-	height: 40px;
-	border: 1px solid #d1d1d1;
-	padding: 8px;
-
-	font-size: 20px;
 	align-self: center;
+	height: 40px;
+	padding: 8px;
+	font-size: 20px;
+	border: 1px solid #d1d1d1;
 }
 
 .s-menu {
-	padding: 0px 10px;
+	padding: 0 10px;
 }
 
 .cust-lbl {
-	font-size: 12px;
-	color: rgb(168, 168, 168);
 	height: 1rem;
+	color: rgb(168, 168, 168);
+	font-size: 12px;
 }
 
 .c-pad {
@@ -62,14 +61,14 @@
 }
 
 .oddDark {
-	background-color: #717171;
 
-	color: #ffffff;
+	color: #fff;
+	background-color: #717171;
 }
 
 .evenDark {
+	color: #fff;
 	background-color: #a2a2a2;
-	color: #ffffff;
 }
 
 .c-pad-mini {
@@ -77,9 +76,9 @@
 }
 
 .save-sec {
-	text-align: center;
 	align-self: center;
 	padding: 10px;
+	text-align: center;
 }
 
 .example-full-width {
@@ -107,9 +106,11 @@ td.mat-column-actions {
 	&:hover {
 		background-color: #e9f3ff;
 	}
+
 	a {
 		color: #3e75ff;
 		text-decoration: none;
+
 		&:hover {
 			text-decoration: underline;
 		}
@@ -141,19 +142,21 @@ td.mat-column-actions {
 
 	.mat-table {
 		background: transparent;
+
 		* {
 			box-sizing: border-box;
 		}
 
 		.mat-row {
-			display: block;
-			overflow: hidden;
-			height: auto;
 			position: relative;
+			display: block;
 			clear: both;
-			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+			height: auto;
+			overflow: hidden;
 			background-color: #fff;
 			border-radius: 3px;
+			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+
 			+ .mat-row {
 				margin-top: 24px;
 			}
@@ -162,20 +165,24 @@ td.mat-column-actions {
 		.mat-cell {
 			display: block;
 			width: 100%;
-			padding: 0 16px;
 			margin: 16px 0;
+			padding: 0 16px;
 			border: 0 none;
+
 			&:first-child {
 				padding: 0 48px 0 16px;
+
 				a {
-					font-size: 20px;
 					// font-weight: 400;
 					color: inherit;
+					font-size: 20px;
 				}
-				&:before {
+
+				&::before {
 					display: none;
 				}
 			}
+
 			&.m-card-sub-title {
 				margin-top: -8px;
 				padding: 0 48px 0 16px;
@@ -184,21 +191,22 @@ td.mat-column-actions {
 		}
 
 		.has_label_on_mobile {
-			&:before {
-				content: attr(data-label);
+			&::before {
 				display: inline;
 				font-weight: normal;
+				content: attr(data-label);
 			}
 		}
 
 		.mat-column-actions {
-			width: auto;
-			padding: 8px 0 0 !important;
-			margin: 0;
 			position: absolute;
 			top: 0;
 			right: 0;
-			&:before {
+			width: auto;
+			margin: 0;
+			padding: 8px 0 0 !important;
+
+			&::before {
 				display: none;
 			}
 		}
@@ -214,31 +222,33 @@ td.mat-column-actions {
 }
 
 .footer {
-	display: flex;
 	position: fixed;
+	bottom: 0;
+	z-index: 999;
+	display: flex;
 	justify-content: space-between;
-	bottom: 0px;
-
-	padding: 0.5rem 80px 0.5rem 1rem;
 	width: calc(100vw - 176px);
 	height: auto;
-	background-color: #ffffff;
-	border-top: 1px solid #f1f1f1;
+
+	padding: 0.5rem 80px 0.5rem 1rem;
 	padding: 8px;
-	z-index: 999;
+	background-color: #fff;
+	border-top: 1px solid #f1f1f1;
 }
+
 .customer {
 	display: grid;
 	grid-template-columns: 450px 1fr 1fr 1fr;
-	padding: 3rem 1rem;
 	width: 94%;
 	margin: 0 auto;
+	padding: 3rem 1rem;
 }
 
 .example-full-width {
 	width: 130px;
-	padding: 0px;
+	padding: 0;
 }
+
 .qty-width {
 	width: 80px;
 }
@@ -247,30 +257,30 @@ td.mat-column-actions {
 
 .content {
 	display: grid;
-	width: 90%;
 	grid-template-columns: 30px 30px 130px 200px 80px 80px 80px 80px 1fr 60px 50px;
-	align-items: center;
-	border-bottom: 2px solid rgb(173, 173, 173);
-	color: #666666;
-	background-color: #f5f5f5;
-	margin: 0 auto;
-	padding: 8px 5px 8px 5px;
 	gap: 10px;
-	font-size: 14px;
+	align-items: center;
+	width: 90%;
+	margin: 0 auto;
+	padding: 8px 5px;
+	color: #666;
 	font-weight: 400;
+	font-size: 14px;
+	background-color: #f5f5f5;
+	border-bottom: 2px solid rgb(173, 173, 173);
 }
 
 .list-item {
 	display: grid;
-	width: 90%;
 	grid-template-columns: 30px 30px 130px 200px 80px 80px 80px 80px 1fr 60px 50px;
-	align-self: center;
-	border-bottom: 1px solid #e0d9d9;
-	font-size: 13px;
-	padding: 5px 5px 10px 5px;
-	margin: 0 auto;
-	align-items: end;
 	gap: 10px;
+	align-items: end;
+	align-self: center;
+	width: 90%;
+	margin: 0 auto;
+	padding: 5px 5px 10px;
+	font-size: 13px;
+	border-bottom: 1px solid #e0d9d9;
 }
 
 .txt-pad {
@@ -278,50 +288,50 @@ td.mat-column-actions {
 }
 
 .headstyl-left {
-	text-align: left;
-	font-size: 16px;
+	color: #666;
 	font-weight: 500;
-	color: #666666;
+	font-size: 16px;
+	text-align: left;
 }
 
 .headstyl-right {
-	text-align: right;
-	font-size: 16px;
+	color: #666;
 	font-weight: 500;
-	color: #666666;
+	font-size: 16px;
+	text-align: right;
 }
 
 .headstyl-center {
-	text-align: center;
-	font-size: 16px;
+	color: #666;
 	font-weight: 500;
-	color: #666666;
+	font-size: 16px;
+	text-align: center;
 }
 
 .num-format-cell-style {
-	padding-right: 10px;
 	align-self: center;
+	padding-right: 10px;
 }
 
 .main-add {
 	display: grid;
+	grid-gap: 10px;
 	grid-template-columns: 1fr 1fr minmax(80px, 100px) 120px;
 	align-items: center;
-	grid-gap: 10px;
-	background-color: #ffffee;
-	padding: 1rem;
 	align-self: center;
 	width: 90%;
 	margin: 0 auto;
+	padding: 1rem;
+	background-color: #ffe;
 }
 
 .empty-add {
-	display: grid;
-	width: 100%;
 	position: fixed;
-	background-color: #ffffee;
 	bottom: 59px;
 	z-index: 2;
+	display: grid;
+	width: 100%;
+	background-color: #ffe;
 }
 
 .example-full-width {

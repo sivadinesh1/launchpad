@@ -7,20 +7,20 @@
 
 .grid-split {
 	display: grid;
-	grid-template-columns: auto;
 	grid-gap: 10px;
+	grid-template-columns: auto;
 	width: 100%;
 }
 
 .screen-header {
 	display: flex;
+	justify-content: space-between;
 	width: 100%;
+	padding: 16px;
+	color: #222;
+	font-weight: 400;
 
 	font-size: 18px;
-	font-weight: 400;
-	color: #222222;
-	justify-content: space-between;
-	padding: 16px;
 }
 
 .mat-width-ext {

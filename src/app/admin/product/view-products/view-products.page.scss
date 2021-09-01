@@ -1,7 +1,7 @@
 .heading {
-	font-size: 20px;
-	color: #222222;
+	color: #222;
 	font-weight: 500;
+	font-size: 20px;
 }
 
 // resize ion-searchbar dnd
@@ -13,11 +13,11 @@
 
 .scan-btn {
 	width: 150px;
-	text-align: center;
 	padding: 8px;
-	border-radius: 5px;
 	color: rgb(236, 37, 37);
+	text-align: center;
 	border: 1px solid rgb(236, 37, 37);
+	border-radius: 5px;
 }
 
 .row-cnt {
@@ -37,20 +37,20 @@
 
 .screen-header {
 	display: flex;
+	justify-content: space-between;
 	margin-left: 80px;
 	padding: 8px;
-	font-size: 16px;
+	color: #222;
 	font-weight: 500;
-	color: #222222;
+	font-size: 16px;
 	background-color: rgb(250, 250, 250);
-	justify-content: space-between;
 }
 
 .found {
-	font-size: 14px;
+	padding: 0 10px;
 	color: grey;
 	font-weight: 400;
-	padding: 0px 10px;
+	font-size: 14px;
 }
 
 .head {
@@ -59,15 +59,15 @@
 }
 
 .add-btn {
-	margin-left: auto;
 	align-items: center;
+	margin-left: auto;
 }
 
 .content {
 	display: grid;
 	width: 100%;
 	margin: 0 auto;
-	padding: 0px 16px;
+	padding: 0 16px;
 }
 
 .row1 {
@@ -77,9 +77,9 @@
 }
 
 .center-message {
-	text-align: center;
 	padding-top: 20px;
 	padding-bottom: 20px;
+	text-align: center;
 }
 
 tr.example-element-row:not(.example-expanded-row):hover {
@@ -103,9 +103,11 @@ td.mat-column-actions {
 	&:hover {
 		background-color: #e9f3ff;
 	}
+
 	a {
 		color: #3e75ff;
 		text-decoration: none;
+
 		&:hover {
 			text-decoration: underline;
 		}
@@ -137,19 +139,21 @@ td.mat-column-actions {
 
 	.mat-table {
 		background: transparent;
+
 		* {
 			box-sizing: border-box;
 		}
 
 		.mat-row {
-			display: block;
-			overflow: hidden;
-			height: auto;
 			position: relative;
+			display: block;
 			clear: both;
-			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+			height: auto;
+			overflow: hidden;
 			background-color: #fff;
 			border-radius: 3px;
+			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+
 			+ .mat-row {
 				margin-top: 24px;
 			}
@@ -158,20 +162,24 @@ td.mat-column-actions {
 		.mat-cell {
 			display: block;
 			width: 100%;
-			padding: 0 16px;
 			margin: 16px 0;
+			padding: 0 16px;
 			border: 0 none;
+
 			&:first-child {
 				padding: 0 48px 0 16px;
+
 				a {
-					font-size: 20px;
 					// font-weight: 400;
 					color: inherit;
+					font-size: 20px;
 				}
-				&:before {
+
+				&::before {
 					display: none;
 				}
 			}
+
 			&.m-card-sub-title {
 				margin-top: -8px;
 				padding: 0 48px 0 16px;
@@ -180,21 +188,22 @@ td.mat-column-actions {
 		}
 
 		.has_label_on_mobile {
-			&:before {
-				content: attr(data-label);
+			&::before {
 				display: inline;
 				font-weight: normal;
+				content: attr(data-label);
 			}
 		}
 
 		.mat-column-actions {
-			width: auto;
-			padding: 8px 0 0 !important;
-			margin: 0;
 			position: absolute;
 			top: 0;
 			right: 0;
-			&:before {
+			width: auto;
+			margin: 0;
+			padding: 8px 0 0 !important;
+
+			&::before {
 				display: none;
 			}
 		}
@@ -206,8 +215,8 @@ td.mat-column-actions {
 }
 
 .search {
-	padding: 10px 16px;
 	width: 500px;
+	padding: 10px 16px;
 }
 
 .searchbar-input {
@@ -215,7 +224,7 @@ td.mat-column-actions {
 }
 
 .full-download {
-	background-color: #fff;
-	padding-left: 16px;
 	padding-right: 16px;
+	padding-left: 16px;
+	background-color: #fff;
 }

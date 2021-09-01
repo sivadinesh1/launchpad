@@ -9,8 +9,8 @@
 
 .main-info {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
 	grid-template-rows: 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
 }
 
 .addl-info1 {
@@ -26,12 +26,12 @@
 }
 
 .pinfo {
-	padding: 10px 0px;
-	font-size: 20px;
-	font-weight: 500;
-	color: #222222;
 	display: flex;
 	justify-content: space-between;
+	padding: 10px 0;
+	color: #222;
+	font-weight: 500;
+	font-size: 20px;
 }
 
 .code,

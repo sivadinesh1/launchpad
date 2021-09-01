@@ -1,22 +1,22 @@
 *:focus {
-	outline: none !important;
 	background-color: #f2f2f2 !important;
+	outline: none !important;
 }
 
 .keypad {
 	display: grid;
 	grid-template-rows: 1fr 1fr 1fr 1fr;
 	max-width: 400px;
-
 	color: black;
 
 	.row {
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr;
+		font-size: 28px;
 		text-align: center;
 		border-top: 1px solid rgb(230, 230, 230);
-		font-size: 28px;
 	}
+
 	.col1,
 	.col2,
 	.col3 {
@@ -25,20 +25,20 @@
 	}
 
 	.col2 {
-		border-left: 1px solid rgb(230, 230, 230);
 		border-right: 1px solid rgb(230, 230, 230);
+		border-left: 1px solid rgb(230, 230, 230);
 	}
 }
 
-input[type="number"] {
+input[type='number'] {
+	display: inline-block;
+	width: 100px;
+	margin: 0 5px;
+	font-size: 30px;
+	text-align: left;
 	background-color: transparent;
 	border: none;
 	border-bottom: 2px solid gray;
-	display: inline-block;
-	font-size: 30px;
-	margin: 0 5px;
-	width: 100px;
-	text-align: left;
 }
 
 .bottom {
@@ -49,15 +49,15 @@ input[type="number"] {
 
 	.left:hover,
 	.right:hover {
-		transform: scale(1.2);
 		font-weight: 500;
+		transform: scale(1.2);
 	}
 }
 
 .top {
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
+	justify-content: space-between;
 
 	.left,
 	.right {
@@ -75,7 +75,7 @@ input[type="number"] {
 }
 
 .black-clr {
-	color: #000000;
+	color: #000;
 }
 
 // .keypad {
@@ -114,7 +114,7 @@ input[type="number"] {
 // }
 
 .row > div:hover {
+	color: #fff;
 	background-color: rgb(165, 165, 165);
-	color: #ffffff;
 	cursor: pointer;
 }

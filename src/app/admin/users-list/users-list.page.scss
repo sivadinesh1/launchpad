@@ -2,13 +2,14 @@
 	display: grid;
 	width: 94%;
 	margin: 0 auto;
-	padding: 0px 16px;
+	padding: 0 16px;
 }
 
 .row1 {
 	display: grid;
 	grid-template-columns: 1fr 100px;
 }
+
 .actions {
 	align-self: center;
 	justify-self: center;
@@ -16,19 +17,19 @@
 
 .header {
 	display: flex;
-	justify-content: space-between;
 
 	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 50px;
+	color: #222;
 
 	font-size: 20px;
-	color: #222222;
-	padding-bottom: 50px;
 }
 
 .center-message {
-	text-align: center;
 	padding-top: 20px;
 	padding-bottom: 20px;
+	text-align: center;
 }
 
 tr.example-element-row:not(.example-expanded-row):hover {
@@ -52,9 +53,11 @@ td.mat-column-actions {
 	&:hover {
 		background-color: #e9f3ff;
 	}
+
 	a {
 		color: #3e75ff;
 		text-decoration: none;
+
 		&:hover {
 			text-decoration: underline;
 		}
@@ -86,20 +89,22 @@ td.mat-column-actions {
 
 	.mat-table {
 		background: transparent;
+
 		* {
 			box-sizing: border-box;
 		}
 
 		.mat-row {
-			display: block;
-			overflow: hidden;
-			height: auto;
 			position: relative;
+			display: block;
 			clear: both;
-			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
-				0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+			height: auto;
+			overflow: hidden;
 			background-color: #fff;
 			border-radius: 3px;
+			box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
+				0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+
 			+ .mat-row {
 				margin-top: 24px;
 			}
@@ -108,20 +113,24 @@ td.mat-column-actions {
 		.mat-cell {
 			display: block;
 			width: 100%;
-			padding: 0 16px;
 			margin: 16px 0;
+			padding: 0 16px;
 			border: 0 none;
+
 			&:first-child {
 				padding: 0 48px 0 16px;
+
 				a {
-					font-size: 20px;
 					// font-weight: 400;
 					color: inherit;
+					font-size: 20px;
 				}
-				&:before {
+
+				&::before {
 					display: none;
 				}
 			}
+
 			&.m-card-sub-title {
 				margin-top: -8px;
 				padding: 0 48px 0 16px;
@@ -130,21 +139,22 @@ td.mat-column-actions {
 		}
 
 		.has_label_on_mobile {
-			&:before {
-				content: attr(data-label);
+			&::before {
 				display: inline;
 				font-weight: normal;
+				content: attr(data-label);
 			}
 		}
 
 		.mat-column-actions {
-			width: auto;
-			padding: 8px 0 0 !important;
-			margin: 0;
 			position: absolute;
 			top: 0;
 			right: 0;
-			&:before {
+			width: auto;
+			margin: 0;
+			padding: 8px 0 0 !important;
+
+			&::before {
 				display: none;
 			}
 		}
@@ -163,6 +173,6 @@ td.mat-column-actions {
 }
 
 .header-row {
-	background-color: #efefef;
 	padding: 8px;
+	background-color: #efefef;
 }

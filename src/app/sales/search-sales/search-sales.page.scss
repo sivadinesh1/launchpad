@@ -2,17 +2,20 @@
 	display: grid;
 	width: 100%;
 }
+
 .search-section {
 	display: grid;
 	grid-template-columns: 300px 1fr;
 }
+
 .form-wrap {
 	display: grid;
-	width: 80%;
 	grid-template-columns: 130px 600px;
 	gap: 10px;
+	width: 80%;
 	font-size: 1rem;
 }
+
 .inner-form {
 	display: grid;
 	grid-template-columns: 1fr 100px 100px 230px;
@@ -20,7 +23,7 @@
 }
 
 .search-btn {
-	padding: 0px 20px;
+	padding: 0 20px;
 }
 
 .header,
@@ -28,22 +31,22 @@
 .headerRow {
 	display: grid;
 	grid-template-columns: 40px 240px 120px 100px 100px 130px 90px 90px 90px 90px;
-	padding: 5px;
 	align-items: center;
+	padding: 5px;
 }
 
 .main-box {
-	width: calc(100vw - 220px);
-	padding: 10px 0px 100px 16px;
 	position: relative;
 	display: grid;
+	width: calc(100vw - 220px);
+	padding: 10px 0 100px 16px;
 	//@at-root: 0 auto;
 }
 
 .header-style {
-	background-color: #f1efef;
-	color: #333333;
+	color: #333;
 	font-size: 13px;
+	background-color: #f1efef;
 }
 
 .listItem {
@@ -61,8 +64,8 @@
 }
 
 .item {
+	color: #333;
 	font-size: 14px;
-	color: #333333;
 }
 
 .mat-date-wrapper {
@@ -70,13 +73,14 @@
 }
 
 .title {
-	font-size: 24px;
-	background-color: #6b82b5;
 	color: #fff;
-	opacity: 0.6;
-	text-align: center;
+	font-size: 24px;
 	line-height: 73px;
+	text-align: center;
+	background-color: #6b82b5;
+	opacity: 0.6;
 }
+
 .title:hover {
 	background-color: #6b82b5;
 	opacity: 1;
@@ -114,8 +118,8 @@
 }
 
 .example-headers-align .mat-expansion-panel-header-description {
-	justify-content: space-between;
 	align-items: center;
+	justify-content: space-between;
 }
 
 .example-headers-align .mat-form-field + .mat-form-field {

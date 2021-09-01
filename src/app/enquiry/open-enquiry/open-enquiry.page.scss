@@ -6,34 +6,34 @@
 .header {
 	padding: 10px;
 	color: #333;
-	border-bottom: 2px solid #adadad;
 	color: '#a5a5a6';
 	background-color: #f5f5f5;
+	border-bottom: 2px solid #adadad;
 }
 
 .header,
 .listItem {
 	display: grid;
-	width: 100%;
-	margin: 0 auto;
 	grid-template-columns: 60px 200px 1fr 100px 300px 1fr;
 
 	align-items: center;
-	font-size: 14px;
+	width: 100%;
 	height: auto;
+	margin: 0 auto;
+	font-size: 14px;
 }
 
 .icon-style {
+	width: 32px;
+	padding: 5px 10px;
 	color: blue;
 	cursor: pointer;
-	padding: 5px 10px;
-	width: 32px;
 }
 
 .header-style {
-	background-color: #757575;
 	color: #333;
 	font-weight: 500;
+	background-color: #757575;
 }
 
 .o-enq-details {
@@ -43,25 +43,26 @@
 }
 
 .edate {
+	color: #222;
 	font-size: 14px;
-	color: #222222;
 }
+
 .items {
-	font-size: 14px;
-	color: #333333;
 	align-self: center;
+	color: #333;
+	font-size: 14px;
 }
 
 .custname {
-	font-size: 16px;
 	color: black;
+	font-size: 16px;
 }
 
 .new-enq {
 	display: flex;
-	text-align: right;
-	padding-bottom: 5px;
 	justify-content: space-between;
+	padding-bottom: 5px;
+	text-align: right;
 }
 
 .idx {
@@ -78,13 +79,14 @@
 }
 
 .title {
-	font-size: 24px;
-	background-color: #6b82b5;
 	color: #fff;
-	opacity: 0.6;
-	text-align: center;
+	font-size: 24px;
 	line-height: 73px;
+	text-align: center;
+	background-color: #6b82b5;
+	opacity: 0.6;
 }
+
 .title:hover {
 	background-color: #6b82b5;
 	opacity: 1;
@@ -92,19 +94,20 @@
 }
 
 .search-btn {
-	padding: 0px 20px;
+	padding: 0 20px;
 }
 
 .listItem {
+	align-items: center;
 	background-color: #fff;
 	border-bottom: 1px solid #f2f2f2;
-	align-items: center;
 }
 
 .title-row {
 	display: flex;
 	justify-content: space-between;
 }
+
 .width {
 	width: 280px !important;
 }
@@ -118,8 +121,8 @@
 }
 
 ::ng-deep.mat-tab-label-content {
-	font-size: 16px;
 	font-weight: 500;
+	font-size: 16px;
 }
 
 .table-header {
@@ -141,14 +144,15 @@
 	grid-template-rows: 1fr 1fr;
 	font-size: 14px;
 }
+
 .det_wrap {
 	padding: 10px;
 }
 
 .heading {
 	padding: 10px;
+	color: #222;
 	font-size: 18px;
-	color: #222222;
 }
 
 .tbl-detail:hover {
@@ -157,20 +161,20 @@
 }
 
 .invoice {
-	color: #fff;
-	cursor: pointer;
-	padding: 10px 20px;
 	margin: 5px 16px;
+	padding: 10px 20px;
+	color: #fff;
 	background-color: royalblue;
 	border-radius: 61px;
+	cursor: pointer;
 }
 
 .stock {
-	color: royalblue;
-	cursor: pointer;
-	padding: 10px 20px;
 	margin: 5px 16px;
+	padding: 10px 20px;
+	color: royalblue;
+	border: 1px solid royalblue;
 
 	border-radius: 61px;
-	border: 1px solid royalblue;
+	cursor: pointer;
 }

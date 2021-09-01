@@ -11,7 +11,7 @@
 }
 
 .search-btn {
-	padding: 0px 20px;
+	padding: 0 20px;
 }
 
 .header,
@@ -19,14 +19,14 @@
 .headerRow {
 	display: grid;
 	grid-template-columns: 1fr 100px 100px 100px 100px 100px 120px 120px 130px 60px 60px;
-	padding: 5px;
 	align-items: center;
+	padding: 5px;
 }
 
 .header-style {
-	background-color: #f1efef;
-	color: #333333;
+	color: #333;
 	font-size: 13px;
+	background-color: #f1efef;
 }
 
 .listItem {
@@ -44,8 +44,8 @@
 }
 
 .item {
+	color: #333;
 	font-size: 14px;
-	color: #333333;
 }
 
 .mat-date-wrapper {
@@ -53,13 +53,14 @@
 }
 
 .title {
-	font-size: 24px;
-	background-color: #6b82b5;
 	color: #fff;
-	opacity: 0.6;
-	text-align: center;
+	font-size: 24px;
 	line-height: 73px;
+	text-align: center;
+	background-color: #6b82b5;
+	opacity: 0.6;
 }
+
 .title:hover {
 	background-color: #6b82b5;
 	opacity: 1;

@@ -1,17 +1,17 @@
 .messages-container {
+	position: relative;
 	display: flex;
+	padding: 20px;
 	color: #a94442;
+	font-family: Roboto;
 	background-color: #f2dede;
 	border: 1px solid #ebccd1;
-	padding: 20px;
-	font-family: Roboto;
-	position: relative;
 }
 
 .close {
 	position: absolute;
-	right: 10px;
 	top: 10px;
+	right: 10px;
 	cursor: pointer;
 }
 

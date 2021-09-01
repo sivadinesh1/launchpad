@@ -4,12 +4,12 @@
 
 .screen-header {
 	display: flex;
+	justify-content: space-between;
 	width: 100%;
+	color: #222;
+	font-weight: 500;
 
 	font-size: 0.9rem;
-	font-weight: 500;
-	color: #222222;
-	justify-content: space-between;
 }
 
 .customer-info {
@@ -19,11 +19,11 @@
 }
 
 .addl-info {
-	border-top: 1px solid grey;
-	border-bottom: 1px solid grey;
 	display: grid;
 	grid-template-columns: 100px 1fr 100px;
 	width: 100%;
+	border-top: 1px solid grey;
+	border-bottom: 1px solid grey;
 }
 
 .addl-header {
@@ -40,8 +40,8 @@
 ::ng-deep.mat-tab-label,
 ::ng-deep.mat-tab-label-active {
 	min-width: 0 !important;
-	padding: 0px 20px !important;
 	margin: 5px !important;
-	font-size: 15px;
+	padding: 0 20px !important;
 	font-weight: 500;
+	font-size: 15px;
 }
