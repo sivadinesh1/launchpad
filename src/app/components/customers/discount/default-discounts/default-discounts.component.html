@@ -1,0 +1,96 @@
+<div class="screen-header">
+	<div>Discount Setup</div>
+	<div>
+		<img
+			class="cursor"
+			src="/assets/images/svg/close.svg"
+			(click)="close()"
+			width="20px"
+			height="20px"
+		/>
+	</div>
+</div>
+
+<div class="content">
+	<form [formGroup]="submitForm" #myForm="ngForm">
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Type</mat-label>
+				<mat-select formControlName="disctype">
+					<mat-option *ngFor="let item of discountType" [value]="item">
+						{{ item }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</div>
+		<div>
+			<mat-form-field class="mat-width-date" floatLabel="always">
+				<mat-label>Effective</mat-label>
+				<input
+					matInput
+					formControlName="effDiscStDate"
+					[matDatepicker]="picker1"
+					type="text"
+					(focus)="picker1.open()"
+					(dateChange)="handleDicountDateChange($event)"
+				/>
+				<mat-datepicker-toggle
+					matSuffix
+					[for]="picker1"
+				></mat-datepicker-toggle>
+				<mat-datepicker #picker1></mat-datepicker>
+
+				<mat-error
+					*ngIf="
+						(submitForm.get('effDiscStDate').hasError('required') ||
+							submitForm.get('effDiscStDate').hasError('patternInvalid')) &&
+						submitForm.get('effDiscStDate').touched
+					"
+				>
+					Invalid (or) Missing entry
+				</mat-error>
+			</mat-form-field>
+		</div>
+
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>GST (0%)</mat-label>
+				<input type="number" matInput formControlName="gstzero" />
+			</mat-form-field>
+		</div>
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>GST (5%)</mat-label>
+				<input type="number" matInput formControlName="gstfive" />
+			</mat-form-field>
+		</div>
+
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>GST (12%)</mat-label>
+				<input type="number" matInput formControlName="gsttwelve" />
+			</mat-form-field>
+		</div>
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>GST (18%)</mat-label>
+				<input type="number" matInput formControlName="gsteighteen" />
+			</mat-form-field>
+		</div>
+
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>GST (28%)</mat-label>
+				<input type="number" matInput formControlName="gsttwentyeight" />
+			</mat-form-field>
+		</div>
+
+		<div style="display: grid; grid-column: 1 / span 5">
+			<div style="text-align: center">
+				<button mat-raised-button color="primary" (click)="submit()">
+					Update
+				</button>
+			</div>
+		</div>
+	</form>
+</div>

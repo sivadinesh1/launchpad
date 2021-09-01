@@ -1,0 +1,38 @@
+.screen-header {
+	display: flex;
+	width: 100%;
+
+	font-size: 0.9rem;
+	font-weight: 500;
+	color: #222222;
+	justify-content: space-between;
+}
+
+.customer-info {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	padding: 5px 0px 5px 0px;
+}
+
+.header {
+	display: grid;
+	grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr 1fr;
+	padding: 6px;
+	font-size: 12px;
+	background-color: #c2c2c2;
+}
+
+.list-item {
+	display: grid;
+	grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr 1fr;
+	padding: 6px;
+	font-size: 12px;
+}
+
+.action-row {
+	display: flex;
+	justify-content: space-between;
+	padding: 10px 0px 5px 6px;
+	border-bottom: 1px solid #e2e2e2;
+	align-items: center;
+}

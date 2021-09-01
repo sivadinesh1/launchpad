@@ -1,0 +1,116 @@
+<!-- <ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)"> -->
+<ion-content [scrollEvents]="true">
+	<div class="content-wrap">
+		<div class="header">
+			<div>
+				<div>Item Wise Sale Reports</div>
+			</div>
+			<div>&nbsp;</div>
+		</div>
+
+		<div style="display: grid; grid-template-columns: 1fr; background-color: #f8f8fb; margin-bottom: 1rem">
+			<form [formGroup]="submitForm" style="display: grid; grid-template-columns: 1fr 1fr 200px 200px 140px; gap: 10px; padding: 1rem">
+				<div style="padding-top: 20px">
+					<mat-form-field style="width: 100%" class="readonly-wrapper">
+						<mat-label>Brands</mat-label>
+						<mat-select formControlName="brandid" value="{selectBrandFlag}" required>
+							<mat-option value="all">All</mat-option>
+							<mat-option *ngFor="let item of brands" [value]="item.id"> {{ item.name }} </mat-option>
+						</mat-select>
+						<mat-error>This field is required</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div style="padding-top: 20px">
+					<mat-form-field style="width: 100%" class="readonly-wrapper">
+						<mat-label>Sale Type</mat-label>
+						<mat-select formControlName="saletype" required value="{saletypeFlag}">
+							<mat-option *ngFor="let item of saletypeList" [value]="item.id"> {{item.value}} </mat-option>
+						</mat-select>
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-date-wrapper" style="padding-top: 20px">
+						<mat-label>Start</mat-label>
+						<input
+							matInput
+							readonly
+							[max]="maxDate"
+							[matDatepicker]="startdate"
+							formControlName="startdate"
+							(focus)="startdate.open()"
+							required
+							(dateChange)="startDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="startdate"></mat-datepicker-toggle>
+						<mat-datepicker #startdate></mat-datepicker>
+					</mat-form-field>
+				</div>
+
+				<div style="padding-top: 20px">
+					<mat-form-field class="mat-date-wrapper">
+						<mat-label>End</mat-label>
+						<input
+							matInput
+							readonly
+							[matDatepicker]="enddate"
+							[max]="maxDate"
+							formControlName="enddate"
+							(focus)="enddate.open()"
+							required
+							(dateChange)="endDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="enddate"></mat-datepicker-toggle>
+						<mat-datepicker #enddate></mat-datepicker>
+					</mat-form-field>
+				</div>
+				<div class="search-btn" style="padding-top: 20px">
+					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="fetchItemWiseSaleReports()">
+						Get Reports
+					</button>
+				</div>
+			</form>
+		</div>
+		<div style="display: grid; grid-template-columns: 1fr 300px 80px; text-align: right; font-style: italic">
+			<div>&nbsp;</div>
+			<div style="align-items: center; display: grid"> Result: {{productArr?.length || 0}} Rows </div>
+			<div class="actions">
+				<img
+					matTooltip="Download"
+					matTooltipClass="tooltip"
+					src="/assets/images/svg/direct-download.svg"
+					style="cursor: pointer"
+					width="32px"
+					height="32px"
+					(click)="exportToExcel()"
+				/>
+			</div>
+		</div>
+		<div #epltable>
+			<table>
+				<thead>
+					<tr class="content">
+						<th style="text-align: left; padding-left: 5px; font-weight: 500"> SNo </th>
+						<th style="text-align: left; padding-left: 5px; font-weight: 500"> Brand </th>
+						<th style="text-align: left; padding-left: 5px; font-weight: 500"> Item Code </th>
+						<th style="text-align: left; padding-right: 5px; font-weight: 500"> Description </th>
+
+						<th style="text-align: right; padding-right: 5px; font-weight: 500"> Sale Qty </th>
+						<th style="text-align: right; padding-right: 5px; font-weight: 500"> Avg.Sale Price </th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr *ngFor="let item of productArr; let idx = index" [ngClass]="{'make-gold': item.processed === 'YS' }" class="list-item">
+						<td style="text-align: left; padding-left: 5px">{{idx + 1}}</td>
+						<td style="text-align: left; padding-left: 5px"> {{item.brand_name}} </td>
+						<td style="text-align: left; padding-left: 5px"> {{item.product_code}} </td>
+						<td style="text-align: left; padding-right: 5px"> {{item.description}} </td>
+						<td style="text-align: right">{{item.qty}}</td>
+						<td style="text-align: right">{{item.avg_SP | number:'1.2-2'}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</ion-content>

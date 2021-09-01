@@ -1,0 +1,76 @@
+.login-content {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	min-height: 100vh;
+	overflow-y: auto;
+
+	.left,
+	.right {
+		display: grid;
+		text-align: center;
+		width: 100%;
+		grid-template-rows: 80px 1fr 50px;
+		text-align: center;
+		background-color: #f9f2f2;
+		margin: 0 auto;
+	}
+
+	.right {
+		grid-template-rows: 80px 1fr 30px;
+		background-color: #fff;
+		.login {
+			display: grid;
+			width: 60%;
+			margin: 0 auto;
+			align-content: center;
+		}
+		.footer {
+			font-size: 12px;
+			color: #444;
+			align-items: center;
+		}
+	}
+
+	// .right {
+	// 	display: grid;
+	// 	width: 80%;
+	// 	text-align: center;
+	// 	align-self: center;
+	// 	justify-content: center;
+	// 	margin: 0 auto;
+	// }
+}
+
+.example-full-width {
+	width: 100%;
+}
+
+.logo-section {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+	padding-left: 24px;
+
+	.section-left {
+		background-color: #f9f2f2;
+	}
+}
+
+.footer {
+	font-size: 20px;
+	font-weight: 200;
+	color: #505050;
+	background-color: #f9f2f2;
+	align-items: center;
+}
+
+.login-txt {
+	text-align: left;
+	padding-bottom: 1.2rem;
+	font-size: 1.4rem;
+	font-weight: 400;
+}
+.other-auth-options-row {
+	display: flex;
+	justify-content: space-between;
+}

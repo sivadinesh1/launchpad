@@ -1,4 +1,5 @@
-/*
+/**
+ * /*
  * App Global CSS
  * ----------------------------------------------------------------------------
  * Put style rules here that you want to apply globally. These styles are for
@@ -7,7 +8,10 @@
  * output CSS.
  * For more information on global stylesheets, visit the documentation:
  * https://ionicframework.com/docs/layout/global-stylesheets
+ *
+ * @format
  */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap");
 
 /* Core CSS required for Ionic components to work properly */
 @import "~@ionic/angular/css/core.css";
@@ -16,7 +20,7 @@
 @import "~@ionic/angular/css/normalize.css";
 @import "~@ionic/angular/css/structure.css";
 @import "~@ionic/angular/css/typography.css";
-@import '~@ionic/angular/css/display.css';
+@import "~@ionic/angular/css/display.css";
 
 /* Optional CSS utils that can be commented out */
 @import "~@ionic/angular/css/padding.css";
@@ -24,3 +28,335 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+@import "./breakpoints/breakpoints.scss";
+
+* {
+  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+}
+
+.select-modal {
+  .modal-wrapper {
+    height: 80vh;
+    width: 90%;
+  }
+}
+
+.tax-edit-modal {
+  .modal-wrapper {
+    height: 300px;
+    width: 40%;
+  }
+}
+
+.vendor-comp-styl {
+  .modal-wrapper {
+    width: 400px;
+    height: 300px;
+  }
+}
+
+.customer-comp-styl {
+  .modal-wrapper {
+    width: 50%;
+    height: 500px;
+  }
+}
+
+.txt-right-align {
+  text-align: right;
+}
+
+.txt-left-align {
+  text-align: left;
+}
+
+.txt-center-align {
+  text-align: center;
+}
+
+.align-self-center {
+  align-self: center;
+}
+
+.justify-self {
+  justify-self: center;
+}
+
+.left-pad20 {
+  padding-left: 20px;
+}
+
+.fsize50 {
+  font-size: 50px;
+}
+.fsize32 {
+  font-size: 40px;
+}
+
+.fweight500 {
+  font-weight: 500;
+}
+
+.odd {
+  background-color: #eeeeee;
+}
+.even {
+  background-color: #faf7ff;
+}
+.active {
+  background-color: blue !important;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.highlighted {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+button {
+  cursor: pointer;
+}
+
+.row-color {
+  background: #fff;
+}
+.row-color:nth-of-type(even) {
+  background: #f4f5f7;
+}
+.row-color:hover {
+  // background: rgb(195, 194, 194);
+  border: 2px solid #0268ce;
+}
+
+.row-color-nohover {
+  background: #fff;
+}
+.row-color-nohover:nth-of-type(even) {
+  background: #f4f5f7;
+}
+
+.plain-row-color-nohover:hover {
+  background: #f2f2f2;
+}
+
+.error {
+  color: rgb(156, 0, 0);
+}
+
+.sales-icon {
+  color: orange;
+}
+
+.mat-form-field-infix {
+  padding: 0.4em 0;
+  border-top: 0.1em solid transparent;
+}
+
+// horizontal scroll bar for select box with lengthy values
+.mat-option-text {
+  overflow: auto;
+  text-overflow: unset;
+}
+
+.mat-drawer,
+.mat-sidenav {
+  &[cdk-scrollable],
+  &[cdkScrollable] {
+    .mat-drawer-inner-container {
+      overflow: visible;
+    }
+  }
+  background-color: #faf9f299;
+}
+
+.mat-tab-label-active {
+  color: #000 !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+}
+
+.mat-tab-label {
+  color: #0319a8;
+  font-size: 16px;
+}
+
+.no-records {
+  padding: 10px;
+  text-align: center;
+  color: #ec407f;
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.mat-option.mat-active {
+  border-left: 2px solid cadetblue;
+}
+
+.mat-drawer-side {
+  border-right-color: #f1f1f1;
+  //	filter: drop-shadow(0px 0px 8px lightgrey) invert(85%);
+}
+
+.tooltip {
+  background: rgb(80, 80, 88);
+  color: #fff;
+  padding: 0.5rem 1.2rem;
+  font-size: 14px;
+  font-weight: 400;
+  transform: translateY(-1px);
+
+  transition: 0.3s linear;
+  animation: odsoky 0.5s ease-in-out;
+}
+
+@keyframes odsoky {
+  0% {
+    transform: translateY(6px);
+  }
+
+  100% {
+    transform: translateY(1px);
+  }
+}
+
+.form-field-gap {
+  padding-top: 8px;
+}
+
+.btn-grad,
+.btn-grad-no-margin {
+  background-image: linear-gradient(
+    to right,
+    #0575e6 0%,
+    #021b79 51%,
+    #0575e6 100%
+  );
+}
+.btn-grad {
+  margin: 10px 24px 10px 24px;
+  // padding: 12px 45px;
+  text-align: center;
+  text-transform: capitalize;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;
+  box-shadow: 0 0 20px #eee;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 190px;
+  max-width: 200px;
+  height: 42px;
+  font-size: 18px;
+}
+
+.btn-grad-no-margin {
+  text-align: center;
+  text-transform: capitalize;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;
+  box-shadow: 0 0 20px #eee;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 190px;
+  max-width: 200px;
+  height: 42px;
+  font-size: 18px;
+}
+
+.btn-grad:hover {
+  background-position: right center; /* change the direction of the change here */
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-grad-no-margin:hover {
+  background-position: right center; /* change the direction of the change here */
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+// to remove padding in mat-dialog
+.app-full-bleed-dialog .mat-dialog-container {
+  padding: 0;
+}
+
+.alert-wrapper {
+  .alert-button:first-child {
+    color: red;
+  }
+}
+
+.add-icon {
+  font-size: 24px;
+  width: 24px !important;
+  height: 24px !important;
+  color: #fff !important;
+}
+
+.add-icon-label {
+  padding-left: 5px;
+  font-size: 18px;
+}
+
+// .alertHeader {
+// 	color: #b52024 !important;
+//    // --color: #b52024 !important;
+//  }
+//  h2.alertHeader {
+//    color: #b52024 !important;
+//   // --color: #b52024 !important;
+//  }
+
+//  //this works for alertHeader when inspecting in the browser
+//  .alert-sub-title.sc-ion-alert-md, .alert-title.sc-ion-alert-md {
+//    color: #b32224;
+//  }
+
+.searchbar-input {
+  background: #fff !important;
+  border-radius: 30px !important;
+  height: 40px !important;
+  max-width: 400px;
+  width: 400px;
+  font-size: 1rem !important;
+  border: 1px solid transparent;
+}
+
+.example-table-container1 {
+  width: 100% !important;
+}
+
+.w-100 {
+  max-width: 100px;
+}

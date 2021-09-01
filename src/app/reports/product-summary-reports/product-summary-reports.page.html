@@ -1,0 +1,78 @@
+<!-- <ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)"> -->
+<ion-content [scrollEvents]="true">
+	<div class="content-wrap">
+		<div class="header">
+			<div>
+				<div>Product Summary Reports</div>
+			</div>
+			<div>&nbsp;</div>
+		</div>
+
+		<div style="display: flex">
+			<div>
+				<img src="/assets/images/svg/filter-results-button.svg" width="22px" height="22px" />
+			</div>
+
+			<div>
+				<mat-form-field class="example-chip-list">
+					<mat-chip-list #chipList aria-label="Fruit selection">
+						<mat-chip *ngFor="let fruit of fruits" [selectable]="selectable" [removable]="removable" (removed)="remove(fruit)">
+							{{fruit}}
+							<mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+						</mat-chip>
+						<input
+							#fruitInput
+							[formControl]="fruitCtrl"
+							[matAutocomplete]="auto"
+							[matChipInputFor]="chipList"
+							[matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+							(matChipInputTokenEnd)="add($event)"
+						/>
+					</mat-chip-list>
+					<mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+						<mat-option *ngFor="let fruit of filteredFruits | async" [value]="fruit"> {{fruit}} </mat-option>
+					</mat-autocomplete>
+				</mat-form-field>
+			</div>
+		</div>
+
+		<div #epltable>
+			<table>
+				<thead>
+					<tr class="content">
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">SNo</th>
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">Brand</th>
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">Item Code</th>
+						<th style="text-align: right; padding-right: 5px; font-weight: 500">Description</th>
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">HSN Code</th>
+						<th style="text-align: right; padding-right: 5px; font-weight: 500">Available Stock</th>
+						<th [hidden]="true" style="text-align: right; padding-right: 5px; font-weight: 500">MRP</th>
+						<th style="text-align: left; padding-left: 5px; font-weight: 500">TAX(%)</th>
+						<th style="text-align: right; padding-right: 5px; font-weight: 500">Rack Info</th>
+						<th style="text-align: right; padding-right: 5px; font-weight: 500">Last Updated</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr *ngFor="let item of productArr; let idx = index" [ngClass]="{'make-gold': item.processed === 'YS' }" class="list-item">
+						<td style="text-align: left; padding-left: 5px">{{idx + 1}}</td>
+						<td style="text-align: left; padding-left: 5px">{{item.brandname}}</td>
+						<td style="text-align: left; padding-left: 5px">{{item.code}}</td>
+						<td style="text-align: right; padding-right: 5px">{{item.description}}</td>
+						<td style="text-align: left">{{item.hsncode}}</td>
+						<td style="text-align: left">{{item.available_stock}}</td>
+
+						<td style="text-align: left; padding-left: 5px">{{item.mrp}}</td>
+						<td style="text-align: right; padding-right: 5px">{{item.tax_rate}}</td>
+						<td style="text-align: left; padding-left: 5px">{{item.rakno}}</td>
+						<td style="text-align: right; padding-right: 5px">{{item.last_updated | date: 'dd/MMM/yyyy'}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+		<ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data..."> </ion-infinite-scroll-content>
+	</ion-infinite-scroll>
+</ion-content>

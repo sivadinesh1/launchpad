@@ -1,0 +1,122 @@
+.sidenav-container {
+	min-width: 11.2rem;
+	height: calc(100vh - 200px);
+	padding-right: 5px;
+	padding-top: 8px;
+}
+
+.jim {
+	width: 30px;
+	height: 30px;
+	object-fit: cover;
+	border-radius: 50%;
+}
+
+:root {
+	--color_fill: yellow;
+}
+
+// .mat-list-item:hover {
+// 	background-color: #f2f2f2;
+// }
+
+.is-active {
+	background-color: red;
+}
+
+.red {
+	border-right: 5px solid red;
+}
+.selectedmenu {
+	// background-color: #e8e8e8;
+	background-color: #ebecf0 !important;
+	color: #0052cc !important;
+}
+
+.side-menu-lbl {
+	font-size: 14px;
+	font-weight: 400;
+	// color: #111111;
+
+	padding: 0px 8px;
+}
+.side-menu-lbl:hover {
+	color: #0052cc;
+}
+
+.header-menu-item {
+	padding-top: 0.3rem !important;
+	padding-bottom: 0.3rem !important;
+
+	//border-radius: 0.3rem !important;
+	border-top-right-radius: 50px !important;
+	border-bottom-right-radius: 50px !important;
+
+	display: flex !important;
+	flex-direction: row !important;
+	align-items: center !important;
+
+	color: #111111;
+	font-size: 0.95rem;
+	font-weight: 600;
+	line-height: 1.625;
+	letter-spacing: 0.025em;
+}
+
+.img-menu-box {
+	margin: 0px 3px 4px 16px;
+}
+
+.header-menu-item:hover {
+	//	background-color: rgba(245, 245, 245, 0.8);
+	background-color: #ff909021;
+}
+
+.header-menu-item:hover .plus {
+	display: block;
+}
+
+.plus {
+	display: none;
+	font-size: 24px;
+	color: blue;
+	width: 24px !important;
+	height: 24px !important;
+	padding-left: 12px;
+}
+.plus:hover {
+	color: rgb(6, 6, 105);
+}
+
+.wrapper {
+	padding-top: 0.2rem !important;
+	padding-bottom: 0.2rem !important;
+	// padding-left: 0.3rem !important;
+	// padding-right: 0.3rem !important;
+	cursor: pointer;
+}
+
+// .wrapper:last-child {
+// 	margin-top: auto;
+// }
+
+.bottom {
+	width: 100%;
+	background-color: #0e269e;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	display: flex;
+	color: #f3f3f3;
+	min-height: 53px;
+}
+
+.fname {
+	font-size: 14px;
+	text-transform: capitalize;
+}
+
+.role {
+	font-size: 12px;
+	text-transform: lowercase;
+}

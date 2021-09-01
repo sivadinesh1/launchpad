@@ -1,0 +1,28 @@
+.content {
+	display: grid;
+	width: 100%;
+
+	padding: 32px;
+}
+
+.grid-split {
+	display: grid;
+	grid-template-columns: auto;
+	grid-gap: 10px;
+	width: 100%;
+}
+
+.screen-header {
+	display: flex;
+	width: 100%;
+
+	font-size: 18px;
+	font-weight: 400;
+	color: #222222;
+	justify-content: space-between;
+	padding: 16px;
+}
+
+.mat-width-ext {
+	width: 100%;
+}

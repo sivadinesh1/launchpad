@@ -1,0 +1,41 @@
+.content {
+	display: grid;
+
+	width: 80%;
+	margin: 0 auto;
+	padding: 10px;
+}
+
+.table-header {
+	display: grid;
+	grid-template-columns: 120px 1fr 1fr 80px 1fr 80px 80px 200px;
+	padding: 10px;
+	background-color: rgb(233, 233, 233);
+}
+
+.tbl-detail {
+	display: grid;
+	grid-template-columns: 120px 1fr 1fr 80px 1fr 80px 80px 200px;
+	padding: 10px;
+	font-size: 14px;
+}
+
+.tc2 {
+	display: grid;
+	grid-template-rows: 1fr 1fr;
+	font-size: 14px;
+}
+.det_wrap {
+	padding: 10px;
+}
+
+.heading {
+	padding: 10px;
+	font-size: 18px;
+	color: #222222;
+}
+
+.tbl-detail:hover {
+	background-color: #e9e8f1;
+	opacity: 1;
+}

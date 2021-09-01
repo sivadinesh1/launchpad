@@ -1,0 +1,209 @@
+<div class="wrapper">
+	<div>
+		<div style="padding: 1rem">Company Basic Information</div>
+		<div class="content">
+			<form [formGroup]="submitForm" class="form">
+				<mat-horizontal-stepper [linear]="isLinear" #stepper formArrayName="formArray">
+					<mat-step formGroupName="0" [stepControl]="formArray?.get([0])">
+						<ng-template matStepLabel>Contact Info</ng-template>
+						<div class="center-info">
+							<div class="name">
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Name</mat-label>
+									<input matInput readonly formControlName="name" required />
+									<mat-error>This field is required</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="address1" style="padding-top: 16px">
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Address Line 1</mat-label>
+									<input matInput formControlName="address1" required />
+								</mat-form-field>
+							</div>
+							<div class="address2">
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Address Line 2</mat-label>
+									<input matInput formControlName="address2" required />
+								</mat-form-field>
+							</div>
+							<div class="address3">
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Address Line 3</mat-label>
+									<input matInput formControlName="address3" required />
+								</mat-form-field>
+							</div>
+
+							<div class="district">
+								<mat-form-field class="mat-width-ext">
+									<mat-label>District</mat-label>
+									<input matInput formControlName="district" required />
+								</mat-form-field>
+							</div>
+
+							<div class="state">
+								<mat-form-field class="mat-width-ext">
+									<mat-label>State</mat-label>
+									<mat-select formControlName="state_id" required>
+										<mat-option *ngFor="let item of statesdata" [value]="item.id"> {{item.description}} </mat-option>
+									</mat-select>
+								</mat-form-field>
+							</div>
+
+							<div class="pin">
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Pin</mat-label>
+									<input matInput formControlName="pin" required />
+								</mat-form-field>
+							</div>
+						</div>
+
+						<div>
+							<button mat-button mat-raised-button color="primary" matStepperNext>Next</button>
+						</div>
+					</mat-step>
+
+					<mat-step formGroupName="1" [stepControl]="formArray?.get([1])">
+						<ng-template matStepLabel>General Info</ng-template>
+						<div class="center-info1">
+							<div>
+								<mat-form-field class="mat-width-ext">
+									<mat-label>GST (Optional)</mat-label>
+									<input type="text" matInput formControlName="gst" />
+								</mat-form-field>
+							</div>
+
+							<div>
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Primary Phone #</mat-label>
+									<input type="number" matInput formControlName="mobile" required />
+								</mat-form-field>
+							</div>
+
+							<div>
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Secondary Phone # (Optional)</mat-label>
+									<input type="number" matInput formControlName="mobile2" />
+								</mat-form-field>
+							</div>
+
+							<div>
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Landline # (Optional)</mat-label>
+									<input type="number" matInput formControlName="phone" />
+								</mat-form-field>
+							</div>
+
+							<div>
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Whatsapp # (Optional)</mat-label>
+									<input type="number" matInput formControlName="whatsapp" />
+								</mat-form-field>
+							</div>
+						</div>
+						<div>
+							<button mat-button mat-raised-button color="primary" matStepperPrevious>Back</button>&nbsp;&nbsp;
+							<button mat-button mat-raised-button color="primary" matStepperNext>Next</button>
+						</div>
+					</mat-step>
+
+					<mat-step formGroupName="2" [stepControl]="formArray?.get([2])">
+						<ng-template matStepLabel>Addl Info</ng-template>
+						<div class="center-info2">
+							<div>
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Email (Optional)</mat-label>
+									<input type="text" matInput formControlName="email" />
+								</mat-form-field>
+							</div>
+
+							<div>
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Bank Name (Optional)</mat-label>
+									<input type="text" matInput formControlName="bankname" />
+								</mat-form-field>
+							</div>
+
+							<div>
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Account # (Optional)</mat-label>
+									<input type="text" matInput formControlName="accountno" />
+								</mat-form-field>
+							</div>
+
+							<div>
+								<mat-form-field class="mat-width-ext">
+									<mat-label>IFSC Code (Optional)</mat-label>
+									<input type="text" matInput formControlName="ifsccode" />
+								</mat-form-field>
+							</div>
+
+							<div>
+								<mat-form-field class="mat-width-ext">
+									<mat-label>Branch (Optional)</mat-label>
+									<input type="text" matInput formControlName="branch" />
+								</mat-form-field>
+							</div>
+						</div>
+						<div>
+							<button mat-button mat-raised-button color="primary" matStepperPrevious>Back</button>
+							&nbsp;&nbsp;
+							<button mat-button mat-raised-button color="primary" (click)="submit()">Update Company Details</button>
+						</div>
+					</mat-step>
+				</mat-horizontal-stepper>
+			</form>
+		</div>
+	</div>
+	<div style="display: grid; grid-template-rows: 1fr">
+		<div>
+			<div style="padding: 1rem">Company Logo (100px X 100px Preferred Size)</div>
+			<div style="display: grid; grid-template-columns: 1fr 1fr">
+				<div>
+					<img src="{{restApiUrl}}/{{resultList?.logo_name}}" width="200px" height="200px" alt="" srcset="" />
+				</div>
+
+				<div>
+					<input type="file" class="file-input" accept="image/*" (change)="onFileSelected($event, 'main')" #fileUpload />
+
+					<div class="file-upload">
+						{{fileName || "Upload Picture"}}
+
+						<button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
+							<mat-icon>attach_file</mat-icon>
+						</button>
+					</div>
+					<div *ngIf="imageError !== '' ">
+						<span style="color: red; padding: 16px; font-size: 16px"> {{this.imageError}} </span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div>
+			<div style="padding: 1rem">Side Logo (380px X 100px Preferred size)</div>
+			<div style="display: grid; grid-template-columns: 1fr 1fr">
+				<div>
+					<img src="{{restApiUrl}}/{{resultList?.side_logo_name}}?{{now}}" width="200px" height="200px" alt="" srcset="" />
+				</div>
+
+				<div>
+					<input type="file" class="file-input" accept="image/*" (change)="onFileSelected($event, 'side')" #fileUpload1 />
+
+					<div class="file-upload">
+						{{fileName || "Upload Picture"}}
+
+						<button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload1.click()">
+							<mat-icon>attach_file</mat-icon>
+						</button>
+					</div>
+					<div *ngIf="sideImageError !== '' ">
+						<span style="color: red; padding: 16px; font-size: 16px"> {{this.sideImageError}} </span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- test -->

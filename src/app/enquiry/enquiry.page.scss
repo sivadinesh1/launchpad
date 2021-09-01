@@ -1,0 +1,233 @@
+.screen-header {
+	display: flex;
+	font-weight: 400;
+	padding: 10px;
+	width: 100%;
+	font-size: 14px;
+	margin: 0px;
+}
+
+// Notes: How to center absolute div horizontally using CSS?
+.enq-form {
+	display: grid;
+	align-content: flex-start;
+	width: 90%;
+
+	left: 0;
+	right: 0;
+
+	margin-left: auto;
+	margin-right: auto;
+
+	border: 0px solid red;
+	overflow-y: auto;
+}
+
+.enq-form1 > div:last-child {
+	scroll-snap-align: end;
+}
+
+.enq-wrap {
+	display: grid;
+	width: 94%;
+	margin: 0 auto;
+	height: auto;
+	padding-bottom: 100px;
+	display: grid;
+
+	.row {
+		display: grid;
+		grid-template-rows: 40px 1fr;
+		padding: 10px 10px 50px 10px;
+
+		.row1 {
+			display: grid;
+			grid-template-columns: 40px 40px 120px 1fr minmax(120px, 150px);
+			align-items: center;
+			grid-gap: 10px;
+			border-bottom: 2px solid rgb(173, 173, 173);
+			color: '#a5a5a6';
+			background-color: #f5f5f5;
+		}
+
+		.row2 {
+			align-items: center;
+			// overflow-y: auto;
+			// overflow-x: hidden;
+			// max-height: 500px;
+			padding-top: 10px;
+			.list-item {
+				display: grid;
+				grid-template-columns: 40px 40px 120px 1fr minmax(120px, 150px);
+				align-self: center;
+				grid-gap: 10px;
+
+				font-size: 14px;
+				padding-top: 5px;
+			}
+		}
+	}
+}
+
+.submit {
+	justify-content: center;
+	align-self: center;
+}
+
+.item-details {
+	display: grid;
+	grid-template-columns: 40px 40px 120px 1fr minmax(120px, 150px);
+	align-items: center;
+	grid-gap: 10px;
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+.example-full-width {
+	width: 100%;
+}
+
+.mat-auto-width {
+	width: 80%;
+}
+
+.remarks-txtarea {
+	width: 400px;
+}
+
+.save-btn {
+	width: 400px;
+}
+
+.id {
+	font-size: 14px;
+}
+
+.add-item {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	text-align: center;
+	padding: 10px;
+
+	grid-gap: 30px;
+	color: darkblue;
+	font-size: 18px;
+}
+
+.list-block {
+	display: grid;
+
+	overflow-y: auto;
+	border: 0px solid red;
+}
+
+.elseblock {
+	display: grid;
+	justify-self: left;
+	align-items: center;
+}
+
+.content {
+	display: flex;
+	justify-content: space-between;
+
+	width: 100%;
+	margin: 0 auto;
+}
+
+.customer1 {
+	display: grid;
+	grid-template-columns: 1.5fr 1fr 1fr 1fr;
+	padding-bottom: 10px;
+	width: 100%;
+}
+
+.customer {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 100px;
+	padding: 3rem 1rem 1rem 1rem;
+	width: 94%;
+	margin: 0 auto;
+}
+
+.cust-info {
+	display: grid;
+	align-self: center;
+	font-size: 12px;
+	justify-content: left;
+	padding-left: 10px;
+}
+
+.items {
+	margin-right: auto;
+}
+
+.itms-lbl {
+	color: #797979;
+	font-size: 14px;
+}
+
+.main-add {
+	display: grid;
+	grid-template-columns: 2fr minmax(110px, 100px);
+
+	background-color: #7e8bb1;
+
+	.left {
+		display: grid;
+		grid-template-columns: minmax(410px, 1fr) 1.5fr minmax(60px, 80px) 110px;
+		align-items: center;
+		grid-gap: 10px;
+		background-color: #e8e8e8;
+		padding: 1rem;
+		align-self: center;
+		border-top: 2px solid #7e8bb1;
+		border-bottom: 2px solid #7e8bb1;
+	}
+	.right {
+		display: grid;
+		grid-template-columns: 1fr;
+		background-color: #efefef;
+		padding: 5px;
+	}
+}
+
+.small-icon-button {
+	width: 42px !important;
+	height: 42px !important;
+	line-height: 42px !important;
+
+	.mat-icon {
+		width: 32px !important;
+		height: 32px !important;
+		line-height: 28px !important;
+	}
+	.material-icons {
+		font-size: 32px !important;
+	}
+}
+
+.footer {
+	display: flex;
+	position: fixed;
+	justify-content: space-between;
+	bottom: 0px;
+	padding: 0.5rem 80px 0.5rem 1rem;
+	width: calc(100vw - 176px);
+	height: auto;
+	background-color: #f7f9fd;
+	border-top: 1px solid #e6e6e6;
+}
+
+.enq-bottom {
+	display: grid;
+	position: fixed;
+
+	bottom: 56px;
+
+	width: 100%;
+	padding: 0px 5%;
+	height: auto;
+	background-color: #ffffff;
+}

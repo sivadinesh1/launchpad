@@ -1,0 +1,22 @@
+<div class="content">
+	<div class="header" style="justify-self: center; font-weight: 500;">
+		Successfully converted to sale!!!
+	</div>
+	<div class="invoice-details">
+		<div class="inv-det-heading"></div>
+		<div>
+			<div style="color: grey;">Invoice #</div>
+			<div>{{ data.invoiceid }}</div>
+		</div>
+		<div>
+			<div style="color: grey;">Invoice Date</div>
+			<div>{{ data.invoicedate }}</div>
+		</div>
+	</div>
+
+	<div class="footer" style="margin-top: 32px; justify-content: center;">
+		<button mat-raised-button color="primary" type="button" (click)="close()" style="font-size: 1rem; padding: 0px 20px;">
+			Close & Navigate to sale dashboard
+		</button>
+	</div>
+</div>

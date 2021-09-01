@@ -1,0 +1,175 @@
+.enq-form {
+	display: grid;
+	align-content: flex-start;
+	width: 90%;
+	margin: 0 auto;
+}
+
+.e-form {
+	display: grid;
+	width: 80%;
+	margin: 0 auto;
+}
+
+.save-enquiry {
+	display: flex;
+	height: 80px;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.actn-btn-sec {
+	display: grid;
+	margin-top: auto;
+	// display: flex;
+	// justify-content: space-between;
+	border-top: 1px solid rgb(230, 230, 230);
+}
+
+.submit {
+	display: flex;
+	justify-content: center;
+}
+
+.list-item {
+	display: grid;
+	max-height: 70vh;
+	min-height: 70vh;
+	overflow-y: auto;
+}
+
+.item-details {
+	display: grid;
+	grid-template-columns: 30px 1fr 1.5fr minmax(110px, 130px);
+	align-items: center;
+	grid-gap: 10px;
+	padding: 12px;
+}
+
+.styl-txt-box-small {
+	width: 100px !important;
+	border: 1px solid #d1d1d1;
+	padding: 8px;
+	// border-radius: 5px;
+}
+
+.example-full-width {
+	width: 100%;
+}
+
+.remarks-txtarea {
+	width: 400px;
+}
+
+.save-btn {
+	width: 400px;
+}
+
+.add-items-lbl,
+.add-cust-lbl {
+	align-self: center;
+	font-size: 18px;
+}
+
+.id {
+	font-size: 14px;
+}
+
+#theItem:focus {
+	border-bottom-color: red;
+}
+
+.o-form {
+	display: flex;
+	text-align: left;
+	font-size: 20px;
+	color: #222222;
+	padding: 10px;
+}
+
+.o-form {
+	display: flex;
+	justify-content: space-between;
+}
+
+.add-item {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	text-align: center;
+	padding: 10px;
+
+	grid-gap: 30px;
+	color: darkblue;
+	font-size: 18px;
+}
+
+.mat-form-field-suffix {
+	top: 8px !important;
+}
+
+.list-block {
+	display: grid;
+	max-height: 70vh;
+	overflow-y: auto;
+}
+
+.elseblock {
+	display: grid;
+	justify-self: left;
+	align-items: center;
+}
+
+.actn-row {
+	display: flex;
+	justify-content: space-between;
+	padding: 6px;
+	border-top: 0px solid #dfdfdf;
+	border-bottom: 1px solid #dfdfdf;
+	margin-bottom: 10px;
+	margin-top: 5px;
+}
+
+.items {
+	margin-right: auto;
+}
+
+.itms-lbl {
+	color: #797979;
+	font-size: 14px;
+}
+
+.screen-header {
+	display: flex;
+	padding: 8px;
+	font-size: 18px;
+	font-weight: 500;
+	color: #222222;
+	justify-content: space-between;
+}
+
+.content {
+	display: grid;
+}
+
+.main-add {
+	display: grid;
+	grid-template-columns: 2fr minmax(110px, 100px);
+
+	background-color: #e8e8e8;
+
+	.left {
+		display: grid;
+		grid-template-columns: minmax(350px, 1fr) 2fr minmax(60px, 80px) 110px;
+		align-items: center;
+		grid-gap: 10px;
+		background-color: #e8e8e8;
+		padding: 1rem;
+		align-self: center;
+	}
+	.right {
+		display: grid;
+		grid-template-columns: 1fr;
+		background-color: #efefef;
+		padding: 5px;
+	}
+}

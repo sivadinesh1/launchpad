@@ -1,0 +1,31 @@
+<ion-content>
+	<div class="screen-header">
+		<div style="font-size: 18px"> Manual Invoice Number Generation </div>
+
+		<div style="align-items: center">
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close('')" width="16px" height="16px" />
+		</div>
+	</div>
+
+	<div style="font-size: 16px; color: grey; padding: 1rem 0">
+		In General, Invoce number generation is automatic(recommended). In special cases you may need manual Invoice Number.
+	</div>
+	<div style="padding-top: 16px">
+		<form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+			<div>
+				<mat-form-field class="example-full-width">
+					<mat-label>Manual Invoice Number</mat-label>
+					<input matInput type="text" class="form-control" name="invoiceNo" [(ngModel)]="model.invoiceNo" #invoiceNo="ngModel" required autoFocus />
+
+					<mat-error *ngIf="invoiceNo?.errors?.required"> Required feild </mat-error>
+				</mat-form-field>
+			</div>
+			<div style="padding-top: 20px">
+				<button mat-raised-button color="primary" type="submit"> Create Manual Invoice Number </button>
+			</div>
+			<div style="padding: 1rem 0; color: red">
+				{{ this.responsemsg }}
+			</div>
+		</form>
+	</div>
+</ion-content>

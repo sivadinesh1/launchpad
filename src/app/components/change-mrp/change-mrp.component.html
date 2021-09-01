@@ -1,0 +1,44 @@
+<div class="element-edit-wrap">
+	<div class="screen-header">
+		<div style="font-size: 14px">Change MRP</div>
+		<div>
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="closeModal()" width="20px" height="20px" />
+		</div>
+	</div>
+
+	<form [formGroup]="submitForm" (ngSubmit)="onSubmit()">
+		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px">
+			<div style="padding: 5px 0px">
+				<div style="font-size: 12px; color: #777777">Item</div>
+				<div style="font-size: 14px; color: #333">
+					{{ this.pArry[this.rArry]?.product_code }}
+				</div>
+				<div style="font-size: 14px; color: #333">
+					{{ this.pArry[this.rArry]?.product_desc }}
+				</div>
+			</div>
+			<div style="padding: 5px 0px">
+				<div style="font-size: 12px; color: #777777">Current MRP</div>
+				<div style="font-size: 14px; color: #333">
+					{{ this.pArry[this.rArry]?.mrp }}
+				</div>
+			</div>
+
+			<div style="padding: 5px 0px">
+				<mat-form-field>
+					<mat-label>New MRP</mat-label>
+					<input type="number" matInput min="1" max="99999" formControlName="mrp" required />
+					<mat-error>This field is required</mat-error>
+				</mat-form-field>
+			</div>
+			<div style="padding: 5px 0px">&nbsp;</div>
+			<div class="error" style="text-align: center; grid-column: 1/-1">{{ this.msg }}&nbsp;</div>
+			<div class="save">
+				<button mat-stroked-button color="primary" (click)="closeModal()" type="button">Close</button>
+			</div>
+			<div class="save">
+				<button mat-raised-button color="primary" type="submit" style="font-size: 1rem; padding: 0px 20px">Create New MRP</button>
+			</div>
+		</div>
+	</form>
+</div>

@@ -1,0 +1,113 @@
+<div style="display: flex; justify-content: space-between">
+	<div *ngIf="!isAddBank" style="padding-left: 16px; padding-top: 16px">
+		<mat-form-field style="width: 380px">
+			<mat-label>Select from List of Banks</mat-label>
+			<mat-select required (selectionChange)="handleChange($event)">
+				<mat-option *ngFor="let item of bankList" [value]="item"> {{ item.bankname }} </mat-option>
+			</mat-select>
+		</mat-form-field>
+	</div>
+
+	<div *ngIf="isAddBank" style="width: 348px; padding: 16px; font-size: 24px"> Information on Bank Details </div>
+
+	<div class="btn-grad add-btn" (click)="addBank()">
+		<mat-icon class="add-icon">add</mat-icon>
+		<span style="padding-left: 10px; font-size: 20px">Add Bank</span>
+	</div>
+</div>
+
+<div *ngIf="isAddBank" class="content">
+	<form [formGroup]="submitForm">
+		<div class="code">
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Bank Name</mat-label>
+				<input matInput formControlName="bankname" required autocomplete="off" />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<div class="code">
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Account #</mat-label>
+				<input matInput formControlName="accountno" required autocomplete="off" />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<div class="code">
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Account Name</mat-label>
+				<input matInput formControlName="accountname" required autocomplete="off" />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<div class="code">
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Branch Details</mat-label>
+				<input matInput formControlName="branchdetails" required autocomplete="off" />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<div class="code">
+			<mat-form-field class="mat-width-ext">
+				<mat-label>IFSC Code</mat-label>
+				<input matInput formControlName="ifsccode" required autocomplete="off" />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<mat-checkbox formControlName="isdefault">
+			<span style="font-size: 14px; color: darkslategrey"> Print in Invoice</span>
+		</mat-checkbox>
+		<div style="text-align: center">
+			<button mat-stroked-button color="primary" (click)="cancel()" type="button">Cancel</button>&nbsp;&nbsp;&nbsp;
+			<button mat-raised-button color="primary" (click)="onSubmit('add')" type="button">+ Add Bank</button>
+		</div>
+	</form>
+</div>
+
+<div *ngIf="isEditBank" style="font-weight: 500; padding: 16px"> Update Bank Information </div>
+
+<div *ngIf="isEditBank" class="content">
+	<form [formGroup]="submitForm">
+		<div class="code">
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Bank Name</mat-label>
+				<input matInput formControlName="bankname" required autocomplete="off" />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<div class="code">
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Account #</mat-label>
+				<input matInput formControlName="accountno" required autocomplete="off" />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<div class="code">
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Account Name</mat-label>
+				<input matInput formControlName="accountname" required autocomplete="off" />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<div class="code">
+			<mat-form-field class="mat-width-ext">
+				<mat-label>Branch Details</mat-label>
+				<input matInput formControlName="branchdetails" required autocomplete="off" />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<div class="code">
+			<mat-form-field class="mat-width-ext">
+				<mat-label>IFSC Code</mat-label>
+				<input matInput formControlName="ifsccode" required autocomplete="off" />
+				<mat-error>This field is required</mat-error>
+			</mat-form-field>
+		</div>
+		<mat-checkbox formControlName="isdefault">
+			<span style="font-size: 14px; color: darkslategrey"> Print in Invoice</span>
+		</mat-checkbox>
+		<div style="text-align: center">
+			<button mat-stroked-button color="primary" (click)="cancel()" type="button">Cancel</button>&nbsp;&nbsp;&nbsp;
+			<button mat-raised-button color="primary" (click)="onSubmit('update')" type="button">+ Update Information</button>
+		</div>
+	</form>
+</div>

@@ -1,0 +1,23 @@
+.screen-header {
+	display: flex;
+	width: 100%;
+
+	font-size: 0.9rem;
+	font-weight: 500;
+	color: #222222;
+	justify-content: space-between;
+}
+
+.customer-info {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	padding: 5px 0px 5px 0px;
+}
+
+.header {
+	display: grid;
+	grid-template-columns: 40px 90px 1fr 50px 80px 50px 40px 80px;
+	padding: 6px;
+	font-size: 12px;
+	background-color: #c2c2c2;
+}

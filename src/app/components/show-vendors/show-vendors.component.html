@@ -1,0 +1,13 @@
+<div class="show-vendor-wrap">
+	<div class="heading">
+		Select a vendor
+	</div>
+	<ng-container *ngFor="let item of vendordata; let idx = index">
+		<div class="row-color row" (click)="addVendor(item)">
+			<div class="name">
+				{{ item.name }}
+			</div>
+		</div>
+	</ng-container>
+	<br />
+</div>

@@ -1,0 +1,59 @@
+<!-- <div class="top">
+	<div class="left">
+		<input type="number" readonly maxlength="10" #p1 />
+	</div>
+	<div class="right">
+		<div class="col3" (click)="scratchbox('-1')"><=</div>
+	</div>
+</div> -->
+
+<div class="top">
+	<div class="left" style="font-size: 28px;"><span #p1></span></div>
+	<div class="right" style="font-size: 28px;">
+		<div class="col3 cursor" (click)="scratchbox('-1')">
+			<ion-icon name="backspace"></ion-icon>
+		</div>
+	</div>
+</div>
+
+<div class="keypad">
+	<div class="row">
+		<div class="col1" (click)="scratchbox('1')">1</div>
+		<div class="col2" (click)="scratchbox('2')">2</div>
+		<div class="col3" (click)="scratchbox('3')">3</div>
+	</div>
+	<div class="row">
+		<div class="col1" (click)="scratchbox('4')">4</div>
+		<div class="col2" (click)="scratchbox('5')">5</div>
+		<div class="col3" (click)="scratchbox('6')">6</div>
+	</div>
+	<div class="row">
+		<div class="col1" (click)="scratchbox('7')">7</div>
+		<div class="col2" (click)="scratchbox('8')">8</div>
+		<div class="col3" (click)="scratchbox('9')">9</div>
+	</div>
+	<div class="row">
+		<div class="col1">&nbsp;</div>
+		<div class="col2" (click)="scratchbox('0')">0</div>
+		<div class="col3" (click)="scratchbox('.')"><b>.</b></div>
+	</div>
+</div>
+
+<!-- <div class="bottom">
+	<div class="left" (click)="cancel()">
+		Cancel
+	</div>
+	<div class="right" (click)="set()">
+		Set
+	</div>
+</div> -->
+
+<!-- components top nav bar> Cancel & Set actions > set enabled when valid(10 digits) -->
+<div class="bottom">
+	<div class="left cursor" (click)="cancel()">
+		Cancel
+	</div>
+	<div class="right cursor" (click)="set()">
+		<span style="font-size: 18px; color: #000000;">Set</span>
+	</div>
+</div>

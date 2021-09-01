@@ -1,0 +1,40 @@
+<ion-content>
+	<div class="content">
+		<div class="heading">
+			Previous 30 days back order - <i>{{back_order_lst?.length}} rows</i>
+		</div>
+
+		<div class="table-header">
+			<div class="th1">Enquiry Date</div>
+			<div class="th1">Customer Name</div>
+			<div class="th1">Product Info</div>
+			<div class="th1">Avl Qty</div>
+			<div class="th2">Notes</div>
+			<div class="th3">Ask Qty</div>
+			<div class="th4">Given Qty</div>
+			<div class="th5">Reason</div>
+		</div>
+
+		<div
+			*ngFor="let item of back_order_lst;let idx = index; let isOdd = odd; let isEven = even;"
+		>
+			<div class="tbl-detail" [class.odd]="isOdd" [class.even]="isEven">
+				<div class="tc1">{{item.order_date}}</div>
+				<div class="tc1">{{item.customer_name}}</div>
+				<div
+					class="tc2"
+					style="cursor: pointer; color: blue"
+					(click)="productInfo(item)"
+				>
+					<div class="pcode">{{item.product_code}}</div>
+					<div class="pdesc">{{item.description}}</div>
+				</div>
+				<div class="tc2">{{item.available_stock}}</div>
+				<div class="tc2">{{item.notes}}</div>
+				<div class="tc3">{{item.askqty}}</div>
+				<div class="tc4">{{item.giveqty}}</div>
+				<div class="tc5">{{item.reason}}</div>
+			</div>
+		</div>
+	</div>
+</ion-content>

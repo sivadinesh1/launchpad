@@ -1,0 +1,26 @@
+<div>
+	<div class="screen-header">
+		<div>Edit Brand Details</div>
+		<div>
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
+		</div>
+	</div>
+
+	<div class="content">
+		<form class="myForm" [formGroup]="submitForm" (ngSubmit)="onSubmit()">
+			<div class="brand-info">
+				<div class="name">
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Name</mat-label>
+						<input matInput placeholder="Name" formControlName="name" required autocomplete="off" />
+						<mat-error>This field is required</mat-error>
+					</mat-form-field>
+				</div>
+			</div>
+
+			<div style="text-align: center; padding: 16px">
+				<button mat-raised-button color="primary" type="submit">Update Brand</button>
+			</div>
+		</form>
+	</div>
+</div>

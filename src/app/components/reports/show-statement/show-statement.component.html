@@ -1,0 +1,74 @@
+<ion-content>
+	<div class="screen-header">
+		<div>
+			<div style="font-size: 14px; font-weight: 400; color: grey">Statement Period: </div>
+			<div>
+				<span style="font-size: 16px; font-weight: 400; color: #000">{{ this.data?.startdate | date: 'dd/MMM/yyyy' }}</span>
+				-
+				<span style="font-size: 16px; font-weight: 400; color: #000">{{ this.data?.enddate | date: 'dd/MMM/yyyy' }}</span>
+			</div>
+		</div>
+
+		<div style="align-items: center">
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="16px" height="16px" />
+		</div>
+	</div>
+
+	<div class="head">
+		<div style="display: grid">
+			<div style="font-size: 12px; color: grey">Customer</div>
+			<div style="font-size: 14px; font-weight: 500"> {{ statementdata[0]?.customer }} </div>
+			<div style="font-size: 14px; font-weight: 500">{{ statementdata[0]?.place }}</div>
+		</div>
+
+		<div style="align-self: center">
+			<span style="padding: 0px 6px"
+				><img
+					matTooltip="Download"
+					matTooltipClass="tooltip"
+					src="/assets/images/svg/direct-download.svg"
+					style="cursor: pointer"
+					width="24px"
+					height="24px"
+					(click)="exportCustomerStatement()"
+			/></span>
+		</div>
+
+		<div>
+			<div style="font-size: 12px; color: grey"> Opening Balance </div>
+			<div style="font-size: 14px; font-weight: 500"> {{ openingbalance | currency: 'INR' }}? </div>
+		</div>
+		<div>
+			<div style="font-size: 12px; color: grey">Closing Balance</div>
+			<div style="font-size: 14px; font-weight: 500">{{ closingbalance | currency: 'INR' }}</div>
+		</div>
+	</div>
+
+	<div #epltable>
+		<table style="width: 100%">
+			<thead>
+				<tr class="header">
+					<th style="text-align: left">S.No</th>
+					<th style="text-align: left">Ref Date</th>
+					<th style="text-align: left">Txn Type</th>
+					<th style="text-align: left">Reference</th>
+					<th style="text-align: right">Invoice Amt</th>
+					<th style="text-align: right">Received Amt</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let item of statementdata ? statementdata : []; let idx = index" class="list-item row-color">
+					<td style="text-align: left">{{ idx + 1 }}</td>
+					<td>{{ item.ref_date_f | date: 'dd/MMM/yyyy' }}</td>
+					<td>{{ item.type }}</td>
+					<td>{{ item.refn }}</td>
+
+					<td style="text-align: right">{{ item.invoice_amount | currency: 'INR' }}</td>
+					<td style="text-align: right">
+						{{ +item?.Received_Amount | currency: 'INR' }}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</ion-content>

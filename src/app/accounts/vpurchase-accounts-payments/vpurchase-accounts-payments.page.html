@@ -1,0 +1,421 @@
+<ion-content>
+	<div style="display: flex; justify-content: space-between; width: 90%; margin: 0 auto; padding: 16px 0px">
+		<div>Vendor Payments Management</div>
+		<div>
+			&nbsp;
+
+			<span>
+				<button
+					appPreventDoubleClick
+					(throttledClick)="addPayments()"
+					[throttleTime]="500"
+					mat-button
+					color="primary"
+					style="background-color: bisque"
+				>
+					Pay Multiple Invoices / Vendor
+				</button>
+			</span>
+		</div>
+	</div>
+
+	<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
+		<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
+			<mat-tab label="Pending Payments">
+				<ng-template [ngTemplateOutlet]="INVTABLE"></ng-template>
+			</mat-tab>
+
+			<mat-tab label="Cleared Payments">
+				<ng-template [ngTemplateOutlet]="PYMTTABLE"></ng-template>
+			</mat-tab>
+		</mat-tab-group>
+	</div>
+
+	<ng-template #INVTABLE>
+		<ng-container>
+			<div class="example-container">
+				<form [formGroup]="submitForm">
+					<div class="row1">
+						<ion-searchbar
+							style="width: 300px"
+							autofocus
+							debounce="400"
+							placeholder="Type to search"
+							#searchbartab1
+							show-cancel-button="focus"
+							(ionClear)="resetTab1()"
+							(ionInput)="applyFilterTab1($event.target.value)"
+						></ion-searchbar>
+						<div style="display: flex; align-items: center">
+							<div>
+								<mat-radio-group formControlName="searchtype" class="example-radio-group" (change)="radioClickHandle()">
+									<mat-radio-button style="padding-top: 10px" value="{{op.id}}" *ngFor="let op of searchType" [checked]="op.checked"
+										>{{op.name}}</mat-radio-button
+									>
+								</mat-radio-group>
+							</div>
+						</div>
+						<div class="vendors" *ngIf="this.submitForm.value.searchtype === 'all'">
+							<mat-form-field class="width" style="padding-top: 20px">
+								<mat-label>Search</mat-label>
+								<input
+									matInput
+									[matAutocomplete]="auto"
+									formControlName="vendorctrl"
+									required
+									matTooltip="Type to filter the Vendor list"
+									matTooltipPosition="after"
+								/>
+								<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearPendingPymtVendors()">
+									<mat-icon>close</mat-icon>
+								</button>
+								<mat-autocomplete #auto="matAutocomplete" (optionSelected)="getPosts($event)">
+									<mat-option *ngFor="let vendor of vendor_lis" [value]="vendor">
+										<span>{{ vendor.name }} </span>
+									</mat-option>
+								</mat-autocomplete>
+							</mat-form-field>
+						</div>
+						<div *ngIf="this.submitForm.value.searchtype === 'all'">
+							<mat-form-field class="mat-date-wrapper" style="padding-top: 20px">
+								<mat-label>From</mat-label>
+								<input
+									matInput
+									readonly
+									[disableControl]="this.submitForm.value.searchtype !== 'all'"
+									[max]="maxDate"
+									[matDatepicker]="fromdate"
+									formControlName="fromdate"
+									(focus)="fromdate.open()"
+									required
+									(dateChange)="fromDateSelected($event)"
+								/>
+								<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
+								<mat-datepicker #fromdate></mat-datepicker>
+							</mat-form-field>
+						</div>
+						<div style="padding-top: 20px" *ngIf="this.submitForm.value.searchtype === 'all'">
+							<mat-form-field class="mat-date-wrapper">
+								<mat-label>To</mat-label>
+								<input
+									matInput
+									readonly
+									[disableControl]="this.submitForm.value.searchtype !== 'all'"
+									[matDatepicker]="todate"
+									[max]="maxDate"
+									formControlName="todate"
+									(focus)="todate.open()"
+									required
+									(dateChange)="toDateSelected($event)"
+								/>
+								<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
+								<mat-datepicker #todate></mat-datepicker>
+							</mat-form-field>
+						</div>
+
+						<div style="padding-top: 20px" *ngIf="this.submitForm.value.searchtype !== 'all'">
+							<mat-form-field style="width: 100%">
+								<mat-label>Invoice #</mat-label>
+								<input matInput type="text" #invno formControlName="invoiceno" />
+								<mat-error *ngIf="submitForm.controls['invoiceno'].hasError('required')"> Please enter a value </mat-error>
+							</mat-form-field>
+						</div>
+
+						<div class="search-btn" style="padding-top: 20px">
+							<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="searchPendingPayments()">
+								Search
+							</button>
+						</div>
+
+						<div class="actions">
+							<img
+								matTooltip="Download"
+								matTooltipClass="tooltip"
+								(click)="exportPendingPaymentsToExcel()"
+								src="/assets/images/svg/direct-download.svg"
+								style="cursor: pointer"
+								width="32px"
+								height="32px"
+							/>
+						</div>
+					</div>
+				</form>
+
+				<mat-paginator #InvoiceTablePaginator="matPaginator" [pageSizeOptions]="[100, 200]" showFirstLastButtons></mat-paginator>
+
+				<div class="example-table-container" #epltable1>
+					<table mat-table [dataSource]="purchaseInvoicedataSource" multiTemplateDataRows>
+						<ng-container matColumnDef="invoicedate">
+							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Invoice Date </th>
+							<td mat-cell *matCellDef="let element" class="m-card-title" style="color: #333333; font-weight: 500"> {{(element.invoice_date )}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="invoiceno">
+							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Inv # </th>
+							<td mat-cell *matCellDef="let element" class="m-card-title"> {{(element.invoice_no)}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="vendorname">
+							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Vendor Name </th>
+							<td
+								mat-cell
+								*matCellDef="let element"
+								(click)="goVendorFinancials(element.vendor_id)"
+								style="color: blue; cursor: pointer"
+								class="m-card-title"
+							>
+								{{(element.vendor_name)}}
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="paymentstatus">
+							<th class="m-txt-field" mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Aging Days </th>
+
+							<td mat-cell *matCellDef="let element" class="m-txt-field">
+								<ng-container *ngIf="element.aging_days >= 31">
+									<span style="color: red"> {{(element.aging_days)}} </span>
+								</ng-container>
+
+								<ng-container *ngIf="element.aging_days <= 30">
+									<span style="color: #000000de"> {{(element.aging_days)}} </span>
+								</ng-container>
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="nettotal">
+							<th class="m-curr-field" mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Amount </th>
+							<td mat-cell *matCellDef="let element" class="m-curr-field"> {{(element.invoice_amt | currency: "INR")}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="paidamt">
+							<th class="m-curr-field" mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Paid Amount </th>
+							<td mat-cell *matCellDef="let element" class="m-curr-field"> {{(element.paid_amount | nullzero | currency: "INR")}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="balamt">
+							<th class="m-curr-field" mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500">
+								Balance Amount
+							</th>
+							<td mat-cell *matCellDef="let element" class="m-curr-field"> {{(element.bal_amount | nullzero | currency: "INR")}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="paybtn">
+							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
+							<td mat-cell *matCellDef="let element" class="m-curr-field">
+								<button
+									*ngIf="element.payment_status !== 'PAID'"
+									mat-button
+									appPreventDoubleClick
+									(throttledClick)="addPaymentsBillToBill(element)"
+									[throttleTime]="500"
+									mat-button
+									color="warn"
+								>
+									Bill To Bill / Pay
+								</button>
+							</td>
+						</ng-container>
+
+						<tr mat-header-row *matHeaderRowDef="purchaseInvoiceDisplayedColumns; sticky: true"></tr>
+
+						<tr class="example-element-row" mat-row *matRowDef="let row; columns: purchaseInvoiceDisplayedColumns;"></tr>
+					</table>
+					<div [hidden]="isTableHasData" class="center-message"> No Data available. </div>
+				</div>
+			</div>
+			<mat-menu #menu="matMenu">
+				<ng-template matMenuContent let-element="element">
+					<button mat-menu-item>
+						<mat-icon>edit </mat-icon>
+						<span>Edit</span>
+					</button>
+				</ng-template>
+			</mat-menu>
+		</ng-container>
+	</ng-template>
+
+	<ng-template #PYMTTABLE>
+		<form [formGroup]="submitForm">
+			<div class="row1">
+				<ion-searchbar
+					style="width: 300px"
+					autofocus
+					debounce="400"
+					placeholder="Type to search"
+					#searchbartab1
+					show-cancel-button="focus"
+					(ionClear)="resetTab2()"
+					(ionInput)="applyFilterTab2($event.target.value)"
+				></ion-searchbar>
+				<div style="display: flex; align-items: center">
+					<div>
+						<mat-radio-group formControlName="searchtype" class="example-radio-group" (change)="radioClickHandle()">
+							<mat-radio-button style="padding-top: 10px" value="{{op.id}}" *ngFor="let op of searchType" [checked]="op.checked"
+								>{{op.name}}</mat-radio-button
+							>
+						</mat-radio-group>
+					</div>
+				</div>
+				<div *ngIf="this.submitForm.value.searchtype === 'all'" class="vendors" style="padding-top: 20px">
+					<mat-form-field style="width: 200px">
+						<mat-label>Search</mat-label>
+						<input
+							matInput
+							[matAutocomplete]="auto"
+							formControlName="vendorctrl"
+							required
+							matTooltip="Type to filter the Vendor list"
+							matTooltipPosition="after"
+						/>
+						<button
+							mat-button
+							matSuffix
+							mat-icon-button
+							aria-label="Clear"
+							*ngIf="this.submitForm.value.searchtype === 'all'"
+							type="button"
+							(click)="clearPendingPymtVendors()"
+						>
+							<mat-icon>close</mat-icon>
+						</button>
+						<mat-autocomplete #auto="matAutocomplete" panelWidth="auto" (optionSelected)="getPosts($event)">
+							<mat-option *ngFor="let vendor of filteredVendor | async" [value]="vendor">
+								<span>{{ vendor.name }} </span>
+							</mat-option>
+						</mat-autocomplete>
+					</mat-form-field>
+				</div>
+				<div *ngIf="this.submitForm.value.searchtype === 'all'">
+					<mat-form-field class="mat-date-wrapper" style="padding-top: 20px">
+						<mat-label>From</mat-label>
+						<input
+							matInput
+							readonly
+							[disableControl]="this.submitForm.value.searchtype !== 'all'"
+							[max]="maxDate"
+							[matDatepicker]="fromdate"
+							formControlName="fromdate"
+							(focus)="fromdate.open()"
+							required
+							(dateChange)="fromDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
+						<mat-datepicker #fromdate></mat-datepicker>
+					</mat-form-field>
+				</div>
+				<div style="padding-top: 20px" *ngIf="this.submitForm.value.searchtype === 'all'">
+					<mat-form-field class="mat-date-wrapper">
+						<mat-label>To</mat-label>
+						<input
+							matInput
+							readonly
+							[disableControl]="this.submitForm.value.searchtype !== 'all'"
+							[matDatepicker]="todate"
+							[max]="maxDate"
+							formControlName="todate"
+							(focus)="todate.open()"
+							required
+							(dateChange)="toDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
+						<mat-datepicker #todate></mat-datepicker>
+					</mat-form-field>
+				</div>
+
+				<div style="padding-top: 20px" *ngIf="this.submitForm.value.searchtype !== 'all'">
+					<mat-form-field style="width: 100%">
+						<mat-label>Invoice #</mat-label>
+						<input matInput type="text" #invno formControlName="invoiceno" />
+						<mat-error *ngIf="submitForm.controls['invoiceno'].hasError('required')"> Please enter a value </mat-error>
+					</mat-form-field>
+				</div>
+
+				<div class="search-btn" style="padding-top: 20px">
+					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="searchReceivedPayments()">
+						Search
+					</button>
+				</div>
+
+				<div class="actions">
+					<img
+						matTooltip="Download"
+						matTooltipClass="tooltip"
+						(click)="exportClearedPaymentsToExcel()"
+						src="/assets/images/svg/direct-download.svg"
+						style="cursor: pointer"
+						width="32px"
+						height="32px"
+					/>
+				</div>
+			</div>
+		</form>
+
+		<mat-paginator #PaymentTablePaginator="matPaginator" [pageSize]="100" [pageSizeOptions]="[100, 200]" showFirstLastButtons></mat-paginator>
+
+		<ng-container>
+			<div class="example-container">
+				<div class="example-table-container1" #epltable1>
+					<table mat-table [dataSource]="paymentdataSource" multiTemplateDataRows>
+						<ng-container matColumnDef="invoiceno">
+							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Invoice # </th>
+							<td mat-cell *matCellDef="let element" class="m-card-title"> {{(element.invoice_no )}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="invoicedate">
+							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Invoice Date </th>
+							<td mat-cell *matCellDef="let element" class="m-card-title"> {{(element.invoice_date )}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="vendorname">
+							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Vendor Name </th>
+							<td
+								mat-cell
+								*matCellDef="let element"
+								class="m-card-title"
+								(click)="goVendorFinancials(element.vendor_id)"
+								style="color: blue; cursor: pointer; font-weight: 500"
+							>
+								{{(element.vendor_name )}}
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="pymtmodename">
+							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Payment Mode </th>
+							<td mat-cell *matCellDef="let element" class="m-card-title"> {{(element.pymt_mode_name )}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="pymtdate">
+							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Payment Date </th>
+							<td mat-cell *matCellDef="let element" class="m-card-title"> {{(element.pymt_date )}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="paymentno">
+							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Pymt # </th>
+							<td mat-cell *matCellDef="let element" class="m-card-title"> {{(element.payment_no)}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="bankref">
+							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Bank Ref </th>
+							<td mat-cell *matCellDef="let element" class="m-card-title"> {{(element.bank_ref)}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="pymtref">
+							<th mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Pymt Ref </th>
+							<td mat-cell *matCellDef="let element" class="m-card-title"> {{(element.pymt_ref)}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="paidamt">
+							<th class="m-curr-field" mat-header-cell *matHeaderCellDef style="color: #333333; font-size: 14px; font-weight: 500"> Paid Amt </th>
+							<td mat-cell *matCellDef="let element" class="m-curr-field"> {{element.applied_amount | currency: "INR"}} </td>
+						</ng-container>
+
+						<tr mat-header-row *matHeaderRowDef="paymentDisplayedColumns; sticky: true"></tr>
+
+						<tr class="example-element-row" mat-row *matRowDef="let row; columns: paymentDisplayedColumns;"></tr>
+					</table>
+					<div [hidden]="isTableHasData" class="center-message"> No Data available. </div>
+				</div>
+			</div>
+		</ng-container>
+	</ng-template>
+</ion-content>

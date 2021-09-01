@@ -1,0 +1,190 @@
+<div class="screen-header">
+	<div>Discount Settings For:&nbsp; {{ this.elements?.name }}</div>
+	<div>
+		<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
+	</div>
+</div>
+<br /><br />
+
+<div>
+	<form [formGroup]="submitForm" #myForm="ngForm">
+		<div class="listItemHeader" style="background-color: aliceblue">
+			<div style="font-size: 18px; font-weight: 500">Default Discount for All Brands</div>
+			<div>Effective Date</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+		</div>
+		<div class="listItemRow" style="padding-top: 16px">
+			<div>&nbsp;</div>
+			<div>{{ elements?.startdate }}</div>
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>GST (0%)</mat-label>
+					<input type="number" matInput formControlName="gstzero" required />
+
+					<mat-error *ngIf="submitForm.get('gstzero').hasError('required')"> Mandatory</mat-error>
+				</mat-form-field>
+			</div>
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>GST (5%)</mat-label>
+					<input type="number" matInput formControlName="gstfive" required />
+					<mat-error *ngIf="submitForm.controls['gstfive'].hasError('required')"> Mandatory </mat-error>
+				</mat-form-field>
+			</div>
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>GST (12%)</mat-label>
+					<input type="number" matInput formControlName="gsttwelve" required />
+					<mat-error *ngIf="submitForm.get('gsttwelve').hasError('required') && submitForm.get('gsttwelve').touched"> Mandatory </mat-error>
+				</mat-form-field>
+			</div>
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>GST (18%)</mat-label>
+					<input type="number" matInput formControlName="gsteighteen" required />
+					<mat-error *ngIf="submitForm.get('gsteighteen').hasError('required') && submitForm.get('gsteighteen').touched"> Mandatory </mat-error>
+				</mat-form-field>
+			</div>
+			<div>
+				<mat-form-field class="mat-width-ext">
+					<mat-label>GST (28%)</mat-label>
+					<input type="number" matInput formControlName="gsttwentyeight" required />
+					<mat-error *ngIf="submitForm.get('gsttwentyeight').hasError('required') && submitForm.get('gsttwentyeight').touched"> Mandatory </mat-error>
+				</mat-form-field>
+			</div>
+			<div>
+				<button mat-raised-button color="primary" type="button" (click)="defaultEdit()"> Update </button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<div>
+	<div class="listItemHeader" style="background-color: aliceblue">
+		<div>Discounts By Brands</div>
+		<div>Effective Date</div>
+		<div>GST (0%)</div>
+		<div>GST (5%)</div>
+		<div>GST (12%)</div>
+		<div>GST (18%)</div>
+		<div>GST (28%)</div>
+		<div>&nbsp;</div>
+	</div>
+	<div class="listItemRow" *ngFor="let element of dataRecords">
+		<div>{{ element.brand_name }}</div>
+		<div>{{ element.startdate }}</div>
+		<div>{{ element.gstzero }}</div>
+		<div>{{ element.gstfive }}</div>
+		<div>{{ element.gsttwelve }}</div>
+		<div>{{ element.gsteighteen }}</div>
+		<div>{{ element.gsttwentyeight }}</div>
+		<div>
+			<mat-icon style="cursor: pointer" (click)="internalEdit(element)">edit</mat-icon>
+		</div>
+	</div>
+</div>
+
+<div style="font-size: 20px; color: #333333; display: flex; /* width: 50%; */ margin: 0 auto; padding: 32px 0px"> Choose brand to add discount </div>
+
+<form [formGroup]="submitForm1" #myForm="ngForm">
+	<div class="listItemRow">
+		<div>
+			<span *ngIf="mode === 'add'">
+				<mat-form-field class="mat-width-brand">
+					<mat-label>Brands</mat-label>
+					<mat-select formControlName="brand_id" required>
+						<mat-option>Select a brand</mat-option>
+						<mat-option *ngFor="let item of brandsList" [value]="item.id">
+							{{ item.name }}
+						</mat-option>
+					</mat-select>
+					<mat-error *ngIf="submitForm1.get('brand_id').hasError('required')"> This field is <strong>required</strong> </mat-error>
+				</mat-form-field>
+			</span>
+
+			<span *ngIf="mode === 'update'">
+				<div> Brand: </div>
+				<div>
+					{{ brandname }}
+				</div>
+			</span>
+		</div>
+		<div>
+			<mat-form-field class="mat-width-date" floatLabel="always">
+				<mat-label>Effective</mat-label>
+				<input matInput formControlName="effDiscStDate" required [matDatepicker]="picker1" type="text" (focus)="picker1.open()" />
+				<mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+				<mat-datepicker #picker1></mat-datepicker>
+
+				<mat-error
+					*ngIf="
+						(submitForm1.get('effDiscStDate').hasError('required') || submitForm1.get('effDiscStDate').hasError('patternInvalid')) &&
+						submitForm1.get('effDiscStDate').touched
+					"
+				>
+					Invalid (or) Missing entry
+				</mat-error>
+			</mat-form-field>
+		</div>
+
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>GST (0%)</mat-label>
+				<input type="number" matInput formControlName="gstzero" required />
+
+				<mat-error *ngIf="submitForm1.get('gstzero').hasError('required')"> Mandatory</mat-error>
+			</mat-form-field>
+		</div>
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>GST (5%)</mat-label>
+				<input type="number" matInput formControlName="gstfive" required />
+				<mat-error *ngIf="submitForm1.controls['gstfive'].hasError('required')"> Mandatory </mat-error>
+			</mat-form-field>
+		</div>
+
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>GST (12%)</mat-label>
+				<input type="number" matInput formControlName="gsttwelve" required />
+				<mat-error *ngIf="submitForm1.get('gsttwelve').hasError('required') && submitForm1.get('gsttwelve').touched"> Mandatory </mat-error>
+			</mat-form-field>
+		</div>
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>GST (18%)</mat-label>
+				<input type="number" matInput formControlName="gsteighteen" required />
+				<mat-error *ngIf="submitForm1.get('gsteighteen').hasError('required') && submitForm1.get('gsteighteen').touched"> Mandatory </mat-error>
+			</mat-form-field>
+		</div>
+
+		<div>
+			<mat-form-field class="mat-width-ext">
+				<mat-label>GST (28%)</mat-label>
+				<input type="number" matInput formControlName="gsttwentyeight" required />
+				<mat-error *ngIf="submitForm1.get('gsttwentyeight').hasError('required') && submitForm1.get('gsttwentyeight').touched"> Mandatory </mat-error>
+			</mat-form-field>
+		</div>
+	</div>
+
+	<div style="display: grid; grid-column: 1 / span 5; text-align: left; width: 50%; margin: 0 auto" class="error">
+		{{ responsemsg }}
+	</div>
+
+	<div *ngIf="mode === 'add'" style="display: grid; width: 50%; margin: 0 auto; grid-column: 1 / span 5">
+		<div style="text-align: center">
+			<button mat-raised-button color="primary" type="button" (click)="submit('add')"> Add Discount </button>
+		</div>
+	</div>
+
+	<div *ngIf="mode === 'update'" style="display: grid; width: 50%; margin: 0 auto; grid-column: 1 / span 5">
+		<div style="text-align: center">
+			<button mat-raised-button color="primary" type="button" (click)="submit('update')"> Update Discount </button>
+		</div>
+	</div>
+</form>

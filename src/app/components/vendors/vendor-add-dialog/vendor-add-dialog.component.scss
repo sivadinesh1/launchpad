@@ -1,0 +1,20 @@
+/** @format */
+
+.content {
+	display: grid;
+	width: 100%;
+	margin: 0 auto;
+	padding: 3rem 1rem 1rem 1rem;
+}
+
+.mat-width-ext {
+	width: 100%;
+}
+
+.vendor-info,
+.vendor-info1 {
+	display: grid;
+	grid-template-columns: auto;
+	grid-gap: 16px;
+	padding: 1rem;
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="Dashboard">
+        <path d="M48,12C67.869,12 84,28.131 84,48C84,67.869 67.869,84 48,84C28.131,84 12,67.869 12,48C12,28.131 28.131,12 48,12ZM48,16C65.661,16 80,30.339 80,48C80,65.661 65.661,80 48,80C30.339,80 16,65.661 16,48C16,30.339 30.339,16 48,16ZM49.172,47.907C49.983,48.411 50.686,49.116 51.196,50C52.852,52.868 51.868,56.54 49,58.196C46.132,59.852 42.46,58.868 40.804,56C40.293,55.116 40.034,54.155 40.003,53.2L34,32.215L49.172,47.907ZM19,48C19,31.994 31.994,19 48,19C64.006,19 77,31.994 77,48L73.778,48C73.778,33.773 62.227,22.222 48,22.222C33.773,22.222 22.222,33.773 22.222,48L19,48Z" style="fill:rgb(0,51,255);"/>
+    </g>
+</svg>

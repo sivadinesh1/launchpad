@@ -1,0 +1,49 @@
+<ion-content>
+	<div style="display: grid; padding: 1rem; grid-template-columns: 1fr 1fr 1fr">
+		<div class="item">
+			<div>
+				<span class="item-heading">Sales</span>
+			</div>
+			<div style="font-size: medium">
+				<ul>
+					<li>
+						<span class="items" (click)="getItemWiseReports()">
+							Item Wise Sale Reports
+						</span>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="item">
+			<div>
+				<span style="font-size: 1.2rem; font-weight: 400; padding: 0.5rem"
+					>Inventory</span
+				>
+			</div>
+			<div style="font-size: medium">
+				<ul>
+					<li>
+						<span class="items" (click)="viewProductSummaryReports()">
+							Item Summary Reports
+						</span>
+					</li>
+
+					<li>
+						<span class="items" (click)="viewInventoryReports()">
+							Item wise Stock Transaction Reports
+						</span>
+					</li>
+
+					<li>
+						<span class="items" (click)="openBackOrder()"> Back Orders </span>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="item">
+			<div>
+				<span class="item-heading">Receivables</span>
+			</div>
+		</div>
+	</div>
+</ion-content>

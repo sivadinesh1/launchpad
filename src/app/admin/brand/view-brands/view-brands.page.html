@@ -1,0 +1,94 @@
+<ion-content>
+	<div class="content">
+		<app-messages></app-messages>
+		<div class="header">
+			<div>
+				<div>List of Active Brands</div>
+				<div style="font-size: 12px; color: #797979"> Showing {{pageLength }} Records </div>
+			</div>
+			<div>
+				<button appPreventDoubleClick (throttledClick)="add()" [throttleTime]="500" mat-raised-button color="primary"> + Add Brands </button>
+			</div>
+		</div>
+
+		<div class="row1">
+			<div class="search_box">
+				<ion-searchbar
+					style="width: 300px"
+					autofocus
+					debounce="400"
+					placeholder="Search by brand names"
+					#mySearchbar
+					show-cancel-button="focus"
+					(ionClear)="reset()"
+					(ionInput)="applyFilter($event.target.value)"
+				></ion-searchbar>
+			</div>
+			<div class="actions">
+				<img
+					matTooltip="Download"
+					matTooltipClass="tooltip"
+					src="/assets/images/svg/direct-download.svg"
+					style="cursor: pointer"
+					width="32px"
+					height="32px"
+					(click)="exportToExcel()"
+				/>
+			</div>
+		</div>
+
+		<ng-container>
+			<div class="example-container mat-elevation-z8">
+				<div class="example-table-container" #epltable>
+					<table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+						<ng-container matColumnDef="name">
+							<th mat-header-cell *matHeaderCellDef>Name</th>
+							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name"> {{element.name}} </td>
+						</ng-container>
+
+						<ng-container matColumnDef="edit">
+							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
+							<td mat-cell *matCellDef="let element">
+								<button mat-menu-item (click)="edit(element)">
+									<mat-icon #tooltip="matTooltip" matTooltip="Edit/Modify Brand Details" matTooltipClass="tooltip" (mousedown)="tooltip.hide()"
+										>edit
+									</mat-icon>
+								</button>
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="delete">
+							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
+							<td mat-cell *matCellDef="let element">
+								<button mat-menu-item (click)="delete(element)">
+									<mat-icon #tooltip="matTooltip" matTooltip="Delete Brand Details" matTooltipClass="tooltip" (mousedown)="tooltip.hide()"
+										>delete</mat-icon
+									>
+								</button>
+							</td>
+						</ng-container>
+
+						<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+						<tr class="example-element-row" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+					</table>
+					<div [hidden]="isTableHasData" class="center-message"> No Data available. </div>
+				</div>
+				<mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+			</div>
+			<mat-menu #menu="matMenu">
+				<ng-template matMenuContent let-element="element">
+					<button mat-menu-item (click)="edit(element)">
+						<mat-icon>edit </mat-icon>
+						<span>Edit</span>
+					</button>
+
+					<button mat-menu-item (click)="delete(element)">
+						<mat-icon>delete</mat-icon>
+						<span>Delete </span>
+					</button>
+				</ng-template>
+			</mat-menu>
+		</ng-container>
+	</div>
+</ion-content>

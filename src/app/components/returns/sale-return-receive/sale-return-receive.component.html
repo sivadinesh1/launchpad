@@ -1,0 +1,58 @@
+<ion-content>
+	<div class="screen-header">
+		<div>&nbsp;</div>
+
+		<div style="align-items: center">
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="16px" height="16px" />
+		</div>
+	</div>
+
+	<div class="action-row">
+		<div>RETURNING ITEMS</div>
+		<div>&nbsp;</div>
+	</div>
+
+	<div #epltable>
+		<table style="width: 100%; align-items: center">
+			<thead>
+				<tr class="header">
+					<th style="text-align: left">SNo</th>
+					<th style="text-align: left">CODE</th>
+					<th style="text-align: left">DESCRIPTION</th>
+					<th style="text-align: right">RETURN QTY</th>
+					<th style="text-align: right">RECEIVED QTY</th>
+					<th style="text-align: right">RECEIVE NOW</th>
+				</tr>
+			</thead>
+			<tbody>
+				<div *ngFor="let item of returnArr ? returnArr : []; let idx = index">
+					<tr *ngIf="item?.return_qty !== item?.received_qty" class="list-item row-color" style="align-items: center">
+						<td style="text-align: left">{{ idx + 1 }}</td>
+						<td>{{ item.product_code }}</td>
+						<td>{{ item.description }}</td>
+
+						<td style="text-align: right">{{ item?.return_qty }}</td>
+						<td style="text-align: right">{{ item?.received_qty }}</td>
+						<td style="text-align: right">
+							<mat-form-field style="width: 50px; margin-bottom: -1.25em; text-align: right">
+								<input
+									matInput
+									name="receive_now"
+									type="number"
+									(change)="update_change($event, idx)"
+									value="{{ item?.received_now }}"
+									min="0"
+									max="{{ item?.return_qty - item?.received_qty }}"
+								/>
+							</mat-form-field>
+						</td>
+					</tr>
+				</div>
+			</tbody>
+		</table>
+	</div>
+	<div style="display: flex; justify-content: center; padding-top: 10px">
+		<button mat-raised-button color="primary" style="font-size: 1rem" (click)="search()">Receive</button>&nbsp;&nbsp;
+		<button mat-raised-button color="secondary" style="font-size: 1rem" (click)="cancel()">Cancel</button>
+	</div>
+</ion-content>

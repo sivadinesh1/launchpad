@@ -1,0 +1,145 @@
+<div class="sidenav-container">
+	<div style="height: 100%">
+		<div class="wrapper">
+			<div *ngFor="let page of pages">
+				<hr
+					*ngIf="page.name === 'Enquiry' || page.name === 'Purchase' || page.name === 'Reports'"
+					style="border-bottom: 1px solid #adadad; border-bottom-style: dashed; opacity: 0.5"
+				/>
+
+				<a class="header-menu-item" (click)="routeTo(page.name, page.link)" [ngClass]="{ selectedmenu: clickedItem === page?.name }">
+					<img src="{{ page?.icon }}" width="24px" height="24px" class="img-menu-box" />
+
+					<span class="side-menu-lbl" *ngIf="page.name === 'Sale Orders'">
+						{{ page?.name }}
+					</span>
+
+					<!-- customer menu -->
+					<span class="side-menu-lbl" *ngIf="page.name === 'Customers'" (click)="toggleSubMenu('customer')">{{ page?.name }}</span>
+					<!-- vendor menu -->
+					<span class="side-menu-lbl" *ngIf="page.name === 'Vendors'" (click)="toggleSubMenu('vendor')">{{ page?.name }}</span>
+
+					<span
+						class="side-menu-lbl"
+						*ngIf="page.name !== 'Customers' && page.name !== 'Vendors' && page.name !== 'Customers' && page.name !== 'Sale Orders'"
+						>{{ page?.name }}</span
+					>
+
+					<span *ngIf="page.name === 'Customers'" (click)="toggleSubMenu('customer')">
+						<img *ngIf="!expanded" src="/assets/images/svg/down-arrow.svg" width="10px" height="10px" alt="" />
+						<img *ngIf="expanded" src="/assets/images/svg/up-arrow.svg" width="10px" height="10px" alt="" />
+					</span>
+
+					<span style="display: contents" *ngIf="page.name === 'Enquiry'" (click)="goEnquiryScreen($event)">
+						<mat-icon class="plus" style="padding-left: 38px">add</mat-icon>
+					</span>
+
+					<span style="display: contents" *ngIf="page.name === 'Sale Orders'" (click)="showNewSales($event)">
+						<mat-icon class="plus">add</mat-icon>
+					</span>
+
+					<span style="display: contents" *ngIf="page.name === 'Stock Issue'" (click)="goStockIssue($event)">
+						<mat-icon class="plus">add</mat-icon>
+					</span>
+
+					<span style="display: contents" *ngIf="page.name === 'Purchase'" (click)="goPurchaseAddScreen($event)">
+						<mat-icon class="plus">add</mat-icon>
+					</span>
+
+					<span
+						style="display: grid; justify-self: center; justify-content: center; width: 70%"
+						*ngIf="page.name === 'Vendors'"
+						(click)="toggleSubMenu('vendor')"
+					>
+						<img *ngIf="!expanded1" src="/assets/images/svg/down-arrow.svg" width="10px" height="10px" alt="" />
+						<img *ngIf="expanded1" src="/assets/images/svg/up-arrow.svg" width="10px" height="10px" alt="" />
+					</span>
+				</a>
+
+				<div *ngIf="page?.name === 'Customers'">
+					<div *ngIf="expanded">
+						<div *ngFor="let child of page.children">
+							<a class="header-menu-item" (click)="routeTo(child.name, child.link)" [ngClass]="{ selectedmenu: clickedItem === child?.name }">
+								<span class="side-menu-lbl" style="padding-left: 50px">{{ child?.name }}</span>
+							</a>
+							<div class="plus">+</div>
+						</div>
+					</div>
+				</div>
+
+				<div *ngIf="page?.name === 'Vendors'">
+					<div *ngIf="expanded1">
+						<div *ngFor="let child of page.children">
+							<a class="header-menu-item" (click)="routeTo(child.name, child.link)" [ngClass]="{ selectedmenu: clickedItem === child?.name }">
+								<span class="side-menu-lbl" style="padding-left: 50px">{{ child?.name }}</span>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="bottom" [matMenuTriggerFor]="menu">
+				<img src="../../assets/images/svg/account.svg" width="28px" height="28px" class="img cursor" style="margin: 12px 0px 8px 8px" />
+				<span style="align-self: center; padding: 0px 4px">
+					<ng-container *ngIf="userdata">
+						<div class="fname">{{ userdata?.firstname }}</div>
+						<div class="role">{{ userdata?.role }}</div>
+					</ng-container>
+				</span>
+			</div>
+		</div>
+
+		<!-- <div class="spacer" style="padding-top: 50px">&nbsp;</div> -->
+		<!-- <mat-nav-list>
+			<mat-accordion>
+				<mat-expansion-panel
+					(opened)="panelOpenState = true"
+					(closed)="panelOpenState = false"
+				>
+					<mat-expansion-panel-header>
+						<mat-panel-title>
+							<img
+								src="/assets/images/svg/growth.svg"
+								width="26px"
+								height="26px"
+								class="img-menu-box"
+							/>
+							Reports
+						</mat-panel-title>
+					</mat-expansion-panel-header>
+					<p>RPT 1</p>
+				</mat-expansion-panel>
+			</mat-accordion>
+		</mat-nav-list> -->
+	</div>
+</div>
+
+<mat-menu #menu="matMenu" yPosition="above" xPosition="before">
+	<!-- <button mat-menu-item>
+		<mat-icon>person</mat-icon>
+		<span>Profile</span>
+	</button> -->
+	<button mat-menu-item [matMenuTriggerFor]="admin">
+		<span style="padding-right: 16px; vertical-align: middle">
+			<img src="../../assets/images/svg/manager.svg" width="24px" height="24px" style="vertical-align: middle" />
+		</span>
+		Admin
+	</button>
+
+	<button mat-menu-item (click)="logout()">
+		<span style="padding-right: 16px; vertical-align: middle">
+			<img src="../../assets/images/svg/logout.svg" width="24px" height="24px" style="vertical-align: middle" />
+		</span>
+
+		<span>Log Out</span>
+	</button>
+</mat-menu>
+
+<mat-menu #admin="matMenu">
+	<button mat-menu-item (click)="editCenter()">
+		<span>Company</span>
+	</button>
+
+	<button mat-menu-item (click)="viewUsers()">
+		<span>Users</span>
+	</button>
+</mat-menu>

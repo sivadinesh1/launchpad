@@ -1,0 +1,41 @@
+.content {
+	display: grid;
+	width: 100%;
+	margin: 0 auto;
+	padding: 2rem;
+	min-height: 500px;
+	height: auto;
+}
+
+.mat-width-ext {
+	width: 100%;
+}
+
+.gap {
+	padding: 0px 20px;
+	cursor: pointer;
+}
+
+.center-info,
+.center-info1,
+.center-info2 {
+	display: grid;
+	grid-template-columns: auto;
+	gap: 16px;
+	padding-top: 16px;
+}
+
+.form {
+	min-height: 500px;
+}
+
+.wrapper {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	position: relative;
+	height: auto;
+	overflow-y: scroll;
+}
+.file-input {
+	display: none;
+}

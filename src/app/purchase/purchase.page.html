@@ -1,0 +1,531 @@
+<ion-content style="width: 100%; height: 100%" [scrollEvents]="true" (ionScroll)="logScrolling($event)">
+	<div class="screen-header">
+		<span style="font-size: 18px">{{breadmenu}}</span>
+	</div>
+
+	<form [formGroup]="submitForm">
+		<div class="vendor">
+			<div style="display: grid">
+				<div>
+					<mat-form-field style="width: 380px">
+						<mat-label>Select or Add Vendor</mat-label>
+						<input
+							matInput
+							[matAutocomplete]="auto"
+							formControlName="vendorctrl"
+							[readOnly]="vendorselected"
+							#typehead1
+							required
+							#vlist
+							matTooltipPosition="after"
+							tabindex="1"
+							[attr.disabled]="vendorselected?'true':null"
+						/>
+						<button mat-button matSuffix mat-icon-button tabindex="-1" type="button" (click)="clearInput()">
+							<mat-icon tabindex="-1">close</mat-icon>
+						</button>
+						<mat-autocomplete
+							#auto="matAutocomplete"
+							autoActiveFirstOption
+							[displayWith]="displayFn"
+							(optionSelected)="setVendorInfo($event, 'click')"
+						>
+							<mat-option *ngIf="isVLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+							<ng-container *ngIf="!isVLoading">
+								<mat-option *ngFor="let vendor of vendor_lis" [value]="vendor" style="height: 70px; border-bottom: 1px solid lightsteelblue">
+									<div style="display: grid; grid-template-columns: 1fr">
+										<div>
+											<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ vendor.name }}</div>
+											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ vendor.address1 }}</div>
+											<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ vendor.district }}</div>
+										</div>
+									</div>
+								</mat-option>
+							</ng-container>
+						</mat-autocomplete>
+						<mat-error *ngIf="submitForm.controls['vendorctrl'].hasError('required')"> Please enter a value </mat-error>
+						<mat-error *ngIf="submitForm.controls['vendorctrl'].hasError('incorrect')">
+							<span style="color: darkorange">Vendor Not Found:</span>
+							<span style="font-style: italic; color: #310ac0; cursor: pointer" (click)="addVendor()">+ Add Vendor</span>
+						</mat-error>
+						<mat-hint *ngIf="vendorselected" style="display: flex; justify-content: space-between">
+							<span (click)="openDialog($event)" style="font-size: 12px; color: #310ac0; cursor: pointer">View Vendor Details</span>
+						</mat-hint>
+					</mat-form-field>
+
+					<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; top: 12px; position: relative; gap: 10px">
+						<div>
+							<mat-form-field class="mat-input-wrapper">
+								<mat-label>Invoice #</mat-label>
+								<input matInput type="text" tabindex="7" #invno formControlName="invoiceno" required appSelectOnFocus autocomplete="off" />
+
+								<mat-error
+									*ngIf="(submitForm.get('invoiceno').hasError('required') || submitForm.get('invoiceno').hasError('patternInvalid'))  && submitForm.get('invoiceno').touched"
+								>
+									Invalid (or) Missing entry
+								</mat-error>
+							</mat-form-field>
+						</div>
+						<div>
+							<mat-form-field class="mat-input-wrapper">
+								<mat-label>Invoice date</mat-label>
+								<input
+									matInput
+									formControlName="invoicedate"
+									[matDatepicker]="picker1"
+									(focus)="picker1.open()"
+									[max]="maxDate"
+									(dateChange)="invoiceDateSelected($event)"
+									required
+									tabindex="8"
+									autocomplete="off"
+								/>
+								<mat-datepicker-toggle tabindex="-1" matSuffix [for]="picker1"></mat-datepicker-toggle>
+								<mat-datepicker tabindex="-1" #picker1></mat-datepicker>
+
+								<mat-error
+									*ngIf="(submitForm.get('invoicedate').hasError('required') || submitForm.get('invoicedate').hasError('patternInvalid'))  && submitForm.get('invoicedate').touched"
+								>
+									Invalid (or) Missing entry
+								</mat-error>
+							</mat-form-field>
+						</div>
+						<div>
+							<mat-form-field class="mat-input-wrapper">
+								<mat-label>Received Date</mat-label>
+								<input
+									matInput
+									readonly
+									required
+									tabindex="9"
+									[matDatepicker]="pickerrcvd"
+									formControlName="orderrcvddt"
+									(focus)="pickerrcvd.open()"
+									[max]="maxDate"
+									autocomplete="off"
+								/>
+								<mat-datepicker-toggle tabindex="-1" matSuffix [for]="pickerrcvd"></mat-datepicker-toggle>
+								<mat-datepicker tabindex="-1" #pickerrcvd></mat-datepicker>
+							</mat-form-field>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="vendor-left">
+				<div>
+					<mat-form-field style="width: 125px">
+						<mat-label>Order #</mat-label>
+						<input matInput #orderno type="text" formControlName="orderno" appSelectOnFocus autocomplete="off" />
+
+						<mat-error
+							*ngIf="(submitForm.get('orderno').hasError('required') || submitForm.get('orderno').hasError('patternInvalid'))  && submitForm.get('orderno').touched"
+						>
+							Invalid (or) Missing entry
+						</mat-error>
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field style="width: 125px">
+						<mat-label>Order date</mat-label>
+						<input
+							matInput
+							readonly
+							[matDatepicker]="pickerod"
+							formControlName="orderdate"
+							(focus)="pickerod.open()"
+							[max]="maxOrderDate"
+							autocomplete="off"
+						/>
+						<mat-datepicker-toggle tabindex="-1" matSuffix [for]="pickerod"></mat-datepicker-toggle>
+						<mat-datepicker tabindex="-1" #pickerod></mat-datepicker>
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field style="width: 125px">
+						<mat-label>Lr #</mat-label>
+						<input matInput #lrno type="text" tabindex="11" formControlName="lrno" appSelectOnFocus autocomplete="off" />
+
+						<mat-error
+							*ngIf="(submitForm.get('lrno').hasError('required') || submitForm.get('lrno').hasError('patternInvalid'))  && submitForm.get('lrno').touched"
+						>
+							Invalid (or) Missing entry
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field style="width: 125px">
+						<mat-label>Lr date</mat-label>
+						<input
+							matInput
+							readonly
+							[matDatepicker]="pickerlr"
+							(focus)="pickerlr.open()"
+							formControlName="lrdate"
+							[max]="maxDate"
+							autocomplete="off"
+						/>
+						<mat-datepicker-toggle tabindex="-1" matSuffix [for]="pickerlr"></mat-datepicker-toggle>
+						<mat-datepicker tabindex="-1" #pickerlr></mat-datepicker>
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field style="width: 125px">
+						<mat-label># of Boxes</mat-label>
+						<input matInput type="number" formControlName="noofboxes" appSelectOnFocus autocomplete="off" autocomplete="off" />
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field style="width: 125px">
+						<mat-label>Transportation Cost</mat-label>
+						<input matInput type="number" formControlName="transport_charges" appSelectOnFocus autocomplete="off" />
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field style="width: 125px">
+						<mat-label>Unloading Cost</mat-label>
+						<input matInput type="number" formControlName="unloading_charges" appSelectOnFocus />
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field style="width: 125px">
+						<mat-label>TDS</mat-label>
+						<input matInput type="number" formControlName="misc_charges" appSelectOnFocus autocomplete="off" />
+					</mat-form-field>
+				</div>
+			</div>
+		</div>
+
+		<ng-container *ngIf="!vendorselected">
+			<div style="display: grid; place-items: center; padding: 2rem 2rem">
+				<div style="color: #333333"><h4>Vendor not selected</h4></div>
+				<div style="color: #666666">Select vendor & start adding items to purchase cart</div>
+				<div>
+					<img src="/assets/images/svg/to-do-list.svg" width="200px" />
+				</div>
+			</div>
+		</ng-container>
+
+		<div class="purchase-wrap" [hidden]="!vendorselected">
+			<div class="wrap">
+				<div class="acton-btns">
+					<img class="cursor" src="/assets/images/svg/trash.svg" width="16px" height="16px" *ngIf="showDelIcon" (click)="presentDeleteConfirm()" />
+					<span class="sub-menu cursor" style="color: blue" *ngIf="showDelIcon" (click)="presentDeleteConfirm()">Delete</span>
+				</div>
+
+				<div class="acton-btns">
+					<img class="cursor" src="/assets/images/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editTax()" /><span
+						class="sub-menu cursor"
+						style="color: blue"
+						*ngIf="singleRowSelected"
+						(click)="editTax()"
+						>Tax</span
+					>
+				</div>
+				<div class="acton-btns">
+					<img class="cursor" src="/assets/images/svg/edit.svg" width="16px" height="16px" *ngIf="singleRowSelected" (click)="editMrp()" />
+					<span class="sub-menu cursor" style="color: blue" *ngIf="singleRowSelected" (click)="editMrp()">Mrp</span>
+				</div>
+			</div>
+
+			<div class="left">
+				<div class="row1">
+					<div class="item1 headstyl-left txt-center-align">#</div>
+					<div class="item1 headstyl-left txt-center-align">&nbsp;</div>
+					<div class="item2 headstyl-left">Item Code</div>
+					<div class="item2 headstyl-left">Item Description</div>
+					<div class="item2 headstyl-right">HSN Code</div>
+					<div class="item3 headstyl-right">Qty</div>
+					<div class="item3 headstyl-right">MRP</div>
+					<div class="item3 headstyl-right">Purchase Price</div>
+					<div class="item4 headstyl-right">Tax %</div>
+					<div class="item4 headstyl-right">Net Value</div>
+				</div>
+				<div class="row2">
+					<ng-container *ngIf="listArr.length === 0 && vendorselected">
+						<div style="display: grid; place-items: center; padding: 2rem 2rem">
+							<div style="color: #333333"><h4>Purchase cart</h4></div>
+							<div style="color: #666666">There are no items in your Purchase cart</div>
+						</div>
+					</ng-container>
+					<!-- 
+					<cdk-virtual-scroll-viewport itemSize="48" class="example-viewport">
+						<div *cdkVirtualFor="let item of listArr" class="example-item">
+							{{item?.product_code}}
+						</div>
+					</cdk-virtual-scroll-viewport> -->
+
+					<div *ngIf="vendorselected;">
+						<div
+							*ngFor="let item of listArr ? listArr : []; 
+							let idx = index; trackBy:identify"
+							class="list-item"
+						>
+							<div>{{idx + 1}}</div>
+							<div class="txt-align">
+								<mat-checkbox #myCheckbox (click)="checkedRow(idx)"></mat-checkbox>
+							</div>
+							<div
+								class="item2"
+								style="color: rgb(2, 2, 193); cursor: pointer"
+								(click)="showInventoryReportsDialog(item.product_code, item.product_id)"
+							>
+								{{item.product_code}}
+							</div>
+
+							<div class="item2">{{item.product_desc}}</div>
+							<div style="text-align: right">{{item.hsncode}}</div>
+
+							<div style="text-align: right" class="num-format-cell-style">
+								<mat-form-field style="margin-bottom: -1.25em; width: 80px; text-align: right">
+									<input
+										matInput
+										value="{{item.qty}}"
+										(keyup)="handleQtyChange($event, idx)"
+										required
+										numeric
+										maxlength="7"
+										min="0"
+										max="999999"
+										appSelectOnFocus
+										autocomplete="off"
+									/>
+									<mat-hint *ngIf="item.qtyerror!== '' " style="color: red; font-size: 12px; margin-top: -4px">{{item.qtyerror}}</mat-hint>
+								</mat-form-field>
+							</div>
+
+							<div class="item4 txt-right-align num-format-cell-style">{{item.mrp}}</div>
+
+							<div style="text-align: right" class="num-format-cell-style">
+								<mat-form-field style="margin-bottom: -1.25em; width: 80px; text-align: right">
+									<input
+										matInput
+										value="{{item.purchase_price}}"
+										(keyup)="handlePPChange($event, idx)"
+										required
+										maxlength="7"
+										min="0"
+										max="999999"
+										type="number"
+										appSelectOnFocus
+										autocomplete="off"
+									/>
+									<mat-hint *ngIf="item.pperror!== '' " style="color: red; font-size: 12px; margin-top: -4px">{{item.pperror}}</mat-hint>
+								</mat-form-field>
+							</div>
+
+							<div class="item4 txt-right-align num-format-cell-style">{{item.taxrate}}</div>
+
+							<div class="item4 txt-right-align num-format-cell-style">{{item.total_value}}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="main-add">
+				<div class="left">
+					<div>
+						<mat-form-field class="example-full-width">
+							<mat-label>Select Item Code</mat-label>
+							<input
+								matInput
+								[matAutocomplete]="auto1"
+								[readonly]="!vendorselected"
+								formControlName="productctrl"
+								#typehead
+								#plist
+								matTooltipPosition="after"
+								tabindex="3"
+								autocomplete="off"
+							/>
+							<mat-hint *ngIf="selected_description" matTooltip="Add product">{{selected_description}} :: MRP:{{selected_mrp}}</mat-hint>
+
+							<button mat-button matSuffix mat-icon-button tabindex="-1" aria-label="Clear" type="button" (click)="clearProdInput()">
+								<mat-icon tabindex="-1">close</mat-icon>
+							</button>
+
+							<mat-autocomplete
+								#auto1="matAutocomplete"
+								panelWidth="auto"
+								autoActiveFirstOption
+								[displayWith]="displayProdFn"
+								(optionSelected)="setItemDesc($event, 'click')"
+							>
+								<mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option>
+								<ng-container *ngIf="!isLoading">
+									<mat-option
+										*ngFor="let product of product_lis"
+										[value]="product"
+										style="padding-top: 15px; height: 3.3em !important; padding-bottom: 15px; border-bottom: 1px solid lightsteelblue"
+									>
+										<div style="display: grid; grid-template-columns: 1fr 80px">
+											<div>
+												<div style="font-size: 15px; padding: 2px; line-height: 1em">
+													{{ product.product_code }} &nbsp;&nbsp;
+													<span style="color: blue">Latest MRP: {{ product.mrp | currency: "INR"}}</span>
+												</div>
+												<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ product.description }}</div>
+											</div>
+											<div>
+												<div style="font-size: 15px; padding: 2px; line-height: 1em; text-align: right; color: grey">{{ product.name }}</div>
+												<div style="font-size: 14px; padding: 2px; line-height: 1em; text-align: right; color: blue">
+													<span> <img src="/assets/images/svg/sales.svg" width="18px" height="18px" /></span>
+													<span> &nbsp;{{ product.available_stock }} </span>
+												</div>
+											</div>
+										</div>
+									</mat-option>
+								</ng-container>
+							</mat-autocomplete>
+
+							<mat-error *ngIf="submitForm.controls['productctrl'].hasError('incorrect')"> Invalid product code </mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="example-full-width">
+							<mat-label>P. Price</mat-label>
+							<input
+								matInput
+								type="number"
+								min="1"
+								max="100000"
+								tabindex="4"
+								formControlName="temppurchaseprice"
+								required
+								appSelectOnFocus
+								autocomplete="off"
+							/>
+
+							<mat-error *ngIf="submitForm.controls['temppurchaseprice'].hasError('required')"> Required feild </mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="example-full-width">
+							<mat-label>MRP</mat-label>
+							<input
+								matInput
+								type="number"
+								min="1"
+								max="100000"
+								tabindex="5"
+								formControlName="tempmrp"
+								required
+								appSelectOnFocus
+								autocomplete="off"
+							/>
+
+							<mat-error *ngIf="submitForm.controls['tempmrp'].hasError('required')"> Required feild </mat-error>
+						</mat-form-field>
+					</div>
+					<div>
+						<mat-form-field class="example-full-width">
+							<mat-label>Qty</mat-label>
+							<input
+								matInput
+								type="number"
+								min="1"
+								max="9999"
+								tabindex="6"
+								formControlName="tempqty"
+								required
+								#qty
+								(keydown.enter)="add()"
+								appSelectOnFocus
+								autocomplete="off"
+							/>
+							<mat-hint matTooltip="Total Value" *ngIf="selected_description">
+								<span style="font-size: 11px; color: grey">TOTAL: </span>
+								{{(this.submitForm.value.tempmrp * this.submitForm.value.tempqty) | currency: "INR"}}
+							</mat-hint>
+						</mat-form-field>
+					</div>
+					<div>
+						<button mat-stroked-button color="primary" tabindex="6" #newrow [disabled]="!vendorselected" type="button" (click)="add()">
+							+ New Row
+						</button>
+					</div>
+				</div>
+				<div class="right">
+					<div style="display: grid; grid-template-columns: 1fr 1fr">
+						<div style="color: #666666; text-align: right; font-size: 14px"># Items</div>
+						<div style="color: #666666; text-align: right; font-size: 14px">{{listArr.length}}</div>
+
+						<div *ngIf="i_gst" style="color: #666666; text-align: right; font-size: 14px">IGST</div>
+						<div style="color: #666666; text-align: right; font-size: 14px" *ngIf="i_gst">{{igstTotal}}</div>
+
+						<div *ngIf="!i_gst" style="color: #666666; text-align: right; font-size: 14px">CGST</div>
+						<div style="color: #666666; text-align: right; font-size: 14px" *ngIf="!i_gst">{{cgstTotal}}</div>
+
+						<div *ngIf="!i_gst" style="color: #666666; text-align: right; font-size: 14px">SGST</div>
+						<div style="color: #666666; text-align: right; font-size: 14px" *ngIf="!i_gst">{{sgstTotal}}</div>
+					</div>
+					<div>
+						<div style="color: #666666; text-align: right; font-size: 14px">Total</div>
+						<div style="text-align: right; font-size: 22px" class="align-self-center left-pad20 fweight500">{{this.total | number:'1.2-2'}}</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="purchase-wrap1"></div>
+		</div>
+	</form>
+	<ng-container>
+		<div style="width: 100%">
+			<div class="footer" *ngIf="vendorselected">
+				<div>
+					<div style="font-size: 12px; color: #797979">Net Total</div>
+					<div style="font-size: 22px">{{getNetTotal("rounding")}}</div>
+				</div>
+				<div class="submit">
+					<button
+						appPreventDoubleClick
+						class="cursor"
+						(click)="presentCancelConfirm()"
+						[throttleTime]="500"
+						mat-stroked-button
+						color="primary"
+						type="button"
+						[disabled]="clicked"
+					>
+						Cancel</button
+					>&nbsp;
+					<!-- <button
+					*ngIf="(submitForm.get('status').value !== 'C' ) "
+					style="border-radius: 0px"
+					appPreventDoubleClick
+					class="cursor"
+					(throttledClick)="onSave('draft')"
+					type="button"
+					[throttleTime]="500"
+					mat-stroked-button
+					type="button"
+					color="primary"
+					[disabled]="clicked"
+				>
+					Save as Draft
+				</button> -->
+					&nbsp;
+					<button
+						style="border-radius: 0px"
+						appPreventDoubleClick
+						class="cursor"
+						(throttledClick)="onSavenSubmit('add')"
+						type="button"
+						[throttleTime]="500"
+						mat-raised-button
+						type="button"
+						color="primary"
+						[disabled]="clicked"
+					>
+						<span *ngIf="breadmenu === 'New Purchase'">Add to stock</span>
+						<span *ngIf="breadmenu !== 'New Purchase'">Update to stock</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</ng-container>
+	<ngx-spinner size="medium"></ngx-spinner>
+</ion-content>

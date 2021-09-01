@@ -1,0 +1,176 @@
+.content {
+	display: grid;
+	width: 100%;
+}
+
+.header {
+	padding: 10px;
+	color: #333;
+	border-bottom: 2px solid #adadad;
+	color: '#a5a5a6';
+	background-color: #f5f5f5;
+}
+
+.header,
+.listItem {
+	display: grid;
+	width: 100%;
+	margin: 0 auto;
+	grid-template-columns: 60px 200px 1fr 100px 300px 1fr;
+
+	align-items: center;
+	font-size: 14px;
+	height: auto;
+}
+
+.icon-style {
+	color: blue;
+	cursor: pointer;
+	padding: 5px 10px;
+	width: 32px;
+}
+
+.header-style {
+	background-color: #757575;
+	color: #333;
+	font-weight: 500;
+}
+
+.o-enq-details {
+	display: grid;
+	grid-template-rows: 1fr 1fr;
+	padding: 10px;
+}
+
+.edate {
+	font-size: 14px;
+	color: #222222;
+}
+.items {
+	font-size: 14px;
+	color: #333333;
+	align-self: center;
+}
+
+.custname {
+	font-size: 16px;
+	color: black;
+}
+
+.new-enq {
+	display: flex;
+	text-align: right;
+	padding-bottom: 5px;
+	justify-content: space-between;
+}
+
+.idx {
+	padding: 10px;
+	text-align: center;
+}
+
+.form-wrap {
+	display: grid;
+	grid-template-columns: 1.5fr 300px 160px 160px 200px;
+	// background-color: #f6f6ff;
+
+	gap: 10px;
+}
+
+.title {
+	font-size: 24px;
+	background-color: #6b82b5;
+	color: #fff;
+	opacity: 0.6;
+	text-align: center;
+	line-height: 73px;
+}
+.title:hover {
+	background-color: #6b82b5;
+	opacity: 1;
+	transition: 0.3s;
+}
+
+.search-btn {
+	padding: 0px 20px;
+}
+
+.listItem {
+	background-color: #fff;
+	border-bottom: 1px solid #f2f2f2;
+	align-items: center;
+}
+
+.title-row {
+	display: flex;
+	justify-content: space-between;
+}
+.width {
+	width: 280px !important;
+}
+
+.mat-input-wrapper {
+	width: 160px;
+}
+
+.highlight:hover {
+	background-color: #f1efef;
+}
+
+::ng-deep.mat-tab-label-content {
+	font-size: 16px;
+	font-weight: 500;
+}
+
+.table-header {
+	display: grid;
+	grid-template-columns: 120px 1fr 1fr 80px 1fr 80px 80px 200px;
+	padding: 10px;
+	background-color: rgb(233, 233, 233);
+}
+
+.tbl-detail {
+	display: grid;
+	grid-template-columns: 120px 1fr 1fr 80px 1fr 80px 80px 200px;
+	padding: 10px;
+	font-size: 14px;
+}
+
+.tc2 {
+	display: grid;
+	grid-template-rows: 1fr 1fr;
+	font-size: 14px;
+}
+.det_wrap {
+	padding: 10px;
+}
+
+.heading {
+	padding: 10px;
+	font-size: 18px;
+	color: #222222;
+}
+
+.tbl-detail:hover {
+	background-color: #e9e8f1;
+	opacity: 1;
+}
+
+.invoice {
+	color: #fff;
+	cursor: pointer;
+	padding: 10px 20px;
+	margin: 5px 16px;
+	background-color: royalblue;
+	border-radius: 61px;
+}
+
+.stock {
+	color: royalblue;
+	cursor: pointer;
+	padding: 10px 20px;
+	margin: 5px 16px;
+
+	border-radius: 61px;
+	border: 1px solid royalblue;
+}

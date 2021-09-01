@@ -1,0 +1,143 @@
+<ion-content>
+	<div class="screen-header">
+		<div>&nbsp;</div>
+
+		<div style="align-items: center">
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="16px" height="16px" />
+		</div>
+	</div>
+
+	<div class="action-row">
+		<div>PURCHASE ORDER</div>
+		<div>
+			<span style="padding: 0px 6px"
+				><img
+					matTooltip="Download"
+					matTooltipClass="tooltip"
+					src="/assets/images/svg/direct-download.svg"
+					style="cursor: pointer"
+					width="24px"
+					height="24px"
+					(click)="exportToExcel()"
+			/></span>
+			<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+		</div>
+	</div>
+
+	<div class="customer-info">
+		<div>
+			<div style="padding: 5px">
+				<div style="font-size: 13px; font-weight: 400; opacity: 0.6"> Invoice # </div>
+				<div style="font-size: 14px; font-weight: 400">
+					{{ this.purchasemasterdata?.invoice_no }}
+				</div>
+			</div>
+
+			<div style="padding: 5px">
+				<div style="font-size: 13px; font-weight: 400; opacity: 0.6"> Invoice Date </div>
+				<div style="font-size: 14px; font-weight: 400">
+					{{ this.purchasemasterdata?.invoice_date }}
+				</div>
+			</div>
+
+			<div style="padding: 5px">
+				<div style="font-size: 13px; font-weight: 400; opacity: 0.6"> Status </div>
+				<div style="font-size: 14px; font-weight: 400">
+					{{ this.purchasemasterdata?.status === 'C' ? 'Completed' : '' }}
+				</div>
+			</div>
+		</div>
+		<div>
+			<div style="padding: 5px">
+				<div style="font-size: 13px; font-weight: 400; opacity: 0.6"> Billing Address </div>
+				<div style="padding: 5px 0px">
+					<div style="font-size: 14px; font-weight: 400">
+						{{ this.customerdata?.name }}
+					</div>
+					<div style="font-size: 14px; font-weight: 400; padding: 1px 0x">
+						{{ this.customerdata?.address1 }}
+					</div>
+					<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">
+						{{ this.customerdata?.address2 }}
+					</div>
+				</div>
+			</div>
+			<div style="padding: 5px">
+				<div style="font-size: 13px; font-weight: 400; opacity: 0.6; padding: 5px 0px 0px 0px"> Shipping Address </div>
+				<div style="padding: 5px 0px">
+					<div style="font-size: 14px; font-weight: 400">
+						{{ this.customerdata?.name }}
+					</div>
+					<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">
+						{{ this.customerdata?.csa_address1 }}
+					</div>
+					<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">
+						{{ this.customerdata?.csa_address2 }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div>
+		<table style="width: 100%">
+			<thead>
+				<tr class="header">
+					<th style="text-align: left">SNo</th>
+					<th style="text-align: left">CODE</th>
+					<th style="text-align: left">DESCRIPTION</th>
+					<th style="text-align: right">QTY</th>
+
+					<th style="text-align: right">MRP</th>
+
+					<th style="text-align: right">TAX</th>
+
+					<th style="text-align: right">NET AMNT</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let item of purchasedetailsdata ? purchasedetailsdata : []; let idx = index" class="list-item row-color">
+					<td style="text-align: left">{{ idx + 1 }}</td>
+					<td>{{ item.product_code }}</td>
+					<td>{{ item.description }}</td>
+
+					<td style="text-align: right">{{ item?.qty }}</td>
+					<td style="text-align: right">{{ (+item?.mrp).toFixed(2) }}</td>
+
+					<td style="text-align: right">{{ item?.taxrate }}</td>
+					<td style="text-align: right">
+						{{ (+item?.total_value).toFixed(2) }}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div style="display: grid; grid-template-columns: 1fr 200px 100px">
+		<div>&nbsp;</div>
+		<div style="text-align: right; font-size: 15px; font-weight: 500; padding: 2px 6px"> Sub Total </div>
+		<div style="text-align: right; font-size: 15px; padding: 2px 6px">
+			{{ (+purchasemasterdata?.total_value).toFixed(2) }}
+		</div>
+		<div>&nbsp;</div>
+		<div style="text-align: right; font-size: 14px; padding: 2px 6px"> Transport Chrgs </div>
+		<div style="text-align: right; font-size: 14px; padding: 2px 6px">
+			{{ (+purchasemasterdata?.transport_charges).toFixed(2) }}
+		</div>
+		<div>&nbsp;</div>
+		<div style="text-align: right; font-size: 14px; padding: 2px 6px"> Unloading Chrgs </div>
+		<div style="text-align: right; font-size: 14px; padding: 2px 6px">
+			{{ (+purchasemasterdata?.unloading_charges).toFixed(2) }}
+		</div>
+		<div>&nbsp;</div>
+		<div style="text-align: right; font-size: 14px; padding: 2px 6px"> Misc Chrgs </div>
+		<div style="text-align: right; font-size: 14px; padding: 2px 6px">
+			{{ (+purchasemasterdata?.misc_charges).toFixed(2) }}
+		</div>
+		<div>&nbsp;</div>
+		<div style="text-align: right; font-size: 15px; padding: 2px 6px; font-weight: 500"> Net Total </div>
+		<div style="text-align: right; font-size: 15px; padding: 2px 6px">
+			{{ (+purchasemasterdata?.net_total).toFixed(2) }}
+		</div>
+	</div>
+</ion-content>

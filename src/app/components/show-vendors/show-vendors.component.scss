@@ -1,0 +1,23 @@
+.row {
+	display: grid;
+	padding: 10px;
+	transition: 0.3s;
+
+	.name {
+		text-align: left;
+	}
+}
+
+.heading {
+	display: grid;
+	font-size: 22px;
+	font-weight: 500;
+	padding: 10px;
+	text-align: center;
+}
+
+.show-vendor-wrap {
+	display: grid;
+	padding: 10px;
+	overflow-y: auto;
+}

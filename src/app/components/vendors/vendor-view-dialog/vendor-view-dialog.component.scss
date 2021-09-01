@@ -1,0 +1,47 @@
+.mat-width-ext {
+	width: 100%;
+}
+
+.screen-header {
+	display: flex;
+	width: 100%;
+
+	font-size: 0.9rem;
+	font-weight: 500;
+	color: #222222;
+	justify-content: space-between;
+}
+
+.vendor-info {
+	display: grid;
+	grid-template-columns: 1fr;
+	width: 100%;
+}
+
+.addl-info {
+	border-top: 1px solid grey;
+	border-bottom: 1px solid grey;
+	display: grid;
+	grid-template-columns: 100px 1fr 100px;
+	width: 100%;
+}
+
+.addl-header {
+	padding: 10px 5px;
+	color: rgb(57, 57, 241);
+	font-size: 12px;
+}
+
+.demo-tab-content {
+	padding: 8px;
+}
+
+// Note - this impacts all mat-tab-label
+::ng-deep.mat-tab-label,
+::ng-deep.mat-tab-label-active {
+	min-width: 0 !important;
+	padding: 0px 20px !important;
+	margin: 5px !important;
+	font-size: 15px;
+	font-weight: 500;
+}

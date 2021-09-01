@@ -1,0 +1,39 @@
+.screenheader {
+	display: flex;
+	padding: 8px 0px;
+	font-size: 18px;
+	font-weight: 500;
+	color: #222222;
+	justify-content: space-between;
+}
+
+.content {
+	display: grid;
+	width: 100%;
+	margin: 0 auto;
+	padding: 8px;
+}
+
+.listHeader,
+.listItem {
+	display: grid;
+	padding-left: 1rem;
+	padding-top: 0.2rem;
+	padding-bottom: 0.2rem;
+	grid-template-columns: 80px 80px 150px 150px;
+}
+
+.listHeader,
+.listHeader1 {
+	background-color: aliceblue;
+}
+
+.listHeader1,
+.listItem1 {
+	display: grid;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	padding-top: 0.2rem;
+	padding-bottom: 0.2rem;
+	grid-template-columns: 70px 70px 100px 1fr;
+}

@@ -1,0 +1,50 @@
+<div class="tax-edit-wrap">
+	<div class="screen-header">
+		<div style="font-size: 14px">Change Tax(%)</div>
+		<div>
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="closeModal()" width="20px" height="20px" />
+		</div>
+	</div>
+
+	<form [formGroup]="submitForm">
+		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px">
+			<div style="padding: 5px 0px">
+				<div style="font-size: 12px; color: #777777">Item</div>
+				<div style="font-size: 14px; color: #333">
+					{{ this.pArry[this.rArry]?.product_code }}
+				</div>
+				<div style="font-size: 14px; color: #333">
+					{{ this.pArry[this.rArry]?.product_desc }}
+				</div>
+			</div>
+			<div style="padding: 5px 0px">
+				<div style="font-size: 12px; color: #777777">Current TAX(%)</div>
+				<div style="font-size: 14px; color: #333">
+					{{ this.pArry[this.rArry]?.taxrate }}
+				</div>
+			</div>
+
+			<div style="padding: 5px 0px">
+				<mat-form-field>
+					<mat-label>Select Tax(%)</mat-label>
+					<!-- <input type="number" matInput placeholder="Tax(%)" min="1" max="50" formControlName="tax" required /> -->
+					<mat-select formControlName="tax" required>
+						<mat-option *ngFor="let item of taxList" [value]="item.id"> {{ item.value }} </mat-option>
+					</mat-select>
+					<mat-error>Required Field</mat-error>
+				</mat-form-field>
+			</div>
+			<div style="padding: 5px 0px">&nbsp;</div>
+
+			<div>
+				<button mat-stroked-button color="primary" (click)="applyOnce()" style="font-size: 1rem; padding: 0px 20px">Apply Once</button>
+			</div>
+
+			<div>
+				<button mat-raised-button color="primary" (click)="permanentTaxChange()" style="font-size: 1rem; padding: 0px 20px">
+					Permanently Change
+				</button>
+			</div>
+		</div>
+	</form>
+</div>

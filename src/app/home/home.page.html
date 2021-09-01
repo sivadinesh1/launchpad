@@ -1,20 +1,15 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<!-- <ion-content> -->
+<div>
+	<app-header></app-header>
+	<mat-sidenav-container fullscreen style="margin-top: 56px">
+		<mat-sidenav #sidenav mode="side" [opened]="true">
+			<app-left-menu></app-left-menu>
+		</mat-sidenav>
+		<mat-sidenav-content class="main_content">
+			<ion-router-outlet></ion-router-outlet>
+		</mat-sidenav-content>
+	</mat-sidenav-container>
+</div>
+<!-- </ion-content> -->
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
-</ion-content>
+<!-- mode="side" [opened]="false" [disableClose]="true" -->

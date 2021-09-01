@@ -1,0 +1,216 @@
+<ion-content>
+	<div class="search-wrap">
+		<form [formGroup]="submitForm">
+			<div class="form-wrap">
+				<div class="title" style="cursor: pointer">SALE RETURNS</div>
+
+				<div style="justify-self: end; padding-top: 20px">
+					<mat-form-field style="width: 140px">
+						<mat-label>Search Type</mat-label>
+						<mat-select formControlName="searchtype" required value="{selectedSearchType}" (selectionChange)="searchTypeHandle()">
+							<mat-option *ngFor="let op of searchType" [value]="op.id"> {{op.name}} </mat-option>
+						</mat-select>
+					</mat-form-field>
+				</div>
+
+				<div class="customers">
+					<mat-form-field style="width: 200px">
+						<mat-label>Search</mat-label>
+						<input
+							matInput
+							[matAutocomplete]="auto"
+							formControlName="customerctrl"
+							required
+							matTooltip="Type to filter the Customer list"
+							matTooltipPosition="after"
+						/>
+						<button
+							mat-button
+							matSuffix
+							mat-icon-button
+							aria-label="Clear"
+							*ngIf="this.submitForm.value.searchtype === 'all'"
+							type="button"
+							(click)="clearInput()"
+						>
+							<mat-icon>close</mat-icon>
+						</button>
+						<mat-autocomplete #auto="matAutocomplete" panelWidth="auto" (optionSelected)="getPosts($event)">
+							<mat-option
+								*ngFor="let customer of filteredCustomer | async"
+								[value]="customer"
+								style="height: 70px; border-bottom: 1px solid lightsteelblue"
+							>
+								<div style="display: grid; grid-template-columns: 1fr">
+									<div>
+										<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ customer.name }}</div>
+										<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address1 }}</div>
+										<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address2 }},{{ customer.district }}</div>
+									</div>
+								</div>
+								<!-- <span>{{ customer.name }} </span> -->
+							</mat-option>
+						</mat-autocomplete>
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field style="padding-top: 20px; width: 120px">
+						<mat-label>From</mat-label>
+						<input
+							matInput
+							readonly
+							[disableControl]="this.submitForm.value.searchtype !== 'all'"
+							[max]="maxDate"
+							[matDatepicker]="fromdate"
+							formControlName="fromdate"
+							(focus)="fromdate.open()"
+							required
+							(dateChange)="fromDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="fromdate"></mat-datepicker-toggle>
+						<mat-datepicker #fromdate></mat-datepicker>
+					</mat-form-field>
+				</div>
+				<div style="padding-top: 20px">
+					<mat-form-field class="mat-date-wrapper">
+						<mat-label>To</mat-label>
+						<input
+							matInput
+							readonly
+							[disableControl]="this.submitForm.value.searchtype !== 'all'"
+							[matDatepicker]="todate"
+							[max]="maxDate"
+							formControlName="todate"
+							(focus)="todate.open()"
+							required
+							(dateChange)="toDateSelected($event)"
+						/>
+						<mat-datepicker-toggle matSuffix [for]="todate"></mat-datepicker-toggle>
+						<mat-datepicker #todate></mat-datepicker>
+					</mat-form-field>
+				</div>
+
+				<div style="padding-top: 20px">
+					<mat-form-field style="width: 100%">
+						<mat-label>Inv / Cr Note #</mat-label>
+						<input matInput type="text" #invno formControlName="searchby" />
+						<mat-error *ngIf="submitForm.controls['searchby'].hasError('required')"> Please enter a value </mat-error>
+					</mat-form-field>
+				</div>
+
+				<div class="search-btn" style="padding-top: 20px">
+					<button mat-raised-button [disabled]="!submitForm.valid" color="primary" style="font-size: 1rem" (click)="search()">Search</button>
+				</div>
+			</div>
+		</form>
+		<div style="display: flex; justify-content: space-between">
+			<div style="align-self: center; font-size: 16px; padding: 16px 16px 0px 32px; color: darkblue">
+				All Returns ({{(sales$| async)?.length }}) records
+			</div>
+			<div>&nbsp;</div>
+		</div>
+		<div style="width: 94%; margin: 0 auto; padding-top: 16px" [@.disabled]="true">
+			<mat-tab-group color="primary" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabClick($event)">
+				<mat-tab label="Approved ({{(draftSales$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
+
+				<mat-tab label="Received Items ({{(fullfilledSales$| async)?.length }})">
+					<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+					<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+				</mat-tab>
+			</mat-tab-group>
+		</div>
+	</div>
+
+	<ng-template #draftMsgRef>
+		<div class="header header-style">
+			<div>CUSTOMER NAME</div>
+			<div>CREDIT NOTE</div>
+			<div>INVOICE #</div>
+			<div>INV DATE</div>
+			<div>RETURN DATE</div>
+
+			<div class="txt-right-align"># ITEMS</div>
+			<div class="txt-right-align">TOTAL VALUE</div>
+			<div class="txt-right-align">RECEIVE STATUS</div>
+			<div class="txt-right-align">REFUND STATUS</div>
+			<div>&nbsp;</div>
+		</div>
+		<div class="headerRow" style="background-color: #dfdfdf">
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div style="font-size: 14px; font-weight: 500">&nbsp;</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | currency: "INR"}}</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+		</div>
+	</ng-template>
+
+	<ng-template #MsgRef>
+		<div class="header header-style">
+			<div>CUSTOMER NAME</div>
+			<div>CREDIT NOTE</div>
+			<div>INVOICE #</div>
+			<div>INV DATE</div>
+			<div>RETURN DATE</div>
+
+			<div class="txt-right-align"># ITEMS</div>
+			<div class="txt-right-align">TOTAL VALUE</div>
+
+			<div class="txt-right-align">RECEIVE STATUS</div>
+			<div class="txt-right-align">REFUND STATUS</div>
+			<div>&nbsp;</div>
+		</div>
+		<div class="headerRow" style="background-color: #dfdfdf">
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div style="font-size: 14px; font-weight: 500">&nbsp;</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumNumItems}}</div>
+			<div style="font-size: 14px; font-weight: 500; text-align: right">{{this.sumTotalValue | currency: "INR"}}</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+		</div>
+	</ng-template>
+
+	<ng-template #MsgRef1>
+		<div *ngFor="let item of filteredValues" class="listItem">
+			<div class="item">{{item.name}}</div>
+			<div class="item">{{item.credit_note_no}}</div>
+			<div class="item">{{item.invoice_no}}</div>
+			<div class="item">{{item.invoice_date}}</div>
+
+			<div class="item">{{item.return_date}}</div>
+
+			<div class="item" style="text-align: right">{{item.to_receive_items}}</div>
+			<div class="item" style="text-align: right">{{item.to_return_amount | currency: "INR"}}</div>
+			<div class="item" style="text-align: right">{{item.receive_status_x}}</div>
+			<div class="item" style="text-align: right">{{item.refund_status_x}}</div>
+
+			<div class="item cursor" style="text-align: center">
+				<mat-icon [ngStyle]="{'color':'#6d78d2'}" (click)="salesReturn(item)">remove_red_eye </mat-icon>
+			</div>
+			<div>
+				<mat-icon
+					#tooltip="matTooltip"
+					matTooltip="Print Sale"
+					matTooltipClass="tooltip"
+					(mousedown)="tooltip.hide()"
+					[ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
+					(click)="goPrintCreditNote(item)"
+					>print
+				</mat-icon>
+			</div>
+		</div>
+
+		<div class="no-records" *ngIf="tabIndex === 0 && (draftSales$| async)?.length === 0">No item in status "Approved"</div>
+		<div class="no-records" *ngIf="tabIndex === 1 && (fullfilledSales$| async)?.length === 0">No item in status "Closed"</div>
+	</ng-template>
+</ion-content>

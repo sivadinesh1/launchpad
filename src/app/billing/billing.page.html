@@ -1,0 +1,17 @@
+<ion-header>
+	<ion-toolbar>
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="/dashboard"></ion-back-button>
+		</ion-buttons>
+		<ion-title>billing</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+Name : {{partydata?.name}} enquiry id : {{enquiryid}}
+
+<ion-content class="ion-padding">
+	<div (click)="pay(enquiryid)">PAY</div>
+	<div *ngFor="let item of enquirydata">
+		{{item?.partno}} {{item?.qty}} {{item?.MRP}}
+	</div>
+</ion-content>

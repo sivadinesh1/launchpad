@@ -1,0 +1,44 @@
+<div class="login-content">
+	<div class="left">
+		<div class="logo-section">
+			<img src="/assets/images/svg/launchpad-logo.svg" width="200px" height="72px" alt="" />
+			<div style="text-align: left; font-size: 1.1rem; font-weight: 400"> {{this.ipAddress}}</div>
+			<!-- <div style="text-align: left; font-size: 1.1rem; font-weight: 400">Ph: +91 97316 16386</div> -->
+		</div>
+		<div>
+			<div style="font-size: 40px; font-weight: 300; padding: 48px 32px 24px 32px">
+				Modern Inventory Mangement & Billing Software
+				<!-- Manage Orders, Purhase & Inventory with simple accounting -->
+			</div>
+			<div style="font-weight: 400; font-size: 21px; padding: 0rem 0rem 1rem 0rem; color: #48000082; font-weight: 300; font-style: italic">
+				Manage Orders, Purchase, Inventory & More for SME
+			</div>
+
+			<img src="/assets/images/svg/tractor.svg" height="300px" alt="" />
+		</div>
+		<div class="footer">Trusted by leading Wholesale dealers & retailers</div>
+	</div>
+	<div class="right">
+		<div>&nbsp;</div>
+		<div class="login">
+			<form [formGroup]="loginForm" (ngSubmit)="doLogin()" class="inputs-list">
+				<div class="login-txt">Welcome to Launchpad (Superadmin)</div>
+				<div>
+					<mat-form-field style="width: 400px">
+						<mat-select name="companyVaraible" [(value)]="selectedCompany" placeholder="Company">
+							<mat-option *ngFor="let company of companies" [value]="company.short"> {{company.full}} </mat-option>
+						</mat-select>
+					</mat-form-field>
+				</div>
+
+				<div class="error">{{ this.responsemsg }}</div>
+
+				<ion-button class="login-btn" type="submit" expand="block" [disabled]="!loginForm.valid">Sign In</ion-button>
+				<!-- <ion-row class="other-auth-options-row" style="font-size: 12px; color: #909090">
+					By continuing, you agree to Squapl's Terms of service, Privacy Policy
+				</ion-row> -->
+			</form>
+		</div>
+		<div style="font-size: 12px; opacity: 0.8">&#169; 2021 All Rights Reserved. Squapl Digital Media Technologies</div>
+	</div>
+</div>

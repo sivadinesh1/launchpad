@@ -1,0 +1,57 @@
+<div class="add-prod-wrap">
+	<div class="row1">
+		<div class="search_box">
+			<ion-searchbar
+				style="width: 300px"
+				autofocus
+				debounce="300"
+				placeholder="Search..."
+				#mySearchbar
+				show-cancel-button="focus"
+				(ionClear)="reset()"
+				(ionInput)="openDialog($event.target.value)"
+			></ion-searchbar>
+		</div>
+		<div class="close">
+			<img src="/assets/images/svg/close.svg" (click)="closeModal()" width="20px" height="20px" />
+		</div>
+	</div>
+	<div class="header-row">
+		<div class="col">#</div>
+		<div class="col">Product Info</div>
+		<div class="col">Brand</div>
+		<div class="col">Rack Info</div>
+		<div class="col txt-right-align">Available Qty</div>
+		<div class="col txt-right-align">MRP</div>
+		<div class="col">&nbsp;</div>
+	</div>
+	<div class="row2">
+		<ng-container *ngFor="let item of resultList; let idx = index">
+			<div class="list-item row-color" (click)="addProduct(item)">
+				<div class="item1">{{ idx + 1 }}</div>
+				<div class="item2">
+					<div class="item21">{{ item.product_code }}</div>
+					<div class="item22 desc-styl">{{ item.description }}</div>
+				</div>
+				<div class="item3">{{ item.name }}</div>
+				<div class="item3">{{ item.rackno }}</div>
+				<div class="item3 txt-right-align">{{ item.available_stock }}</div>
+				<div class="item4 txt-right-align">{{ item.mrp }}</div>
+				<div class="item4 txt-right-align">
+					<img src="/assets/images/svg/more.svg" width="24px" height="24px" />
+				</div>
+			</div>
+		</ng-container>
+	</div>
+	<div class="row3">
+		<div class="row-cnt">
+			<span *ngIf="resultList">
+				<span *ngIf="resultList.length >= 50"> Matches: {{ resultList.length }} + </span>
+				<span *ngIf="resultList.length < 50"> Matches: {{ resultList.length }} </span>
+			</span>
+		</div>
+		<div class="scan">
+			<div class="scan-btn">Scan Bar Code</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,21 @@
+/** @format */
+
+.content {
+	display: grid;
+}
+
+.header,
+.footer {
+	display: flex;
+	justify-content: space-between;
+	height: 40px;
+}
+
+.invoice-details {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+
+	.inv-det-heading {
+		grid-column: 1/-1;
+	}
+}

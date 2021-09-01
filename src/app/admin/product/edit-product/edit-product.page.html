@@ -1,0 +1,159 @@
+<ion-content>
+	<div class="content">
+		<div class="screen-header">
+			<div>
+				<span (click)="searchProducts()">
+					<span style="font-size: 16px; color: #797979; cursor: pointer">
+						Search Products
+					</span>
+					/
+				</span>
+			</div>
+			<div>&nbsp;Edit Product</div>
+		</div>
+
+		<form [formGroup]="submitForm">
+			<ng-template matStepLabel>Basic Info</ng-template>
+			<div class="prod-info">
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Code</mat-label>
+						<input
+							matInput
+							placeholder="Code"
+							readonly
+							formControlName="product_code"
+							required
+						/>
+						<mat-error>This field is required</mat-error>
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Description</mat-label>
+						<input matInput formControlName="description" required />
+						<mat-error>This field is required</mat-error>
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Vendor</mat-label>
+						<mat-select formControlName="vendorid">
+							<mat-option
+								*ngFor="let item of (vendors$ | async)"
+								[value]="item.id"
+							>
+								{{item.name}}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>UOM</mat-label>
+						<mat-select formControlName="unit">
+							<mat-option *ngFor="let item of uom" [value]="item.key">
+								{{item.viewValue}}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Packet Size</mat-label>
+						<input
+							type="number"
+							matInput
+							formControlName="packetsize"
+							required
+						/>
+						<mat-error>This field is required</mat-error>
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>HSN Code</mat-label>
+						<input type="text" matInput formControlName="hsncode" required />
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Tax Rate</mat-label>
+						<input type="number" matInput formControlName="taxrate" required />
+						<mat-error>This field is required</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Min. Qty</mat-label>
+						<input matInput formControlName="minqty" />
+
+						<mat-hint>Minimum in stock expexted</mat-hint>
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Unit/Price</mat-label>
+						<input
+							type="number"
+							matInput
+							formControlName="unit_price"
+							required
+						/>
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>MRP</mat-label>
+						<input type="number" matInput formControlName="mrp" />
+						<!-- <mat-hint>Use Purchase screen to change MRP</mat-hint> -->
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Purchase Price</mat-label>
+						<input
+							type="number"
+							matInput
+							formControlName="purchase_price"
+							required
+						/>
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Sale Price</mat-label>
+						<input type="number" matInput formControlName="salesprice" />
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Max. Discount</mat-label>
+						<input type="number" matInput formControlName="maxdiscount" />
+					</mat-form-field>
+				</div>
+
+				<div>
+					<mat-form-field class="mat-width-ext">
+						<mat-label>Rack #</mat-label>
+						<input type="number" matInput formControlName="rackno" />
+					</mat-form-field>
+				</div>
+			</div>
+			<div style="text-align: center">
+				<button mat-stroked-button type="button">Clear</button>&nbsp;&nbsp;
+				<button
+					mat-raised-button
+					color="primary"
+					(click)="submit()"
+					type="button"
+				>
+					+ Update Product
+				</button>
+			</div>
+		</form>
+	</div>
+</ion-content>

@@ -1,0 +1,12 @@
+<div mat-dialog-content>
+	<p>Customer Connect</p>
+
+	<mat-form-field class="example-full-width">
+		<mat-label>Share a message</mat-label>
+		<textarea matInput [(ngModel)]="message" placeholder="Ex. Your order is dispatched..."></textarea>
+	</mat-form-field>
+</div>
+<div mat-dialog-actions>
+	<button mat-button (click)="onNoClick()">Cancel</button>
+	<button mat-button (click)="onShareClick()" cdkFocusInitial>Share</button>
+</div>

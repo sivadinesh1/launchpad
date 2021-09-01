@@ -1,0 +1,53 @@
+/** @format */
+
+.content {
+	display: grid;
+	width: 100%;
+	margin: 0 auto;
+	padding: 16px;
+}
+
+.main-info {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
+}
+
+.addl-info1 {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	padding: 10px;
+}
+
+.addl-info2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	padding: 10px;
+}
+
+.pinfo {
+	padding: 10px 0px;
+	font-size: 20px;
+	font-weight: 500;
+	color: #222222;
+	display: flex;
+	justify-content: space-between;
+}
+
+.code,
+.desc,
+.vendor-info,
+.altcode {
+	padding: 10px;
+}
+
+.sitem1 {
+	color: #797979;
+	font-size: 12px;
+}
+
+.addl-info1,
+.addl-info2 {
+	border: 1px solid #e2e2e2;
+	border-radius: 10px;
+}

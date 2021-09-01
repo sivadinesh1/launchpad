@@ -1,0 +1,42 @@
+<div class="wrapper">
+	<div class="row1">
+		<div style="font-size: 1.5rem; color: #222; display: grid; align-content: center"> Settings </div>
+		<div>&nbsp;</div>
+		<div>
+			<button mat-button matSuffix mat-icon-button type="button" (click)="closeModal()">
+				<mat-icon>close</mat-icon>
+			</button>
+		</div>
+	</div>
+
+	<div class="main-section">
+		<div class="side">
+			<mat-nav-list>
+				<a mat-list-item [routerLink]="['', { outlets: { settings: ['general-settings'] } }]">
+					<span matLine>General</span>
+				</a>
+
+				<a mat-list-item [routerLink]="['', { outlets: { settings: ['permissions-settings'] } }]">
+					<span matLine>Permissions</span>
+				</a>
+				<a mat-list-item [routerLink]="['', { outlets: { settings: ['template-settings'] } }]">
+					<span matLine>Templates</span>
+				</a>
+				<a mat-list-item [routerLink]="['', { outlets: { settings: ['bank-settings'] } }]">
+					<span matLine>Banks</span>
+				</a>
+				<!-- <a mat-list-item [routerLink]="['/detail']">
+					<span matLine>Title</span>
+				</a> -->
+			</mat-nav-list>
+		</div>
+		<div class="main">
+			<router-outlet name="settings"></router-outlet>
+		</div>
+	</div>
+
+	<div class="row3">
+		<div>&nbsp;</div>
+		<div>&nbsp;</div>
+	</div>
+</div>

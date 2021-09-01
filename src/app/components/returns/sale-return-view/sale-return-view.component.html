@@ -1,0 +1,60 @@
+<ion-content>
+	<div class="screen-header">
+		<div>&nbsp;</div>
+
+		<div style="align-items: center">
+			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="16px" height="16px" />
+		</div>
+	</div>
+
+	<div class="action-row">
+		<div>SALES RETURN</div>
+		<div>
+			<span style="padding: 0px 6px; color: blue" class="cursor" *ngIf="showReceiveButton" (click)="salesReturnReceive()"> RECEIVE </span>
+			<span style="padding: 0px 6px" *ngIf="!showReceiveButton"> Received All Items </span>
+		</div>
+	</div>
+
+	<div #epltable>
+		<table style="width: 100%">
+			<thead>
+				<tr class="header">
+					<th style="text-align: left">SNo</th>
+					<th style="text-align: left">CODE</th>
+					<th style="text-align: left">REASON</th>
+					<th style="text-align: right">RETURN QTY</th>
+					<th style="text-align: right">RECEIVED QTY</th>
+					<th style="text-align: right">MRP</th>
+					<th style="text-align: right">DIS%</th>
+					<th style="text-align: right">TAX</th>
+					<th style="text-align: right">NET AMNT</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let item of salereturndetailsdata ? salereturndetailsdata : []; let idx = index" class="list-item row-color">
+					<td style="text-align: left">{{ idx + 1 }}</td>
+					<td>
+						<div>{{ item.product_code }}</div>
+						<div>{{ item.description }}</div>
+					</td>
+					<td>{{ item.reason }}</td>
+
+					<td style="text-align: right">{{ item?.return_qty }}</td>
+					<td style="text-align: right">{{ item?.received_qty }}</td>
+
+					<td style="text-align: right">{{ (+item?.mrp).toFixed(2) }}</td>
+					<td style="text-align: right">{{ item?.disc_percent }}</td>
+
+					<td style="text-align: right">{{ item?.tax }}</td>
+					<td style="text-align: right">{{ (+item?.total_value).toFixed(2) }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div style="display: grid; grid-template-columns: 1fr 200px 100px">
+		<div>&nbsp;</div>
+		<div style="text-align: right; font-size: 15px; padding: 2px 6px; font-weight: 500">Net Total</div>
+		<div style="text-align: right; font-size: 15px; padding: 2px 6px">{{ (+data?.to_return_amount).toFixed(2) }}</div>
+	</div>
+</ion-content>

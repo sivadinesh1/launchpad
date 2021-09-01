@@ -1,0 +1,26 @@
+.content {
+	display: grid;
+	width: 94%;
+	margin: 0 auto;
+	padding: 16px;
+}
+
+.brand-info {
+	display: grid;
+	grid-template-columns: auto auto auto auto;
+	grid-gap: 10px;
+	width: 100%;
+}
+
+.screen-header {
+	display: flex;
+	padding: 8px 0px;
+	font-size: 18px;
+	font-weight: 500;
+	color: #222222;
+	justify-content: space-between;
+}
+
+.mat-width-ext {
+	width: 100%;
+}
