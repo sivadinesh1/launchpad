@@ -108,19 +108,6 @@ export class LoginPage implements OnInit {
     this.router.navigate(['auth/gp-login']);
   }
 
-  //   .pipe(
-  // 	map(async (data: any) => {
-  // 	  if (data.result === 'success') {
-  // 		await this.storagemode.clear();
-
-  // 		await this.storagemode.set('currentUser', JSON.stringify(data.obj));
-
-  // 		this.currentUserSubject.next(data.obj);
-  // 	  }
-  // 	  return data;
-  // 	})
-  //   );
-
   async doLogin(): Promise<void> {
     let username = this.loginForm.controls.phone.value;
     let password = this.loginForm.controls.password.value;
@@ -173,9 +160,6 @@ export class LoginPage implements OnInit {
       this._loadingService.openSnackBar('Invalid Credentials', '');
     }
 
-    //   } else if (data.statusCode === '100') {
-    //     this.responsemsg = 'Login Failed. Database Connection Error';
-    //   }
     this._cdr.detectChanges();
   }
 

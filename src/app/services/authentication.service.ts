@@ -120,6 +120,7 @@ export class AuthenticationService {
       .post<any>(`${this.restApiUrl}/v1/api/auth/super-admin`, { center_id })
       .pipe(
         map(async (data: any) => {
+          debugger;
           if (data.result === 'success') {
             await this.storagemode.clear();
 
@@ -158,10 +159,23 @@ export class AuthenticationService {
   // }
 
   login(username: string, password: string) {
-    return this.httpClient.post<any>(`${this.restApiUrl}/v1/api/auth/login`, {
-      username,
-      password,
-    });
+    return this.httpClient
+      .post<any>(`${this.restApiUrl}/v1/api/auth/login`, {
+        username,
+        password,
+      })
+      .pipe(
+        map(async (data: any) => {
+          if (data.result === 'success') {
+            await this.storagemode.clear();
+
+            await this.storagemode.set('currentUser', JSON.stringify(data.obj));
+
+            this.currentUserSubject.next(data.obj);
+          }
+          return data;
+        })
+      );
   }
 
   fetchPermissions(center_id: string, role_id: string) {
