@@ -8,7 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 import { SharedModule } from 'src/app/shared.module';
@@ -20,6 +20,7 @@ import localeIn from '@angular/common/locales/en-IN';
 import { HomePageModule } from './home/home.module';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { IonicStorageModule } from '@ionic/storage-angular';
+import { HttpErrorInterceptor } from './services/http-error-interceptor';
 
 registerLocaleData(localeIn);
 @NgModule({
@@ -42,6 +43,7 @@ registerLocaleData(localeIn);
   exports: [BrowserModule],
   providers: [
     KeyBoardService,
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: MAT_DATE_LOCALE, useValue: 'en-IN' },
     CurrencyPipe,

@@ -120,16 +120,6 @@ export class AuthenticationService {
       .post<any>(`${this.restApiUrl}/v1/api/auth/super-admin`, { center_id })
       .pipe(
         map(async (data: any) => {
-          return data;
-        })
-      );
-  }
-
-  login(username: string, password: string) {
-    return this.httpClient
-      .post<any>(`${this.restApiUrl}/v1/api/auth/login`, { username, password })
-      .pipe(
-        map(async (data: any) => {
           if (data.result === 'success') {
             await this.storagemode.clear();
 
@@ -140,6 +130,38 @@ export class AuthenticationService {
           return data;
         })
       );
+  }
+
+  // login(username: string, password: string) {
+  //   return this.httpClient
+  //     .post<any>(`${this.restApiUrl}/v1/api/auth/login`, { username, password })
+  //     .pipe(
+  //       map(async (data: any) => {
+  //         if (data.result === 'success') {
+  //           await this.storagemode.clear();
+
+  //           await this.storagemode.set('currentUser', JSON.stringify(data.obj));
+
+  //           this.currentUserSubject.next(data.obj);
+  //         }
+  //         return data;
+  //       })
+  //     );
+  // }
+
+  // getAllActiveVendors(centerid): Observable<Vendor[]> {
+  //   return this.httpClient
+  //     .get<Vendor[]>(
+  //       `${this.restApiUrl}/v1/api/all-active-vendors1/${centerid}`
+  //     )
+  //     .pipe(catchError((err) => of([])));
+  // }
+
+  login(username: string, password: string) {
+    return this.httpClient.post<any>(`${this.restApiUrl}/v1/api/auth/login`, {
+      username,
+      password,
+    });
   }
 
   fetchPermissions(center_id: string, role_id: string) {

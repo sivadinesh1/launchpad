@@ -5,10 +5,15 @@ import {
   HttpParams,
   HttpHeaders,
   HttpResponse,
+  HttpEvent,
+  HttpInterceptor,
+  HttpHandler,
+  HttpRequest,
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { errorApiUrl } from 'src/environments/environment';
-import { Observable, of } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { map, shareReplay, retry, catchError } from 'rxjs/operators';
 
 import * as FileSaver from 'file-saver';
 import { Purchase } from '../models/Purchase';
@@ -112,9 +117,11 @@ export class CommonApiService {
   }
 
   getAllActiveVendors(centerid): Observable<Vendor[]> {
-    return this.httpClient.get<Vendor[]>(
-      `${this.restApiUrl}/v1/api/all-active-vendors/${centerid}`
-    );
+    return this.httpClient
+      .get<Vendor[]>(
+        `${this.restApiUrl}/v1/api/all-active-vendors1/${centerid}`
+      )
+      .pipe(catchError((err) => of([])));
   }
 
   getAllActiveBrands(centerid, status): Observable<Brand[]> {
