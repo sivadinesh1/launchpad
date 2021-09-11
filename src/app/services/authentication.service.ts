@@ -124,9 +124,9 @@ export class AuthenticationService {
           if (data.result === 'success') {
             await this.storagemode.clear();
 
-            await this.storagemode.set('currentUser', JSON.stringify(data.obj));
+            await this.storagemode.set('currentUser', JSON.stringify(data));
 
-            this.currentUserSubject.next(data.obj);
+            this.currentUserSubject.next(data);
           }
           return data;
         })
@@ -158,20 +158,28 @@ export class AuthenticationService {
   //     .pipe(catchError((err) => of([])));
   // }
 
+  // const floApi = axios.create({ baseURL: `${hostname}`, withCredentials: true });
+
   login(username: string, password: string) {
     return this.httpClient
-      .post<any>(`${this.restApiUrl}/v1/api/auth/login`, {
-        username,
-        password,
-      })
+      .post<any>(
+        `${this.restApiUrl}/v1/api/auth/login`,
+        {
+          username,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      )
       .pipe(
         map(async (data: any) => {
           if (data.result === 'success') {
             await this.storagemode.clear();
 
-            await this.storagemode.set('currentUser', JSON.stringify(data.obj));
+            await this.storagemode.set('currentUser', JSON.stringify(data));
 
-            this.currentUserSubject.next(data.obj);
+            this.currentUserSubject.next(data);
           }
           return data;
         })

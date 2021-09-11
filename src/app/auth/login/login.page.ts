@@ -132,15 +132,12 @@ export class LoginPage implements OnInit {
         return;
       }
     });
-
+    debugger;
     if (data.result === 'success') {
       let role = data.role;
       this.responsemsg = '';
 
-      this.authenticationService.fetchPermissions(
-        data.obj.center_id,
-        data.obj.role_id
-      );
+      this.authenticationService.fetchPermissions(data.center_id, data.role_id);
 
       if (role === 'ADMIN') {
         this.router.navigate([`/home/admin-dashboard`]);

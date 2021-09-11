@@ -394,14 +394,6 @@ export class CommonApiService {
     );
   }
 
-  updateCustomerDiscount(objectForm) {
-    return this.httpClient.put<any>(
-      `${this.restApiUrl}/v1/api/admin/update-customer-discount`,
-      objectForm,
-      { observe: 'response' }
-    );
-  }
-
   // update default
   updateDefaultCustomerDiscount(objectForm) {
     return this.httpClient.put<any>(
