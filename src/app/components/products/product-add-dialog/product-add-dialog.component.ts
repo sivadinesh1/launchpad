@@ -111,11 +111,9 @@ export class ProductAddDialogComponent implements OnInit {
           center_id: this.userdata.center_id,
         });
 
-        this._commonApiService
-          .getAllActiveBrands(this.userdata.center_id, 'A')
-          .subscribe((data) => {
-            this.brands = data;
-          });
+        this._commonApiService.getAllActiveBrands('A').subscribe((data) => {
+          this.brands = data;
+        });
 
         this._cdr.markForCheck();
       });
@@ -153,10 +151,7 @@ export class ProductAddDialogComponent implements OnInit {
 
     if (this.submitForm.value.product_code.length > 0) {
       this._commonApiService
-        .isProdExists(
-          this.submitForm.value.product_code,
-          this.userdata.center_id
-        )
+        .isProdExists(this.submitForm.value.product_code)
         .subscribe((data: any) => {
           if (data.length > 0 && data[0].id > 0) {
             this.pexists = true;

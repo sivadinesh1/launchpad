@@ -19,6 +19,6 @@ export class VendorDataResolverService implements Resolve<any> {
 	resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 		const center_id = route.paramMap.get('center_id');
 		const vendor_id = route.paramMap.get('vendor_id');
-		return this.commonapiservice.getVendorDetails(center_id, vendor_id);
+		return this.commonapiservice.getVendorDetails(vendor_id);
 	}
 }

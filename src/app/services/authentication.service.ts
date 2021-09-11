@@ -187,12 +187,10 @@ export class AuthenticationService {
   }
 
   fetchPermissions(center_id: string, role_id: string) {
-    this._commonApiService
-      .fetchPermissions(center_id, role_id)
-      .subscribe(async (data) => {
-        await this.storagemode.set('currentPermission', JSON.stringify(data));
-        this.currentPermisssionSubject.next(data);
-      });
+    this._commonApiService.fetchPermissions(role_id).subscribe(async (data) => {
+      await this.storagemode.set('currentPermission', JSON.stringify(data));
+      this.currentPermisssionSubject.next(data);
+    });
   }
 
   async setCurrentMenu(clickedMenu) {

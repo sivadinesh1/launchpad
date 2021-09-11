@@ -122,7 +122,7 @@ export class VendorAddDialogComponent implements OnInit {
   isVendorExists() {
     if (this.submitForm.value.name.length > 0) {
       this._commonApiService
-        .isVendorExists(this.submitForm.value.name, this.userdata.center_id)
+        .isVendorExists(this.submitForm.value.name)
         .subscribe((data: any) => {
           if (data.result.length > 0) {
             if (data.result[0].id > 0) {

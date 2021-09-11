@@ -99,7 +99,7 @@ export class VendorStatementReportsPage implements OnInit {
 
 	getVendors(center_id) {
 		this._commonApiService
-			.getAllActiveVendors(center_id)
+			.getAllActiveVendors()
 			.subscribe((data: any) => {
 				this.vendor_lis = data;
 

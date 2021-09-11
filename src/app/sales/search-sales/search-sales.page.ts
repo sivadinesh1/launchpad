@@ -160,7 +160,7 @@ export class SearchSalesPage implements OnInit {
 	}
 
 	async init() {
-		this._commonApiService.getAllActiveCustomers(this.userdata.center_id).subscribe((data: any) => {
+		this._commonApiService.getAllActiveCustomers().subscribe((data: any) => {
 			this.customer_lis = data;
 
 			this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges.pipe(

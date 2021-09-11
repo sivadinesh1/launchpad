@@ -46,15 +46,15 @@ export class CommonApiService {
     return this.httpClient.get(this.restApiUrl + '/v1/api/inventory/all');
   }
 
-  viewProductInfo(center_id: string, product_id: string) {
+  viewProductInfo(product_id: string) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/admin/view-product-info/${center_id}/${product_id}`
+      `${this.restApiUrl}/v1/api/admin/view-product-info/${product_id}`
     );
   }
 
-  viewProductsCount(center_id: string) {
+  viewProductsCount() {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/admin/view-products-count/${center_id}`
+      `${this.restApiUrl}/v1/api/admin/view-products-count`
     );
   }
 
@@ -102,7 +102,7 @@ export class CommonApiService {
     );
   }
 
-  getBrandInfo(submitForm) {
+  getBrandInfo(submitForm: any) {
     return this.httpClient.post(
       `${this.restApiUrl}/v1/api/search-brand`,
       submitForm,
@@ -110,35 +110,33 @@ export class CommonApiService {
     );
   }
 
-  getOpenEnquiries(centerid: number, status: string) {
+  getOpenEnquiries(status: string) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/enquiry/open-enquiries/${centerid}/${status}`
+      `${this.restApiUrl}/v1/api/enquiry/open-enquiries/${status}`
     );
   }
 
-  getAllActiveVendors(centerid): Observable<Vendor[]> {
+  getAllActiveVendors(): Observable<Vendor[]> {
     return this.httpClient
-      .get<Vendor[]>(
-        `${this.restApiUrl}/v1/api/all-active-vendors1/${centerid}`
-      )
+      .get<Vendor[]>(`${this.restApiUrl}/v1/api/all-active-vendors`)
       .pipe(catchError((err) => of([])));
   }
 
-  getAllActiveBrands(centerid, status): Observable<Brand[]> {
+  getAllActiveBrands(status): Observable<Brand[]> {
     return this.httpClient.get<Brand[]>(
-      `${this.restApiUrl}/v1/api/all-active-brands/${centerid}/${status}`
+      `${this.restApiUrl}/v1/api/all-active-brands/${status}`
     );
   }
 
-  getAllActivePymtModes(centerid, status): Observable<any> {
+  getAllActivePymtModes(status): Observable<any> {
     return this.httpClient.get<Brand[]>(
-      `${this.restApiUrl}/v1/api/all-pymt-modes/${centerid}/${status}`
+      `${this.restApiUrl}/v1/api/all-pymt-modes/${status}`
     );
   }
 
-  getAllActiveCustomers(centerid) {
+  getAllActiveCustomers() {
     return this.httpClient.get(
-      this.restApiUrl + '/v1/api/all-active-customers/' + centerid
+      this.restApiUrl + '/v1/api/all-active-customers'
     );
   }
 
@@ -235,16 +233,14 @@ export class CommonApiService {
     );
   }
 
-  getEnquiredProductData(center_id, customer_id, enqid, invdt) {
+  getEnquiredProductData(customer_id, enqid, invdt) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/enquiry/get-enquired-product-data/${center_id}/${customer_id}/${enqid}/${invdt}`
+      `${this.restApiUrl}/v1/api/enquiry/get-enquired-product-data/${customer_id}/${enqid}/${invdt}`
     );
   }
 
-  getBackOder(center_id) {
-    return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/enquiry/back-order/${center_id}`
-    );
+  getBackOder() {
+    return this.httpClient.get(`${this.restApiUrl}/v1/api/enquiry/back-order`);
   }
 
   captureError(errorObj) {
@@ -268,7 +264,7 @@ export class CommonApiService {
     });
   }
 
-  printInvoice(submitForm) {
+  printInvoice(submitForm: any) {
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
 
@@ -309,7 +305,7 @@ export class CommonApiService {
     );
   }
 
-  updateProduct(submitForm) {
+  updateProduct(submitForm: any) {
     return this.httpClient.post<any>(
       this.restApiUrl + '/v1/api/admin/update-product',
       submitForm,
@@ -318,9 +314,9 @@ export class CommonApiService {
   }
 
   //vendor
-  getVendorDetails(center_id, vendor_id) {
+  getVendorDetails(vendor_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/admin/get-vendor-details/${center_id}/${vendor_id}`
+      `${this.restApiUrl}/v1/api/admin/get-vendor-details/${vendor_id}`
     );
   }
 
@@ -355,9 +351,9 @@ export class CommonApiService {
   }
 
   // customers
-  getCustomerDetails(center_id, customer_id) {
+  getCustomerDetails(customer_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/admin/get-customer-details/${center_id}/${customer_id}`
+      `${this.restApiUrl}/v1/api/admin/get-customer-details/${customer_id}`
     );
   }
 
@@ -420,9 +416,9 @@ export class CommonApiService {
   }
 
   // centers
-  getCenterDetails(center_id) {
+  getCenterDetails() {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/admin/get-center-details/${center_id}`
+      `${this.restApiUrl}/v1/api/admin/get-center-details`
     );
   }
 
@@ -449,11 +445,6 @@ export class CommonApiService {
       { observe: 'response' }
     );
   }
-
-  // searchPurchases(centerid, vendorid, status, fromdate, todate): Observable<Purchase[]> {
-  //   return this.httpClient.get<Purchase[]>(`${this.restApiUrl}/api/stock/search-purchase/${centerid}/${vendorid}/${status}/${fromdate}/${todate}`)
-  //     .pipe(shareReplay());
-  // }
 
   searchPurchases(submitForm): Observable<Purchase[]> {
     return this.httpClient
@@ -486,9 +477,9 @@ export class CommonApiService {
     );
   }
 
-  showReceiveButton(centerid, sale_return_id) {
+  showReceiveButton(sale_return_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/returns/show-receive-button/${centerid}/${sale_return_id}`
+      `${this.restApiUrl}/v1/api/returns/show-receive-button/${sale_return_id}`
     );
   }
 
@@ -502,10 +493,10 @@ export class CommonApiService {
       .pipe(shareReplay());
   }
 
-  searchAllDraftPurchases(centerid): Observable<Purchase[]> {
+  searchAllDraftPurchases(): Observable<Purchase[]> {
     return this.httpClient
       .get<Purchase[]>(
-        `${this.restApiUrl}/v1/api/stock/search-all-draft-purchase/${centerid}`
+        `${this.restApiUrl}/v1/api/stock/search-all-draft-purchase`
       )
       .pipe(shareReplay());
   }
@@ -617,15 +608,15 @@ export class CommonApiService {
   }
 
   // end
-  isProdExists(pCode, centerid) {
+  isProdExists(pCode) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/admin/prod-exists/${pCode}/${centerid}`
+      `${this.restApiUrl}/v1/api/admin/prod-exists/${pCode}`
     );
   }
 
-  isCustomerExists(cname, centerid) {
+  isCustomerExists(cname) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/customer-exists/${cname}/${centerid}`
+      `${this.restApiUrl}/v1/api/customer-exists/${cname}`
     );
   }
 
@@ -644,15 +635,15 @@ export class CommonApiService {
   }
 
   // end
-  isBrandExists(name, center_id) {
+  isBrandExists(name) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/brand-exists/${name}/${center_id}`
+      `${this.restApiUrl}/v1/api/brand-exists/${name}`
     );
   }
 
-  isVendorExists(name, center_id) {
+  isVendorExists(name) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/vendor-exists/${name}/${center_id}`
+      `${this.restApiUrl}/v1/api/vendor-exists/${name}`
     );
   }
 
@@ -689,37 +680,33 @@ export class CommonApiService {
     );
   }
 
-  getAccountsReceivable(centerid) {
+  getAccountsReceivable() {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/accounts/get-accounts-receivable/${centerid}`
+      `${this.restApiUrl}/v1/api/accounts/get-accounts-receivable`
     );
   }
 
-  // getCustomerDiscount(center_id, customer_id) {
-  //   return this.httpClient.get(`${this.restApiUrl}/api/admin/customer-discount/${center_id}/${customer_id}`);
-  // }
-
-  getAllCustomerDefaultDiscounts(center_id, customer_id) {
+  getAllCustomerDefaultDiscounts(customer_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/admin/all-customer-default-discounts/${center_id}/${customer_id}`
+      `${this.restApiUrl}/v1/api/admin/all-customer-default-discounts/${customer_id}`
     );
   }
 
-  getDiscountsByCustomer(center_id, customer_id) {
+  getDiscountsByCustomer(customer_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/admin/discounts-customer/${center_id}/${customer_id}`
+      `${this.restApiUrl}/v1/api/admin/discounts-customer/${customer_id}`
     );
   }
 
-  getDiscountsByCustomerByBrand(center_id, customer_id) {
+  getDiscountsByCustomerByBrand(customer_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/admin/discounts-customer-brands/${center_id}/${customer_id}`
+      `${this.restApiUrl}/v1/api/admin/discounts-customer-brands/${customer_id}`
     );
   }
 
-  getBrandsMissingDiscounts(center_id, status, customer_id) {
+  getBrandsMissingDiscounts(status, customer_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/brands-missing-discounts/${center_id}/${status}/${customer_id}`
+      `${this.restApiUrl}/v1/api/brands-missing-discounts/${status}/${customer_id}`
     );
   }
 
@@ -764,15 +751,15 @@ export class CommonApiService {
 
   // /get-ledger-customer/:centerid/:customerid
 
-  getLedgerCustomer(center_id, customer_id) {
+  getLedgerCustomer(customer_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/accounts/get-ledger-customer/${center_id}/${customer_id}`
+      `${this.restApiUrl}/v1/api/accounts/get-ledger-customer/${customer_id}`
     );
   }
 
-  getLedgerVendor(center_id, vendor_id) {
+  getLedgerVendor(vendor_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/purchaseaccounts/get-ledger-vendor/${center_id}/${vendor_id}`
+      `${this.restApiUrl}/v1/api/purchaseaccounts/get-ledger-vendor/${vendor_id}`
     );
   }
 
@@ -820,9 +807,9 @@ export class CommonApiService {
     );
   }
 
-  getSaleReturnDetailsData(center_id, sale_return_id) {
+  getSaleReturnDetailsData(sale_return_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/returns/get-sale-return-details/${center_id}/${sale_return_id}`
+      `${this.restApiUrl}/v1/api/returns/get-sale-return-details/${sale_return_id}`
     );
   }
 
@@ -858,15 +845,15 @@ export class CommonApiService {
     );
   }
 
-  getPymtTransactionByCustomer(center_id, customer_id) {
+  getPymtTransactionByCustomer(customer_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/accounts/get-pymt-transactions-customer/${center_id}/${customer_id}`
+      `${this.restApiUrl}/v1/api/accounts/get-pymt-transactions-customer/${customer_id}`
     );
   }
 
-  getPymtTransactionByVendor(center_id, vendor_id) {
+  getPymtTransactionByVendor(vendor_id) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/purchaseaccounts/get-pymt-transactions-vendor/${center_id}/${vendor_id}`
+      `${this.restApiUrl}/v1/api/purchaseaccounts/get-pymt-transactions-vendor/${vendor_id}`
     );
   }
 
@@ -894,9 +881,9 @@ export class CommonApiService {
     );
   }
 
-  getPymtTransactionsByCenter(center_id) {
+  getPymtTransactionsByCenter() {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/accounts/get-pymt-transactions-center/${center_id}`
+      `${this.restApiUrl}/v1/api/accounts/get-pymt-transactions-center`
     );
   }
 
@@ -974,15 +961,15 @@ export class CommonApiService {
     );
   }
 
-  fetchPermissions(centerid, roleid) {
+  fetchPermissions(roleid) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/auth/fetch-permissions/${centerid}/${roleid}`
+      `${this.restApiUrl}/v1/api/auth/fetch-permissions/${roleid}`
     );
   }
 
-  getUsers(centerid, status) {
+  getUsers(status) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/admin/get-users/${centerid}/${status}`
+      `${this.restApiUrl}/v1/api/admin/get-users/${status}`
     );
   }
 
@@ -1010,9 +997,9 @@ export class CommonApiService {
     );
   }
 
-  isUsernameExists(phone, center_id) {
+  isUsernameExists(phone) {
     return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/admin/usename-exists/${phone}/${center_id}`
+      `${this.restApiUrl}/v1/api/admin/usename-exists/${phone}`
     );
   }
 
@@ -1041,10 +1028,8 @@ export class CommonApiService {
     );
   }
 
-  getBanks(centerid) {
-    return this.httpClient.get(
-      `${this.restApiUrl}/v1/api/accounts/banks-list/${centerid}`
-    );
+  getBanks() {
+    return this.httpClient.get(`${this.restApiUrl}/v1/api/accounts/banks-list`);
   }
 
   insertBank(form) {
@@ -1101,9 +1086,9 @@ export class CommonApiService {
     );
   }
 
-  deleteProductFromStock(product_id, mrp, center_id) {
+  deleteProductFromStock(product_id, mrp) {
     return this.httpClient.delete(
-      `${this.restApiUrl}/v1/api/stock/delete-product-from-stock/${product_id}/${mrp}/${center_id}`
+      `${this.restApiUrl}/v1/api/stock/delete-product-from-stock/${product_id}/${mrp}`
     );
   }
 

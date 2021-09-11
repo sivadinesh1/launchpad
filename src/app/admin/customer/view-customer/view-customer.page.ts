@@ -110,7 +110,7 @@ export class ViewCustomerPage implements OnInit {
 
   reloadCustomers() {
     this.isloaded = false;
-    this._commonApiService.getAllActiveCustomers(this.center_id).subscribe({
+    this._commonApiService.getAllActiveCustomers().subscribe({
       next: (data: any) => {
         this.arr = data;
         this.isloaded = true;
@@ -310,7 +310,7 @@ export class ViewCustomerPage implements OnInit {
 
   editdefault(element) {
     this._commonApiService
-      .getAllCustomerDefaultDiscounts(this.center_id, element.id)
+      .getAllCustomerDefaultDiscounts(element.id)
       .subscribe((data: any) => {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
@@ -354,7 +354,7 @@ export class ViewCustomerPage implements OnInit {
 
   manageBrandDiscounts(element) {
     this._commonApiService
-      .getAllCustomerDefaultDiscounts(this.center_id, element.id)
+      .getAllCustomerDefaultDiscounts(element.id)
       .subscribe((data: any) => {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;

@@ -135,7 +135,7 @@ export class BrandDiscountsComponent implements OnInit {
 
   init() {
     this._commonApiService
-      .getDiscountsByCustomerByBrand(this.center_id, this.elements.id)
+      .getDiscountsByCustomerByBrand(this.elements.id)
       .subscribe((data: any) => {
         this.dataRecords = data;
 
@@ -151,7 +151,7 @@ export class BrandDiscountsComponent implements OnInit {
       });
 
     this._commonApiService
-      .getBrandsMissingDiscounts(this.center_id, 'A', this.elements.id)
+      .getBrandsMissingDiscounts('A', this.elements.id)
       .subscribe((data: any) => {
         this.brandsList = data;
         this._cdr.markForCheck();
@@ -220,7 +220,7 @@ export class BrandDiscountsComponent implements OnInit {
           // if successfully update
           if (data.body.result === 'success') {
             this._commonApiService
-              .getBrandsMissingDiscounts(this.center_id, 'A', this.elements.id)
+              .getBrandsMissingDiscounts('A', this.elements.id)
               .subscribe((data: any) => {
                 this.brandsList = data;
                 this._cdr.markForCheck();
