@@ -101,7 +101,6 @@ export class ViewVendorsPage implements OnInit {
 
   reloadVendors() {
     this._commonApiService.getAllActiveVendors().subscribe((data: any) => {
-      debugger;
       // DnD - code to add a "key/Value" in every object of array
       this.dataSource.data = data.map((el) => {
         var o = Object.assign({}, el);

@@ -12,6 +12,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/User';
 import { CommonApiService } from 'src/app/services/common-api.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +41,7 @@ export class AuthenticationService {
     private plt: Platform,
     private storage: Storage,
     private _commonApiService: CommonApiService,
-
+    private _router: Router,
     @Inject(PLATFORM_ID) private platformId: any
   ) {
     this.plt.ready().then(async () => {
@@ -120,7 +121,6 @@ export class AuthenticationService {
       .post<any>(`${this.restApiUrl}/v1/api/auth/super-admin`, { center_id })
       .pipe(
         map(async (data: any) => {
-          debugger;
           if (data.result === 'success') {
             await this.storagemode.clear();
 
@@ -196,5 +196,9 @@ export class AuthenticationService {
   async setCurrentMenu(clickedMenu) {
     await this.storagemode.set('currentMenu', clickedMenu);
     this.currentMenuSubject.next(clickedMenu);
+  }
+
+  redirectToLogin() {
+    this._router.navigate([`/home/login`]);
   }
 }

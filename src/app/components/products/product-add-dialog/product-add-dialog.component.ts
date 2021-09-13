@@ -172,7 +172,7 @@ export class ProductAddDialogComponent implements OnInit {
       .addProduct(this.submitForm.value)
       .subscribe((data: any) => {
         console.log('successfullly inserted product >>>');
-        debugger;
+
         if (data.body.affectedRows === 1) {
           this.dialogRef.close('success');
         }

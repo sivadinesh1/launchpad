@@ -69,7 +69,7 @@ export class AdminDashboardPage implements OnInit {
       .subscribe((data: any) => {
         this._authservice.setCurrentMenu('Home');
         this.userdata = data;
-        debugger;
+
         this.reloadOpsSummary('today');
         this.reloadSalesSummary();
         this.reloadPurchaseSummary();

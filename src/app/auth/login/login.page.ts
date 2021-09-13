@@ -116,9 +116,23 @@ export class LoginPage implements OnInit {
       this.authenticationService.login(username, password)
     ).catch((err) => {
       console.log('error>>> ' + JSON.stringify(err));
-      if (err.startsWith('connect ECONNREFUSED')) {
+      if (err.indexOf('reach database server') > -1) {
         this._loadingService.openSnackBar(
           'Database connection failed!',
+          '',
+          'mat-warn'
+        );
+        return;
+      } else if (err.startsWith('connect ECONNREFUSED')) {
+        this._loadingService.openSnackBar(
+          'Database connection failed!!',
+          '',
+          'mat-warn'
+        );
+        return;
+      } else if (err.startsWith('Unknown error occured')) {
+        this._loadingService.openSnackBar(
+          'Unknown error occured!',
           '',
           'mat-warn'
         );
@@ -132,7 +146,7 @@ export class LoginPage implements OnInit {
         return;
       }
     });
-    debugger;
+
     if (data.result === 'success') {
       let role = data.role;
       this.responsemsg = '';

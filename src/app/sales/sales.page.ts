@@ -322,12 +322,12 @@ export class SalesPage {
     if (this.id === '0') {
       // id ===0 means fresh sale
       this.isFreshSale = true;
-      this.getInvoiceSequence(this.userdata.center_id, 'gstinvoice');
+      this.getInvoiceSequence('gstinvoice');
     }
 
     // comes from MOVE TO SALE: Enquiry -> sale process
     if (this.mode === 'enquiry') {
-      this.getInvoiceSequence(this.userdata.center_id, 'gstinvoice');
+      this.getInvoiceSequence('gstinvoice');
       // id refers to enquiry id, also recorded as orderno in sales table
       this.submitForm.patchValue({
         enqref: this.id,
@@ -759,6 +759,7 @@ export class SalesPage {
   }
 
   ngAfterViewInit() {
+    this.spinner.hide();
     setTimeout(() => {
       this.clist && this.clist.nativeElement.focus();
 
@@ -931,11 +932,10 @@ export class SalesPage {
   }
 
   onSubmit(action, subaction) {
-    debugger;
     if (this.listArr.length == 0) {
       return this.presentAlert('No products added to save!');
     }
-    debugger;
+
     if (!this.submitForm.valid) {
       // DnD this helps in finding invalid controls name, used for debugging
       console.log('invalid field ' + this.findInvalidControls());
@@ -1305,9 +1305,9 @@ export class SalesPage {
   }
 
   // Fn: to get & set invoiceno and invoice type
-  getInvoiceSequence(centerid, invoicetype) {
+  getInvoiceSequence(invoicetype) {
     this._saleApiService
-      .getNxtSaleInvoiceNo(centerid, invoicetype)
+      .getNxtSaleInvoiceNo(invoicetype)
       .subscribe((data: any) => {
         this.submitForm.patchValue({
           invoiceno: data[0].NxtInvNo,
@@ -1639,7 +1639,6 @@ export class SalesPage {
             handler: (blah) => {
               //this.qty.nativeElement.focus();
               this.clearProdInput();
-              debugger;
 
               setTimeout(() => {
                 this.paraElements[index] && this.paraElements[index].focus();

@@ -17,6 +17,13 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
+  constructor(
+    private commonapiservice: CommonApiService,
+    private _errorservice: ErrorService,
+    private _loadingservice: LoadingService,
+    private _authservice: AuthenticationService
+  ) {}
+
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
@@ -48,6 +55,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       }
       if (error.status === 401) {
         console.log('this should print your error!', error.error);
+        this._authservice.redirectToLogin();
       }
 
       if (
