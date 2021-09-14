@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { HomePage } from './home/home.page';
+import { SaleOrderPage } from './sales/sale-order/sale-order.page';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -117,16 +118,15 @@ const routes: Routes = [
         loadChildren: () =>
           import('./enquiry/enquiry.module').then((m) => m.EnquiryPageModule),
       },
-      // {
-      //   path: 'purchase/:edit/:purchaseid',
-      //   loadChildren: () => import('./purchase/purchase.module').then(m => m.PurchasePageModule)
-      // },
 
       {
         path: 'sales/:mode/:id/:saletype',
         pathMatch: 'full',
+
         loadChildren: () =>
-          import('./sales/sales.module').then((m) => m.SalesPageModule),
+          import('./sales/sale-order/sale-order.module').then(
+            (m) => m.SaleOrderPageModule
+          ),
       },
       {
         path: 'dashboard',

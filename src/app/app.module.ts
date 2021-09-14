@@ -43,6 +43,7 @@ registerLocaleData(localeIn);
   exports: [BrowserModule],
   providers: [
     KeyBoardService,
+
     { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: MAT_DATE_LOCALE, useValue: 'en-IN' },

@@ -199,6 +199,6 @@ export class AuthenticationService {
   }
 
   redirectToLogin() {
-    this._router.navigate([`/home/login`]);
+    this._router.navigate([`/login`]);
   }
 }

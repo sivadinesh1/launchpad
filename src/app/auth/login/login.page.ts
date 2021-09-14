@@ -68,7 +68,7 @@ export class LoginPage implements OnInit {
 
     this.loginForm = new FormGroup({
       phone: new FormControl(
-        '',
+        '9999999990',
         Validators.compose([
           Validators.required,
           PhoneValidator.invalidCountryPhone(country),
@@ -76,7 +76,7 @@ export class LoginPage implements OnInit {
       ),
 
       password: new FormControl(
-        '',
+        'tts1234',
         Validators.compose([Validators.minLength(5), Validators.required])
       ),
     });

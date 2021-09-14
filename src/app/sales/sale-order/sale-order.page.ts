@@ -7,6 +7,7 @@ import {
   QueryList,
   ChangeDetectionStrategy,
   HostListener,
+  OnInit,
 } from '@angular/core';
 import {
   ModalController,
@@ -14,7 +15,7 @@ import {
   AlertController,
 } from '@ionic/angular';
 
-import { CommonApiService } from '../services/common-api.service';
+import { CommonApiService } from '../../services/common-api.service';
 import {
   FormGroup,
   FormControl,
@@ -26,13 +27,13 @@ import {
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
-import { CurrencyPadComponent } from '../components/currency-pad/currency-pad.component';
+import { CurrencyPadComponent } from '../../components/currency-pad/currency-pad.component';
 
-import { AuthenticationService } from '../services/authentication.service';
-import { ChangeTaxComponent } from '../components/change-tax/change-tax.component';
-import { ChangeMrpComponent } from '../components/change-mrp/change-mrp.component';
+import { AuthenticationService } from '../../services/authentication.service';
+import { ChangeTaxComponent } from '../../components/change-tax/change-tax.component';
+import { ChangeMrpComponent } from '../../components/change-mrp/change-mrp.component';
 import { Route, ActivatedRoute, Router } from '@angular/router';
-import { NullToQuotePipe } from '../util/pipes/null-quote.pipe';
+import { NullToQuotePipe } from '../../util/pipes/null-quote.pipe';
 import {
   filter,
   tap,
@@ -43,38 +44,55 @@ import {
 import * as moment from 'moment';
 import { NgxSpinnerService } from 'ngx-spinner';
 
-import { SaleApiService } from '../services/sale-api.service';
+import { SaleApiService } from '../../services/sale-api.service';
 
-import { InvoiceSuccessComponent } from '../components/invoice-success/invoice-success.component';
+import { InvoiceSuccessComponent } from '../../components/invoice-success/invoice-success.component';
 
 import { Customer } from 'src/app/models/Customer';
-import { Product } from '../models/Product';
+import { Product } from '../../models/Product';
 import { empty } from 'rxjs';
-import { RequireMatch } from '../util/directives/requireMatch';
+import { RequireMatch } from '../../util/directives/requireMatch';
 import {
   MatAutocomplete,
   MatAutocompleteTrigger,
 } from '@angular/material/autocomplete';
 import { IonContent } from '@ionic/angular';
-import { CustomerViewDialogComponent } from '../components/customers/customer-view-dialog/customer-view-dialog.component';
-import { CustomerAddDialogComponent } from '../components/customers/customer-add-dialog/customer-add-dialog.component';
-import { ConvertToSaleDialogComponent } from '../components/convert-to-sale-dialog/convert-to-sale-dialog.component';
+import { CustomerViewDialogComponent } from '../../components/customers/customer-view-dialog/customer-view-dialog.component';
+import { CustomerAddDialogComponent } from '../../components/customers/customer-add-dialog/customer-add-dialog.component';
+import { ConvertToSaleDialogComponent } from '../../components/convert-to-sale-dialog/convert-to-sale-dialog.component';
 import { Observable } from 'rxjs';
-import { User } from '../models/User';
+import { User } from '../../models/User';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ProductAddDialogComponent } from '../components/products/product-add-dialog/product-add-dialog.component';
-import { SuccessMessageDialogComponent } from '../components/success-message-dialog/success-message-dialog.component';
+import { ProductAddDialogComponent } from '../../components/products/product-add-dialog/product-add-dialog.component';
+import { SuccessMessageDialogComponent } from '../../components/success-message-dialog/success-message-dialog.component';
 
-import { InventoryReportsDialogComponent } from '../components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
-import { ManualInvoiceNumberDialogComponent } from '../components/sales/manual-invoice-number-dialog/manual-invoice-number-dialog.component';
+import { InventoryReportsDialogComponent } from '../../components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
+import { ManualInvoiceNumberDialogComponent } from '../../components/sales/manual-invoice-number-dialog/manual-invoice-number-dialog.component';
+import { formatDate } from '@angular/common';
+import { ComponentCanDeactivate } from 'src/app/services/dirtycheck.guard';
 
 @Component({
-  selector: 'app-sales',
-  templateUrl: './sales.page.html',
-  styleUrls: ['./sales.page.scss'],
+  selector: 'app-sale-order',
+  templateUrl: './sale-order.page.html',
+  styleUrls: ['./sale-order.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SalesPage {
+export class SaleOrderPage implements ComponentCanDeactivate {
+  // @HostListener allows us to also guard against browser refresh, close, etc.
+  // @HostListener('window:beforeunload')
+  // canDeactivate(): Observable<boolean> | boolean {
+  //   debugger;
+  //   return false;
+  //   // insert logic to check if there are pending changes here;
+  //   // returning true will navigate without confirmation
+  //   // returning false will show a confirm dialog before navigating away
+  // }
+
+  @HostListener('window:beforeunload')
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    return false;
+  }
+
   breadmenu = 'New Sale';
 
   listArr = [];
@@ -202,6 +220,7 @@ export class SalesPage {
     private spinner: NgxSpinnerService,
     private _cdr: ChangeDetectorRef
   ) {
+    this.basicinit();
     this.userdata$ = this._authservice.currentUser;
     this.userdata$
       .pipe(filter((data) => data !== null))
@@ -210,7 +229,7 @@ export class SalesPage {
 
         // data change
         this._route.data.subscribe((data) => {
-          this.basicinit();
+          // this.basicinit();
 
           this.selInvType = 'gstinvoice';
           this.listArr = [];
@@ -525,19 +544,6 @@ export class SalesPage {
     this.searchProducts();
 
     this._cdr.markForCheck();
-  }
-
-  ngOnInit() {
-    const draft = localStorage.getItem('sales_form');
-
-    if (draft) {
-      this.submitForm.setValue(JSON.parse(draft));
-    }
-    this.submitForm.valueChanges
-      .pipe(filter(() => this.submitForm.valid))
-      .subscribe((val) =>
-        localStorage.setItem('sales_form', JSON.stringify(val))
-      );
   }
 
   searchCustomers() {
@@ -905,7 +911,11 @@ export class SalesPage {
         this.presentAlert('Lr Date without Lr # not allowed');
         return false;
       }
-      if (this.submitForm.value.lrdate < this.submitForm.value.invoicedate) {
+
+      if (
+        formatDate(this.submitForm.value.lrdate, 'dd-MM-yyyy', 'en-US') <
+        formatDate(this.submitForm.value.invoicedate, 'dd-MM-yyyy', 'en-US')
+      ) {
         this.presentAlert('Lr date should be after Invoice date');
         return false;
       }
@@ -930,15 +940,27 @@ export class SalesPage {
     });
   }
 
+  /** Gets invalid controls & prints in console */
   public findInvalidControls() {
     const invalid = [];
     const controls = this.submitForm.controls;
     for (const name in controls) {
       if (controls[name].invalid) {
+        console.log(controls[name].errors);
         invalid.push(name);
       }
     }
     return invalid;
+  }
+
+  checkisNumber(param: string) {
+    if (
+      this.submitForm.get(param).value === '' ||
+      this.submitForm.get(param).value === null ||
+      this.submitForm.get(param).value < 0
+    ) {
+      this.submitForm.controls[param].setValue(0);
+    }
   }
 
   onSubmit(action, subaction) {
@@ -2060,9 +2082,9 @@ export class SalesPage {
 
   // @HostListener('window:beforeunload', ['$event'])
   // beforeUnloadHander($event) {
-  // 	$event.returnValue = 'Your changes will not be saved';
+  //   $event.returnValue = 'Your changes will not be saved';
 
-  // 	return true;
+  //   return true;
   // }
 }
 

@@ -56,6 +56,11 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       if (error.status === 401) {
         console.log('this should print your error!', error.error);
         this._authservice.redirectToLogin();
+        this._loadingservice.openSnackBar(
+          'Session expired, Login again!',
+          '',
+          'mat-warn'
+        );
       }
 
       if (

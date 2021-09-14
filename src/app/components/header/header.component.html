@@ -1,60 +1,64 @@
 <div fxFlex="row" fxLayoutGap="10px" class="header">
-	<span>
-		<img src="/assets/images/svg/launchpad-logo.svg" width="200px" height="30px" alt="" />
-	</span>
-	<span style="align-self: center">
-		<div class="cname">
-			{{ userdata?.center_name }}
-		</div>
-		<div style="font-size: 12px">{{ userdata?.district }}</div>
-	</span>
-	<span class="spacer"></span>
+  <span>
+    <img
+      src="/assets/images/svg/launchpad-logo.svg"
+      width="200px"
+      height="30px"
+      alt=""
+    />
+  </span>
+  <span style="align-self: center">
+    <div class="cname">
+      {{ userdata?.center_name }}
+    </div>
+  </span>
+  <span class="spacer"></span>
 
-	<span style="align-self: center; padding: 0px 0px 0px 40px">
-		<img
-			src="../../assets/images/svg/sales-b.svg"
-			(click)="showNewSales()"
-			width="24px"
-			height="24px"
-			class="img cursor"
-			#tooltip="matTooltip"
-			matTooltip="New Sale Order"
-			matTooltipClass="tooltip"
-			(mousedown)="tooltip.hide()"
-		/>
-		<span (click)="showNewSales()" class="quick-links"> NEW SALE ORDER </span>
-	</span>
-	<span style="align-self: center; padding: 0px 20px">
-		<img
-			src="../../assets/images/svg/enquiry-b.svg"
-			(click)="showNewEnquiry()"
-			width="24px"
-			height="24px"
-			class="img cursor"
-			#tooltip="matTooltip"
-			matTooltip="New Enquiry"
-			matTooltipClass="tooltip"
-			(mousedown)="tooltip.hide()"
-		/>
-		<span (click)="showNewEnquiry()" class="quick-links"> NEW ENQUIRY </span>
-	</span>
-	&nbsp;&nbsp;
-	<span style="align-self: center">
-		<img
-			src="../../assets/images/svg/search-b.svg"
-			(click)="showAddProductComp()"
-			width="24px"
-			height="24px"
-			class="img cursor"
-			#tooltip="matTooltip"
-			matTooltip="Quick Search (Items/Customer/Vendor/Brand)"
-			matTooltipClass="tooltip"
-			(mousedown)="tooltip.hide()"
-		/>
-		<span (click)="showAddProductComp()" class="quick-links"> SEARCH </span>
-	</span>
-	&nbsp;&nbsp;
-	<!-- <span style="align-self: center; padding: 0px 25px">
+  <span style="align-self: center; padding: 0px 0px 0px 40px">
+    <img
+      src="../../assets/images/svg/sales-b.svg"
+      (click)="showNewSales()"
+      width="24px"
+      height="24px"
+      class="img cursor"
+      #tooltip="matTooltip"
+      matTooltip="New Sale Order"
+      matTooltipClass="tooltip"
+      (mousedown)="tooltip.hide()"
+    />
+    <span (click)="showNewSales()" class="quick-links"> CREATE INVOICE </span>
+  </span>
+  <span style="align-self: center; padding: 0px 20px">
+    <img
+      src="../../assets/images/svg/enquiry-b.svg"
+      (click)="showNewEnquiry()"
+      width="24px"
+      height="24px"
+      class="img cursor"
+      #tooltip="matTooltip"
+      matTooltip="New Enquiry"
+      matTooltipClass="tooltip"
+      (mousedown)="tooltip.hide()"
+    />
+    <span (click)="showNewEnquiry()" class="quick-links"> NEW ENQUIRY </span>
+  </span>
+  &nbsp;&nbsp;
+  <span style="align-self: center">
+    <img
+      src="../../assets/images/svg/search-b.svg"
+      (click)="showAddProductComp()"
+      width="24px"
+      height="24px"
+      class="img cursor"
+      #tooltip="matTooltip"
+      matTooltip="Quick Search (Items/Customer/Vendor/Brand)"
+      matTooltipClass="tooltip"
+      (mousedown)="tooltip.hide()"
+    />
+    <span (click)="showAddProductComp()" class="quick-links"> SEARCH </span>
+  </span>
+  &nbsp;&nbsp;
+  <!-- <span style="align-self: center; padding: 0px 25px">
 		<ng-container *ngIf="userdata">
 			<div class="fname">{{ userdata?.firstname }}</div>
 			<div class="role">{{ userdata?.role }}</div>

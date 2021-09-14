@@ -1,0 +1,1134 @@
+<ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
+  <form *ngIf="submitForm" [formGroup]="submitForm">
+    <!-- Header Row -->
+    <div class="screen-header">
+      <div style="font-size: 18px; letter-spacing: 1px; color: #4e53b7">
+        {{this.submitForm?.value?.invoicetype === 'gstinvoice' ? "SALE ORDER -
+        Tax Invoice": "STOCK ISSUE"}}
+      </div>
+      <div>
+        <ion-segment mode="ios" value="New Sale">
+          <ion-segment-button value="New Sale">
+            <ion-label>New Sale</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="Sales & Services">
+            <ion-label>Sales & Services</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr">
+        <div *ngIf="iscustomerselected">
+          <div style="height: 53px">
+            <div *ngIf="this.saletype !== 'SI'" class="label-text">
+              Invoice #
+            </div>
+            <div
+              *ngIf="this.saletype !== 'SI'"
+              style="font-size: 18px; font-weight: 500"
+            >
+              {{this.submitForm?.value?.invoiceno}}
+              <span *ngIf="this.id === '0'"
+                ><mat-icon
+                  #tooltip="matTooltip"
+                  matTooltip="Create Manual Invoice #"
+                  matTooltipClass="tooltip"
+                  (mousedown)="tooltip.hide()"
+                  [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
+                  (click)="openManualInvoiceDialog()"
+                  >edit
+                </mat-icon></span
+              >
+            </div>
+            <div
+              *ngIf="this.saletype === 'SI' && this.mode === 'edit' && this.id !== '0' "
+              class="label-text"
+            >
+              Stock Issue #
+            </div>
+            <div
+              *ngIf="this.saletype === 'SI' && this.mode === 'edit' && this.id !== '0' "
+            >
+              {{this.submitForm?.value?.invoiceno}}
+            </div>
+          </div>
+
+          <div
+            *ngIf="mode === 'enquiry' && this.submitForm?.value?.orderdate !== '' "
+          >
+            <mat-form-field>
+              <mat-label class="label-text">Enquiry #</mat-label>
+              <input
+                matInput
+                #orderno
+                type="text"
+                tabindex="-1"
+                formControlName="orderno"
+                autocomplete="off"
+              />
+
+              <mat-error
+                *ngIf="(submitForm?.get('orderno').hasError('required') || submitForm?.get('orderno').hasError('patternInvalid'))  && submitForm?.get('orderno').touched"
+              >
+                Invalid (or) Missing entry
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div style="position: relative; top: 10px" *ngIf="iscustomerselected">
+          <mat-form-field>
+            <mat-label class="label-text"
+              >{{this.saletype === 'SI'? 'Stock Issue Date' : 'Invoice
+              Date'}}</mat-label
+            >
+            <input
+              matInput
+              readonly
+              required
+              tabindex="-1"
+              formControlName="invoicedate"
+              [matDatepicker]="picker1"
+              type="text"
+              (focus)="picker1.open()"
+              [max]="maxDate"
+              autocomplete="off"
+            />
+            <mat-datepicker-toggle
+              tabindex="-1"
+              matSuffix
+              [for]="picker1"
+            ></mat-datepicker-toggle>
+            <mat-datepicker tabindex="-1" #picker1></mat-datepicker>
+
+            <mat-error
+              *ngIf="(submitForm?.get('invoicedate').hasError('required') || submitForm?.get('invoicedate').hasError('patternInvalid'))  && submitForm?.get('invoicedate').touched"
+            >
+              Invalid (or) Missing entry
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <!-- Select Customer  -->
+    <div class="customer">
+      <div style="display: grid; grid-template-columns: 3fr 1fr">
+        <div>
+          <mat-form-field
+            class="example-full-width"
+            style="padding-right: 10px; font-size: 16px"
+          >
+            <mat-label class="label-text">Select Customer</mat-label>
+            <input
+              matInput
+              [matAutocomplete]="auto"
+              formControlName="customerctrl"
+              [readOnly]="iscustomerselected"
+              #typehead1
+              required
+              panelWidth="auto"
+              #clist
+              autofocus
+              matTooltipPosition="after"
+              tabindex="1"
+            />
+
+            <button
+              mat-button
+              matSuffix
+              mat-icon-button
+              type="button"
+              tabindex="-1"
+              (click)="handleCustomerChange()"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              autoActiveFirstOption
+              panelWidth="auto"
+              [displayWith]="displayFn"
+              (optionSelected)="setCustomerInfo($event, 'click')"
+            >
+              <mat-option
+                *ngIf="isCLoading"
+                class="is-loading"
+                style="width: 400px"
+              >
+                <div style="display: flex; align-items: center">
+                  <mat-spinner diameter="20"></mat-spinner>
+                  <span>&nbsp;&nbsp;Start typing...</span>
+                </div>
+              </mat-option>
+
+              <ng-container *ngIf="!isCLoading">
+                <mat-option
+                  *ngFor="let customer of customer_lis"
+                  [value]="customer"
+                  style="height: 70px; border-bottom: 1px solid lightsteelblue"
+                >
+                  <div style="display: grid; grid-template-columns: 1fr">
+                    <div>
+                      <div
+                        style="font-size: 16px; padding: 2px; line-height: 1em"
+                      >
+                        {{ customer.name }}
+                      </div>
+                      <div
+                        style="
+                          font-size: 14px;
+                          padding: 2px;
+                          line-height: 1em;
+                          opacity: 0.7;
+                        "
+                      >
+                        {{ customer.address1 }}
+                      </div>
+                      <div
+                        style="
+                          font-size: 14px;
+                          padding: 2px;
+                          line-height: 1em;
+                          opacity: 0.7;
+                        "
+                      >
+                        {{ customer.address2 }},{{ customer.district }}
+                      </div>
+                    </div>
+                  </div>
+                </mat-option>
+              </ng-container>
+            </mat-autocomplete>
+            <mat-error
+              *ngIf="submitForm?.controls['customerctrl'].hasError('required')"
+            >
+              Please enter a value
+            </mat-error>
+            <mat-error
+              *ngIf="submitForm?.controls['customerctrl'].hasError('incorrect')"
+            >
+              <span style="color: darkorange">Customer Not Found:</span>
+              <span
+                style="font-style: italic; color: #310ac0; cursor: pointer"
+                (click)="addCustomer()"
+                >+ Add Customer</span
+              >
+            </mat-error>
+            <mat-hint *ngIf="iscustomerselected && isRetailCustomer !== 'Y'">
+              <span
+                (click)="openDialog($event)"
+                style="font-size: 12px; color: #310ac0; cursor: pointer"
+                >View Customer Details</span
+              >
+            </mat-hint>
+          </mat-form-field>
+
+          <div *ngIf="isRetailCustomer === 'Y' ">
+            <div>
+              <mat-form-field class="mat-input-wrapper cursor">
+                <mat-label>Customer Name</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  formControlName="retail_customer_name"
+                  autocomplete="off"
+                />
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field class="mat-input-wrapper cursor">
+                <mat-label>Customer Address</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  formControlName="retail_customer_address"
+                  autocomplete="off"
+                />
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field class="mat-input-wrapper cursor">
+                <mat-label>Customer Phone</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="retail_customer_phone"
+                  autocomplete="off"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div
+          style="
+            justify-content: left;
+            align-self: flex-start;
+            padding-left: 1rem;
+          "
+        >
+          &nbsp;
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr">
+        <div
+          style="
+            justify-content: left;
+            align-self: flex-start;
+            padding-left: 1rem;
+          "
+        >
+          &nbsp;
+        </div>
+
+        <div
+          style="
+            justify-content: left;
+            align-self: flex-start;
+            padding-left: 1rem;
+          "
+        >
+          <div
+            *ngIf="mode === 'enquiry' && this.submitForm?.value?.orderdate !== '' "
+          >
+            <mat-form-field>
+              <mat-label>Enquiry Date</mat-label>
+              <input
+                matInput
+                readonly
+                [matDatepicker]="pickerod"
+                tabindex="-1"
+                formControlName="orderdate"
+                (focus)="pickerod.open()"
+                autocomplete="off"
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="pickerod"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #pickerod></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Not Yet added -->
+    <ng-container *ngIf="!iscustomerselected">
+      <div style="display: grid; place-items: center; padding: 2rem 2rem">
+        <div style="color: #333333"><h4>Customer not selected</h4></div>
+        <div style="color: #666666">
+          Select customer & start adding items to sales cart
+        </div>
+        <div>
+          <img src="/assets/images/svg/to-do-list.svg" width="200px" />
+        </div>
+      </div>
+    </ng-container>
+
+    <mat-tab-group
+      mat-align-tabs="start"
+      animationDuration="0ms"
+      style="width: 96%; margin: 0 auto"
+    >
+      <mat-tab label="Add Items" *ngIf="iscustomerselected">
+        <div class="purchase-wrap" [hidden]="!iscustomerselected">
+          <!-- main-box ribbon -->
+          <div class="wrap">
+            <div class="acton-btns">
+              <img
+                class="cursor"
+                src="/assets/images/svg/trash.svg"
+                width="16px"
+                height="16px"
+                *ngIf="showDelIcon"
+                (click)="presentDeleteConfirm()"
+              />
+              <span
+                class="sub-menu cursor"
+                *ngIf="showDelIcon"
+                (click)="presentDeleteConfirm()"
+                >Delete</span
+              >
+            </div>
+
+            <div class="acton-btns">
+              <img
+                class="cursor"
+                src="/assets/images/svg/edit.svg"
+                width="16px"
+                height="16px"
+                *ngIf="singleRowSelected"
+                (click)="editTax()"
+              /><span
+                class="sub-menu cursor"
+                *ngIf="singleRowSelected"
+                (click)="editTax()"
+                >Tax</span
+              >
+            </div>
+            <div class="acton-btns">
+              <img
+                class="cursor"
+                src="/assets/images/svg/edit.svg"
+                width="16px"
+                height="16px"
+                *ngIf="singleRowSelected"
+                (click)="editMrp()"
+              />
+              <span
+                class="sub-menu cursor"
+                *ngIf="singleRowSelected"
+                (click)="editMrp()"
+                >Mrp</span
+              >
+            </div>
+          </div>
+
+          <div class="left">
+            <div class="row1">
+              <div class="item1 headstyl-center txt-center-align">#</div>
+              <div class="item1 headstyl-center txt-center-align">&nbsp;</div>
+              <div class="item2 headstyl-left">Items Code</div>
+              <!-- <div class="item2 headstyl-left">Item Description</div> -->
+
+              <div class="item3 headstyl-right">Qty</div>
+              <div class="item3 headstyl-right">MRP</div>
+              <div class="item3 headstyl-center">Discount %</div>
+
+              <div class="item4 headstyl-right">Tax %</div>
+
+              <div class="item4 headstyl-right">Net Value</div>
+            </div>
+            <div class="row2">
+              <ng-container *ngIf="listArr?.length === 0 && iscustomerselected">
+                <div
+                  style="display: grid; place-items: center; padding: 2rem 2rem"
+                >
+                  <div style="color: #333333"><h4>Sales cart</h4></div>
+                  <div style="color: #666666">
+                    There are no items in your Sales cart
+                  </div>
+                </div>
+              </ng-container>
+
+              <div
+                *ngFor="let item of listArr ? listArr : []; let idx = index"
+                class="list-item"
+              >
+                <div>{{idx + 1}}</div>
+
+                <div class="txt-align">
+                  <mat-checkbox
+                    #myCheckbox
+                    (click)="checkedRow(idx)"
+                  ></mat-checkbox>
+                </div>
+                <div
+                  class="item2"
+                  style="color: rgb(2, 2, 193); cursor: pointer"
+                  (click)="showInventoryReportsDialog(item.product_code, item.product_id)"
+                >
+                  <div>{{item.product_code}}</div>
+                  <div>{{item.product_desc}}</div>
+                </div>
+                <!-- <div>&nbsp;</div> -->
+                <!-- <div class="item2">{{item.product_desc}}</div> -->
+
+                <div style="text-align: right" class="num-format-cell-style">
+                  <mat-form-field
+                    style="
+                      margin-bottom: -1.25em;
+                      width: 80px;
+                      text-align: right;
+                    "
+                  >
+                    <input
+                      matInput
+                      value="{{item.qty}}"
+                      (keyup)="handleQtyChange($event, idx)"
+                      required
+                      numeric
+                      maxlength="7"
+                      min="0"
+                      max="999999"
+                      appSelectOnFocus
+                      autocomplete="off"
+                      #para
+                    />
+                    <mat-hint
+                      *ngIf="item.qtyerror!== '' "
+                      style="color: red; font-size: 12px; margin-top: -4px"
+                      >{{item.qtyerror}}</mat-hint
+                    >
+                  </mat-form-field>
+                </div>
+
+                <div class="item4 txt-right-align num-format-cell-style">
+                  {{item.mrp | number:'1.2-2'}}
+                </div>
+
+                <div style="text-align: right" class="num-format-cell-style">
+                  <mat-form-field
+                    style="
+                      margin-bottom: -1.25em;
+                      width: 80px;
+                      text-align: right;
+                    "
+                  >
+                    <input
+                      matInput
+                      value="{{item.disc_percent}}"
+                      (keyup)="handleDiscountChange($event, idx)"
+                      required
+                      type="number"
+                      maxlength="7"
+                      min="0"
+                      max="100"
+                      appSelectOnFocus
+                      autocomplete="off"
+                    />
+                    <mat-hint
+                      *ngIf="item.discerror!== '' "
+                      style="color: red; font-size: 12px; margin-top: -4px"
+                      >{{item.discerror}}</mat-hint
+                    >
+                  </mat-form-field>
+                </div>
+
+                <div class="item4 txt-right-align num-format-cell-style">
+                  {{item.taxrate}}
+                </div>
+
+                <div class="item4 txt-right-align num-format-cell-style">
+                  <span [ngClass]="marginCheck(item.margin)">
+                    {{item.total_value }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="main-add">
+            <div class="left">
+              <div>
+                <div>
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Select Item Code</mat-label>
+                    <input
+                      matInput
+                      [matAutocomplete]="auto2"
+                      [readonly]="!iscustomerselected"
+                      formControlName="productctrl"
+                      #typehead2
+                      #plist
+                      autofocus
+                      matTooltipPosition="after"
+                      tabindex="2"
+                      autocomplete="off"
+                    />
+                    <mat-hint
+                      *ngIf="selected_description"
+                      matTooltip="Add product"
+                      >{{selected_description}} ::
+                      MRP:{{selected_mrp}}</mat-hint
+                    >
+
+                    <button
+                      mat-button
+                      matSuffix
+                      mat-icon-button
+                      aria-label="Clear"
+                      tabindex="-1"
+                      type="button"
+                      (click)="clearProdInput()"
+                    >
+                      <mat-icon tabindex="-1">close</mat-icon>
+                    </button>
+
+                    <mat-autocomplete
+                      #auto2="matAutocomplete"
+                      autoActiveFirstOption
+                      [displayWith]="displayProdFn"
+                      panelWidth="auto"
+                      (optionSelected)="setItemDesc($event, 'click')"
+                    >
+                      <mat-option
+                        *ngIf="isLoading"
+                        class="is-loading"
+                        style="width: 380px"
+                      >
+                        <mat-spinner diameter="20"></mat-spinner>
+                      </mat-option>
+                      <ng-container
+                        *ngIf="!isLoading && (product_lis !== null && product_lis?.length> 0)"
+                      >
+                        <mat-option
+                          *ngFor="let product of product_lis"
+                          [value]="product"
+                          style="
+                            padding-top: 15px;
+                            height: 3.3em !important;
+                            padding-bottom: 15px;
+                            border-bottom: 1px solid lightsteelblue;
+                          "
+                        >
+                          <div
+                            style="
+                              display: grid;
+                              grid-template-columns: 1fr 80px;
+                            "
+                          >
+                            <div>
+                              <div
+                                style="
+                                  font-size: 15px;
+                                  padding: 2px;
+                                  line-height: 1em;
+                                "
+                              >
+                                {{ product.product_code }} &nbsp;&nbsp;
+                                <span style="font-weight: 600">
+                                  MRP: {{ product.mrp | currency: "INR"}}</span
+                                >
+                              </div>
+                              <div
+                                style="
+                                  font-size: 14px;
+                                  padding: 2px;
+                                  line-height: 1em;
+                                "
+                              >
+                                {{ product.description }}
+                              </div>
+                            </div>
+                            <div>
+                              <div
+                                style="
+                                  font-size: 15px;
+                                  padding: 2px;
+                                  line-height: 1em;
+                                  text-align: right;
+                                "
+                              >
+                                {{ product.name }}
+                              </div>
+                              <div
+                                style="
+                                  font-size: 14px;
+                                  padding: 2px;
+                                  line-height: 1em;
+                                  text-align: right;
+                                  font-weight: 600;
+                                "
+                              >
+                                <span> {{ product.available_stock }} </span>
+                              </div>
+                            </div>
+                          </div>
+                        </mat-option>
+                      </ng-container>
+                      <ng-container
+                        *ngIf="!isLoading && (product_lis !== null && product_lis?.length === 0)"
+                      >
+                        <mat-option
+                          style="
+                            padding-top: 15px;
+                            height: 3.3em !important;
+                            padding-bottom: 15px;
+                            border-bottom: 1px solid lightsteelblue;
+                          "
+                        >
+                          <span style="color: darkorange">Item Not Found:</span>
+                          <span
+                            style="
+                              font-style: italic;
+                              color: #310ac0;
+                              cursor: pointer;
+                            "
+                            (click)="addProduct()"
+                            >+ Add Product</span
+                          >
+                        </mat-option>
+                      </ng-container>
+                    </mat-autocomplete>
+
+                    <mat-error
+                      *ngIf="submitForm?.controls['productctrl'].hasError('incorrect')"
+                    >
+                      Invalid product code
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div>
+                <mat-form-field class="example-full-width">
+                  <mat-label>MRP</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    min="1"
+                    max="100000"
+                    tabindex="3"
+                    formControlName="tempmrp"
+                    required
+                  />
+
+                  <mat-error
+                    *ngIf="submitForm?.controls['tempmrp'].hasError('required')"
+                  >
+                    Required feild
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div>
+                <mat-form-field class="example-full-width">
+                  <mat-label>Qty</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    min="1"
+                    max="9999"
+                    tabindex="4"
+                    formControlName="tempqty"
+                    required
+                    #qty
+                    (keydown.enter)="add($event)"
+                    appSelectOnFocus
+                    autocomplete="off"
+                  />
+                  <mat-hint
+                    matTooltip="Total Value"
+                    *ngIf="selected_description"
+                  >
+                    <span style="font-size: 11px; color: grey">TOTAL: </span>
+                    {{(this.submitForm?.value?.tempmrp *
+                    this.submitForm?.value?.tempqty) | currency: "INR"}}
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+              <div>
+                <button
+                  mat-stroked-button
+                  color="primary"
+                  tabindex="4"
+                  #newrow
+                  [disabled]="!iscustomerselected"
+                  type="button"
+                  (click)="add($event)"
+                >
+                  + New Row
+                </button>
+              </div>
+            </div>
+            <div class="right">
+              <div style="display: grid; grid-template-columns: 1fr 1fr">
+                <div style="color: #666666; text-align: right; font-size: 14px">
+                  # Items
+                </div>
+                <div style="color: #666666; text-align: right; font-size: 14px">
+                  {{listArr?.length}}
+                </div>
+
+                <div
+                  *ngIf="i_gst"
+                  style="color: #666666; text-align: right; font-size: 14px"
+                >
+                  IGST
+                </div>
+                <div
+                  style="color: #666666; text-align: right; font-size: 14px"
+                  *ngIf="i_gst"
+                >
+                  {{igstTotal | number:'1.2-2'}}
+                </div>
+
+                <div
+                  *ngIf="!i_gst"
+                  style="color: #666666; text-align: right; font-size: 14px"
+                >
+                  CGST
+                </div>
+                <div
+                  style="color: #666666; text-align: right; font-size: 14px"
+                  *ngIf="!i_gst"
+                >
+                  {{cgstTotal | number:'1.2-2'}}
+                </div>
+
+                <div
+                  *ngIf="!i_gst"
+                  style="color: #666666; text-align: right; font-size: 14px"
+                >
+                  SGST
+                </div>
+                <div
+                  style="color: #666666; text-align: right; font-size: 14px"
+                  *ngIf="!i_gst"
+                >
+                  {{sgstTotal | number:'1.2-2'}}
+                </div>
+              </div>
+              <div>
+                <div style="color: #666666; text-align: right; font-size: 14px">
+                  Total
+                </div>
+                <div
+                  style="text-align: right; font-size: 22px"
+                  class="align-self-center left-pad20 fweight500"
+                >
+                  {{this.total | number:'1.2-2'}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab label="Misc Cost" *ngIf="iscustomerselected">
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 50px;
+            padding: 2rem 1rem;
+          "
+        >
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              border: 1px solid grey;
+              padding: 1rem;
+              border-radius: 5px;
+            "
+          >
+            <div
+              style="
+                display: grid;
+                grid-column: 1/-1;
+                padding-bottom: 10px;
+                font-weight: 600;
+              "
+            >
+              SHIPPING COST
+            </div>
+            <div>
+              <mat-form-field>
+                <mat-label>Lr #</mat-label>
+                <input
+                  matInput
+                  #lrno
+                  type="text"
+                  tabindex="5"
+                  formControlName="lrno"
+                  autocomplete="off"
+                />
+
+                <mat-error
+                  *ngIf="(submitForm?.get('lrno').hasError('required') || submitForm?.get('lrno').hasError('patternInvalid'))  && submitForm?.get('lrno').touched"
+                >
+                  Invalid (or) Missing entry
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field>
+                <mat-label>Lr Date</mat-label>
+                <input
+                  matInput
+                  readonly
+                  tabindex="-1"
+                  [matDatepicker]="pickerlr"
+                  (focus)="pickerlr.open()"
+                  formControlName="lrdate"
+                  [max]="maxDate"
+                  autocomplete="off"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  tabindex="-1"
+                  [for]="pickerlr"
+                ></mat-datepicker-toggle>
+                <mat-datepicker tabindex="-1" #pickerlr></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field>
+                <mat-label>Shipped Date</mat-label>
+                <input
+                  matInput
+                  readonly
+                  tabindex="7"
+                  [matDatepicker]="pickerrcvd"
+                  formControlName="orderrcvddt"
+                  (focus)="pickerrcvd.open()"
+                  [max]="maxDate"
+                  autocomplete="off"
+                />
+                <mat-datepicker-toggle
+                  tabindex="-1"
+                  matSuffix
+                  [for]="pickerrcvd"
+                ></mat-datepicker-toggle>
+                <mat-datepicker tabindex="-1" #pickerrcvd></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field>
+                <mat-label># of boxes</mat-label>
+                <input
+                  matInput
+                  tabindex="8"
+                  type="number"
+                  formControlName="noofboxes"
+                  (change)="checkisNumber('noofboxes')"
+                  appSelectOnFocus
+                  autocomplete="off"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              border: 1px solid grey;
+              padding: 1rem;
+              border-radius: 5px;
+            "
+          >
+            <div
+              style="
+                display: grid;
+                grid-column: 1/-1;
+                padding-bottom: 10px;
+                font-weight: 600;
+              "
+            >
+              OTHER COST(S)
+            </div>
+            <div>
+              <mat-form-field>
+                <mat-label>Transport Cost</mat-label>
+                <input
+                  matInput
+                  tabindex="-1"
+                  type="number"
+                  formControlName="transport_charges"
+                  appSelectOnFocus
+                  (change)="checkisNumber('transport_charges')"
+                  autocomplete="off"
+                />
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field>
+                <mat-label>Unloading Cost</mat-label>
+                <input
+                  matInput
+                  tabindex="-1"
+                  type="number"
+                  formControlName="unloading_charges"
+                  (change)="checkisNumber('unloading_charges')"
+                  appSelectOnFocus
+                  autocomplete="off"
+                />
+              </mat-form-field>
+            </div>
+
+            <div>
+              <mat-form-field style="width: 80px">
+                <mat-label>Misc Cost</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  tabindex="-1"
+                  formControlName="misc_charges"
+                  (change)="checkisNumber('misc_charges')"
+                  appSelectOnFocus
+                  autocomplete="off"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+    <ng-container>
+      <div class="footer" *ngIf="iscustomerselected">
+        <!-- <div>
+					<div style="font-size: 12px; color: #797979">Net Total</div>
+					<div style="font-size: 32px">
+						{{getNetTotal("rounding") | currency: 'INR':'symbol':'1.0-0' }}
+					</div>
+				</div> -->
+        <div class="stockissue" *ngIf="stock_issue_ref">
+          <div>
+            <div style="font-size: 12px; color: grey">Stock Issued Ref#</div>
+            <div style="font-size: 14px; color: #444444">
+              {{stock_issue_ref}}
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 12px; color: grey">Stock Issued on</div>
+            <div style="font-size: 14px; color: #444444">
+              {{stock_issue_date_ref}}
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!stock_issue_ref">&nbsp;</div>
+
+        <div class="submit">
+          <button
+            appPreventDoubleClick
+            class="cursor"
+            (click)="presentCancelConfirm()"
+            [throttleTime]="500"
+            mat-stroked-button
+            color="primary"
+            type="button"
+            [disabled]="clicked"
+            tabindex="-1"
+          >
+            Cancel</button
+          >&nbsp;
+          <button
+            *ngIf="((submitForm?.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
+            style="border-radius: 0px"
+            appPreventDoubleClick
+            class="cursor"
+            (throttledClick)="onSubmit('draft', '')"
+            type="button"
+            [throttleTime]="500"
+            mat-stroked-button
+            type="button"
+            color="primary"
+            [disabled]="clicked"
+            tabindex="-1"
+          >
+            Save as Draft
+          </button>
+          <button
+            *ngIf="((submitForm?.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
+            mat-stroked-button
+            color="primary"
+            tabindex="-1"
+            #ddTrigger="matMenuTrigger"
+            [matMenuTriggerFor]="beforeMenu"
+            style="border-radius: 0px; border-left: 1px solid grey"
+          >
+            <mat-icon>arrow_drop_up</mat-icon>
+          </button>
+          &nbsp;
+          <button
+            *ngIf="((submitForm?.get('status').value === '') && (selInvType === 'stockissue')) "
+            style="border-radius: 0px"
+            appPreventDoubleClick
+            class="cursor"
+            (throttledClick)="onSubmit('draft','')"
+            type="button"
+            [throttleTime]="500"
+            mat-stroked-button
+            type="button"
+            color="primary"
+            [disabled]="clicked"
+            tabindex="-1"
+          >
+            Save Estimate
+          </button>
+
+          <button
+            *ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stockissue')) "
+            style="border-radius: 0px"
+            appPreventDoubleClick
+            class="cursor"
+            (throttledClick)="onSubmit('draft','')"
+            type="button"
+            [throttleTime]="500"
+            mat-stroked-button
+            type="button"
+            color="primary"
+            [disabled]="clicked"
+            tabindex="-1"
+          >
+            Update Estimate
+          </button>
+
+          <button
+            *ngIf="((submitForm.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
+            style="border-radius: 0px"
+            appPreventDoubleClick
+            class="cursor"
+            (throttledClick)="onSubmit('add','');"
+            type="button"
+            [throttleTime]="500"
+            mat-raised-button
+            type="button"
+            color="primary"
+            [disabled]="clicked"
+            tabindex="-1"
+          >
+            Generate Invoice
+          </button>
+          <!-- (click)="actionMethod(); btn.disabled = true;" -->
+          <button
+            *ngIf="((submitForm.get('status').value === 'C') && (selInvType !== 'stockissue')) "
+            style="border-radius: 0px"
+            appPreventDoubleClick
+            class="cursor"
+            (throttledClick)="onSubmit('add','')"
+            type="button"
+            [throttleTime]="500"
+            mat-raised-button
+            type="button"
+            color="primary"
+            [disabled]="clicked"
+            tabindex="-1"
+          >
+            Update Invoice
+          </button>
+
+          &nbsp;
+
+          <!-- <button
+						*ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stockissue')) "
+						style="border-radius: 0px"
+						appPreventDoubleClick
+						class="cursor"
+						(throttledClick)="presentConvertSaleConfirm()"
+						type="button"
+						[throttleTime]="500"
+						mat-raised-button
+						type="button"
+						color="primary"
+						[disabled]="clicked"
+						tabindex="17"
+					>
+						Convert to Sale Invoice
+					</button> -->
+        </div>
+      </div>
+    </ng-container>
+  </form>
+
+  <ngx-spinner
+    bdColor="rgba(0, 0, 0, 0.8)"
+    size="small"
+    color="#fff"
+    type="line-scale"
+    ><p style="color: white">Loading...</p></ngx-spinner
+  >
+
+  <mat-menu #beforeMenu="matMenu" [overlapTrigger]="false" xPosition="before">
+    <mat-option>
+      <button
+        mat-button
+        type="button"
+        tabindex="-1"
+        (click)="onSubmit('draft','continue')"
+      >
+        Save Draft & Continue
+      </button>
+    </mat-option>
+  </mat-menu>
+</ion-content>
