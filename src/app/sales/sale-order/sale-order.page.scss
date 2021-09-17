@@ -23,7 +23,7 @@
 
     .row1 {
       display: grid;
-      grid-template-columns: 30px 40px minmax(250px, 500px) 100px 100px 100px 100px 100px 100px;
+      grid-template-columns: 30px 40px minmax(250px, 500px) 100px 100px 100px 100px 100px 100px 60px;
       gap: 10px;
       align-items: center;
       color: "#a5a5a6";
@@ -36,7 +36,7 @@
 
       .list-item {
         display: grid;
-        grid-template-columns: 30px 40px minmax(250px, 500px) 100px 100px 100px 100px 100px 100px;
+        grid-template-columns: 30px 40px minmax(250px, 500px) 100px 100px 100px 100px 100px 100px 60px;
         gap: 10px;
         align-items: end;
 
@@ -120,6 +120,10 @@
 .num-format-cell-style {
   align-self: center;
   padding-right: 10px;
+}
+
+.num-format-cell-style:focus {
+  border: 1px solid darkblue;
 }
 
 .desc {

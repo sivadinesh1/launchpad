@@ -20,11 +20,14 @@ const routes: Routes = [
   },
   {
     path: 'sale-order',
-    // component: SaleOrderPage,
     loadChildren: () =>
       import('./sale-order/sale-order.module').then(
         (m) => m.SaleOrderPageModule
       ),
+  },
+  {
+    path: 'search-sale-order',
+    loadChildren: () => import('./search-sale-order/search-sale-order.module').then( m => m.SearchSaleOrderPageModule)
   },
 ];
 

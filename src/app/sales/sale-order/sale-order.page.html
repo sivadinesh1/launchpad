@@ -398,6 +398,7 @@
               <div class="item4 headstyl-right">Tax %</div>
 
               <div class="item4 headstyl-right">Net Value</div>
+              <div class="item4 headstyl-right">&nbsp;</div>
             </div>
             <div class="row2">
               <ng-container *ngIf="listArr?.length === 0 && iscustomerselected">
@@ -434,8 +435,9 @@
                 <!-- <div>&nbsp;</div> -->
                 <!-- <div class="item2">{{item.product_desc}}</div> -->
 
-                <div style="text-align: right" class="num-format-cell-style">
+                <div style="text-align: right">
                   <mat-form-field
+                    appearance="none"
                     style="
                       margin-bottom: -1.25em;
                       width: 80px;
@@ -444,6 +446,7 @@
                   >
                     <input
                       matInput
+                      class="num-format-cell-style"
                       value="{{item.qty}}"
                       (keyup)="handleQtyChange($event, idx)"
                       required
@@ -504,6 +507,7 @@
                     {{item.total_value }}
                   </span>
                 </div>
+                <div>delete</div>
               </div>
             </div>
           </div>

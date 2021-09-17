@@ -50,11 +50,18 @@ const routes: Routes = [
             (m) => m.PurchasePageModule
           ),
       },
+      // {
+      //   path: 'search-sales',
+      //   loadChildren: () =>
+      //     import('./sales/search-sales/search-sales.module').then(
+      //       (m) => m.SearchSalesPageModule
+      //     ),
+      // },
       {
         path: 'search-sales',
         loadChildren: () =>
-          import('./sales/search-sales/search-sales.module').then(
-            (m) => m.SearchSalesPageModule
+          import('./sales/search-sale-order/search-sale-order.module').then(
+            (m) => m.SearchSaleOrderPageModule
           ),
       },
       {

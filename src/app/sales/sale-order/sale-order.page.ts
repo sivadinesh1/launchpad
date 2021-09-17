@@ -78,19 +78,13 @@ import { ComponentCanDeactivate } from 'src/app/services/dirtycheck.guard';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SaleOrderPage implements ComponentCanDeactivate {
-  // @HostListener allows us to also guard against browser refresh, close, etc.
-  // @HostListener('window:beforeunload')
-  // canDeactivate(): Observable<boolean> | boolean {
-  //   debugger;
-  //   return false;
-  //   // insert logic to check if there are pending changes here;
-  //   // returning true will navigate without confirmation
-  //   // returning false will show a confirm dialog before navigating away
-  // }
-
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-    return false;
+    if (this.submitForm.pristine) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   breadmenu = 'New Sale';

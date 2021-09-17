@@ -57,3 +57,17 @@
   line-height: 16px;
   cursor: pointer;
 }
+
+#search input[type="search"].filled {
+  width: 400px;
+  padding-left: 32px;
+  color: #4a83c0;
+  background-color: #fff;
+  cursor: auto;
+}
+
+.close {
+  z-index: 10;
+  margin-left: -3rem;
+  margin-right: 1rem;
+}

@@ -14,6 +14,26 @@
   </span>
   <span class="spacer"></span>
 
+  <span class="right">
+    <form id="search">
+      <input
+        #search
+        type="search"
+        placeholder="Search"
+        [ngClass]="{ filled: filled }"
+        (click)="filled = true"
+        (blur)="filled = search.value ? true : false"
+      />
+      <button
+        class="close"
+        *ngIf="filled"
+        (click)="search.value = ''; filled = false"
+      >
+        X
+      </button>
+    </form>
+  </span>
+
   <span style="align-self: center; padding: 0px 0px 0px 40px">
     <img
       src="../../assets/images/svg/sales-b.svg"

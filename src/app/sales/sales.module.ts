@@ -8,6 +8,7 @@ import { SalesPageRoutingModule } from './sales-routing.module';
 
 import { SalesPage } from './sales.page';
 import { SharedModule } from '../shared.module';
+import { SearchSaleOrderPipe } from './search-sale-order.pipe';
 
 
 @NgModule({
@@ -19,7 +20,7 @@ import { SharedModule } from '../shared.module';
     ReactiveFormsModule,
     SalesPageRoutingModule
   ],
-  declarations: [SalesPage]
+  declarations: [SalesPage, SearchSaleOrderPipe]
 })
 export class SalesPageModule { }
 

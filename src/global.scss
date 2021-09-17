@@ -386,3 +386,8 @@ input[type="number"] {
 .mat-option:focus:not(.mat-option-disabled) {
   background-color: #9a9999c4;
 }
+
+.mat-menu-panel.myMenu {
+  margin-top: -40px;
+  width: 200px;
+}
