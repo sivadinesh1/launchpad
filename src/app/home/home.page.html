@@ -1,15 +1,22 @@
 <div>
   <mat-toolbar color="primary" class="example-toolbar">
-    <button mat-icon-button (click)="sidenav.toggle()">
+    <button mat-icon-button (click)="onToolbarMenuToggle()">
       <mat-icon>menu</mat-icon>
     </button>
     <app-header></app-header>
   </mat-toolbar>
-  <mat-sidenav-container fullscreen style="margin-top: 56px">
-    <mat-sidenav #sidenav mode="side" [opened]="true">
+  <mat-sidenav-container fullscreen id="sidenavContainer">
+    <mat-sidenav
+      #sidenav
+      mode="side"
+      [opened]="true"
+      id="sidenav"
+      [class.menu-open]="isMenuOpen"
+      [class.menu-close]="!isMenuOpen"
+    >
       <app-left-menu></app-left-menu>
     </mat-sidenav>
-    <mat-sidenav-content class="main_content">
+    <mat-sidenav-content [ngStyle]="{ 'margin-left.px': contentMargin }">
       <ion-router-outlet></ion-router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>

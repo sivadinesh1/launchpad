@@ -1,1 +1,32 @@
 @import "../../breakpoints/breakpoints.scss";
+
+#toolbarMenu {
+  cursor: pointer;
+  margin-right: 20px;
+}
+#mainToolbar .toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+#mainToolbar .toolbar-icon {
+  cursor: pointer;
+  margin: 0 8px;
+}
+
+#sidenavContainer {
+  margin-top: 56px;
+}
+
+#sidenav {
+  width: 180px;
+}
+
+#sidenav.menu-close {
+  width: 60px;
+  transition: width 0.2s;
+}
+
+#sidenav.menu-open {
+  width: 180px;
+  transition: width 0.2s;
+}
