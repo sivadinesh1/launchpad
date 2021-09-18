@@ -1,5 +1,4 @@
-<ion-content>
-  <div style="display: flex">
+<!-- <div style="display: flex">
     <div [matMenuTriggerFor]="menuN" #menuTriggerN>
       <img
         src="/assets/images/svg/filter-results-button.svg"
@@ -160,109 +159,117 @@
         </mat-form-field>
       </form>
     </div>
+  </div> -->
+
+<div style="background-color: aquamarine; display: flex">
+  <div [matMenuTriggerFor]="menuN" #menuTriggerN>
+    <img
+      src="/assets/images/svg/filter-results-button.svg"
+      width="22px"
+      height="22px"
+    />
+  </div>
+</div>
+
+<div class="header header-style">
+  <div>#</div>
+  <div>Customer Name</div>
+  <div>Invoice #</div>
+  <div>Date</div>
+
+  <div class="txt-right-align">Items</div>
+  <div class="txt-right-align">Total Value</div>
+  <div class="txt-center-align">Status</div>
+  <div>
+    <img
+      matTooltip="Download"
+      matTooltipClass="tooltip"
+      src="/assets/images/svg/direct-download.svg"
+      style="cursor: pointer"
+      width="32px"
+      height="32px"
+      (click)="exportDraftSalesToExcel()"
+    />
+  </div>
+</div>
+
+<div *ngFor="let item of filteredValues; let idx = index" class="listItem">
+  <div>{{idx + 1}}</div>
+  <div class="item">{{item.customer_name}}</div>
+  <div class="item" (click)="openDialog(item)">{{item.invoice_no}}</div>
+  <div class="item">{{item.invoice_date}}</div>
+
+  <div class="item" style="text-align: right">{{item.no_of_items}}</div>
+  <div class="item" style="text-align: right">
+    {{item.net_total.toLocaleString('en-IN')}}
   </div>
 
-  <div class="header header-style">
-    <div>#</div>
-    <div>CUSTOMER NAME</div>
-    <div>INVOICE #</div>
-    <div>INV DATE</div>
-
-    <div class="txt-right-align"># ITEMS</div>
-    <div class="txt-right-align">TOTAL VALUE</div>
-    <div class="txt-center-align">STATUS</div>
-    <div>
-      <img
-        matTooltip="Download"
-        matTooltipClass="tooltip"
-        src="/assets/images/svg/direct-download.svg"
-        style="cursor: pointer"
-        width="32px"
-        height="32px"
-        (click)="exportDraftSalesToExcel()"
-      />
-    </div>
+  <div class="item" style="text-align: right">
+    {{item.status === 'D' ? 'Draft' : 'Completed'}}
   </div>
 
-  <div *ngFor="let item of filteredValues; let idx = index" class="listItem">
-    <div>{{idx + 1}}</div>
-    <div class="item">{{item.customer_name}}</div>
-    <div class="item" (click)="openDialog(item)">{{item.invoice_no}}</div>
-    <div class="item">{{item.invoice_date}}</div>
-
-    <div class="item" style="text-align: right">{{item.no_of_items}}</div>
-    <div class="item" style="text-align: right">
-      {{item.net_total.toLocaleString('en-IN')}}
-    </div>
-
-    <div class="item" style="text-align: right">
-      {{item.status === 'D' ? 'Draft' : 'Completed'}}
-    </div>
-
-    <div class="item" style="text-align: center">
-      <mat-icon
-        #tooltip="matTooltip"
-        matTooltip="Edit/Modify Sale Details"
-        matTooltipClass="tooltip"
-        (mousedown)="tooltip.hide()"
-        [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
-        (click)="goSalesEditScreen(item)"
-        >edit
-      </mat-icon>
-      <span style="position: relative; color: #6d78d2; top: -5px"
-        >&nbsp;Edit</span
-      >
-    </div>
-
-    <div class="item" style="text-align: center">&nbsp;</div>
-    <div
-      class="item"
-      style="text-align: center"
-      *ngIf="item.sale_type === 'gstinvoice' && item.status !== 'D'"
+  <div class="item" style="text-align: center">
+    <mat-icon
+      #tooltip="matTooltip"
+      matTooltip="Edit/Modify Sale Details"
+      matTooltipClass="tooltip"
+      (mousedown)="tooltip.hide()"
+      [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
+      (click)="goSalesEditScreen(item)"
+      >edit
+    </mat-icon>
+    <span style="position: relative; color: #6d78d2; top: -5px"
+      >&nbsp;Edit</span
     >
-      <mat-icon
-        #tooltip="matTooltip"
-        matTooltip="Print Sale"
-        matTooltipClass="tooltip"
-        (mousedown)="tooltip.hide()"
-        [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
-        (click)="goPrintInvoice(item)"
-        >print
-      </mat-icon>
-      <span style="font-size: 12px; font-weight: 600"
-        >[{{item.print_count === -1 ? 'M': item.print_count}}]
-      </span>
-    </div>
-
-    <!-- *ngIf="this.deleteAccess === 'Y'" -->
-    <div class="item" *ngIf="item.status === 'D'" style="text-align: center">
-      <mat-icon
-        #tooltip="matTooltip"
-        matTooltip="Delete Draft Sale"
-        matTooltipClass="tooltip"
-        (mousedown)="tooltip.hide()"
-        [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
-        (click)="presentAlertConfirm(item)"
-        >delete_outline </mat-icon
-      ><span style="position: relative; color: red; top: -5px"
-        >&nbsp;Delete</span
-      >
-    </div>
-
-    <div *ngIf="tabIndex === 1">
-      <img
-        matTooltip="Sales Return"
-        matTooltipClass="tooltip"
-        src="/assets/images/svg/return.svg"
-        style="cursor: pointer"
-        width="24px"
-        height="24px"
-        color="red"
-        (click)="salesReturn(item)"
-      />
-    </div>
   </div>
-</ion-content>
+
+  <div class="item" style="text-align: center">&nbsp;</div>
+  <div
+    class="item"
+    style="text-align: center"
+    *ngIf="item.sale_type === 'gstinvoice' && item.status !== 'D'"
+  >
+    <mat-icon
+      #tooltip="matTooltip"
+      matTooltip="Print Sale"
+      matTooltipClass="tooltip"
+      (mousedown)="tooltip.hide()"
+      [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
+      (click)="goPrintInvoice(item)"
+      >print
+    </mat-icon>
+    <span style="font-size: 12px; font-weight: 600"
+      >[{{item.print_count === -1 ? 'M': item.print_count}}]
+    </span>
+  </div>
+
+  <!-- *ngIf="this.deleteAccess === 'Y'" -->
+  <div class="item" *ngIf="item.status === 'D'" style="text-align: center">
+    <mat-icon
+      #tooltip="matTooltip"
+      matTooltip="Delete Draft Sale"
+      matTooltipClass="tooltip"
+      (mousedown)="tooltip.hide()"
+      [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
+      (click)="presentAlertConfirm(item)"
+      >delete_outline </mat-icon
+    ><span style="position: relative; color: red; top: -5px">&nbsp;Delete</span>
+  </div>
+
+  <div *ngIf="tabIndex === 1">
+    <img
+      matTooltip="Sales Return"
+      matTooltipClass="tooltip"
+      src="/assets/images/svg/return.svg"
+      style="cursor: pointer"
+      width="24px"
+      height="24px"
+      color="red"
+      (click)="salesReturn(item)"
+    />
+  </div>
+</div>
+
 <!-- 
 DnD - sample vertical menu
 <mat-icon
