@@ -30,6 +30,7 @@ import { CommonApiService } from 'src/app/services/common-api.service';
 import { RequireMatch } from 'src/app/util/directives/requireMatch';
 import { Product } from 'src/app/models/Product';
 import * as moment from 'moment';
+import { InventoryReportsDialogComponent } from '../reports/inventory-reports-dialog/inventory-reports-dialog.component';
 
 @Component({
   selector: 'app-header',
@@ -57,8 +58,12 @@ export class HeaderComponent implements OnInit {
   customernameprint: string = '';
 
   isLoading = false;
+  isCLoading = false;
+  customer_lis: Customer[];
   product_lis: Product[];
   listArr = [];
+
+  searchByLbl: string;
 
   constructor(
     private _authservice: AuthenticationService,
@@ -68,6 +73,8 @@ export class HeaderComponent implements OnInit {
     private _commonApiService: CommonApiService,
     private _fb: FormBuilder
   ) {
+    this.searchByLbl = 'Inventory';
+
     this.userdata$ = this._authservice.currentUser;
 
     this.userdata$
@@ -78,12 +85,18 @@ export class HeaderComponent implements OnInit {
       });
 
     this.submitForm = this._fb.group({
-      productctrl: [null, [RequireMatch]],
+      customerctrl: [null, [Validators.required, RequireMatch]],
+      productctrl: [null],
     });
   }
 
   ngOnInit() {
     this.searchProducts();
+    this.searchCustomers();
+  }
+
+  searchBy(param) {
+    this.searchByLbl = param;
   }
 
   searchProducts() {
@@ -120,6 +133,35 @@ export class HeaderComponent implements OnInit {
       });
   }
 
+  searchCustomers() {
+    this.submitForm.controls['customerctrl'].valueChanges
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.isCLoading = true)),
+        switchMap((id: any) => {
+          if (id != null && id.length !== undefined && id.length >= 2) {
+            return this._commonApiService.getCustomerInfo({
+              centerid: this.userdata.center_id,
+              searchstr: id,
+            });
+          } else {
+            return empty();
+          }
+        })
+      )
+
+      .subscribe((data: any) => {
+        this.isCLoading = false;
+        this.customer_lis = data.body;
+
+        this._cdr.markForCheck();
+      });
+  }
+
+  displayFn(obj: any): string | undefined {
+    return obj && obj.name ? obj.name : undefined;
+  }
+
   displayProdFn(obj: any): string | undefined {
     return obj && obj.product_code ? obj.product_code : undefined;
   }
@@ -135,6 +177,51 @@ export class HeaderComponent implements OnInit {
     this.product_lis = null;
 
     this._cdr.markForCheck();
+  }
+
+  clearCustomerInput() {
+    this.submitForm.patchValue({
+      customerctrl: null,
+    });
+    this.customer_lis = null;
+
+    this._cdr.markForCheck();
+  }
+
+  // (click)="showInventoryReportsDialog(item.product_code, item.product_id)"
+
+  async showTransactions(event, from) {
+    let onlyProductCodeArr = this.listArr.map((element) => {
+      return element.product_code;
+    });
+
+    if (from === 'tab') {
+      this.showInventoryReportsDialog(event.product_code, event.product_id);
+    } else {
+      this.showInventoryReportsDialog(
+        event.option.value.product_code,
+        event.option.value.product_id
+      );
+    }
+  }
+
+  async showInventoryReportsDialog(product_code, product_id) {
+    debugger;
+    const modal = await this._modalcontroller.create({
+      component: InventoryReportsDialogComponent,
+      componentProps: {
+        center_id: this.center_id,
+        product_code: product_code,
+        product_id: product_id,
+      },
+      cssClass: 'select-modal',
+    });
+
+    modal.onDidDismiss().then((result) => {
+      this._cdr.markForCheck();
+    });
+
+    await modal.present();
   }
 
   async logout() {
@@ -213,24 +300,6 @@ export class HeaderComponent implements OnInit {
 
   goAccountsScreen() {
     this._router.navigateByUrl(`/home/accounts/accounts-dash`);
-  }
-
-  async openSettings() {
-    const modal = await this._modalcontroller.create({
-      component: SettingsDialogComponent,
-      componentProps: {
-        center_id: this.userdata.center_id,
-        role_id: this.userdata.role_id,
-      },
-      cssClass: 'select-modal',
-    });
-
-    modal.onDidDismiss().then((result) => {
-      console.log('The result:', result);
-      this._cdr.markForCheck();
-    });
-
-    await modal.present();
   }
 
   onclick() {

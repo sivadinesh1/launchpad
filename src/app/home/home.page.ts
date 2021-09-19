@@ -17,6 +17,7 @@ import { SidenavService } from '../services/sidenav.service';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   providers: [LoadingService, MessagesService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage implements OnInit {
   userdata: any;
@@ -24,14 +25,22 @@ export class HomePage implements OnInit {
 
   onSideNavChange: boolean;
 
-  isMenuOpen = true;
-  contentMargin = 180;
+  isMenuOpen: boolean;
+  contentMargin: number;
+
+  isloaded: boolean;
 
   constructor(
     private _authservice: AuthenticationService,
     private _sidenavService: SidenavService,
+    private _cdr: ChangeDetectorRef,
     private _router: Router
   ) {
+    this.isMenuOpen = false;
+    this.contentMargin = 180;
+    this.isloaded = false;
+
+    this.onToolbarMenuToggle();
     this._sidenavService.sideNavState$.subscribe((res) => {
       this.onSideNavChange = res;
     });
@@ -48,6 +57,7 @@ export class HomePage implements OnInit {
     } else {
       this.contentMargin = 180;
     }
+    this.isloaded = true;
   }
 
   goAdmin() {

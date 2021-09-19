@@ -13,7 +13,11 @@
     >
       <app-left-menu></app-left-menu>
     </mat-sidenav>
-    <mat-sidenav-content [ngStyle]="{ 'margin-left.px': contentMargin }">
+    <mat-sidenav-content
+      class="test"
+      [ngStyle]="{ 'margin-left.px': contentMargin }"
+      *ngIf="isloaded"
+    >
       <ion-router-outlet></ion-router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>

@@ -53,27 +53,13 @@
   cursor: pointer;
 }
 
-input[type="search"] {
-  width: 400px;
-  // padding-left: 32px;
-  // color: #4a83c0;
-  // background-color: #fff;
-  // cursor: auto;
-  border: 0px none;
-}
-
 input[type="search"]:focus {
   outline: none;
 }
 
-// .close {
-//   z-index: 10;
-//   margin-left: -3rem;
-//   margin-right: 1rem;
-// }
-
 .example-full-width {
-  width: 400px;
-  border: 1px solid grey;
+  width: 449px;
+
   border-radius: 5px;
+  margin-bottom: -1.25em;
 }
