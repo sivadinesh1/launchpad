@@ -4,17 +4,32 @@ import {
   Input,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
+  EventEmitter,
+  Output,
 } from '@angular/core';
 
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { empty, Observable } from 'rxjs';
 import { User } from '../../models/User';
-import { filter, map, defaultIfEmpty } from 'rxjs/operators';
+import {
+  filter,
+  map,
+  defaultIfEmpty,
+  debounceTime,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 
 import { SearchDialogComponent } from '../search/search-dialog/search-dialog.component';
 import { SettingsDialogComponent } from '../settings/settings-dialog/settings-dialog.component';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Customer } from 'src/app/models/Customer';
+import { CommonApiService } from 'src/app/services/common-api.service';
+import { RequireMatch } from 'src/app/util/directives/requireMatch';
+import { Product } from 'src/app/models/Product';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-header',
@@ -31,11 +46,27 @@ export class HeaderComponent implements OnInit {
   public today = Date.now();
   filled = false;
 
+  @Output()
+  onHBMenuClick = new EventEmitter<any>();
+
+  customerdata: any;
+
+  submitForm: FormGroup;
+
+  customername: string = '';
+  customernameprint: string = '';
+
+  isLoading = false;
+  product_lis: Product[];
+  listArr = [];
+
   constructor(
     private _authservice: AuthenticationService,
     private _modalcontroller: ModalController,
     private _cdr: ChangeDetectorRef,
-    private _router: Router
+    private _router: Router,
+    private _commonApiService: CommonApiService,
+    private _fb: FormBuilder
   ) {
     this.userdata$ = this._authservice.currentUser;
 
@@ -45,12 +76,65 @@ export class HeaderComponent implements OnInit {
         this.userdata = data;
         this._cdr.markForCheck();
       });
+
+    this.submitForm = this._fb.group({
+      productctrl: [null, [RequireMatch]],
+    });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.searchProducts();
+  }
+
+  searchProducts() {
+    let invdt = '';
+    if (this.submitForm.value.invoicedate === null) {
+      invdt = moment().format('DD-MM-YYYY');
+    } else {
+      invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
+    }
+
+    this.submitForm.controls['productctrl'].valueChanges
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.isLoading = true)),
+        switchMap((id: any) => {
+          if (id != null && id.length >= 1) {
+            return this._commonApiService.getProductInformation({
+              centerid: this.userdata.center_id,
+              customerid: 1,
+              orderdate: invdt,
+              searchstr: id,
+            });
+          } else {
+            return empty();
+          }
+        })
+      )
+
+      .subscribe((data: any) => {
+        this.isLoading = false;
+        this.product_lis = data.body;
+
+        this._cdr.markForCheck();
+      });
+  }
+
+  displayProdFn(obj: any): string | undefined {
+    return obj && obj.product_code ? obj.product_code : undefined;
+  }
 
   goAdmin() {
     this._router.navigate([`/home/admin`]);
+  }
+
+  clearProdInput() {
+    this.submitForm.patchValue({
+      productctrl: null,
+    });
+    this.product_lis = null;
+
+    this._cdr.markForCheck();
   }
 
   async logout() {
@@ -147,5 +231,23 @@ export class HeaderComponent implements OnInit {
     });
 
     await modal.present();
+  }
+
+  onclick() {
+    this.onHBMenuClick.emit();
+  }
+
+  setCustomerInfo(event, from) {
+    if (event !== undefined) {
+      if (from === 'tab') {
+        this.customerdata = event;
+
+        this._cdr.detectChanges();
+      } else {
+        this.customerdata = event.option.value;
+
+        this._cdr.detectChanges();
+      }
+    }
   }
 }

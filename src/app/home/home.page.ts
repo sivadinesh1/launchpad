@@ -58,4 +58,8 @@ export class HomePage implements OnInit {
     await this._authservice.logOut();
     this._router.navigateByUrl('');
   }
+
+  check() {
+    console.log('check');
+  }
 }

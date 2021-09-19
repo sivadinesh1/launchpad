@@ -14,7 +14,7 @@
 }
 
 #sidenavContainer {
-  margin-top: 56px;
+  margin-top: 64px;
 }
 
 #sidenav {
@@ -29,4 +29,14 @@
 #sidenav.menu-open {
   width: 180px;
   transition: width 0.2s;
+}
+
+.example-toolbar {
+  display: flex;
+  padding: 8px 20px 0px 8px;
+  height: 60px;
+  color: #222;
+  background-color: #fff;
+
+  box-shadow: 0 0 9px -5px rgb(0 0 0 / 70%);
 }

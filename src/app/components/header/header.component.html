@@ -1,37 +1,189 @@
 <div fxFlex="row" fxLayoutGap="10px" class="header">
-  <span>
-    <img
-      src="/assets/images/svg/launchpad-logo.svg"
-      width="200px"
-      height="30px"
-      alt=""
-    />
-  </span>
-  <span style="align-self: center">
-    <div class="cname">
-      {{ userdata?.center_name }}
+  <button mat-icon-button (click)="onclick()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <div>
+    <div
+      style="
+        display: inline-grid;
+
+        position: relative;
+        top: -8px;
+      "
+    >
+      <img
+        src="/assets/images/svg/launchpad-logo.svg"
+        width="80px"
+        height="13px"
+        alt=""
+      />
     </div>
-  </span>
+    <div style="align-self: center; position: relative; top: -8px">
+      <div class="cname">
+        {{ userdata?.center_name }}
+      </div>
+    </div>
+  </div>
+
   <span class="spacer"></span>
 
   <span class="right">
-    <form id="search">
-      <input
-        #search
-        type="search"
-        placeholder="Search"
-        [ngClass]="{ filled: filled }"
-        (click)="filled = true"
-        (blur)="filled = search.value ? true : false"
-      />
-      <button
-        class="close"
-        *ngIf="filled"
-        (click)="search.value = ''; filled = false"
+    <div
+      style="
+        display: inline-block;
+        width: 500px;
+        border: 1px solid #d8d8d8;
+        border-radius: 5px;
+      "
+    >
+      <div
+        style="
+          width: 34px;
+          display: inline-block;
+          text-align: center;
+          vertical-align: middle;
+        "
       >
-        X
-      </button>
-    </form>
+        <img
+          src="../../assets/images/svg/search-b.svg"
+          (click)="showAddProductComp()"
+          width="20px"
+          height="20px"
+          class="img cursor"
+          #tooltip="matTooltip"
+          matTooltip="Quick Search (Items/Customer/Vendor/Brand)"
+          matTooltipClass="tooltip"
+          (mousedown)="tooltip.hide()"
+        />
+      </div>
+
+      <div>
+        <form *ngIf="submitForm" [formGroup]="submitForm">
+          <mat-form-field class="example-full-width">
+            <input
+              matInput
+              [matAutocomplete]="auto2"
+              formControlName="productctrl"
+              #typehead2
+              #plist
+              autofocus
+              matTooltipPosition="after"
+              tabindex="2"
+              autocomplete="off"
+              placeholder="Search Items"
+            />
+
+            <button
+              mat-button
+              matSuffix
+              mat-icon-button
+              aria-label="Clear"
+              tabindex="-1"
+              type="button"
+              (click)="clearProdInput()"
+            >
+              <mat-icon tabindex="-1">close</mat-icon>
+            </button>
+
+            <mat-autocomplete
+              #auto2="matAutocomplete"
+              autoActiveFirstOption
+              [displayWith]="displayProdFn"
+              panelWidth="auto"
+            >
+              <mat-option
+                *ngIf="isLoading"
+                class="is-loading"
+                style="width: 380px"
+              >
+                <mat-spinner diameter="20"></mat-spinner>
+              </mat-option>
+              <ng-container
+                *ngIf="
+                  !isLoading && product_lis !== null && product_lis?.length > 0
+                "
+              >
+                <mat-option
+                  *ngFor="let product of product_lis"
+                  [value]="product"
+                  style="
+                    padding-top: 15px;
+                    height: 3.3em !important;
+                    padding-bottom: 15px;
+                    border-bottom: 1px solid lightsteelblue;
+                  "
+                >
+                  <div style="display: grid; grid-template-columns: 1fr 80px">
+                    <div>
+                      <div
+                        style="font-size: 15px; padding: 2px; line-height: 1em"
+                      >
+                        {{ product.product_code }} &nbsp;&nbsp;
+                        <span style="font-weight: 600">
+                          MRP: {{ product.mrp | currency: "INR" }}</span
+                        >
+                      </div>
+                      <div
+                        style="font-size: 14px; padding: 2px; line-height: 1em"
+                      >
+                        {{ product.description }}
+                      </div>
+                    </div>
+                    <div>
+                      <div
+                        style="
+                          font-size: 15px;
+                          padding: 2px;
+                          line-height: 1em;
+                          text-align: right;
+                        "
+                      >
+                        {{ product.name }}
+                      </div>
+                      <div
+                        style="
+                          font-size: 14px;
+                          padding: 2px;
+                          line-height: 1em;
+                          text-align: right;
+                          font-weight: 600;
+                        "
+                      >
+                        <span> {{ product.available_stock }} </span>
+                      </div>
+                    </div>
+                  </div>
+                </mat-option>
+              </ng-container>
+              <ng-container
+                *ngIf="
+                  !isLoading &&
+                  product_lis !== null &&
+                  product_lis?.length === 0
+                "
+              >
+                <mat-option
+                  style="
+                    padding-top: 15px;
+                    height: 3.3em !important;
+                    padding-bottom: 15px;
+                    border-bottom: 1px solid lightsteelblue;
+                  "
+                >
+                  <span style="color: darkorange">Item Not Found:</span>
+                </mat-option>
+              </ng-container>
+            </mat-autocomplete>
+
+            <mat-error
+              *ngIf="submitForm?.controls['productctrl'].hasError('incorrect')"
+            >
+              Invalid product code
+            </mat-error>
+          </mat-form-field>
+        </form>
+      </div>
+    </div>
   </span>
 
   <span style="align-self: center; padding: 0px 0px 0px 40px">
