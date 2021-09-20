@@ -5,7 +5,7 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 
-import { SidenavService } from 'src/app/services/sidenav.service';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Observable } from 'rxjs';
@@ -35,7 +35,7 @@ interface Page {
 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LeftMenuComponent implements OnInit {
+export class LeftMenuComponent {
   public sideNavState: boolean = false;
   public linkText: boolean = false;
   clickedItem: any;
@@ -193,7 +193,7 @@ export class LeftMenuComponent implements OnInit {
   ];
 
   constructor(
-    private _sidenavService: SidenavService,
+    
     private _authservice: AuthenticationService,
     private _router: Router,
     private _modalcontroller: ModalController,
@@ -231,11 +231,7 @@ export class LeftMenuComponent implements OnInit {
     this.expanded1 = false;
   }
 
-  ngOnInit() {}
-
-  ngAfterViewInit(): void {
-    // console.log('dinesh ngafter > ' + JSON.stringify(this.userdata));
-  }
+  
 
   onSinenavToggle() {
     this.sideNavState = !this.sideNavState;
@@ -244,12 +240,12 @@ export class LeftMenuComponent implements OnInit {
       this.linkText = this.sideNavState;
       this._cdr.detectChanges();
     }, 200);
-    this._sidenavService.sideNavState$.next(this.sideNavState);
+    
     this._cdr.detectChanges();
   }
 
   routeTo(name: string, url: string) {
-    console.log('dinesh..1');
+    
     this._authservice.setCurrentMenu(name);
 
     this.clickedItem = name;

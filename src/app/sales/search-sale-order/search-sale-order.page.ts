@@ -1,59 +1,41 @@
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import {
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  ViewChild,
-  ChangeDetectionStrategy,
-  ElementRef,
-  ViewEncapsulation,
-  Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation
 } from '@angular/core';
-import { CommonApiService } from '../../services/common-api.service';
-import { AuthenticationService } from '../../services/authentication.service';
-import * as moment from 'moment';
 import {
-  FormGroup,
-  FormControl,
-  Validators,
-  FormBuilder,
+  FormBuilder, FormControl, FormGroup, Validators
 } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Observable, lastValueFrom, of, empty } from 'rxjs';
-import { Sales } from '../../models/Sales';
-import { Customer } from 'src/app/models/Customer';
+import {
+  MatAutocomplete
+} from '@angular/material/autocomplete';
+import {
+  MatDialog,
+  MatDialogConfig
+} from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import * as moment from 'moment';
+import { empty, lastValueFrom, Observable } from 'rxjs';
 import {
   debounceTime,
   filter,
-  map,
-  startWith,
-  switchMap,
-  tap,
+  map, switchMap,
+  tap
 } from 'rxjs/operators';
-import { User } from 'src/app/models/User';
+import { EnquiryPrintComponent } from 'src/app/components/enquiry-print/enquiry-print.component';
 import {
-  MatDialog,
-  MatDialogConfig,
-  DialogPosition,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
-import {
-  DialogData,
-  InvoiceSuccessComponent,
+  InvoiceSuccessComponent
 } from 'src/app/components/invoice-success/invoice-success.component';
 import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { SalesReturnDialogComponent } from 'src/app/components/sales/sales-return-dialog/sales-return-dialog.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { EnquiryPrintComponent } from 'src/app/components/enquiry-print/enquiry-print.component';
-import * as xlsx from 'xlsx';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import {
-  MatAutocomplete,
-  MatAutocompleteSelectedEvent,
-} from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
 import { SearchInvoicenoComponent } from 'src/app/components/search-invoiceno/search-invoiceno.component';
+import { Customer } from 'src/app/models/Customer';
+import { User } from 'src/app/models/User';
+import * as xlsx from 'xlsx';
+import { Sales } from '../../models/Sales';
+import { AuthenticationService } from '../../services/authentication.service';
+import { CommonApiService } from '../../services/common-api.service';
 
 @Component({
   selector: 'app-search-sale-order',

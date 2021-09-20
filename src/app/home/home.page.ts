@@ -1,16 +1,11 @@
 import {
-  Component,
-  ViewChild,
-  OnInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
+  ChangeDetectionStrategy, Component, OnInit
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoadingService } from '../components/loading/loading.service';
 import { MessagesService } from '../components/messages/messages.service';
-import { MatSidenav } from '@angular/material/sidenav';
 import { AuthenticationService } from '../services/authentication.service';
-import { Router } from '@angular/router';
-import { SidenavService } from '../services/sidenav.service';
+
 
 @Component({
   selector: 'app-home',
@@ -20,7 +15,7 @@ import { SidenavService } from '../services/sidenav.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage implements OnInit {
-  userdata: any;
+  
   center_id: any;
 
   onSideNavChange: boolean;
@@ -28,28 +23,26 @@ export class HomePage implements OnInit {
   isMenuOpen: boolean;
   contentMargin: number;
 
-  isloaded: boolean;
+  isLoaded: boolean;
 
   constructor(
-    private _authservice: AuthenticationService,
-    private _sidenavService: SidenavService,
-    private _cdr: ChangeDetectorRef,
+    private _authService: AuthenticationService,
+    
+    
     private _router: Router
   ) {
     this.isMenuOpen = false;
     this.contentMargin = 180;
-    this.isloaded = false;
-
+    this.isLoaded = false;
+    
     this.onToolbarMenuToggle();
-    this._sidenavService.sideNavState$.subscribe((res) => {
-      this.onSideNavChange = res;
-    });
+    
   }
 
   ngOnInit() {}
 
   onToolbarMenuToggle() {
-    console.log('On toolbar toggled', this.isMenuOpen);
+    
     this.isMenuOpen = !this.isMenuOpen;
 
     if (!this.isMenuOpen) {
@@ -57,7 +50,7 @@ export class HomePage implements OnInit {
     } else {
       this.contentMargin = 180;
     }
-    this.isloaded = true;
+    this.isLoaded = true;
   }
 
   goAdmin() {
@@ -65,7 +58,7 @@ export class HomePage implements OnInit {
   }
 
   async logout() {
-    await this._authservice.logOut();
+    await this._authService.logOut();
     this._router.navigateByUrl('');
   }
 

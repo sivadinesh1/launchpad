@@ -1,5 +1,8 @@
+
+
 .header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 400px 1fr 165px 165px;
   width: 100%;
 }
 

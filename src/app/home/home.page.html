@@ -1,13 +1,14 @@
 <div>
   <mat-toolbar class="example-toolbar mat-elevation-z2">
-    <app-header (onHBMenuClick)="onToolbarMenuToggle();"></app-header>
+    <app-header style="width: 100%;"
+    (onHBMenuClick)="onToolbarMenuToggle();"></app-header>
   </mat-toolbar>
-  <mat-sidenav-container fullscreen id="sidenavContainer">
+  <mat-sidenav-container fullscreen id="sideNavContainer">
     <mat-sidenav
-      #sidenav
+      #sideNav
       mode="side"
       [opened]="true"
-      id="sidenav"
+      id="sideNav"
       [class.menu-open]="isMenuOpen"
       [class.menu-close]="!isMenuOpen"
     >
@@ -16,7 +17,7 @@
     <mat-sidenav-content
       class="test"
       [ngStyle]="{ 'margin-left.px': contentMargin }"
-      *ngIf="isloaded"
+      *ngIf="isLoaded"
     >
       <ion-router-outlet></ion-router-outlet>
     </mat-sidenav-content>

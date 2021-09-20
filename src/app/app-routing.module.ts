@@ -230,7 +230,7 @@ const routes: Routes = [
           ).then((m) => m.LedgerCustomerPageModule),
       },
       {
-        path: 'financials-customer/:center_id/:customer_id',
+        path: 'financials-customer',
         loadChildren: () =>
           import(
             './admin/customer/financials-customer/financials-customer.module'

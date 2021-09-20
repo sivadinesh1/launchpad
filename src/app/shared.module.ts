@@ -128,6 +128,7 @@ import { PricePipePipe } from './util/pipes/price-formatter.pipe';
 import { ProductCorrectionDialogComponent } from './components/products/product-correction-dialog/product-correction-dialog.component';
 import { ManualInvoiceNumberDialogComponent } from './components/sales/manual-invoice-number-dialog/manual-invoice-number-dialog.component';
 import { SearchInvoicenoComponent } from './components/search-invoiceno/search-invoiceno.component';
+import { SearchCustomersComponent } from './components/search-customers/search-customers.component';
 
 const components = [
   NullToQuotePipe,
@@ -218,6 +219,7 @@ const components = [
   ShowHidePasswordComponent,
 
   HeaderComponent,
+  SearchCustomersComponent,
   LeftMenuComponent,
 
   WindowComponent,
@@ -272,6 +274,7 @@ const matcomponents = [
     PreventCutCopyPasteDirective,
 
     ArrowDivDirective,
+    SearchCustomersComponent,
   ],
   imports: [
     CommonModule,

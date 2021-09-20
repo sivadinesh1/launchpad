@@ -13,28 +13,28 @@
   margin: 0 8px;
 }
 
-#sidenavContainer {
-  margin-top: 64px;
+#sideNavContainer {
+  margin-top: 60px;
 }
 
-#sidenav {
+#sideNav {
   width: 180px;
 }
 
-#sidenav.menu-close {
+#sideNav.menu-close {
   width: 60px;
   transition: width 0.2s;
 }
 
-#sidenav.menu-open {
+#sideNav.menu-open {
   width: 180px;
   transition: width 0.2s;
 }
 
 .example-toolbar {
   display: flex;
-  padding: 8px 20px 0px 8px;
-  height: 60px;
+  padding: 1px 20px 0px 8px;
+  height: 56px;
   color: #222;
   background-color: #fff;
 
