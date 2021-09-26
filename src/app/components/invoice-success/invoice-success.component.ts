@@ -81,7 +81,7 @@ export class InvoiceSuccessComponent implements OnInit {
 		this.selectedoptionArr = [];
 
 		//Get total checked items
-		for (let value of Object.values(this.checkbox_list)) {
+		for (const value of Object.values(this.checkbox_list)) {
 			if (value.checked) {
 				this.selectedoptionArr.push(value.name);
 			}
@@ -99,7 +99,7 @@ export class InvoiceSuccessComponent implements OnInit {
 	printActn(action) {
 		this.isPrint = true;
 
-		let submitForm = {
+		const submitForm = {
 			sale_id: this.data.id,
 			print_type: this.selectedoptionArr,
 			print_ship_to: this.checked,
@@ -122,7 +122,7 @@ export class InvoiceSuccessComponent implements OnInit {
 			// iframe.contentWindow.print();
 
 			// dnd to open in new tab - does not work with pop up blocked
-			var link = document.createElement('a');
+			const link = document.createElement('a');
 			link.href = window.URL.createObjectURL(blob);
 
 			if (action === 'view') {
@@ -158,7 +158,7 @@ export class InvoiceSuccessComponent implements OnInit {
 	printEstimate() {
 		this.isPrint = true;
 
-		let submitForm = {
+		const submitForm = {
 			sale_id: this.data.invoice_id,
 			print_type: this.selectedoptionArr,
 		};
@@ -180,7 +180,7 @@ export class InvoiceSuccessComponent implements OnInit {
 			// iframe.contentWindow.print();
 
 			// dnd to open in new tab - does not work with pop up blocked
-			var link = document.createElement('a');
+			const link = document.createElement('a');
 			link.href = window.URL.createObjectURL(blob);
 			link.target = '_blank';
 			link.click();

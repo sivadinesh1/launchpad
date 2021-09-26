@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
-import { User } from "../../models/User";
+import { User } from '../../models/User';
 
 import { IonSearchbar } from '@ionic/angular';
 import * as xlsx from 'xlsx';
@@ -74,7 +74,7 @@ export class ProductSummaryReportsPage implements OnInit {
       .subscribe((data: any) => {
         this.center_id = data.center_id;
         this.ready = 1;
-        this.reloadProductSummaryReport(false, "");
+        this.reloadProductSummaryReport(false, '');
         this._cdr.markForCheck();
       });
 
@@ -90,8 +90,8 @@ export class ProductSummaryReportsPage implements OnInit {
 
 
   init() {
-    if (this.ready === 1) {  // ready = 1 only after userdata observable returns 
-      this.reloadProductSummaryReport(false, "");
+    if (this.ready === 1) {  // ready = 1 only after userdata observable returns
+      this.reloadProductSummaryReport(false, '');
     }
   }
 
@@ -109,13 +109,13 @@ export class ProductSummaryReportsPage implements OnInit {
   reloadProductSummaryReport(isFirstLoad, event) {
 
     this._commonApiService.fetchProductSummaryReports(
-      { "center_id": this.center_id, "start": this.start, "end": this.start + this.rowsperpage })
+      { center_id: this.center_id, start: this.start, end: this.start + this.rowsperpage })
       .subscribe((data: any) => {
 
         this.productArr = data.body;
 
         if (isFirstLoad)
-          event.target.complete();
+          {event.target.complete();}
 
         this.start = this.start + this.rowsperpage;
         this._cdr.markForCheck();

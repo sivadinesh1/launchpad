@@ -34,7 +34,7 @@ export class DeleteEnquiryDialogComponent implements OnInit {
 
   delete() {
     this._commonApiService.deleteEnquiry(this.enquiry.id).subscribe((data: any) => {
-      console.log('object.. enquiry deleted ..')
+      console.log('object.. enquiry deleted ..');
       this.dialogRef.close('success');
     });
   }

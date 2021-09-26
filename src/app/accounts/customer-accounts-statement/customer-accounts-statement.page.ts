@@ -93,7 +93,7 @@ export class CustomerAccountsStatementPage implements OnInit {
         });
         this.getCustomers(this.userdata.center_id);
         this.ready = 1;
-        this.statementForm.controls['customerctrl'].setErrors(null);
+        this.statementForm.controls.customerctrl.setErrors(null);
         this._cdr.markForCheck();
       });
 
@@ -116,9 +116,7 @@ export class CustomerAccountsStatementPage implements OnInit {
     this._commonApiService.getAllActiveCustomers().subscribe((data: any) => {
       this.customer_lis = data;
 
-      this.filteredCustomer = this.statementForm.controls[
-        'customerctrl'
-      ].valueChanges.pipe(
+      this.filteredCustomer = this.statementForm.controls.customerctrl.valueChanges.pipe(
         startWith(''),
         map((customer) =>
           customer ? this.filtercustomer(customer) : this.customer_lis.slice()
@@ -158,7 +156,7 @@ export class CustomerAccountsStatementPage implements OnInit {
     });
     this.statementdata = [];
     this.datafetch = false;
-    this.statementForm.controls['customerctrl'].setErrors(null);
+    this.statementForm.controls.customerctrl.setErrors(null);
     this._cdr.markForCheck();
   }
 
@@ -189,11 +187,11 @@ export class CustomerAccountsStatementPage implements OnInit {
           // 2. push them to the statementdata array
           // 3. sort them asc
 
-          let missingcustomers = this.customer_lis.filter(
+          const missingcustomers = this.customer_lis.filter(
             (o) => !this.statementdata.some((i) => i.id === o.id)
           );
 
-          var newArray = [...this.statementdata, ...missingcustomers];
+          const newArray = [...this.statementdata, ...missingcustomers];
 
           this.statementdata = [];
           this.statementdata = newArray.sort((a, b) =>
@@ -276,7 +274,7 @@ export class CustomerAccountsStatementPage implements OnInit {
     this.statementdata = [];
     this.datafetch = false;
     this.isloading = false;
-    this.statementForm.controls['customerctrl'].setErrors(null);
+    this.statementForm.controls.customerctrl.setErrors(null);
     this._cdr.markForCheck();
   }
 
@@ -293,7 +291,7 @@ export class CustomerAccountsStatementPage implements OnInit {
 
   reformatRefDate(reportData) {
     reportData.forEach((element) => {
-      element['ref_date_f'] = moment(element['ref_date_f']).format(
+      element.ref_date_f = moment(element.ref_date_f).format(
         'DD-MM-YYYY'
       );
     });
@@ -322,47 +320,47 @@ export class CustomerAccountsStatementPage implements OnInit {
     });
 
     reportData.forEach((e) => {
-      e['Date'] = e['ref_date_f'];
-      delete e['ref_date_f'];
+      e.Date = e.ref_date_f;
+      delete e.ref_date_f;
 
-      e['Customer Name'] = e['name'];
-      delete e['name'];
+      e['Customer Name'] = e.name;
+      delete e.name;
 
-      e['Reference'] = e['refn'];
-      delete e['refn'];
+      e.Reference = e.refn;
+      delete e.refn;
 
-      e['Type'] = e['type'];
-      delete e['type'];
+      e.Type = e.type;
+      delete e.type;
 
-      e['Invoice Amount'] = e['invoice_amount'];
-      delete e['invoice_amount'];
+      e['Invoice Amount'] = e.invoice_amount;
+      delete e.invoice_amount;
 
-      e['Received Amount'] = e['Received_Amount'];
-      delete e['Received_Amount'];
+      e['Received Amount'] = e.Received_Amount;
+      delete e.Received_Amount;
 
-      delete e['id'];
-      delete e['center_id'];
+      delete e.id;
+      delete e.center_id;
 
-      delete e['state_id'];
-      delete e['code'];
-      delete e['phone'];
-      delete e['mobile'];
-      delete e['mobile2'];
-      delete e['whatsapp'];
-      delete e['isactive'];
+      delete e.state_id;
+      delete e.code;
+      delete e.phone;
+      delete e.mobile;
+      delete e.mobile2;
+      delete e.whatsapp;
+      delete e.isactive;
 
-      delete e['credit_amt'];
-      delete e['balance_amt'];
-      delete e['last_paid_date'];
-      delete e['place'];
+      delete e.credit_amt;
+      delete e.balance_amt;
+      delete e.last_paid_date;
+      delete e.place;
 
-      delete e['address1'];
-      delete e['address2'];
-      delete e['district'];
-      delete e['description'];
-      delete e['pin'];
-      delete e['gst'];
-      delete e['email'];
+      delete e.address1;
+      delete e.address2;
+      delete e.district;
+      delete e.description;
+      delete e.pin;
+      delete e.gst;
+      delete e.email;
     });
 
     const wb1: xlsx.WorkBook = xlsx.utils.book_new();
@@ -380,7 +378,7 @@ export class CustomerAccountsStatementPage implements OnInit {
       { width: 40 },
     ];
 
-    var wsrows = [
+    const wsrows = [
       { hpt: 30 }, // row 1 sets to the height of 12 in points
       { hpx: 30 }, // row 2 sets to the height of 16 in pixels
     ];
@@ -439,25 +437,25 @@ export class CustomerAccountsStatementPage implements OnInit {
     reportData = this.reformatRefDate(reportData);
 
     reportData.forEach((e) => {
-      e['Customer Name'] = e['name'];
+      e['Customer Name'] = e.name;
 
-      e['Type'] = e['type'];
-      delete e['type'];
+      e.Type = e.type;
+      delete e.type;
 
-      e['Invoice Amount'] = e['invoice_amount'];
-      delete e['invoice_amount'];
+      e['Invoice Amount'] = e.invoice_amount;
+      delete e.invoice_amount;
 
-      e['Received Amount'] = e['Received_Amount'];
-      delete e['Received_Amount'];
+      e['Received Amount'] = e.Received_Amount;
+      delete e.Received_Amount;
 
-      e['Reference'] = e['refn'];
-      delete e['refn'];
+      e.Reference = e.refn;
+      delete e.refn;
 
-      delete e['id'];
-      delete e['name'];
-      delete e['place'];
-      e['Date'] = e['ref_date_f'];
-      delete e['ref_date_f'];
+      delete e.id;
+      delete e.name;
+      delete e.place;
+      e.Date = e.ref_date_f;
+      delete e.ref_date_f;
     });
 
     const wb1: xlsx.WorkBook = xlsx.utils.book_new();
@@ -475,7 +473,7 @@ export class CustomerAccountsStatementPage implements OnInit {
       { width: 32 },
     ];
 
-    var wsrows = [
+    const wsrows = [
       { hpt: 30 }, // row 1 sets to the height of 12 in points
       { hpx: 30 }, // row 2 sets to the height of 16 in pixels
     ];
@@ -537,14 +535,14 @@ export class CustomerAccountsStatementPage implements OnInit {
   }
 
   getCurrentCustomerCB(item) {
-    let tempCB = this.allClosingBalanceArr.filter(
+    const tempCB = this.allClosingBalanceArr.filter(
       (data: any) => data.id === item.id
     );
     return tempCB[0]?.balance || 0;
   }
 
   getCurrentCustomerOB(item) {
-    let tempCB = this.allOpeningBalanceArr.filter(
+    const tempCB = this.allOpeningBalanceArr.filter(
       (data: any) => data.id === item.id
     );
     return tempCB[0]?.balance || 0;

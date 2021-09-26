@@ -1,68 +1,65 @@
-
-
 .header {
-  display: grid;
-  grid-template-columns: 400px 1fr 165px 165px;
-  width: 100%;
+	display: grid;
+	grid-template-columns: 400px 1fr 165px 165px;
+	width: 100%;
 }
 
 .spacer {
-  /* This fills the remaining space, by using flexbox.
+	/* This fills the remaining space, by using flexbox.
        Every toolbar row uses a flexbox row layout. */
-  flex: 1 1 auto;
+	flex: 1 1 auto;
 }
 
 .fname {
-  color: #222;
-  font-size: 14px;
+	color: #222;
+	font-size: 14px;
 }
 
 .role {
-  color: #222;
-  font-size: 12px;
+	color: #222;
+	font-size: 12px;
 }
 
 .cname {
-  color: #797979;
-  font-weight: bold;
-  font-size: 17px;
-  font-style: italic;
-  line-height: 12px;
-  letter-spacing: -0.05em;
-  padding-left: 5px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+	padding-left: 5px;
+	color: #797979;
+	font-weight: bold;
+	font-size: 17px;
+	font-style: italic;
+	line-height: 12px;
+	letter-spacing: -0.05em;
+	text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
 }
 
 .launchpad {
-  display: grid;
-  align-content: center;
-  padding: 0 16px;
-  color: #fff;
-  font-weight: 600;
-  font-size: 20px;
-  font-style: normal;
+	display: grid;
+	align-content: center;
+	padding: 0 16px;
+	color: #fff;
+	font-weight: 600;
+	font-size: 20px;
+	font-style: normal;
 }
 
 .quick-links {
-  position: relative;
-  top: -6px;
-  padding-left: 10px;
-  color: #4e53b7;
-  font-weight: bold;
-  font-size: 12px;
+	position: relative;
+	top: -6px;
+	padding-left: 10px;
+	color: #4e53b7;
+	font-weight: bold;
+	font-size: 12px;
 
-  font-style: normal;
-  line-height: 16px;
-  cursor: pointer;
+	font-style: normal;
+	line-height: 16px;
+	cursor: pointer;
 }
 
-input[type="search"]:focus {
-  outline: none;
+input[type='search']:focus {
+	outline: none;
 }
 
 .example-full-width {
-  width: 449px;
-
-  border-radius: 5px;
-  margin-bottom: -1.25em;
+	width: 449px;
+	margin-bottom: -1.25em;
+	border-radius: 5px;
 }

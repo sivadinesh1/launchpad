@@ -101,9 +101,7 @@ export class StatementReportsPage implements OnInit {
     this._commonApiService.getAllActiveCustomers().subscribe((data: any) => {
       this.customer_lis = data;
 
-      this.filteredCustomer = this.statementForm.controls[
-        'customerctrl'
-      ].valueChanges.pipe(
+      this.filteredCustomer = this.statementForm.controls.customerctrl.valueChanges.pipe(
         startWith(''),
         map((customer) =>
           customer ? this.filtercustomer(customer) : this.customer_lis.slice()
@@ -151,7 +149,7 @@ export class StatementReportsPage implements OnInit {
   }
 
   getStatement() {
-    let data = {
+    const data = {
       centerid: this.userdata.center_id,
       customerid: this.statementForm.value.customerid,
       startdate: this.statementForm.value.startdate,

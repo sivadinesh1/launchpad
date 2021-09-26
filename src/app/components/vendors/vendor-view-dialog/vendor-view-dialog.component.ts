@@ -29,7 +29,7 @@ export class VendorViewDialogComponent implements OnInit {
 
   isLinear = true;
   vendor: Vendor;
-  statesdata
+  statesdata;
 
   constructor(private _cdr: ChangeDetectorRef, private _router: Router,
     private _formBuilder: FormBuilder, private dialogRef: MatDialogRef<VendorViewDialogComponent>,

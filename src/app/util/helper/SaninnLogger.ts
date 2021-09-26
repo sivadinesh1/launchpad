@@ -13,9 +13,9 @@ export class SaninnLogger {
         }
         const logPrefix = this.logPrefix;
         if (logPrefix.length) {
-            return console.log.bind(window.console, logPrefix);    
+            return console.log.bind(window.console, logPrefix);
         } else {
-            return console.log.bind(window.console);    
+            return console.log.bind(window.console);
         }
     }
 
@@ -25,21 +25,21 @@ export class SaninnLogger {
         }
         const logPrefix = this.logPrefix;
         if (logPrefix.length) {
-            return console.warn.bind(window.console, logPrefix);    
+            return console.warn.bind(window.console, logPrefix);
         } else {
-            return console.warn.bind(window.console);    
+            return console.warn.bind(window.console);
         }
    }
-    
+
     get dir(): Function {
         if (!isDebug) {
             return () => { };
         }
         const logPrefix = this.logPrefix;
         if (logPrefix.length) {
-            return console.dir.bind(window.console, logPrefix);    
+            return console.dir.bind(window.console, logPrefix);
         } else {
-            return console.dir.bind(window.console);    
+            return console.dir.bind(window.console);
         }
     }
 
@@ -49,9 +49,9 @@ export class SaninnLogger {
         }
         const logPrefix = this.logPrefix;
         if (logPrefix.length) {
-            return console.error.bind(window.console, logPrefix);    
+            return console.error.bind(window.console, logPrefix);
         } else {
-            return console.error.bind(window.console);    
+            return console.error.bind(window.console);
         }
     }
 

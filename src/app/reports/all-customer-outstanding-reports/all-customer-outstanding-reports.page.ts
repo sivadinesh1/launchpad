@@ -65,36 +65,36 @@ export class AllCustomerOutstandingReportsPage implements OnInit {
 			}
 		});
 
-		let reportData = JSON.parse(JSON.stringify(this.outstandingBalanceList));
+		const reportData = JSON.parse(JSON.stringify(this.outstandingBalanceList));
 
 		reportData.forEach((e) => {
-			e['Last Paid Date'] = e['last_paid_date'];
-			delete e['last_paid_date'];
+			e['Last Paid Date'] = e.last_paid_date;
+			delete e.last_paid_date;
 
-			e['Balance Amount'] = e['balance_amt'];
-			delete e['balance_amt'];
+			e['Balance Amount'] = e.balance_amt;
+			delete e.balance_amt;
 
-			delete e['center_id'];
-			delete e['createdon'];
-			delete e['credit_amt'];
-			delete e['email'];
-			delete e['gst'];
-			delete e['id'];
-			delete e['inv_count'];
-			delete e['isactive'];
+			delete e.center_id;
+			delete e.createdon;
+			delete e.credit_amt;
+			delete e.email;
+			delete e.gst;
+			delete e.id;
+			delete e.inv_count;
+			delete e.isactive;
 
-			delete e['mobile'];
-			delete e['mobile2'];
-			delete e['panno'];
-			delete e['phone'];
-			delete e['pin'];
-			delete e['pin'];
-			delete e['state_id'];
-			delete e['state_id'];
-			delete e['tin'];
-			delete e['tin'];
-			delete e['whatsapp'];
-			delete e['contact'];
+			delete e.mobile;
+			delete e.mobile2;
+			delete e.panno;
+			delete e.phone;
+			delete e.pin;
+			delete e.pin;
+			delete e.state_id;
+			delete e.state_id;
+			delete e.tin;
+			delete e.tin;
+			delete e.whatsapp;
+			delete e.contact;
 		});
 
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();

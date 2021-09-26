@@ -28,7 +28,7 @@ export class DashboardPage implements OnInit {
       .pipe(
         filter((data) => data !== null))
       .subscribe((data: any) => {
-        this._authservice.setCurrentMenu("HOME");
+        this._authservice.setCurrentMenu('HOME');
         this.userdata = data;
         this.reloadInquirySummary();
         this._cdr.markForCheck();
@@ -42,7 +42,7 @@ export class DashboardPage implements OnInit {
   reloadInquirySummary() {
 
     this._commonApiService.fetchInquirySummary(
-      { "center_id": this.userdata.center_id, "from_date": moment().format('MM-DD-YYYY'), "to_date": moment().format('MM-DD-YYYY') })
+      { center_id: this.userdata.center_id, from_date: moment().format('MM-DD-YYYY'), to_date: moment().format('MM-DD-YYYY') })
       .subscribe((data: any) => {
 
 

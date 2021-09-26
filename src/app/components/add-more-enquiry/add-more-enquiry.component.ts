@@ -1,6 +1,24 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, ChangeDetectorRef, Inject } from '@angular/core';
-import { FormGroup, NgForm, FormBuilder, FormArray, Validators } from '@angular/forms';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+    Component,
+    OnInit,
+    ChangeDetectionStrategy,
+    ViewChild,
+    ChangeDetectorRef,
+    Inject,
+} from '@angular/core';
+import {
+    FormGroup,
+    NgForm,
+    FormBuilder,
+    FormArray,
+    Validators,
+    FormControl,
+} from '@angular/forms';
+import {
+    MatDialog,
+    MAT_DIALOG_DATA,
+    MatDialogRef,
+} from '@angular/material/dialog';
 import { ModalController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
@@ -13,285 +31,326 @@ import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { empty } from 'rxjs';
 
 @Component({
-	selector: 'app-add-more-enquiry',
-	templateUrl: './add-more-enquiry.component.html',
-	styleUrls: ['./add-more-enquiry.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-add-more-enquiry',
+    templateUrl: './add-more-enquiry.component.html',
+    styleUrls: ['./add-more-enquiry.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddMoreEnquiryComponent implements OnInit {
-	submitForm: FormGroup;
+    submitForm: FormGroup;
 
-	customerAdded = false;
-	customerData: any;
+    customerAdded = false;
+    customerData: any;
 
-	removeRowArr = [];
-	showDelIcon = false;
-	centerid: any;
-	userid: any;
+    removeRowArr = [];
+    showDelIcon = false;
+    centerid: any;
+    userid: any;
 
-	data: any;
-	isLoading = false;
-	product_lis: Product[];
+    data: any;
+    isLoading = false;
+    product_lis: Product[];
 
-	@ViewChild('myForm', { static: true }) myForm: NgForm;
+    @ViewChild('myForm', { static: true }) myForm: NgForm;
 
-	// TAB navigation for product list
-	@ViewChild('typehead', { read: MatAutocompleteTrigger })
-	autoTrigger: MatAutocompleteTrigger;
+    // TAB navigation for product list
+    @ViewChild('typehead', { read: MatAutocompleteTrigger })
+    autoTrigger: MatAutocompleteTrigger;
 
-	@ViewChild('plist', { static: true }) plist: any;
+    @ViewChild('plist', { static: true }) plist: any;
 
-	constructor(
-		private _fb: FormBuilder,
-		public dialog: MatDialog,
-		@Inject(MAT_DIALOG_DATA) data: any,
-		private dialogRef: MatDialogRef<AddMoreEnquiryComponent>,
-		private _modalcontroller: ModalController,
-		private _router: Router,
-		private _route: ActivatedRoute,
-		private _cdr: ChangeDetectorRef,
-		private _commonApiService: CommonApiService,
-		private _authservice: AuthenticationService,
-	) {
-		this.submitForm = this._fb.group({
-			enquiry_id: [data.enquiry_id, Validators.required],
-			customer: [data.customer_id, Validators.required],
-			centerid: [data.center_id, Validators.required],
-			productctrl: [null, [RequireMatch]],
-			remarks: [''],
+    constructor(
+        private _fb: FormBuilder,
+        public dialog: MatDialog,
+        @Inject(MAT_DIALOG_DATA) data: any,
+        private dialogRef: MatDialogRef<AddMoreEnquiryComponent>,
+        private _modalcontroller: ModalController,
+        private _router: Router,
+        private _route: ActivatedRoute,
+        private _cdr: ChangeDetectorRef,
+        private _commonApiService: CommonApiService,
+        private _authservice: AuthenticationService
+    ) {
+        this.submitForm = this._fb.group({
+            enquiry_id: [data.enquiry_id, Validators.required],
+            customer: [data.customer_id, Validators.required],
+            centerid: [data.center_id, Validators.required],
+            productctrl: [null, [RequireMatch]],
+            remarks: [''],
 
-			tempdesc: [''],
+            tempdesc: [''],
 
-			tempqty: ['1', [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
+            tempqty: [
+                '1',
+                [
+                    Validators.required,
+                    Validators.max(1000),
+                    Validators.min(1),
+                    Validators.pattern(/\-?\d*\.?\d{1,2}/),
+                ],
+            ],
 
-			productarr: this._fb.array([]),
-		});
-		//console.log('object' + data);
-	}
+            productarr: this._fb.array([]),
+        });
+        //console.log('object' + data);
+    }
 
-	ngOnInit() {
-		this.init();
-	}
+    ngOnInit() {
+        this.init();
+    }
 
-	init() {
-		this.customerData = '';
-		this.customerAdded = false;
+    init() {
+        this.customerData = '';
+        this.customerAdded = false;
 
-		this.searchProducts();
+        this.searchProducts();
 
-		// this.addProduct();
-		// this.addProduct();
-		// this.addProduct();
-		// this.addProduct();
-		// this.addProduct();
+        // this.addProduct();
+        // this.addProduct();
+        // this.addProduct();
+        // this.addProduct();
+        // this.addProduct();
 
-		this._cdr.markForCheck();
-	}
+        this._cdr.markForCheck();
+    }
 
-	get productarr(): FormGroup {
-		return this.submitForm.get('productarr') as FormGroup;
-	}
+    get productarr(): FormGroup {
+        return this.submitForm.get('productarr') as FormGroup;
+    }
 
-	addProduct() {
-		const control = <FormArray>this.submitForm.controls['productarr'];
-		control.push(this.initProduct());
-		this._cdr.markForCheck();
-	}
+    addProduct() {
+        const control = <FormArray>this.submitForm.controls.productarr;
+        control.push(this.initProduct());
+        this._cdr.markForCheck();
+    }
 
-	initProduct() {
-		return this._fb.group({
-			checkbox: [false],
-			product_code: [''],
-			notes: ['', Validators.required],
-			quantity: [1, [Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)]],
-		});
-	}
+    initProduct() {
+        return this._fb.group({
+            checkbox: [false],
+            product_code: [''],
+            notes: ['', Validators.required],
+            quantity: [
+                1,
+                [
+                    Validators.required,
+                    Validators.max(1000),
+                    Validators.min(1),
+                    Validators.pattern(/\-?\d*\.?\d{1,2}/),
+                ],
+            ],
+        });
+    }
 
-	clearProdInput() {
-		this.submitForm.patchValue({
-			product_code: null,
+    clearProdInput() {
+        this.submitForm.patchValue({
+            product_code: null,
 
-			tempdesc: null,
-			tempqty: 1,
-		});
-		this.product_lis = null;
-		this._cdr.markForCheck();
-	}
+            tempdesc: null,
+            tempqty: 1,
+        });
+        this.product_lis = null;
+        this._cdr.markForCheck();
+    }
 
-	getLength() {
-		const control = <FormArray>this.submitForm.controls['productarr'];
-		return control.length;
-	}
+    getLength() {
+        const control = <FormArray>this.submitForm.controls.productarr;
+        return control.length;
+    }
 
-	setItemDesc(event, from) {
-		if (from === 'tab') {
-			this.submitForm.patchValue({
-				tempdesc: event.description,
-			});
-		} else {
-			this.submitForm.patchValue({
-				tempdesc: event.option.value.description,
-			});
-		}
+    setItemDesc(event, from) {
+        if (from === 'tab') {
+            this.submitForm.patchValue({
+                tempdesc: event.description,
+            });
+        } else {
+            this.submitForm.patchValue({
+                tempdesc: event.option.value.description,
+            });
+        }
 
-		this._cdr.markForCheck();
-	}
+        this._cdr.markForCheck();
+    }
 
-	onRemoveRows() {
-		this.removeRowArr.sort(this.compare).reverse();
-		this.removeRowArr.forEach((idx) => {
-			this.onRemoveProduct(idx);
-		});
+    onRemoveRows() {
+        this.removeRowArr.sort(this.compare).reverse();
+        this.removeRowArr.forEach((idx) => {
+            this.onRemoveProduct(idx);
+        });
 
-		this.removeRowArr = [];
-	}
+        this.removeRowArr = [];
+    }
 
-	compare(a: number, b: number) {
-		return a - b;
-	}
+    compare(a: number, b: number) {
+        return a - b;
+    }
 
-	onRemoveProduct(idx) {
-		console.log('object ' + this.removeRowArr);
-		(<FormArray>this.submitForm.get('productarr')).removeAt(idx);
-	}
+    onRemoveProduct(idx) {
+        console.log('object ' + this.removeRowArr);
+        (<FormArray>this.submitForm.get('productarr')).removeAt(idx);
+    }
 
-	checkedRow(idx: number) {
-		const faControl = (<FormArray>this.submitForm.controls['productarr']).at(idx);
-		faControl['controls'].checkbox;
+    checkedRow(idx: number) {
+        //	const faControl = (<FormArray>this.submitForm.controls.productarr).at(idx);
 
-		if (!faControl.value.checkbox) {
-			this.removeRowArr.push(idx);
-		} else {
-			this.removeRowArr = this.removeRowArr.filter((e) => e !== idx);
-		}
-		this.delIconStatus();
-		console.log('object..' + this.removeRowArr);
-	}
+        const formArray = this.submitForm.get('productarr') as FormArray;
+        const faControl = formArray.controls[idx] as FormControl;
 
-	delIconStatus() {
-		if (this.removeRowArr.length > 0) {
-			this.showDelIcon = true;
-		} else {
-			this.showDelIcon = false;
-		}
-	}
+        //faControl.controls.checkbox;
 
-	openCurrencyPad(idx) {
-		const dialogRef = this.dialog.open(CurrencyPadComponent, {
-			width: '400px',
-		});
+        if (!faControl.value.checkbox) {
+            this.removeRowArr.push(idx);
+        } else {
+            this.removeRowArr = this.removeRowArr.filter((e) => e !== idx);
+        }
+        this.delIconStatus();
+        console.log('object..' + this.removeRowArr);
+    }
 
-		dialogRef.afterClosed().subscribe((data) => {
-			if (data != undefined && data.length > 0 && data != 0) {
-				const faControl = (<FormArray>this.submitForm.controls['productarr']).at(idx);
-				faControl['controls'].quantity.setValue(data);
-			}
+    delIconStatus() {
+        if (this.removeRowArr.length > 0) {
+            this.showDelIcon = true;
+        } else {
+            this.showDelIcon = false;
+        }
+    }
 
-			this._cdr.markForCheck();
-		});
-	}
+    openCurrencyPad(idx) {
+        const dialogRef = this.dialog.open(CurrencyPadComponent, {
+            width: '400px',
+        });
 
-	displayProdFn(obj: any): string | undefined {
-		return obj && obj.product_code ? obj.product_code : undefined;
-	}
+        dialogRef.afterClosed().subscribe((data) => {
+            if (data != undefined && data.length > 0 && data != 0) {
+                // const faControl = (<FormArray>this.submitForm.controls.productarr).at(idx);
+                // faControl.controls.quantity.setValue(data);
+                const formArray = this.submitForm.get(
+                    'productarr'
+                ) as FormArray;
+                const faControl = formArray.controls[idx] as FormControl;
+            }
 
-	ngAfterViewInit() {
-		this.autoTrigger.panelClosingActions.subscribe((x) => {
-			if (this.autoTrigger.activeOption) {
-				this.submitForm.patchValue({
-					productctrl: this.autoTrigger.activeOption.value,
-				});
-				this.setItemDesc(this.autoTrigger.activeOption.value, 'tab');
-			}
-		});
-	}
+            this._cdr.markForCheck();
+        });
+    }
 
-	searchProducts() {
-		let search = '';
-		this.submitForm.controls['productctrl'].valueChanges
-			.pipe(
-				debounceTime(300),
-				tap(() => (this.isLoading = true)),
-				switchMap((id: any) => {
-					console.log(id);
-					search = id;
-					if (id != null && id.length >= 0) {
-						return this._commonApiService.getProductInfo({
-							centerid: this.submitForm.value.centerid,
-							searchstring: id,
-						});
-					} else {
-						return empty();
-					}
-				}),
-			)
+    displayProdFn(obj: any): string | undefined {
+        return obj && obj.product_code ? obj.product_code : undefined;
+    }
 
-			.subscribe((data: any) => {
-				this.isLoading = false;
-				this.product_lis = data.body;
-				this._cdr.markForCheck();
-			});
-	}
+    ngAfterViewInit() {
+        this.autoTrigger.panelClosingActions.subscribe((x) => {
+            if (this.autoTrigger.activeOption) {
+                this.submitForm.patchValue({
+                    productctrl: this.autoTrigger.activeOption.value,
+                });
+                this.setItemDesc(this.autoTrigger.activeOption.value, 'tab');
+            }
+        });
+    }
 
-	add() {
-		if (this.submitForm.value.tempdesc === '' || this.submitForm.value.tempdesc === null) {
-			this.submitForm.controls['tempdesc'].setErrors({ required: true });
-			this.submitForm.controls['tempdesc'].markAsTouched();
+    searchProducts() {
+        let search = '';
+        this.submitForm.controls.productctrl.valueChanges
+            .pipe(
+                debounceTime(300),
+                tap(() => (this.isLoading = true)),
+                switchMap((id: any) => {
+                    console.log(id);
+                    search = id;
+                    if (id != null && id.length >= 0) {
+                        return this._commonApiService.getProductInfo({
+                            centerid: this.submitForm.value.centerid,
+                            searchstring: id,
+                        });
+                    } else {
+                        return empty();
+                    }
+                })
+            )
 
-			return false;
-		}
+            .subscribe((data: any) => {
+                this.isLoading = false;
+                this.product_lis = data.body;
+                this._cdr.markForCheck();
+            });
+    }
 
-		if (this.submitForm.value.tempqty === '' || this.submitForm.value.tempqty === null) {
-			this.submitForm.controls['tempqty'].setErrors({ required: true });
-			this.submitForm.controls['tempqty'].markAsTouched();
+    add() {
+        if (
+            this.submitForm.value.tempdesc === '' ||
+            this.submitForm.value.tempdesc === null
+        ) {
+            this.submitForm.controls.tempdesc.setErrors({ required: true });
+            this.submitForm.controls.tempdesc.markAsTouched();
 
-			return false;
-		}
+            return false;
+        }
 
-		const control = <FormArray>this.submitForm.controls['productarr'];
+        if (
+            this.submitForm.value.tempqty === '' ||
+            this.submitForm.value.tempqty === null
+        ) {
+            this.submitForm.controls.tempqty.setErrors({ required: true });
+            this.submitForm.controls.tempqty.markAsTouched();
 
-		control.push(
-			this._fb.group({
-				checkbox: [false],
-				product_code: [this.submitForm.value.productctrl === null ? '' : this.submitForm.value.productctrl.product_code],
+            return false;
+        }
 
-				notes: [this.submitForm.value.tempdesc, Validators.required],
-				quantity: [
-					this.submitForm.value.tempqty,
-					[Validators.required, Validators.max(1000), Validators.min(1), Validators.pattern(/\-?\d*\.?\d{1,2}/)],
-				],
-			}),
-		);
+        const control = <FormArray>this.submitForm.controls.productarr;
 
-		this.submitForm.patchValue({
-			productctrl: '',
-			tempdesc: '',
-			tempqty: 1,
-		});
+        control.push(
+            this._fb.group({
+                checkbox: [false],
+                product_code: [
+                    this.submitForm.value.productctrl === null
+                        ? ''
+                        : this.submitForm.value.productctrl.product_code,
+                ],
 
-		this.submitForm.controls['tempdesc'].setErrors(null);
-		this.submitForm.controls['tempqty'].setErrors(null);
-		this.submitForm.controls['productctrl'].setErrors(null);
-		this.plist.nativeElement.focus();
+                notes: [this.submitForm.value.tempdesc, Validators.required],
+                quantity: [
+                    this.submitForm.value.tempqty,
+                    [
+                        Validators.required,
+                        Validators.max(1000),
+                        Validators.min(1),
+                        Validators.pattern(/\-?\d*\.?\d{1,2}/),
+                    ],
+                ],
+            })
+        );
 
-		this._cdr.markForCheck();
-	}
+        this.submitForm.patchValue({
+            productctrl: '',
+            tempdesc: '',
+            tempqty: 1,
+        });
 
-	onSubmit() {
-		if (!this.submitForm.valid) {
-			return false;
-		}
+        this.submitForm.controls.tempdesc.setErrors(null);
+        this.submitForm.controls.tempqty.setErrors(null);
+        this.submitForm.controls.productctrl.setErrors(null);
+        this.plist.nativeElement.focus();
 
-		this._commonApiService.addMoreEnquiry(this.submitForm.value).subscribe((data: any) => {
-			this.submitForm.reset();
-			this.myForm.resetForm();
-			this.dialogRef.close('success');
+        this._cdr.markForCheck();
+    }
 
-			this._cdr.markForCheck();
-		});
-	}
+    onSubmit() {
+        if (!this.submitForm.valid) {
+            return false;
+        }
 
-	close() {
-		this.dialogRef.close();
-	}
+        this._commonApiService
+            .addMoreEnquiry(this.submitForm.value)
+            .subscribe((data: any) => {
+                this.submitForm.reset();
+                this.myForm.resetForm();
+                this.dialogRef.close('success');
+
+                this._cdr.markForCheck();
+            });
+    }
+
+    close() {
+        this.dialogRef.close();
+    }
 }

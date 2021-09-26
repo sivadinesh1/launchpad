@@ -34,7 +34,7 @@ export class WindowComponent implements OnInit, OnDestroy {
         // STEP 4: create an external window
         this.externalWindow = window.open('', '', 'width=600,height=400,left=200,top=200');
 
-        // STEP 5: create a PortalHost with the body of the new window document    
+        // STEP 5: create a PortalHost with the body of the new window document
         const host = new DomPortalHost(
             this.externalWindow.document.body,
             this.componentFactoryResolver,
@@ -48,6 +48,6 @@ export class WindowComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         // STEP 7: close the window when this component destroyed
-        this.externalWindow.close()
+        this.externalWindow.close();
     }
 }

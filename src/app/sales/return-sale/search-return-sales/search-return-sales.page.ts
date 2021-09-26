@@ -136,7 +136,7 @@ export class SearchReturnSalesPage implements OnInit {
 		this._commonApiService.getAllActiveCustomers().subscribe((data: any) => {
 			this.customer_lis = data;
 
-			this.filteredCustomer = this.submitForm.controls['customerctrl'].valueChanges.pipe(
+			this.filteredCustomer = this.submitForm.controls.customerctrl.valueChanges.pipe(
 				startWith(''),
 				map((customer) => (customer ? this.filtercustomer(customer) : this.customer_lis.slice())),
 			);
@@ -155,8 +155,8 @@ export class SearchReturnSalesPage implements OnInit {
 		} else {
 			this.submitForm.value.searchby = '';
 			this.submitForm.get('customerctrl').enable();
-			this.submitForm.controls['searchby'].setErrors(null);
-			this.submitForm.controls['searchby'].markAsTouched();
+			this.submitForm.controls.searchby.setErrors(null);
+			this.submitForm.controls.searchby.markAsTouched();
 		}
 		this.selectedSearchType = this.submitForm.value.searchtype;
 	}
@@ -186,8 +186,8 @@ export class SearchReturnSalesPage implements OnInit {
 	async search() {
 		if (this.submitForm.value.searchtype !== 'all' && this.submitForm.value.searchby.trim().length === 0) {
 			console.log('invoice number is mandatory');
-			this.submitForm.controls['searchby'].setErrors({ required: true });
-			this.submitForm.controls['searchby'].markAsTouched();
+			this.submitForm.controls.searchby.setErrors({ required: true });
+			this.submitForm.controls.searchby.markAsTouched();
 			return false;
 		}
 
@@ -204,7 +204,7 @@ export class SearchReturnSalesPage implements OnInit {
 
 		this.filteredSales$ = this.sales$;
 
-		let value = await lastValueFrom(this.filteredSales$);
+		const value = await lastValueFrom(this.filteredSales$);
 
 		this.filteredValues = value.filter((data: any) => data.return_status === 'A');
 
@@ -290,7 +290,7 @@ export class SearchReturnSalesPage implements OnInit {
 	}
 
 	async tabClick($event) {
-		let value = await lastValueFrom(this.filteredSales$);
+		const value = await lastValueFrom(this.filteredSales$);
 
 		if ($event.index === 0) {
 			this.filteredValues = value.filter((data: any) => data.return_status === 'A');
@@ -307,16 +307,12 @@ export class SearchReturnSalesPage implements OnInit {
 		this.sumNumItems = 0;
 
 		this.sumTotalValue = this.filteredValues
-			.map((item) => {
-				return item.to_return_amount;
-			})
+			.map((item) => item.to_return_amount)
 			.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 			.toFixed(2);
 
 		this.sumNumItems = this.filteredValues
-			.map((item) => {
-				return item.to_receive_items;
-			})
+			.map((item) => item.to_receive_items)
 			.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 	}
 
@@ -380,7 +376,7 @@ export class SearchReturnSalesPage implements OnInit {
 	}
 
 	goPrintCreditNote(item) {
-		let submitForm = {
+		const submitForm = {
 			sale_return_id: item.sale_return_id,
 			center_id: item.center_id,
 			sale_id: item.sale_id,
@@ -404,7 +400,7 @@ export class SearchReturnSalesPage implements OnInit {
 			// iframe.contentWindow.print();
 
 			// dnd to open in new tab - does not work with pop up blocked
-			var link = document.createElement('a');
+			const link = document.createElement('a');
 			link.href = window.URL.createObjectURL(blob);
 			link.target = '_blank';
 			link.click();

@@ -24,31 +24,35 @@ import { HttpErrorInterceptor } from './services/http-error-interceptor';
 
 registerLocaleData(localeIn);
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
-  imports: [
-    BrowserModule,
+    declarations: [AppComponent],
+    entryComponents: [],
+    imports: [
+        BrowserModule,
 
-    HttpClientModule,
-    SharedModule,
-    HomePageModule,
-    IonicModule.forRoot(),
-    IonicStorageModule.forRoot({
-      /* config */
-    }),
-    AppRoutingModule,
-    NgxSkeletonLoaderModule,
-    BrowserAnimationsModule,
-  ],
-  exports: [BrowserModule],
-  providers: [
-    KeyBoardService,
+        HttpClientModule,
+        SharedModule,
+        HomePageModule,
+        IonicModule.forRoot(),
+        IonicStorageModule.forRoot({
+            /* config */
+        }),
+        AppRoutingModule,
+        NgxSkeletonLoaderModule,
+        BrowserAnimationsModule,
+    ],
+    exports: [BrowserModule],
+    providers: [
+        KeyBoardService,
 
-    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: MAT_DATE_LOCALE, useValue: 'en-IN' },
-    CurrencyPipe,
-  ],
-  bootstrap: [AppComponent],
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
+            multi: true,
+        },
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        { provide: MAT_DATE_LOCALE, useValue: 'en-IN' },
+        CurrencyPipe,
+    ],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}

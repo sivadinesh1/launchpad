@@ -201,14 +201,14 @@ export class FinancialsCustomerPage implements OnInit {
     });
 
     this._route.data.subscribe((data) => {
-      this.customerdata = data['customerdata'][0];
+      this.customerdata = data.customerdata[0];
       this.customer_id = this.customerdata.id;
       this.customer_credit_amount = this.customerdata?.credit_amt;
     });
 
     this._route.params.subscribe((params) => {
-      this.center_id = params['center_id'];
-      this.customer_id = params['customer_id'];
+      this.center_id = params.center_id;
+      this.customer_id = params.customer_id;
       this.initForm();
       this.initStatementForm();
       this.init();
@@ -275,8 +275,8 @@ export class FinancialsCustomerPage implements OnInit {
         searchtype: 'all',
       });
 
-      this.submitForm.controls['invoiceno'].setErrors(null);
-      this.submitForm.controls['invoiceno'].markAsTouched();
+      this.submitForm.controls.invoiceno.setErrors(null);
+      this.submitForm.controls.invoiceno.markAsTouched();
     }
     this._cdr.detectChanges();
   }
@@ -360,22 +360,22 @@ export class FinancialsCustomerPage implements OnInit {
   }
 
   reloadSaleInvoiceByCustomer() {
-    let center_id = this.center_id;
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
+    const center_id = this.center_id;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
 
-    let searchtype = this.submitForm.value.searchtype;
-    let invoiceno = this.submitForm.value.invoiceno;
+    const searchtype = this.submitForm.value.searchtype;
+    const invoiceno = this.submitForm.value.invoiceno;
 
     this._commonApiService
       .getSaleInvoiceByCustomer({
         centerid: center_id,
         customerid: this.customer_id,
-        fromdate: fromdate,
-        todate: todate,
+        fromdate,
+        todate,
 
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.saleInvoicedataSource.data = data.body;
@@ -387,21 +387,21 @@ export class FinancialsCustomerPage implements OnInit {
   }
 
   reloadPaymentsByCustomer() {
-    let center_id = this.center_id;
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
+    const center_id = this.center_id;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
 
-    let searchtype = this.submitForm.value.searchtype;
-    let invoiceno = this.submitForm.value.invoiceno;
+    const searchtype = this.submitForm.value.searchtype;
+    const invoiceno = this.submitForm.value.invoiceno;
     this._commonApiService
       .getPaymentsByCustomer({
         centerid: center_id,
         customerid: this.customer_id,
-        fromdate: fromdate,
-        todate: todate,
+        fromdate,
+        todate,
 
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.paymentdataSource.data = data.body;
@@ -413,16 +413,16 @@ export class FinancialsCustomerPage implements OnInit {
   }
 
   reloadPaymentsOverviewByCustomer() {
-    let center_id = this.center_id;
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
+    const center_id = this.center_id;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
 
     this._commonApiService
       .getPaymentsOverviewByCustomer({
         centerid: center_id,
         customerid: this.customer_id,
-        fromdate: fromdate,
-        todate: todate,
+        fromdate,
+        todate,
 
         searchtype: 'all',
       })

@@ -54,8 +54,8 @@ export class EditProductPage implements OnInit {
     this.currentStep = 0;
 
     this._route.params.subscribe((params) => {
-      this.center_id = params['centerid'];
-      this.product_id = params['productid'];
+      this.center_id = params.centerid;
+      this.product_id = params.productid;
 
       this._cdr.markForCheck();
     });

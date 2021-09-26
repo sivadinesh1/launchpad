@@ -132,20 +132,14 @@ export class SalesReturnDialogComponent implements OnInit {
 	}
 
 	async return() {
-		let isItemsToReturn = this.returnArr.some((e) => {
-			return e.received_now > 0;
-		});
+		const isItemsToReturn = this.returnArr.some((e) => e.received_now > 0);
 
-		let isItemsToReturn1 = this.returnArr.some((e) => {
-			return e.received_now > e.qty + e.returned || e.error !== '';
-		});
+		const isItemsToReturn1 = this.returnArr.some((e) => e.received_now > e.qty + e.returned || e.error !== '');
 
 		if (isItemsToReturn && !isItemsToReturn1) {
 			console.log('object/... su bit ');
 
-			this.filteredArr = this.returnArr.filter((element) => {
-				return element.received_now > 0;
-			});
+			this.filteredArr = this.returnArr.filter((element) => element.received_now > 0);
 
 			const sum_to_return_amount = this.returnArr.reduce((accumulator, currentValue) => accumulator + currentValue.total_value, 0).toFixed(2);
 			const sum_to_return_items = this.returnArr.reduce((accumulator, currentValue) => accumulator + currentValue.received_now, 0);

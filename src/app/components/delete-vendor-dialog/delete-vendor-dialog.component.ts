@@ -37,7 +37,7 @@ export class DeleteVendorDialogComponent implements OnInit {
 
   delete() {
     this._commonApiService.deleteVendor(this.vendor.id).subscribe((data: any) => {
-      console.log('object.. vendor deleted ..')
+      console.log('object.. vendor deleted ..');
       this.dialogRef.close('success');
     });
   }

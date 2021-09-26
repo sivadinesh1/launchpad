@@ -5,11 +5,11 @@ import { DomSanitizer } from '@angular/platform-browser';
     name: 'safe'
   })
   export class SafePipe implements PipeTransform {
-  
+
     constructor(private sanitizer: DomSanitizer) {}
-  
+
     transform(value) {
       return this.sanitizer.bypassSecurityTrustHtml(value);
     }
-  
+
   }

@@ -25,8 +25,8 @@ export class WhatsappDialogComponent implements OnInit {
   }
 
   onShareClick() {
-    let url = `https://api.whatsapp.com/send?phone=${this.dataInfo.whatsapp}&text=${this.message}`;
-    window.open(url, "_blank");
+    const url = `https://api.whatsapp.com/send?phone=${this.dataInfo.whatsapp}&text=${this.message}`;
+    window.open(url, '_blank');
     this.dialogRef.close();
   }
 

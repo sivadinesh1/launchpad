@@ -194,9 +194,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
     this._commonApiService.getAllActiveVendors().subscribe((data: any) => {
       this.vendor_lis = data;
 
-      this.filteredVendor = this.submitForm.controls[
-        'vendorctrl'
-      ].valueChanges.pipe(
+      this.filteredVendor = this.submitForm.controls.vendorctrl.valueChanges.pipe(
         startWith(''),
         map((vendor) =>
           vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()
@@ -295,27 +293,25 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
   }
 
   reloadPurchaseInvoiceByCenter() {
-    let fromdate = this.submitForm?.value.fromdate;
-    let todate = this.submitForm?.value.todate;
-    let vendorid = this.submitForm?.value.vendorid;
-    let searchtype = this.submitForm?.value.searchtype;
-    let invoiceno = this.submitForm?.value.invoiceno;
+    const fromdate = this.submitForm?.value.fromdate;
+    const todate = this.submitForm?.value.todate;
+    const vendorid = this.submitForm?.value.vendorid;
+    const searchtype = this.submitForm?.value.searchtype;
+    const invoiceno = this.submitForm?.value.invoiceno;
 
     this._commonApiService
       .getPurchaseInvoiceByCenter({
         centerid: this.userdata.center_id,
-        fromdate: fromdate,
-        todate: todate,
-        vendorid: vendorid,
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        fromdate,
+        todate,
+        vendorid,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.invoicesdata = data.body;
 
-        this.purchaseInvoicedataSource.data = data.body.filter((data: any) => {
-          return data.payment_status !== 'PAID';
-        });
+        this.purchaseInvoicedataSource.data = data.body.filter((data: any) => data.payment_status !== 'PAID');
 
         this.purchaseInvoicedataSource.sort = this.sort;
         this.pageLength = data.length;
@@ -325,27 +321,25 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
   }
 
   searchPendingPayments() {
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
-    let vendorid = this.submitForm.value.vendorid;
-    let searchtype = this.submitForm.value.searchtype;
-    let invoiceno = this.submitForm.value.invoiceno;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
+    const vendorid = this.submitForm.value.vendorid;
+    const searchtype = this.submitForm.value.searchtype;
+    const invoiceno = this.submitForm.value.invoiceno;
 
     this._commonApiService
       .getPurchaseInvoiceByCenter({
         centerid: this.userdata.center_id,
-        fromdate: fromdate,
-        todate: todate,
-        vendorid: vendorid,
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        fromdate,
+        todate,
+        vendorid,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.invoicesdata = data.body;
 
-        this.purchaseInvoicedataSource.data = data.body.filter((data: any) => {
-          return data.payment_status !== 'PAID';
-        });
+        this.purchaseInvoicedataSource.data = data.body.filter((data: any) => data.payment_status !== 'PAID');
 
         this.purchaseInvoicedataSource.sort = this.sort;
         this.pageLength = data.length;
@@ -355,20 +349,20 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
   }
 
   searchReceivedPayments() {
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
-    let vendorid = this.submitForm.value.vendorid;
-    let searchtype = this.submitForm.value.searchtype;
-    let invoiceno = this.submitForm.value.invoiceno;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
+    const vendorid = this.submitForm.value.vendorid;
+    const searchtype = this.submitForm.value.searchtype;
+    const invoiceno = this.submitForm.value.invoiceno;
 
     this._commonApiService
       .getVendorPaymentsByCenter({
         centerid: this.userdata.center_id,
-        fromdate: fromdate,
-        todate: todate,
-        vendorid: vendorid,
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        fromdate,
+        todate,
+        vendorid,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.clearedPayments = data.body;
@@ -398,8 +392,8 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
       });
 
       this.submitForm.get('vendorctrl').enable();
-      this.submitForm.controls['invoiceno'].setErrors(null);
-      this.submitForm.controls['invoiceno'].markAsTouched();
+      this.submitForm.controls.invoiceno.setErrors(null);
+      this.submitForm.controls.invoiceno.markAsTouched();
     }
     this._cdr.detectChanges();
   }
@@ -441,7 +435,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
   }
 
   addPaymentsBillToBill(element) {
-    let success = 0;
+    const success = 0;
 
     this._commonApiService
       .getVendorDetails(element.vendor_id)
@@ -496,38 +490,38 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
   exportPendingPaymentsToExcel() {
     const fileName = 'Purchase_Pending_Payments_Reports.xlsx';
 
-    let reportData = JSON.parse(JSON.stringify(this.invoicesdata));
+    const reportData = JSON.parse(JSON.stringify(this.invoicesdata));
 
     reportData.forEach((e) => {
-      e['Vendor Name'] = e['vendor_name'];
-      delete e['vendor_name'];
+      e['Vendor Name'] = e.vendor_name;
+      delete e.vendor_name;
 
-      e['Invoice #'] = e['invoice_no'];
-      delete e['invoice_no'];
+      e['Invoice #'] = e.invoice_no;
+      delete e.invoice_no;
 
-      e['Invoice Date'] = e['invoice_date'];
-      delete e['invoice_date'];
+      e['Invoice Date'] = e.invoice_date;
+      delete e.invoice_date;
 
-      e['Invoice Amount'] = e['invoice_amt'];
-      delete e['invoice_amt'];
+      e['Invoice Amount'] = e.invoice_amt;
+      delete e.invoice_amt;
 
-      e['Aging Days'] = e['aging_days'];
-      delete e['aging_days'];
+      e['Aging Days'] = e.aging_days;
+      delete e.aging_days;
 
-      e['Payment Status'] = e['payment_status'];
-      delete e['payment_status'];
+      e['Payment Status'] = e.payment_status;
+      delete e.payment_status;
 
-      e['Paid Amount'] = e['paid_amount'];
-      delete e['paid_amount'];
+      e['Paid Amount'] = e.paid_amount;
+      delete e.paid_amount;
 
-      e['Balance Amount'] = e['bal_amount'];
-      delete e['bal_amount'];
+      e['Balance Amount'] = e.bal_amount;
+      delete e.bal_amount;
 
-      delete e['purchase_id'];
-      delete e['center_id'];
-      delete e['vendor_id'];
-      delete e['vendor_address1'];
-      delete e['vendor_address2'];
+      delete e.purchase_id;
+      delete e.center_id;
+      delete e.vendor_id;
+      delete e.vendor_address1;
+      delete e.vendor_address2;
     });
 
     const wb1: xlsx.WorkBook = xlsx.utils.book_new();
@@ -569,42 +563,42 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
     const fileName = 'Cleared_Payments_Reports.xlsx';
 
     //	this.arr = this.clearedPayments;
-    let reportData = JSON.parse(JSON.stringify(this.clearedPayments));
+    const reportData = JSON.parse(JSON.stringify(this.clearedPayments));
 
     reportData.forEach((e) => {
-      e['Vendor Name'] = e['vendor_name'];
-      delete e['vendor_name'];
+      e['Vendor Name'] = e.vendor_name;
+      delete e.vendor_name;
 
-      e['Invoice #'] = e['invoice_no'];
-      delete e['invoice_no'];
+      e['Invoice #'] = e.invoice_no;
+      delete e.invoice_no;
 
-      e['Invoice Date'] = e['invoice_date'];
-      delete e['invoice_date'];
+      e['Invoice Date'] = e.invoice_date;
+      delete e.invoice_date;
 
-      e['Bank Ref'] = e['bank_ref'];
-      delete e['bank_ref'];
+      e['Bank Ref'] = e.bank_ref;
+      delete e.bank_ref;
 
-      e['Payment Ref'] = e['pymt_ref'];
-      delete e['pymt_ref'];
+      e['Payment Ref'] = e.pymt_ref;
+      delete e.pymt_ref;
 
-      e['Payment #'] = e['payment_no'];
-      delete e['payment_no'];
+      e['Payment #'] = e.payment_no;
+      delete e.payment_no;
 
-      e['Payment Date'] = e['payment_date'];
-      delete e['payment_date'];
+      e['Payment Date'] = e.payment_date;
+      delete e.payment_date;
 
-      e['Payment Mode'] = e['pymt_mode_name'];
-      delete e['pymt_mode_name'];
+      e['Payment Mode'] = e.pymt_mode_name;
+      delete e.pymt_mode_name;
 
-      e['Advance Amount Used'] = e['advance_amt_used'];
-      delete e['advance_amt_used'];
+      e['Advance Amount Used'] = e.advance_amt_used;
+      delete e.advance_amt_used;
 
-      e['Paid Amount'] = e['applied_amount'];
-      delete e['applied_amount'];
+      e['Paid Amount'] = e.applied_amount;
+      delete e.applied_amount;
 
-      delete e['vendor_id'];
-      delete e['last_updated'];
-      delete e['pymt_mode_ref_id'];
+      delete e.vendor_id;
+      delete e.last_updated;
+      delete e.pymt_mode_ref_id;
     });
 
     const wb1: xlsx.WorkBook = xlsx.utils.book_new();

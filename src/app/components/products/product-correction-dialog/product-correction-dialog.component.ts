@@ -130,7 +130,7 @@ export class ProductCorrectionDialogComponent implements OnInit {
     console.log(loginForm.value.qty);
     console.log('selected item ' + JSON.stringify(this.selecteditem));
 
-    let submitForm = {
+    const submitForm = {
       stock_id: this.selecteditem.stock_id,
       product_id: this.selecteditem.product_id,
       mrp: this.selecteditem.mrp,

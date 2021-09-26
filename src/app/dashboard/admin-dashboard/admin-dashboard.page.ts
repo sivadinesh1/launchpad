@@ -93,7 +93,7 @@ export class AdminDashboardPage implements OnInit {
   }
 
   ngOnInit() {
-    this.userid = this._route.snapshot.params['userid'];
+    this.userid = this._route.snapshot.params.userid;
   }
 
   customEnquiry() {
@@ -132,9 +132,9 @@ export class AdminDashboardPage implements OnInit {
       this.customEnquiry();
     }
 
-    let obj = {
+    const obj = {
       center_id: this.userdata.center_id,
-      from_date: from_date,
+      from_date,
       to_date: moment().format('DD-MM-YYYY'),
     };
 
@@ -258,16 +258,12 @@ export class AdminDashboardPage implements OnInit {
         this.centerReceivablesSummary = data.body;
 
         this.centerReceivablesTotal = this.centerReceivablesSummary
-          .map((item) => {
-            return item.balance;
-          })
+          .map((item) => item.balance)
           .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
           .toFixed(2);
 
         this.receivablesByCustomers = this.centerReceivablesSummary.filter(
-          (item) => {
-            return item.balance !== 0.0 || item.balance !== 0;
-          }
+          (item) => item.balance !== 0.0 || item.balance !== 0
         );
 
         this._cdr.markForCheck();
@@ -290,9 +286,7 @@ export class AdminDashboardPage implements OnInit {
         this.paymentsArr = data.body;
 
         this.paymentsTotal = this.paymentsArr
-          .map((item) => {
-            return item.payment_now_amt;
-          })
+          .map((item) => item.payment_now_amt)
           .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
           .toFixed(2);
 
@@ -320,7 +314,7 @@ export class AdminDashboardPage implements OnInit {
 
   click() {
     this._commonApiService.createMeeting().subscribe((data: any) => {
-      let testdata = data;
+      const testdata = data;
       console.log('dinesh ' + JSON.stringify(testdata));
 
       this._cdr.markForCheck();

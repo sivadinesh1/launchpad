@@ -58,9 +58,9 @@ export class AuthenticationService {
   }
 
   async reloadLocalStorage() {
-    let tempCurrentUser = await this.getLocalStoreItems('currentUser');
-    let tempMenuUser = await this.getLocalStoreItems('currentMenu');
-    let tempCurrentPermission = await this.getLocalStoreItems(
+    const tempCurrentUser = await this.getLocalStoreItems('currentUser');
+    const tempMenuUser = await this.getLocalStoreItems('currentMenu');
+    const tempCurrentPermission = await this.getLocalStoreItems(
       'currentPermission'
     );
 
@@ -91,7 +91,7 @@ export class AuthenticationService {
         map(async (userData: any) => {
           await this.storagemode.clear();
 
-          let tokenStr = 'Bearer ' + userData.additionalinfo;
+          const tokenStr = 'Bearer ' + userData.additionalinfo;
 
           await this.storagemode.set('username', username);
           await this.storagemode.set('token', tokenStr);

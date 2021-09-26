@@ -116,7 +116,7 @@ export class ViewCustomerPage implements OnInit {
         this.isloaded = true;
         // DnD - code to add a "key/Value" in every object of array
         this.dataSource.data = data.map((el) => {
-          var o = Object.assign({}, el);
+          const o = Object.assign({}, el);
           o.isExpanded = false;
           return o;
         });
@@ -270,14 +270,14 @@ export class ViewCustomerPage implements OnInit {
   async exportCustomerDataToExcel() {
     const fileName = 'Active_Customers_Reports.xlsx';
 
-    let reportData = JSON.parse(JSON.stringify(this.arr));
+    const reportData = JSON.parse(JSON.stringify(this.arr));
 
     reportData.forEach((e) => {
-      delete e['id'];
-      delete e['center_id'];
-      delete e['state_id'];
-      delete e['code'];
-      delete e['isactive'];
+      delete e.id;
+      delete e.center_id;
+      delete e.state_id;
+      delete e.code;
+      delete e.isactive;
     });
     this.arr.splice(0, 1);
 

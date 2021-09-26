@@ -42,7 +42,7 @@ export class SearchDialogComponent implements OnInit {
 
 		if (this.searchByFlag === 'Item') {
 			this._commonApiService
-				.getProductInfo({ centerid: this.center_id, searchstring: searchstring, searchby: this.searchByFlag })
+				.getProductInfo({ centerid: this.center_id, searchstring, searchby: this.searchByFlag })
 				.subscribe((data) => {
 					this.resultList = data.body;
 
@@ -121,7 +121,7 @@ export class SearchDialogComponent implements OnInit {
 	async showInventoryReportsDialog(product_code, product_id) {
 		const modal = await this._modalcontroller.create({
 			component: InventoryReportsDialogComponent,
-			componentProps: { center_id: this.center_id, product_code: product_code, product_id: product_id },
+			componentProps: { center_id: this.center_id, product_code, product_id },
 			cssClass: 'select-modal',
 		});
 

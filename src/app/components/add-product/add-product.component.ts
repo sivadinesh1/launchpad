@@ -38,7 +38,7 @@ export class AddProductComponent implements OnInit {
 
       if (this.customer_id === 0) {
 
-        this._commonApiService.getProductInfo({ "centerid": this.center_id, "searchstring": searchstring }).subscribe(
+        this._commonApiService.getProductInfo({ centerid: this.center_id, searchstring }).subscribe(
           data => {
             this.resultList = data.body;
 
@@ -57,7 +57,7 @@ export class AddProductComponent implements OnInit {
 
       } else {
 
-        this._commonApiService.getProductInformation({ "centerid": this.center_id, "customerid": this.customer_id, "orderdate": this.order_date, "searchstr": searchstring }).subscribe(
+        this._commonApiService.getProductInformation({ centerid: this.center_id, customerid: this.customer_id, orderdate: this.order_date, searchstr: searchstring }).subscribe(
           data => {
             this.resultList = data.body;
 

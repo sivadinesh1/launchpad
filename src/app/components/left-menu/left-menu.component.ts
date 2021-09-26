@@ -1,25 +1,16 @@
 import {
-  Component,
-  OnInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
+  ChangeDetectorRef, Component
 } from '@angular/core';
-
-
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthenticationService } from 'src/app/services/authentication.service';
-import { Observable } from 'rxjs';
-import { filter, tap } from 'rxjs/operators';
-import { User } from 'src/app/models/User';
 import { ModalController } from '@ionic/angular';
+import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { User } from 'src/app/models/User';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 import { SettingsDialogComponent } from '../settings/settings-dialog/settings-dialog.component';
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
+
+
 
 interface Page {
   link: string;
@@ -36,8 +27,8 @@ interface Page {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeftMenuComponent {
-  public sideNavState: boolean = false;
-  public linkText: boolean = false;
+  public sideNavState = false;
+  public linkText = false;
   clickedItem: any;
 
   clickedMenudata$: Observable<any>;
@@ -193,7 +184,7 @@ export class LeftMenuComponent {
   ];
 
   constructor(
-    
+
     private _authservice: AuthenticationService,
     private _router: Router,
     private _modalcontroller: ModalController,
@@ -231,7 +222,7 @@ export class LeftMenuComponent {
     this.expanded1 = false;
   }
 
-  
+
 
   onSinenavToggle() {
     this.sideNavState = !this.sideNavState;
@@ -240,12 +231,12 @@ export class LeftMenuComponent {
       this.linkText = this.sideNavState;
       this._cdr.detectChanges();
     }, 200);
-    
+
     this._cdr.detectChanges();
   }
 
   routeTo(name: string, url: string) {
-    
+
     this._authservice.setCurrentMenu(name);
 
     this.clickedItem = name;

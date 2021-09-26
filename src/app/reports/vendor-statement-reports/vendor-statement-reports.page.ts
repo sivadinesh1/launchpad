@@ -103,9 +103,7 @@ export class VendorStatementReportsPage implements OnInit {
 			.subscribe((data: any) => {
 				this.vendor_lis = data;
 
-				this.filteredVendor = this.statementForm.controls[
-					'vendorctrl'
-				].valueChanges.pipe(
+				this.filteredVendor = this.statementForm.controls.vendorctrl.valueChanges.pipe(
 					startWith(''),
 					map((vendor) =>
 						vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()
@@ -153,7 +151,7 @@ export class VendorStatementReportsPage implements OnInit {
 	}
 
 	getStatement() {
-		let data = {
+		const data = {
 			centerid: this.userdata.center_id,
 			vendorid: this.statementForm.value.vendorid,
 			startdate: this.statementForm.value.startdate,

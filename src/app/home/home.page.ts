@@ -15,7 +15,7 @@ import { AuthenticationService } from '../services/authentication.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage implements OnInit {
-  
+
   center_id: any;
 
   onSideNavChange: boolean;
@@ -27,22 +27,22 @@ export class HomePage implements OnInit {
 
   constructor(
     private _authService: AuthenticationService,
-    
-    
+
+
     private _router: Router
   ) {
     this.isMenuOpen = false;
     this.contentMargin = 180;
     this.isLoaded = false;
-    
+
     this.onToolbarMenuToggle();
-    
+
   }
 
   ngOnInit() {}
 
   onToolbarMenuToggle() {
-    
+
     this.isMenuOpen = !this.isMenuOpen;
 
     if (!this.isMenuOpen) {

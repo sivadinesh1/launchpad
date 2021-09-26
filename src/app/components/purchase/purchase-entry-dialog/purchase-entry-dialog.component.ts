@@ -82,50 +82,50 @@ export class PurchaseEntryDialogComponent implements OnInit {
   async exportToExcel() {
     const fileName = `Purchase_Order_Reports_${this.purchasemasterdata?.invoice_no}.xlsx`;
 
-    let reportData = JSON.parse(JSON.stringify(this.purchasedetailsdata));
+    const reportData = JSON.parse(JSON.stringify(this.purchasedetailsdata));
 
     reportData.forEach((e) => {
-      e['Product Code'] = e['product_code'];
-      delete e['product_code'];
+      e['Product Code'] = e.product_code;
+      delete e.product_code;
 
-      e['Description'] = e['description'];
-      delete e['description'];
+      e.Description = e.description;
+      delete e.description;
 
-      e['HSNcode'] = e['hsncode'];
-      delete e['hsncode'];
+      e.HSNcode = e.hsncode;
+      delete e.hsncode;
 
-      e['TAX'] = e['tax'];
-      delete e['tax'];
+      e.TAX = e.tax;
+      delete e.tax;
 
-      e['MRP'] = e['mrp'];
-      delete e['mrp'];
+      e.MRP = e.mrp;
+      delete e.mrp;
 
-      e['Purchase Price'] = e['purchase_price'];
-      delete e['purchase_price'];
+      e['Purchase Price'] = e.purchase_price;
+      delete e.purchase_price;
 
-      e['Quantity'] = e['qty'];
-      delete e['qty'];
+      e.Quantity = e.qty;
+      delete e.qty;
 
-      e['Total Value'] = e['total_value'];
-      delete e['total_value'];
+      e['Total Value'] = e.total_value;
+      delete e.total_value;
 
-      delete e['id'];
-      delete e['batchdate'];
-      delete e['cgst'];
-      delete e['igst'];
-      delete e['packetsize'];
+      delete e.id;
+      delete e.batchdate;
+      delete e.cgst;
+      delete e.igst;
+      delete e.packetsize;
 
-      delete e['product_id'];
-      delete e['purchase_id'];
+      delete e.product_id;
+      delete e.purchase_id;
 
-      delete e['revision'];
-      delete e['sgst'];
-      delete e['stock_id'];
-      delete e['stock_pk'];
-      delete e['tax_value'];
-      delete e['taxable_value'];
-      delete e['taxrate'];
-      delete e['total_value'];
+      delete e.revision;
+      delete e.sgst;
+      delete e.stock_id;
+      delete e.stock_pk;
+      delete e.tax_value;
+      delete e.taxable_value;
+      delete e.taxrate;
+      delete e.total_value;
     });
 
     const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);

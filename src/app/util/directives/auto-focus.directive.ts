@@ -17,7 +17,7 @@ export class AutoFocusDirective implements AfterContentInit {
 
             this.el.nativeElement.focus();
 
-        }, 500)
+        }, 500);
 
     }
 

@@ -35,7 +35,7 @@ export class DeleteBrandDialogComponent implements OnInit {
 
   delete() {
     this._commonApiService.deleteBrand(this.brand.id).subscribe((data: any) => {
-      console.log('object.. brand deleted ..')
+      console.log('object.. brand deleted ..');
       this.dialogRef.close('success');
     });
   }

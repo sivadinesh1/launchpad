@@ -12,7 +12,7 @@ import { Component, Directive, ElementRef, Renderer2 } from '@angular/core';
 
 export class PreventCutCopyPasteDirective {
   constructor(el: ElementRef, renderer: Renderer2) {
-    var events = 'cut copy paste';
+    const events = 'cut copy paste';
     events.split(' ').forEach(e =>
       renderer.listen(el.nativeElement, e, (event) => {
         event.preventDefault();

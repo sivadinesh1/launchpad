@@ -143,10 +143,10 @@ export class ProcessEnquiryPage implements OnInit {
 
         this._route.params.subscribe((params) => {
           this.clicked = false;
-          this.enqid = params['enqid'];
+          this.enqid = params.enqid;
 
           this.submitForm1.patchValue({
-            enquiry_id: params['enqid'],
+            enquiry_id: params.enqid,
             centerid: this.userdata.center_id,
             createdby: this.userdata.userid,
           });
@@ -206,7 +206,7 @@ export class ProcessEnquiryPage implements OnInit {
 
   searchProducts() {
     let search = '';
-    this.submitForm1.controls['productctrl'].valueChanges
+    this.submitForm1.controls.productctrl.valueChanges
       .pipe(
         debounceTime(300),
         tap(() => (this.isLoading = true)),
@@ -259,7 +259,7 @@ export class ProcessEnquiryPage implements OnInit {
         this.spinner.hide();
 
         if (type === 'loadingnow') {
-          let v1 = 220 + this.enqDetailsOrig?.enquiryDetails.length * 70 + 70;
+          const v1 = 220 + this.enqDetailsOrig?.enquiryDetails.length * 70 + 70;
           this.ScrollToPoint(0, v1);
         } else {
           this.ScrollToTop();
@@ -331,19 +331,17 @@ export class ProcessEnquiryPage implements OnInit {
     this.productList$[index] = group.get('product_code').valueChanges.pipe(
       debounceTime(300),
 
-      switchMap((value) => {
-        return this._commonApiService.getProductInfo1({
+      switchMap((value) => this._commonApiService.getProductInfo1({
           centerid: this.userdata.center_id,
           searchstring: value,
-        });
-      })
+        }))
     );
     return group;
   }
 
   searchCustomers() {
     //let search = '';
-    this.submitForm.controls['customerctrl'].valueChanges
+    this.submitForm.controls.customerctrl.valueChanges
       .pipe(
         debounceTime(300),
         tap(() => (this.isCLoading = true)),
@@ -536,7 +534,7 @@ export class ProcessEnquiryPage implements OnInit {
     this._cdr.markForCheck();
     this.spinner.show();
 
-    let formToMoveSale = {
+    const formToMoveSale = {
       enquries: this.submitForm.value.enquiries,
       userid: this.userdata.userid,
     };
@@ -571,9 +569,7 @@ export class ProcessEnquiryPage implements OnInit {
   }
 
   async presentAlertConfirm() {
-    let atleastOneValidEntry = this.submitForm.value.enquiries.filter((e) => {
-      return e.giveqty !== 0;
-    });
+    const atleastOneValidEntry = this.submitForm.value.enquiries.filter((e) => e.giveqty !== 0);
 
     if (atleastOneValidEntry.length === 0) {
       // attn move all to backorder to be implemented
@@ -970,7 +966,7 @@ export class ProcessEnquiryPage implements OnInit {
     // 	return false;
     // }
 
-    let form = {
+    const form = {
       center_id: this.userdata.center_id,
       enquiry_id: +this.enqid,
 

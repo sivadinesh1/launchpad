@@ -148,7 +148,7 @@ export class CustomerPaymentDialogComponent implements OnInit {
   }
 
   addAccount() {
-    const control = <FormArray>this.submitForm.controls['accountarr'];
+    const control = <FormArray>this.submitForm.controls.accountarr;
     control.push(this.initAccount());
 
     this._cdr.markForCheck();
@@ -169,12 +169,12 @@ export class CustomerPaymentDialogComponent implements OnInit {
   // method to calculate total payed now and balance due
   checkTotalSum() {
     this.summed = 0;
-    const ctrl = <FormArray>this.submitForm.controls['accountarr'];
+    const ctrl = <FormArray>this.submitForm.controls.accountarr;
     // iterate each object in the form array
     ctrl.controls.forEach((x) => {
       // get the itemmt value and need to parse the input to number
 
-      let parsed = parseFloat(
+      const parsed = parseFloat(
         x.get('receivedamount').value === '' ||
           x.get('receivedamount').value === null
           ? 0
@@ -187,7 +187,7 @@ export class CustomerPaymentDialogComponent implements OnInit {
 
       // current set of paymnets + already paid amount > actual invocie amount then error
       if (this.summed + this.invoice.paid_amount > this.invoice.invoice_amt) {
-        let val = this.currencyPipe.transform(
+        const val = this.currencyPipe.transform(
           this.summed + this.invoice.paid_amount - this.invoice.invoice_amt,
           'INR'
         );
@@ -209,7 +209,7 @@ export class CustomerPaymentDialogComponent implements OnInit {
 
   onSubmit() {
     if (this.checkTotalSum()) {
-      let form = {
+      const form = {
         centerid: this.userdata.center_id,
         bankref: this.submitForm.value.accountarr[0].bankref,
         customerid: this.submitForm.value.customer.id,

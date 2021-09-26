@@ -42,8 +42,8 @@ export class HeaderComponent implements OnInit {
 
   submitForm: FormGroup;
 
-  customername: string = '';
-  customernameprint: string = '';
+  customername = '';
+  customernameprint = '';
 
   isLoading = false;
   isCLoading = false;
@@ -94,7 +94,7 @@ export class HeaderComponent implements OnInit {
     }
 
     // check customer_id, empty
-    this.submitForm.controls['productctrl'].valueChanges
+    this.submitForm.controls.productctrl.valueChanges
       .pipe(
         debounceTime(300),
         tap(() => (this.isLoading = true)),
@@ -158,13 +158,13 @@ export class HeaderComponent implements OnInit {
   }
 
   async showInventoryReportsDialog(product_code, product_id) {
-    
+
     const modal = await this._modalcontroller.create({
       component: InventoryReportsDialogComponent,
       componentProps: {
         center_id: this.center_id,
-        product_code: product_code,
-        product_id: product_id,
+        product_code,
+        product_id,
       },
       cssClass: 'select-modal',
     });
@@ -187,8 +187,8 @@ export class HeaderComponent implements OnInit {
 
   customerInfoPage(item) {
     console.log('object.......' + JSON.stringify(item));
-    
-    this._router.navigate([`/home/financials-customer`], {state: {"center_id": item.center_id, "customer_id": item.id}});
+
+    this._router.navigate([`/home/financials-customer`], {state: {center_id: item.center_id, customer_id: item.id}});
 
   }
 

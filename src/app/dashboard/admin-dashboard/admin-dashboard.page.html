@@ -19,10 +19,10 @@
 			</ng-container>
 
 			<ng-container *ngIf="!iscustomenquiry">
-				<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'yearly' }" (click)="reloadOpsSummary('yearly')">This year</div>
-				<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'monthly' }" (click)="reloadOpsSummary('monthly')">This month</div>
-				<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'weekly' }" (click)="reloadOpsSummary('weekly')">This week</div>
-				<div class="timeline" [ngClass]="{ selected: selectedOpsOption == 'today' }" (click)="reloadOpsSummary('today')">Today</div>
+				<div class="timeline" [ngClass]="{ selected: selectedOpsOption === 'yearly' }" (click)="reloadOpsSummary('yearly')">This year</div>
+				<div class="timeline" [ngClass]="{ selected: selectedOpsOption === 'monthly' }" (click)="reloadOpsSummary('monthly')">This month</div>
+				<div class="timeline" [ngClass]="{ selected: selectedOpsOption === 'weekly' }" (click)="reloadOpsSummary('weekly')">This week</div>
+				<div class="timeline" [ngClass]="{ selected: selectedOpsOption === 'today' }" (click)="reloadOpsSummary('today')">Today</div>
 			</ng-container>
 			<div style="padding: 10px 0px 0px 10px" *ngIf="!iscustomenquiry" (click)="reloadOpsSummary('custom')">
 				<img class="cursor" src="/assets/images/svg/calendar.svg" width="20px" height="20px" />

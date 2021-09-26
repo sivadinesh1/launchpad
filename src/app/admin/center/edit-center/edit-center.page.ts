@@ -319,7 +319,7 @@ export class EditCenterPage implements OnInit {
       .uploadCompanyLogo(formData, this.center_id, position)
       .subscribe((data: any) => {
         console.log('dinesh ' + data);
-        let response = data;
+        const response = data;
 
         if (response.result === 'ok') {
           // throw snackbar & display image

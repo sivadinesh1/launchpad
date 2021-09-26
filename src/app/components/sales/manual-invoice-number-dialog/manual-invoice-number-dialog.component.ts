@@ -63,12 +63,12 @@ export class ManualInvoiceNumberDialogComponent implements OnInit {
 		console.log('dinesh ' + JSON.stringify(this.model));
 		this.responsemsg = '';
 
-		let submitForm = {
+		const submitForm = {
 			invoice_no: this.model.invoiceNo,
 			center_id: this.data.center_id,
 		};
 
-		let result = await firstValueFrom(this._commonApiService.getDuplicateInvoiceNoCheked(submitForm));
+		const result = await firstValueFrom(this._commonApiService.getDuplicateInvoiceNoCheked(submitForm));
 
 		if (+result.body > 0) {
 			this.responsemsg = 'Invoice# already present. Try another number';

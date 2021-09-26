@@ -67,7 +67,7 @@ export class SuperadminPage implements OnInit {
       short: '4',
     },
   ];
-  selectedCompany: string = '1';
+  selectedCompany = '1';
 
   constructor(
     public router: Router,
@@ -127,19 +127,19 @@ export class SuperadminPage implements OnInit {
   }
 
   async doLogin(): Promise<void> {
-    let username = '9999999990';
-    let password = 'tts1234';
+    const username = '9999999990';
+    const password = 'tts1234';
 
-    let predata = await lastValueFrom(
+    const predata = await lastValueFrom(
       this.authenticationService.superadmin(this.selectedCompany)
     );
 
-    let data = await lastValueFrom(
+    const data = await lastValueFrom(
       this.authenticationService.login(username, password)
     );
 
     if (data.result === 'success') {
-      let role = data.role;
+      const role = data.role;
       this.responsemsg = '';
 
       this.authenticationService.fetchPermissions(

@@ -95,12 +95,12 @@ export class ViewProductsPage implements OnInit {
 	ionViewDidEnter() {}
 
 	openDialog(searchstring): void {
-		this._commonApiService.getProductInfo({ centerid: this.center_id, searchstring: searchstring }).subscribe((data: any) => {
+		this._commonApiService.getProductInfo({ centerid: this.center_id, searchstring }).subscribe((data: any) => {
 			this.tempsearchstring = searchstring;
 
 			// DnD - code to add a "key/Value" in every object of array
 			this.dataSource.data = data.body.map((el) => {
-				var o = Object.assign({}, el);
+				const o = Object.assign({}, el);
 				o.isExpanded = false;
 				return o;
 			});
@@ -229,7 +229,7 @@ export class ViewProductsPage implements OnInit {
 		const fileName = `Full_Stock_List_${moment().format('DD-MM-YYYY')}.xlsx`;
 
 		this._commonApiService.fetchFullProductInventoryReports({ centerid: this.center_id, mrp_split: this.mrp_flag }).subscribe((reportdata: any) => {
-			let reportData = JSON.parse(JSON.stringify(reportdata.body));
+			const reportData = JSON.parse(JSON.stringify(reportdata.body));
 
 			const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
 			const wb1: xlsx.WorkBook = xlsx.utils.book_new();

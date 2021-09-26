@@ -116,8 +116,8 @@ export class OpenEnquiryPage implements OnInit {
         .subscribe((data: any) => {
           this.userdata = data;
           this.init();
-          this.status = params['status'];
-          this.timeline = params['timeline'];
+          this.status = params.status;
+          this.timeline = params.timeline;
 
           if (this.timeline === 'today') {
             this.fromdate.setTime(new Date().getTime());
@@ -182,9 +182,7 @@ export class OpenEnquiryPage implements OnInit {
     this._commonApiService.getAllActiveCustomers().subscribe((data: any) => {
       this.customer_lis = data;
 
-      this.filteredCustomer = this.submitForm.controls[
-        'customerctrl'
-      ].valueChanges.pipe(
+      this.filteredCustomer = this.submitForm.controls.customerctrl.valueChanges.pipe(
         startWith(''),
         map((customer) =>
           customer ? this.filtercustomer(customer) : this.customer_lis.slice()
@@ -227,7 +225,7 @@ export class OpenEnquiryPage implements OnInit {
 
     this.filteredEnquiries$ = this.enquiries$;
 
-    let value = await lastValueFrom(this.filteredEnquiries$);
+    const value = await lastValueFrom(this.filteredEnquiries$);
 
     if (param === 'O') {
       this.filteredValues = value.filter(
@@ -244,9 +242,7 @@ export class OpenEnquiryPage implements OnInit {
     // to calculate the count on each status
     this.newEnquiries$ = this.enquiries$.pipe(
       map((arr: any) =>
-        arr.filter((f) => {
-          return f.estatus === 'O' || f.estatus === 'D';
-        })
+        arr.filter((f) => f.estatus === 'O' || f.estatus === 'D')
       )
     );
 
@@ -258,9 +254,7 @@ export class OpenEnquiryPage implements OnInit {
     );
     this.fullfilledEnquiries$ = this.enquiries$.pipe(
       map((arr: any) =>
-        arr.filter((f) => {
-          return f.estatus === 'E' || f.estatus === 'X';
-        })
+        arr.filter((f) => f.estatus === 'E' || f.estatus === 'X')
       )
     );
 
@@ -311,18 +305,14 @@ export class OpenEnquiryPage implements OnInit {
 
   async tabClick($event) {
     if (this.filteredEnquiries$ !== undefined) {
-      let value = await lastValueFrom(this.filteredEnquiries$);
+      const value = await lastValueFrom(this.filteredEnquiries$);
 
       if ($event.index === 0 || $event === 0) {
-        this.filteredValues = value.filter((data: any) => {
-          return data.estatus === 'O' || data.estatus === 'D';
-        });
+        this.filteredValues = value.filter((data: any) => data.estatus === 'O' || data.estatus === 'D');
       } else if ($event.index === 1 || $event === 1) {
         this.filteredValues = value.filter((data: any) => data.estatus === 'P');
       } else if ($event.index === 2 || $event === 2) {
-        this.filteredValues = value.filter((data: any) => {
-          return data.estatus === 'E' || data.estatus === 'X';
-        });
+        this.filteredValues = value.filter((data: any) => data.estatus === 'E' || data.estatus === 'X');
       }
 
       if ($event.index === 3 || $event === 3) {

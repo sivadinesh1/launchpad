@@ -109,10 +109,10 @@ export class LoginPage implements OnInit {
   }
 
   async doLogin(): Promise<void> {
-    let username = this.loginForm.controls.phone.value;
-    let password = this.loginForm.controls.password.value;
+    const username = this.loginForm.controls.phone.value;
+    const password = this.loginForm.controls.password.value;
 
-    let data = await lastValueFrom(
+    const data = await lastValueFrom(
       this.authenticationService.login(username, password)
     ).catch((err) => {
       console.log('error>>> ' + JSON.stringify(err));
@@ -148,7 +148,7 @@ export class LoginPage implements OnInit {
     });
 
     if (data.result === 'success') {
-      let role = data.role;
+      const role = data.role;
       this.responsemsg = '';
 
       this.authenticationService.fetchPermissions(data.center_id, data.role_id);

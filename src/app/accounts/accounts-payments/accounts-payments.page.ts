@@ -226,9 +226,7 @@ export class AccountsPaymentsPage implements OnInit {
     this._commonApiService.getAllActiveCustomers().subscribe((data: any) => {
       this.customer_lis = data;
 
-      this.filteredCustomer = this.submitForm.controls[
-        'customerctrl'
-      ].valueChanges.pipe(
+      this.filteredCustomer = this.submitForm.controls.customerctrl.valueChanges.pipe(
         startWith(''),
         map((customer) =>
           customer ? this.filtercustomer(customer) : this.customer_lis.slice()
@@ -358,14 +356,14 @@ export class AccountsPaymentsPage implements OnInit {
   }
 
   reloadPaymentsOverviewByCenter() {
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
 
     this._commonApiService
       .getPaymentsOverviewByCenter({
         centerid: this.userdata.center_id,
-        fromdate: fromdate,
-        todate: todate,
+        fromdate,
+        todate,
         customerid: 'all',
         searchtype: 'all',
       })
@@ -384,26 +382,26 @@ export class AccountsPaymentsPage implements OnInit {
   }
 
   reloadPaymentsByCenter() {
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
-    let customerid = this.submitForm.value.customerid;
-    let searchtype = this.submitForm.value.searchtype;
-    let invoiceno = this.submitForm.value.invoiceno;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
+    const customerid = this.submitForm.value.customerid;
+    const searchtype = this.submitForm.value.searchtype;
+    const invoiceno = this.submitForm.value.invoiceno;
 
     this._commonApiService
       .getPaymentsByCenter({
         centerid: this.userdata.center_id,
-        fromdate: fromdate,
-        todate: todate,
-        customerid: customerid,
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        fromdate,
+        todate,
+        customerid,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.paymentdata = data.body;
         // DnD - code to add a "key/Value" in every object of array
         this.paymentdataSource.data = data.body.map((el) => {
-          var o = Object.assign({}, el);
+          const o = Object.assign({}, el);
           o.isExpanded = false;
           return o;
         });
@@ -415,27 +413,25 @@ export class AccountsPaymentsPage implements OnInit {
   }
 
   reloadSaleInvoiceByCenter() {
-    let fromdate = this.submitForm?.value.fromdate;
-    let todate = this.submitForm?.value.todate;
-    let customerid = this.submitForm?.value.customerid;
-    let searchtype = this.submitForm?.value.searchtype;
-    let invoiceno = this.submitForm?.value.invoiceno;
+    const fromdate = this.submitForm?.value.fromdate;
+    const todate = this.submitForm?.value.todate;
+    const customerid = this.submitForm?.value.customerid;
+    const searchtype = this.submitForm?.value.searchtype;
+    const invoiceno = this.submitForm?.value.invoiceno;
 
     this._commonApiService
       .getSaleInvoiceByCenter({
         centerid: this.userdata.center_id,
-        fromdate: fromdate,
-        todate: todate,
-        customerid: customerid,
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        fromdate,
+        todate,
+        customerid,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.invoicesdata = data.body;
 
-        this.saleInvoicedataSource.data = data.body.filter((data: any) => {
-          return data.payment_status !== 'PAID';
-        });
+        this.saleInvoicedataSource.data = data.body.filter((data: any) => data.payment_status !== 'PAID');
 
         this.saleInvoicedataSource.sort = this.sort;
 
@@ -444,27 +440,25 @@ export class AccountsPaymentsPage implements OnInit {
   }
 
   searchPendingPayments() {
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
-    let customerid = this.submitForm.value.customerid;
-    let searchtype = this.submitForm.value.searchtype;
-    let invoiceno = this.submitForm.value.invoiceno;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
+    const customerid = this.submitForm.value.customerid;
+    const searchtype = this.submitForm.value.searchtype;
+    const invoiceno = this.submitForm.value.invoiceno;
 
     this._commonApiService
       .getSaleInvoiceByCenter({
         centerid: this.userdata.center_id,
-        fromdate: fromdate,
-        todate: todate,
-        customerid: customerid,
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        fromdate,
+        todate,
+        customerid,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.invoicesdata = data.body;
 
-        this.saleInvoicedataSource.data = data.body.filter((data: any) => {
-          return data.payment_status !== 'PAID';
-        });
+        this.saleInvoicedataSource.data = data.body.filter((data: any) => data.payment_status !== 'PAID');
 
         this.saleInvoicedataSource.sort = this.sort;
 
@@ -473,20 +467,20 @@ export class AccountsPaymentsPage implements OnInit {
   }
 
   searchReceivedPayments() {
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
-    let customerid = this.submitForm.value.customerid;
-    let searchtype = this.submitForm.value.searchtype;
-    let invoiceno = this.submitForm.value.invoiceno;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
+    const customerid = this.submitForm.value.customerid;
+    const searchtype = this.submitForm.value.searchtype;
+    const invoiceno = this.submitForm.value.invoiceno;
 
     this._commonApiService
       .getPaymentsByCenter({
         centerid: this.userdata.center_id,
-        fromdate: fromdate,
-        todate: todate,
-        customerid: customerid,
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        fromdate,
+        todate,
+        customerid,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.paymentdata = data.body;
@@ -499,20 +493,20 @@ export class AccountsPaymentsPage implements OnInit {
   }
 
   searchReceivedPaymentsOverview() {
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
-    let customerid = this.submitForm.value.customerid;
-    let searchtype = this.submitForm.value.searchtype;
-    let invoiceno = this.submitForm.value.invoiceno;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
+    const customerid = this.submitForm.value.customerid;
+    const searchtype = this.submitForm.value.searchtype;
+    const invoiceno = this.submitForm.value.invoiceno;
 
     this._commonApiService
       .getPaymentsOverviewByCenter({
         centerid: this.userdata.center_id,
-        fromdate: fromdate,
-        todate: todate,
-        customerid: customerid,
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        fromdate,
+        todate,
+        customerid,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.paymentdata = data.body;
@@ -530,7 +524,7 @@ export class AccountsPaymentsPage implements OnInit {
       customerid: 'all',
       customerctrl: 'All Customers',
     });
-    this.submitForm.controls['customerctrl'].setErrors(null);
+    this.submitForm.controls.customerctrl.setErrors(null);
     this._cdr.markForCheck();
     // this.searchPendingPayments();
   }
@@ -546,8 +540,8 @@ export class AccountsPaymentsPage implements OnInit {
       });
 
       this.submitForm.get('customerctrl').enable();
-      this.submitForm.controls['invoiceno'].setErrors(null);
-      this.submitForm.controls['invoiceno'].markAsTouched();
+      this.submitForm.controls.invoiceno.setErrors(null);
+      this.submitForm.controls.invoiceno.markAsTouched();
     }
     this._cdr.detectChanges();
   }
@@ -588,7 +582,7 @@ export class AccountsPaymentsPage implements OnInit {
   }
 
   addPaymentsBillToBill(element) {
-    let success = 0;
+    const success = 0;
 
     this._commonApiService
       .getCustomerDetails(element.customer_id)
@@ -643,34 +637,34 @@ export class AccountsPaymentsPage implements OnInit {
   exportPendingPaymentsToExcel() {
     const fileName = 'Pending_Receivables_Reports.xlsx';
 
-    let reportData = JSON.parse(
+    const reportData = JSON.parse(
       JSON.stringify(this.saleInvoicedataSource.data)
     );
 
     reportData.forEach((e) => {
-      e['Customer Name'] = e['customer_name'];
-      delete e['customer_name'];
-      e['Invoice #'] = e['invoice_no'];
-      delete e['invoice_no'];
-      e['Invoice Date'] = e['invoice_date'];
-      delete e['invoice_date'];
-      e['Aging Days'] = e['aging_days'];
-      delete e['aging_days'];
-      e['Invoice Amount'] = e['invoice_amt'];
-      delete e['invoice_amt'];
-      e['Sale Type'] = e['sale_type'];
-      delete e['sale_type'];
-      e['Payment Status'] = e['payment_status'];
-      delete e['payment_status'];
-      e['Paid Amount'] = e['paid_amount'];
-      delete e['paid_amount'];
-      e['Balance Amount'] = e['bal_amount'];
-      delete e['bal_amount'];
-      delete e['sale_id'];
-      delete e['center_id'];
-      delete e['customer_id'];
-      delete e['customer_address1'];
-      delete e['customer_address2'];
+      e['Customer Name'] = e.customer_name;
+      delete e.customer_name;
+      e['Invoice #'] = e.invoice_no;
+      delete e.invoice_no;
+      e['Invoice Date'] = e.invoice_date;
+      delete e.invoice_date;
+      e['Aging Days'] = e.aging_days;
+      delete e.aging_days;
+      e['Invoice Amount'] = e.invoice_amt;
+      delete e.invoice_amt;
+      e['Sale Type'] = e.sale_type;
+      delete e.sale_type;
+      e['Payment Status'] = e.payment_status;
+      delete e.payment_status;
+      e['Paid Amount'] = e.paid_amount;
+      delete e.paid_amount;
+      e['Balance Amount'] = e.bal_amount;
+      delete e.bal_amount;
+      delete e.sale_id;
+      delete e.center_id;
+      delete e.customer_id;
+      delete e.customer_address1;
+      delete e.customer_address2;
     });
 
     const wb1: xlsx.WorkBook = xlsx.utils.book_new();
@@ -710,43 +704,43 @@ export class AccountsPaymentsPage implements OnInit {
 
     this.arr = this.paymentdata;
     this.arr.forEach((e) => {
-      e['Customer Name'] = e['customer_name'];
-      delete e['customer_name'];
+      e['Customer Name'] = e.customer_name;
+      delete e.customer_name;
 
-      e['Pymt Mode'] = e['pymt_mode_name'];
-      delete e['pymt_mode_name'];
+      e['Pymt Mode'] = e.pymt_mode_name;
+      delete e.pymt_mode_name;
 
-      e['Bank Ref'] = e['bank_ref'];
-      delete e['bank_ref'];
+      e['Bank Ref'] = e.bank_ref;
+      delete e.bank_ref;
 
-      e['Payment Ref'] = e['pymt_ref'];
-      delete e['pymt_ref'];
+      e['Payment Ref'] = e.pymt_ref;
+      delete e.pymt_ref;
 
-      e['Payment No'] = e['payment_no'];
-      delete e['payment_no'];
+      e['Payment No'] = e.payment_no;
+      delete e.payment_no;
 
-      e['Payment Date'] = e['pymt_date'];
-      delete e['pymt_date'];
+      e['Payment Date'] = e.pymt_date;
+      delete e.pymt_date;
 
-      e['Advance Amount Used'] = e['advance_amt_used'];
-      delete e['advance_amt_used'];
+      e['Advance Amount Used'] = e.advance_amt_used;
+      delete e.advance_amt_used;
 
-      e['Invoice #'] = e['invoice_no'];
-      delete e['invoice_no'];
+      e['Invoice #'] = e.invoice_no;
+      delete e.invoice_no;
 
-      e['Invoice Date'] = e['invoice_date'];
-      delete e['invoice_date'];
+      e['Invoice Date'] = e.invoice_date;
+      delete e.invoice_date;
 
-      e['Paid Amount'] = e['applied_amount'];
-      delete e['applied_amount'];
+      e['Paid Amount'] = e.applied_amount;
+      delete e.applied_amount;
 
-      delete e['sale_id'];
-      delete e['center_id'];
-      delete e['customer_id'];
-      delete e['customer_address1'];
-      delete e['customer_address2'];
-      delete e['pymt_mode_ref_id'];
-      delete e['last_updated'];
+      delete e.sale_id;
+      delete e.center_id;
+      delete e.customer_id;
+      delete e.customer_address1;
+      delete e.customer_address2;
+      delete e.pymt_mode_ref_id;
+      delete e.last_updated;
     });
 
     const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);

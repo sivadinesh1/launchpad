@@ -128,9 +128,7 @@ export class SearchPurchasePage implements OnInit {
     this._commonApiService.getAllActiveVendors().subscribe((data: any) => {
       this.vendor_lis = data;
 
-      this.filteredVendor = this.submitForm.controls[
-        'vendorctrl'
-      ].valueChanges.pipe(
+      this.filteredVendor = this.submitForm.controls.vendorctrl.valueChanges.pipe(
         startWith(''),
         map((vendor) =>
           vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()
@@ -197,7 +195,7 @@ export class SearchPurchasePage implements OnInit {
 
     this.filteredPurchase$ = this.purchases$;
 
-    let value = await lastValueFrom(this.filteredPurchase$);
+    const value = await lastValueFrom(this.filteredPurchase$);
     this.filteredValues = value.filter((data: any) => data.status === 'C');
 
     // to calculate the count on each status
@@ -281,7 +279,7 @@ export class SearchPurchasePage implements OnInit {
   }
 
   async tabClick($event) {
-    let value = await lastValueFrom(this.filteredPurchase$);
+    const value = await lastValueFrom(this.filteredPurchase$);
 
     if ($event.index === 0) {
       this.filteredValues = value.filter(
@@ -305,16 +303,12 @@ export class SearchPurchasePage implements OnInit {
     this.sumNumItems = 0;
 
     this.sumTotalValue = this.filteredValues
-      .map((item) => {
-        return item.net_total;
-      })
+      .map((item) => item.net_total)
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
       .toFixed(2);
 
     this.sumNumItems = this.filteredValues
-      .map((item) => {
-        return item.no_of_items;
-      })
+      .map((item) => item.no_of_items)
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
     // DnD - How to count string result set (count of unique vendor names)
@@ -350,66 +344,66 @@ export class SearchPurchasePage implements OnInit {
 
     this.arr = await lastValueFrom(this.draftPurchase$);
 
-    let reportData = JSON.parse(JSON.stringify(this.arr));
+    const reportData = JSON.parse(JSON.stringify(this.arr));
 
     reportData.forEach((e) => {
-      e['Vendor Name'] = e['vendor_name'];
-      delete e['vendor_name'];
+      e['Vendor Name'] = e.vendor_name;
+      delete e.vendor_name;
 
-      e['Invoice #'] = e['invoice_no'];
-      delete e['invoice_no'];
+      e['Invoice #'] = e.invoice_no;
+      delete e.invoice_no;
 
-      e['Invoice Date'] = e['invoice_date'];
-      delete e['invoice_date'];
+      e['Invoice Date'] = e.invoice_date;
+      delete e.invoice_date;
 
-      e['Purchase Type'] = e['purchase_type'];
-      delete e['purchase_type'];
+      e['Purchase Type'] = e.purchase_type;
+      delete e.purchase_type;
 
-      e['Total Qty'] = e['total_qty'];
-      delete e['total_qty'];
+      e['Total Qty'] = e.total_qty;
+      delete e.total_qty;
 
-      e['# of Items'] = e['no_of_items'];
-      delete e['no_of_items'];
+      e['# of Items'] = e.no_of_items;
+      delete e.no_of_items;
 
-      e['Taxable Value'] = e['taxable_value'];
-      delete e['taxable_value'];
+      e['Taxable Value'] = e.taxable_value;
+      delete e.taxable_value;
 
-      e['CGST'] = e['cgst'];
-      delete e['cgst'];
+      e.CGST = e.cgst;
+      delete e.cgst;
 
-      e['SGST'] = e['sgst'];
-      delete e['sgst'];
+      e.SGST = e.sgst;
+      delete e.sgst;
 
-      e['IGST'] = e['igst'];
-      delete e['igst'];
+      e.IGST = e.igst;
+      delete e.igst;
 
-      e['Total Value'] = e['total_value'];
-      delete e['total_value'];
+      e['Total Value'] = e.total_value;
+      delete e.total_value;
 
-      e['Net Total'] = e['net_total'];
-      delete e['net_total'];
+      e['Net Total'] = e.net_total;
+      delete e.net_total;
 
-      e['Stock Inwards Date Time'] = e['stock_inwards_datetime'];
-      delete e['stock_inwards_datetime'];
+      e['Stock Inwards Date Time'] = e.stock_inwards_datetime;
+      delete e.stock_inwards_datetime;
 
-      delete e['id'];
-      delete e['center_id'];
-      delete e['vendor_id'];
-      delete e['lr_no'];
-      delete e['lr_date'];
-      delete e['received_date'];
-      delete e['order_no'];
-      delete e['order_date'];
-      delete e['transport_charges'];
+      delete e.id;
+      delete e.center_id;
+      delete e.vendor_id;
+      delete e.lr_no;
+      delete e.lr_date;
+      delete e.received_date;
+      delete e.order_no;
+      delete e.order_date;
+      delete e.transport_charges;
 
-      delete e['unloading_charges'];
-      delete e['misc_charges'];
-      delete e['status'];
-      delete e['revision'];
-      delete e['tax_applicable'];
-      delete e['roundoff'];
-      delete e['retail_customer_name'];
-      delete e['no_of_boxes'];
+      delete e.unloading_charges;
+      delete e.misc_charges;
+      delete e.status;
+      delete e.revision;
+      delete e.tax_applicable;
+      delete e.roundoff;
+      delete e.retail_customer_name;
+      delete e.no_of_boxes;
     });
 
     const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
@@ -451,66 +445,66 @@ export class SearchPurchasePage implements OnInit {
 
     this.arr = await lastValueFrom(this.fullfilledPurchase$);
 
-    let reportData = JSON.parse(JSON.stringify(this.arr));
+    const reportData = JSON.parse(JSON.stringify(this.arr));
 
     reportData.forEach((e) => {
-      e['Vendor Name'] = e['vendor_name'];
-      delete e['vendor_name'];
+      e['Vendor Name'] = e.vendor_name;
+      delete e.vendor_name;
 
-      e['Invoice #'] = e['invoice_no'];
-      delete e['invoice_no'];
+      e['Invoice #'] = e.invoice_no;
+      delete e.invoice_no;
 
-      e['Invoice Date'] = e['invoice_date'];
-      delete e['invoice_date'];
+      e['Invoice Date'] = e.invoice_date;
+      delete e.invoice_date;
 
-      e['Purchase Type'] = e['purchase_type'];
-      delete e['purchase_type'];
+      e['Purchase Type'] = e.purchase_type;
+      delete e.purchase_type;
 
-      e['Total Qty'] = e['total_qty'];
-      delete e['total_qty'];
+      e['Total Qty'] = e.total_qty;
+      delete e.total_qty;
 
-      e['# of Items'] = e['no_of_items'];
-      delete e['no_of_items'];
+      e['# of Items'] = e.no_of_items;
+      delete e.no_of_items;
 
-      e['Taxable Value'] = e['taxable_value'];
-      delete e['taxable_value'];
+      e['Taxable Value'] = e.taxable_value;
+      delete e.taxable_value;
 
-      e['CGST'] = e['cgst'];
-      delete e['cgst'];
+      e.CGST = e.cgst;
+      delete e.cgst;
 
-      e['SGST'] = e['sgst'];
-      delete e['sgst'];
+      e.SGST = e.sgst;
+      delete e.sgst;
 
-      e['IGST'] = e['igst'];
-      delete e['igst'];
+      e.IGST = e.igst;
+      delete e.igst;
 
-      e['Total Value'] = e['total_value'];
-      delete e['total_value'];
+      e['Total Value'] = e.total_value;
+      delete e.total_value;
 
-      e['Net Total'] = e['net_total'];
-      delete e['net_total'];
+      e['Net Total'] = e.net_total;
+      delete e.net_total;
 
-      e['Stock Inwards Date Time'] = e['stock_inwards_datetime'];
-      delete e['stock_inwards_datetime'];
+      e['Stock Inwards Date Time'] = e.stock_inwards_datetime;
+      delete e.stock_inwards_datetime;
 
-      delete e['id'];
-      delete e['center_id'];
-      delete e['vendor_id'];
-      delete e['lr_no'];
-      delete e['lr_date'];
-      delete e['received_date'];
-      delete e['order_no'];
-      delete e['order_date'];
-      delete e['transport_charges'];
+      delete e.id;
+      delete e.center_id;
+      delete e.vendor_id;
+      delete e.lr_no;
+      delete e.lr_date;
+      delete e.received_date;
+      delete e.order_no;
+      delete e.order_date;
+      delete e.transport_charges;
 
-      delete e['unloading_charges'];
-      delete e['misc_charges'];
-      delete e['status'];
-      delete e['revision'];
-      delete e['tax_applicable'];
-      delete e['roundoff'];
-      delete e['retail_customer_name'];
-      delete e['no_of_boxes'];
+      delete e.unloading_charges;
+      delete e.misc_charges;
+      delete e.status;
+      delete e.revision;
+      delete e.tax_applicable;
+      delete e.roundoff;
+      delete e.retail_customer_name;
+      delete e.no_of_boxes;
     });
 
     const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);

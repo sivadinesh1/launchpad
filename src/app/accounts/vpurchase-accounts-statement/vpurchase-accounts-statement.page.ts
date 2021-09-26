@@ -102,9 +102,7 @@ export class VpurchaseAccountsStatementPage implements OnInit {
     this._commonApiService.getAllActiveVendors().subscribe((data: any) => {
       this.vendor_lis = data;
 
-      this.filteredVendor = this.statementForm.controls[
-        'vendorctrl'
-      ].valueChanges.pipe(
+      this.filteredVendor = this.statementForm.controls.vendorctrl.valueChanges.pipe(
         startWith(''),
         map((vendor) =>
           vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()
@@ -152,7 +150,7 @@ export class VpurchaseAccountsStatementPage implements OnInit {
   }
 
   getStatement() {
-    let data = {
+    const data = {
       centerid: this.userdata.center_id,
       vendorid: this.statementForm.value.vendorid,
       startdate: this.statementForm.value.startdate,
@@ -199,7 +197,7 @@ export class VpurchaseAccountsStatementPage implements OnInit {
 
   reformatRefDate(reportData) {
     reportData.forEach((element) => {
-      element['ledger_date'] = moment(element['ledger_date']).format(
+      element.ledger_date = moment(element.ledger_date).format(
         'DD-MM-YYYY'
       );
     });
@@ -214,27 +212,27 @@ export class VpurchaseAccountsStatementPage implements OnInit {
     reportData = this.reformatRefDate(reportData);
 
     reportData.forEach((e) => {
-      delete e['center_id'];
-      delete e['vendor_id'];
-      delete e['txn_type'];
+      delete e.center_id;
+      delete e.vendor_id;
+      delete e.txn_type;
 
-      e['Credit'] = e['credit_amt'];
-      delete e['credit_amt'];
+      e.Credit = e.credit_amt;
+      delete e.credit_amt;
 
-      e['Debit'] = e['debit_amt'];
-      delete e['debit_amt'];
+      e.Debit = e.debit_amt;
+      delete e.debit_amt;
 
-      e['Balance Amount'] = e['balance_amt'];
-      delete e['balance_amt'];
+      e['Balance Amount'] = e.balance_amt;
+      delete e.balance_amt;
 
-      e['Purchase Reference'] = e['purchase_ref_id'];
-      delete e['purchase_ref_id'];
+      e['Purchase Reference'] = e.purchase_ref_id;
+      delete e.purchase_ref_id;
 
-      e['Payment Reference'] = e['payment_ref_id'];
-      delete e['payment_ref_id'];
+      e['Payment Reference'] = e.payment_ref_id;
+      delete e.payment_ref_id;
 
-      e['Date'] = e['ledger_date'];
-      delete e['ledger_date'];
+      e.Date = e.ledger_date;
+      delete e.ledger_date;
     });
 
     const wb: xlsx.WorkBook = xlsx.utils.book_new();
@@ -250,7 +248,7 @@ export class VpurchaseAccountsStatementPage implements OnInit {
       { width: 32 },
     ];
 
-    var wsrows = [
+    const wsrows = [
       { hpt: 30 }, // row 1 sets to the height of 12 in points
       { hpx: 30 }, // row 2 sets to the height of 16 in pixels
     ];

@@ -19,7 +19,7 @@ export class CurrencyPadComponent implements OnInit {
   ngOnInit() { }
 
   scratchbox(number) {
-    let x = this.p1.nativeElement.innerHTML;
+    const x = this.p1.nativeElement.innerHTML;
     if (number === '-1') {
       this.p1.nativeElement.innerHTML = x.substring(0, x.length - 1);
     } else {
@@ -34,8 +34,8 @@ export class CurrencyPadComponent implements OnInit {
   handleKeyboardEvent(event: KeyboardEvent) {
 
     console.log('key pressed ' + event.keyCode);
-    let kpressed = event.keyCode;
-    let x = this.p1.nativeElement.innerHTML;
+    const kpressed = event.keyCode;
+    const x = this.p1.nativeElement.innerHTML;
 
     if (kpressed === 48) {
       this.p1.nativeElement.innerHTML = x + 0;

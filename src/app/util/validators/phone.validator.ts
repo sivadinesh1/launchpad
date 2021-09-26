@@ -22,10 +22,10 @@ export class PhoneValidator {
       if (phoneControl.value !== '') {
         try {
           const phoneUtil = libphonenumber.PhoneNumberUtil.getInstance();
-          const phoneNumber = '' + phoneControl.value + '',
-            region = countryControl.value.iso,
-            number = phoneUtil.parse(phoneNumber, region),
-            isValidNumber = phoneUtil.isValidNumber(number);
+          const phoneNumber = '' + phoneControl.value + '';
+            const region = countryControl.value.iso;
+            const number = phoneUtil.parse(phoneNumber, region);
+            const isValidNumber = phoneUtil.isValidNumber(number);
 
           if (isValidNumber) {
             return null;
@@ -43,7 +43,7 @@ export class PhoneValidator {
         return null;
       }
     };
-  }
+  };
 }
 
 

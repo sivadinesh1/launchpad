@@ -19,14 +19,14 @@ export class CustomerDataResolverService implements Resolve<any> {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    let value = this.router.getCurrentNavigation().extras.state; 
+    const value = this.router.getCurrentNavigation().extras.state;
 
     let customer_id = value?.customer_id;
     if(customer_id === undefined) {
       customer_id = history.state.customer_id;
-    } 
-    
-    
+    }
+
+
 
     return this.commonapiservice.getCustomerDetails(customer_id);
   }

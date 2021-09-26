@@ -90,7 +90,7 @@ export class LoadingService {
   // }
 
   async showAlert() {
-    let alert = await this.alertctrl.create({
+    const alert = await this.alertctrl.create({
       header: 'Unauthorized',
       message: 'You are not authorized to visit this page!',
       buttons: ['OK'],

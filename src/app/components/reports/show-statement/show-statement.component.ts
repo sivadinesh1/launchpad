@@ -86,7 +86,7 @@ export class ShowStatementComponent implements OnInit {
 
 	reformatRefDate(reportData) {
 		reportData.forEach((element) => {
-			element['ref_date_f'] = moment(element['ref_date_f']).format('DD-MM-YYYY');
+			element.ref_date_f = moment(element.ref_date_f).format('DD-MM-YYYY');
 		});
 		return reportData;
 	}
@@ -99,8 +99,8 @@ export class ShowStatementComponent implements OnInit {
 		reportData = this.reformatRefDate(reportData);
 
 		reportData.forEach((e) => {
-			delete e['customer'];
-			delete e['place'];
+			delete e.customer;
+			delete e.place;
 		});
 
 		const wb1: xlsx.WorkBook = xlsx.utils.book_new();

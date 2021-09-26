@@ -20,8 +20,8 @@ export class ViewProductPage implements OnInit {
     private _router: Router
   ) {
     this._route.params.subscribe((params) => {
-      this.center_id = params['center_id'];
-      this.product_id = params['product_id'];
+      this.center_id = params.center_id;
+      this.product_id = params.product_id;
 
       this._cdr.markForCheck();
     });

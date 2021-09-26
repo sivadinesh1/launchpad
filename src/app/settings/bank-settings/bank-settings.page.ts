@@ -134,9 +134,7 @@ export class BankSettingsPage implements OnInit {
     } else if (mode === 'update') {
       // check if atleast one bank has default enabled.
 
-      const list = this.bankList.filter((e) => {
-        return e.isdefault === 'Y';
-      });
+      const list = this.bankList.filter((e) => e.isdefault === 'Y');
 
       if (
         (list.length === 0 || list.length === 1) &&

@@ -6,13 +6,13 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class PricePipePipe implements PipeTransform {
 	transform(value: number): any {
 		if (!isNaN(value)) {
-			var currencySymbol = '₹';
+			const currencySymbol = '₹';
 			if (value == null) {
 				return '';
 			}
-			var InrRSOut = value;
+			let InrRSOut = value;
 			InrRSOut = Math.round(InrRSOut);
-			var RV = '';
+			let RV = '';
 			if (InrRSOut > 0 && InrRSOut < 1000) {
 				RV = InrRSOut.toString();
 			} else if (InrRSOut >= 1000 && InrRSOut < 10000) {

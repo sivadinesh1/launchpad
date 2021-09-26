@@ -1,275 +1,220 @@
-<!-- <div style="display: flex">
-    <div [matMenuTriggerFor]="menuN" #menuTriggerN>
-      <img
-        src="/assets/images/svg/filter-results-button.svg"
-        width="22px"
-        height="22px"
-      />
-    </div>
-
-    <div class="customers">
-      <form [formGroup]="submitForm">
-        <mat-form-field
-          class="example-full-width"
-          style="padding-right: 10px; font-size: 16px"
-        >
-          <mat-label class="label-text">Select Customer</mat-label>
-          <input
-            matInput
-            [matAutocomplete]="auto"
-            formControlName="customerctrl"
-            #typehead1
-            panelWidth="auto"
-            #clist
-            autofocus
-            matTooltipPosition="after"
-            tabindex="1"
-          />
-
-          <button
-            mat-button
-            matSuffix
-            mat-icon-button
-            type="button"
-            tabindex="-1"
-            (click)="handleCustomerChange()"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-autocomplete
-            #auto="matAutocomplete"
-            autoActiveFirstOption
-            panelWidth="auto"
-            [displayWith]="displayFn"
-            (optionSelected)="setCustomerInfo($event, 'click')"
-          >
-            <mat-option
-              *ngIf="isCLoading"
-              class="is-loading"
-              style="width: 400px"
-            >
-              <div style="display: flex; align-items: center">
-                <mat-spinner diameter="20"></mat-spinner>
-                <span>&nbsp;&nbsp;Start typing...</span>
-              </div>
-            </mat-option>
-
-            <ng-container *ngIf="!isCLoading">
-              <mat-option
-                *ngFor="let customer of customer_lis"
-                [value]="customer"
-                style="height: 70px; border-bottom: 1px solid lightsteelblue"
-              >
-                <div style="display: grid; grid-template-columns: 1fr">
-                  <div>
-                    <div
-                      style="font-size: 16px; padding: 2px; line-height: 1em"
-                    >
-                      {{ customer.name }}
-                    </div>
-                    <div
-                      style="
-                        font-size: 14px;
-                        padding: 2px;
-                        line-height: 1em;
-                        opacity: 0.7;
-                      "
-                    >
-                      {{ customer.address1 }}
-                    </div>
-                    <div
-                      style="
-                        font-size: 14px;
-                        padding: 2px;
-                        line-height: 1em;
-                        opacity: 0.7;
-                      "
-                    >
-                      {{ customer.address2 }},{{ customer.district }}
-                    </div>
-                  </div>
-                </div>
-              </mat-option>
-            </ng-container>
-          </mat-autocomplete>
-          <mat-error
-            *ngIf="submitForm?.controls['customerctrl'].hasError('required')"
-          >
-            Please enter a value
-          </mat-error>
-        </mat-form-field>
-      </form>
-    </div>
-
-    <div>
-      <ion-segment mode="ios" value="New Sale">
-        <ion-segment-button value="New Sale">
-          <ion-label>All</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="Sales & Services">
-          <ion-label>Draft</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="invoiced">
-          <ion-label>Invoiced</ion-label>
-        </ion-segment-button>
-      </ion-segment>
-    </div>
-
+<ion-content>
+    <div style="padding: 1rem">All Sale Orders</div>
     <div
-      style="
-        width: 284px;
-        display: flex;
-        justify-content: space-between;
-        padding: 0 16px 0 28px;
-      "
-      [matMenuTriggerFor]="admin"
+        style="
+            background-color: #fff;
+            display: flex;
+            padding: 16px;
+            align-items: center;
+        "
     >
-      <div>
-        <div>
-          {{this.fromdate | date:'MMM dd'}} - {{this.todate | date:'dd, yyyy'}}
+        <div
+            [matMenuTriggerFor]="menuN"
+            #menuTriggerN
+            style="flex: 0 0 70px; padding: 0 16px"
+        >
+            <img
+                src="/assets/images/svg/filter-results-button.svg"
+                width="22px"
+                height="22px"
+            />
         </div>
 
-        <div style="font-weight: 600">Last {{this.searchByDays}} days</div>
-      </div>
+        <app-search-customers
+            (customerOutput)="customerInfoPage($event)"
+        ></app-search-customers>
+
+        <div>
+            <ion-segment mode="ios" value="New Sale">
+                <ion-segment-button value="New Sale">
+                    <ion-label>All</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="Sales & Services">
+                    <ion-label>Draft</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="invoiced">
+                    <ion-label>Invoiced</ion-label>
+                </ion-segment-button>
+            </ion-segment>
+        </div>
+        <div
+            style="
+                width: 240px;
+                display: flex;
+                justify-content: space-between;
+                padding: 0 16px 0 28px;
+                margin-left: auto;
+            "
+            [matMenuTriggerFor]="admin"
+        >
+            <div>
+                <div>
+                    {{this.fromdate | date:'MMM dd'}} - {{this.todate |
+                    date:'dd, yyyy'}}
+                </div>
+
+                <div style="font-weight: 600">
+                    Last {{this.searchByDays}} days
+                </div>
+            </div>
+            <div style="position: relative; top: 4px">
+                <img
+                    src="/assets/images/svg/down-arrow.svg"
+                    width="14px"
+                    height="14px"
+                />
+            </div>
+        </div>
     </div>
-    <div>
-      <img
-        src="/assets/images/svg/filter-results-button.svg"
-        width="22px"
-        height="22px"
-      />
+
+    <div class="header header-style">
+        <div>#</div>
+        <div>Customer Name</div>
+        <div>Invoice #</div>
+        <div>Date</div>
+
+        <div class="txt-right-align">Items</div>
+        <div class="txt-right-align">Total Value</div>
+        <div class="txt-center-align">Status</div>
+        <div>
+            <img
+                matTooltip="Download"
+                matTooltipClass="tooltip"
+                src="/assets/images/svg/direct-download.svg"
+                style="cursor: pointer"
+                width="32px"
+                height="32px"
+                (click)="exportDraftSalesToExcel()"
+            />
+        </div>
     </div>
 
-    <div
-      style="display: grid; grid-column: 9/-1; position: relative; top: 10px"
-    >
-      <form [formGroup]="submitForm">
-        <mat-form-field class="readonly-wrapper">
-          <mat-label>Show</mat-label>
-          <mat-select
-            formControlName="order"
-            (selectionChange)="search()"
-            value="{orderDefaultFlag}"
-            [disableControl]="this.submitForm.value.searchtype !== 'all'"
-          >
-            <mat-option *ngFor="let item of orderList" [value]="item.id">
-              {{item.value}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </form>
+    <div *ngFor="let item of filteredValues; let idx = index" class="listItem">
+        <div>{{idx + 1}}</div>
+        <div class="item">{{item.customer_name}}</div>
+        <div class="item" (click)="openDialog(item)">{{item.invoice_no}}</div>
+        <div class="item">{{item.invoice_date}}</div>
+
+        <div class="item" style="text-align: right">{{item.no_of_items}}</div>
+        <div class="item" style="text-align: right">
+            {{item.net_total.toLocaleString('en-IN')}}
+        </div>
+
+        <div class="item" style="text-align: right">
+            {{item.status === 'D' ? 'Draft' : 'Completed'}}
+        </div>
+
+        <div class="item" style="text-align: center">
+            <mat-icon
+                #tooltip="matTooltip"
+                matTooltip="Edit/Modify Sale Details"
+                matTooltipClass="tooltip"
+                (mousedown)="tooltip.hide()"
+                [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
+                (click)="goSalesEditScreen(item)"
+                >edit
+            </mat-icon>
+            <span style="position: relative; color: #6d78d2; top: -5px"
+                >&nbsp;Edit</span
+            >
+        </div>
+
+        <div class="item" style="text-align: center">&nbsp;</div>
+        <div
+            class="item"
+            style="text-align: center"
+            *ngIf="item.sale_type === 'gstinvoice' && item.status !== 'D'"
+        >
+            <mat-icon
+                #tooltip="matTooltip"
+                matTooltip="Print Sale"
+                matTooltipClass="tooltip"
+                (mousedown)="tooltip.hide()"
+                [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
+                (click)="goPrintInvoice(item)"
+                >print
+            </mat-icon>
+            <span style="font-size: 12px; font-weight: 600"
+                >[{{item.print_count === -1 ? 'M': item.print_count}}]
+            </span>
+        </div>
+
+        <!-- *ngIf="this.deleteAccess === 'Y'" -->
+        <div
+            class="item"
+            *ngIf="item.status === 'D'"
+            style="text-align: center"
+        >
+            <mat-icon
+                #tooltip="matTooltip"
+                matTooltip="Delete Draft Sale"
+                matTooltipClass="tooltip"
+                (mousedown)="tooltip.hide()"
+                [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
+                (click)="presentAlertConfirm(item)"
+                >delete_outline </mat-icon
+            ><span style="position: relative; color: red; top: -5px"
+                >&nbsp;Delete</span
+            >
+        </div>
+
+        <div *ngIf="tabIndex === 1">
+            <img
+                matTooltip="Sales Return"
+                matTooltipClass="tooltip"
+                src="/assets/images/svg/return.svg"
+                style="cursor: pointer"
+                width="24px"
+                height="24px"
+                color="red"
+                (click)="salesReturn(item)"
+            />
+        </div>
     </div>
-  </div> -->
 
-<div style="background-color: aquamarine; display: flex">
-  <div [matMenuTriggerFor]="menuN" #menuTriggerN>
-    <img
-      src="/assets/images/svg/filter-results-button.svg"
-      width="22px"
-      height="22px"
-    />
-  </div>
-</div>
+    <!-- 
+DnD - sample vertical menu
+<mat-icon
+    #tooltip="matTooltip"
+    matTooltip="More Menu Options"
+    matTooltipClass="tooltip"
+    (mousedown)="tooltip.hide()"
+    [matMenuTriggerFor]="menu"
+    [matMenuTriggerData]="{item: item}"
+    style="cursor: pointer"
+>more_vert</mat-icon
+>
+<mat-menu #menu="matMenu">
+    <ng-template matMenuContent let-aliasMenuItems="item">
+        <button mat-menu-item (click)="salesReturn(aliasMenuItems)">
+            <mat-icon>keyboard_return</mat-icon>
+            <span>Sales Return</span>
+        </button>
+    </ng-template>
+</mat-menu> -->
 
-<div class="header header-style">
-  <div>#</div>
-  <div>Customer Name</div>
-  <div>Invoice #</div>
-  <div>Date</div>
+    <mat-menu #admin="matMenu" [overlapTrigger]="false" class="myMenu">
+        <div mat-menu-item (click)="dateFilter(7)">
+            <span>Last 7 days</span>
+        </div>
 
-  <div class="txt-right-align">Items</div>
-  <div class="txt-right-align">Total Value</div>
-  <div class="txt-center-align">Status</div>
-  <div>
-    <img
-      matTooltip="Download"
-      matTooltipClass="tooltip"
-      src="/assets/images/svg/direct-download.svg"
-      style="cursor: pointer"
-      width="32px"
-      height="32px"
-      (click)="exportDraftSalesToExcel()"
-    />
-  </div>
-</div>
+        <div mat-menu-item (click)="dateFilter(14)">
+            <span>Last 14 days</span>
+        </div>
+    </mat-menu>
 
-<div *ngFor="let item of filteredValues; let idx = index" class="listItem">
-  <div>{{idx + 1}}</div>
-  <div class="item">{{item.customer_name}}</div>
-  <div class="item" (click)="openDialog(item)">{{item.invoice_no}}</div>
-  <div class="item">{{item.invoice_date}}</div>
-
-  <div class="item" style="text-align: right">{{item.no_of_items}}</div>
-  <div class="item" style="text-align: right">
-    {{item.net_total.toLocaleString('en-IN')}}
-  </div>
-
-  <div class="item" style="text-align: right">
-    {{item.status === 'D' ? 'Draft' : 'Completed'}}
-  </div>
-
-  <div class="item" style="text-align: center">
-    <mat-icon
-      #tooltip="matTooltip"
-      matTooltip="Edit/Modify Sale Details"
-      matTooltipClass="tooltip"
-      (mousedown)="tooltip.hide()"
-      [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
-      (click)="goSalesEditScreen(item)"
-      >edit
-    </mat-icon>
-    <span style="position: relative; color: #6d78d2; top: -5px"
-      >&nbsp;Edit</span
-    >
-  </div>
-
-  <div class="item" style="text-align: center">&nbsp;</div>
-  <div
-    class="item"
-    style="text-align: center"
-    *ngIf="item.sale_type === 'gstinvoice' && item.status !== 'D'"
-  >
-    <mat-icon
-      #tooltip="matTooltip"
-      matTooltip="Print Sale"
-      matTooltipClass="tooltip"
-      (mousedown)="tooltip.hide()"
-      [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
-      (click)="goPrintInvoice(item)"
-      >print
-    </mat-icon>
-    <span style="font-size: 12px; font-weight: 600"
-      >[{{item.print_count === -1 ? 'M': item.print_count}}]
-    </span>
-  </div>
-
-  <!-- *ngIf="this.deleteAccess === 'Y'" -->
-  <div class="item" *ngIf="item.status === 'D'" style="text-align: center">
-    <mat-icon
-      #tooltip="matTooltip"
-      matTooltip="Delete Draft Sale"
-      matTooltipClass="tooltip"
-      (mousedown)="tooltip.hide()"
-      [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
-      (click)="presentAlertConfirm(item)"
-      >delete_outline </mat-icon
-    ><span style="position: relative; color: red; top: -5px">&nbsp;Delete</span>
-  </div>
-
-  <div *ngIf="tabIndex === 1">
-    <img
-      matTooltip="Sales Return"
-      matTooltipClass="tooltip"
-      src="/assets/images/svg/return.svg"
-      style="cursor: pointer"
-      width="24px"
-      height="24px"
-      color="red"
-      (click)="salesReturn(item)"
-    />
-  </div>
-</div>
-
+    <mat-menu #menuN="matMenu">
+        <button mat-menu-item (click)="openDialog1()">
+            Search By Invoice #
+        </button>
+        <button mat-menu-item (click)="openDialog1()">
+            Sort By Recent Invoice
+        </button>
+        <button mat-menu-item (click)="openDialog1()">
+            Sort By Old Invoice
+        </button>
+    </mat-menu>
+</ion-content>
 <!-- 
 DnD - sample vertical menu
 <mat-icon
@@ -290,17 +235,3 @@ DnD - sample vertical menu
 		</button>
 	</ng-template>
 </mat-menu> -->
-
-<mat-menu #admin="matMenu" [overlapTrigger]="false" class="myMenu">
-  <div mat-menu-item (click)="dateFilter(7)">
-    <span>Last 7 days</span>
-  </div>
-
-  <div mat-menu-item (click)="dateFilter(14)">
-    <span>Last 14 days</span>
-  </div>
-</mat-menu>
-
-<mat-menu #menuN="matMenu">
-  <button mat-menu-item (click)="openDialog1()">Search By Invoice #</button>
-</mat-menu>

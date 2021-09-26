@@ -23,7 +23,7 @@ export class BillingPage implements OnInit {
 
   ngOnInit() {
     this.paramsSubscription = this._route.params.subscribe(params => {
-      this.enquiryid = params['enquiryid'];
+      this.enquiryid = params.enquiryid;
       console.log('object....>>.');
 
       // this._commonApiService.getPartyDetails(this.enquiryid).subscribe(e => {

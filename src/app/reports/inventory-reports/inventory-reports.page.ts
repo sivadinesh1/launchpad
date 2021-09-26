@@ -79,7 +79,7 @@ export class InventoryReportsPage implements OnInit {
 
 	reloadInventoryReport(product_code, product_id) {
 		this._commonApiService
-			.fetchProductInventoryReports({ center_id: this.center_id, product_code: product_code, product_id: product_id })
+			.fetchProductInventoryReports({ center_id: this.center_id, product_code, product_id })
 			.subscribe((data: any) => {
 				// DnD - code to add a "key/Value" in every object of array
 				this.dataSource.data = data.body;
@@ -97,9 +97,9 @@ export class InventoryReportsPage implements OnInit {
 
 	openDialog(action, invoice, sale_id, purchase_id, customer_id, vendor_id): void {
 		if (action === 'Sale') {
-			this.openSaleDialog({ id: sale_id, center_id: this.center_id, customer_id: customer_id });
+			this.openSaleDialog({ id: sale_id, center_id: this.center_id, customer_id });
 		} else if (action === 'Purchase') {
-			this.openPurchaseDialog({ id: purchase_id, center_id: this.center_id, vendor_id: vendor_id });
+			this.openPurchaseDialog({ id: purchase_id, center_id: this.center_id, vendor_id });
 		}
 	}
 

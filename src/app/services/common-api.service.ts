@@ -72,9 +72,7 @@ export class CommonApiService {
         observe: 'response',
       })
       .pipe(
-        map((res: any) => {
-          return res.body;
-        })
+        map((res: any) => res.body)
       );
   }
 
@@ -259,7 +257,7 @@ export class CommonApiService {
     headers = headers.set('Accept', 'application/pdf');
 
     return this.httpClient.get(`${this.restApiUrl}/v1/api/sample-pdf`, {
-      headers: headers,
+      headers,
       responseType: 'blob' as 'json',
     });
   }
@@ -271,7 +269,7 @@ export class CommonApiService {
     return this.httpClient.post(
       `${this.restApiUrl}/v1/api/print/invoice-pdf`,
       submitForm,
-      { headers: headers, responseType: 'blob' as 'json' }
+      { headers, responseType: 'blob' as 'json' }
     );
   }
 
@@ -282,7 +280,7 @@ export class CommonApiService {
     return this.httpClient.post(
       `${this.restApiUrl}/v1/api/print/estimate-pdf`,
       submitForm,
-      { headers: headers, responseType: 'blob' as 'json' }
+      { headers, responseType: 'blob' as 'json' }
     );
   }
 
@@ -293,7 +291,7 @@ export class CommonApiService {
     return this.httpClient.post(
       `${this.restApiUrl}/v1/api/print/credit-note-pdf`,
       submitForm,
-      { headers: headers, responseType: 'blob' as 'json' }
+      { headers, responseType: 'blob' as 'json' }
     );
   }
 

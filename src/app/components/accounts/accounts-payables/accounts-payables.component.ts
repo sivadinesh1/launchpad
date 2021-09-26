@@ -110,9 +110,7 @@ export class AccountsPayablesComponent implements OnInit {
     this._commonApiService.getAllActiveVendors().subscribe((data: any) => {
       this.vendor_lis = data;
       // autocomplete as typing
-      this.filteredVendor = this.submitForm.controls[
-        'vendor'
-      ].valueChanges.pipe(
+      this.filteredVendor = this.submitForm.controls.vendor.valueChanges.pipe(
         startWith(''),
         map((vendor) =>
           vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()
@@ -193,7 +191,7 @@ export class AccountsPayablesComponent implements OnInit {
 
   // adds one line item for payment
   addAccount() {
-    const control = <FormArray>this.submitForm.controls['accountarr'];
+    const control = <FormArray>this.submitForm.controls.accountarr;
     control.push(this.initAccount());
 
     this.getBalanceDue();
@@ -222,7 +220,7 @@ export class AccountsPayablesComponent implements OnInit {
       JSON.stringify(this.vendorUnpaidInvoices)
     );
 
-    const ctrl = <FormArray>this.submitForm.controls['accountarr'];
+    const ctrl = <FormArray>this.submitForm.controls.accountarr;
 
     let init = 0;
 
@@ -230,7 +228,7 @@ export class AccountsPayablesComponent implements OnInit {
     ctrl.controls.forEach((x) => {
       // get the itemmt value and need to parse the input to number
 
-      let parsed = parseFloat(
+      const parsed = parseFloat(
         x.get('receivedamount').value === '' ||
           x.get('receivedamount').value === null
           ? 0
@@ -306,7 +304,7 @@ export class AccountsPayablesComponent implements OnInit {
 
   onSubmit() {
     if (this.checkTotalSum()) {
-      let form = {
+      const form = {
         centerid: this.userdata.center_id,
         bankref: this.submitForm.value.accountarr[0].bankref,
         vendorid: this.vendor.id,
@@ -379,7 +377,7 @@ export class AccountsPayablesComponent implements OnInit {
   }
 
   getPosts(event) {
-    const control = <FormArray>this.submitForm.controls['accountarr'];
+    const control = <FormArray>this.submitForm.controls.accountarr;
     control.removeAt(0);
 
     this.submitForm.patchValue({
@@ -400,13 +398,13 @@ export class AccountsPayablesComponent implements OnInit {
     );
 
     this.invoiceamount = this.vendorUnpaidInvoices
-      .reduce(function (acc, curr) {
+      .reduce(function(acc, curr) {
         return acc + curr.invoice_amt;
       }, 0)
       .toFixed(2);
 
     this.paidamount = this.vendorUnpaidInvoices
-      .reduce(function (acc, curr) {
+      .reduce(function(acc, curr) {
         return acc + curr.paid_amount;
       }, 0)
       .toFixed(2);

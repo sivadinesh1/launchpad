@@ -100,8 +100,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
   submitForm: FormGroup;
 
-  customername: string = '';
-  customernameprint: string = '';
+  customername = '';
+  customernameprint = '';
 
   no_of_boxes: any;
 
@@ -228,7 +228,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
           this.selInvType = 'gstinvoice';
           this.listArr = [];
           this.cancel();
-          this.rawSalesData = data['rawsalesdata'];
+          this.rawSalesData = data.rawsalesdata;
         });
         // param change
         this._route.params.subscribe((params) => {
@@ -238,9 +238,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
           this.clicked = false;
 
-          this.id = params['id'];
-          this.mode = params['mode'];
-          this.saletype = params['saletype'];
+          this.id = params.id;
+          this.mode = params.mode;
+          this.saletype = params.saletype;
 
           if (this.saletype === 'SI') {
             this.selInvType = 'stockissue';
@@ -366,7 +366,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
           this.setTaxLabel(custData[0].code);
 
-          let invdt = moment(this.submitForm.value.invoicedate).format(
+          const invdt = moment(this.submitForm.value.invoicedate).format(
             'DD-MM-YYYY'
           );
 
@@ -375,7 +375,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             .getEnquiredProductData(this.customerdata.id, this.id, invdt)
             .subscribe((prodData: any) => {
               this.spinner.hide();
-              let proddata = prodData;
+              const proddata = prodData;
 
               this.submitForm.patchValue({
                 orderdate:
@@ -518,7 +518,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
           this._commonApiService
             .saleDetails(this.rawSalesData[0].id)
             .subscribe((saleData: any) => {
-              let sData = saleData;
+              const sData = saleData;
 
               sData.forEach((element) => {
                 this.processItems(element, 'preload');
@@ -541,7 +541,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
   }
 
   searchCustomers() {
-    this.submitForm.controls['customerctrl'].valueChanges
+    this.submitForm.controls.customerctrl.valueChanges
       .pipe(
         debounceTime(300),
         tap(() => (this.isCLoading = true)),
@@ -588,7 +588,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     // else part is when navigating via edit sale,
     // when disc_info present its fresh adding products, if not, take it from saledetail tbl
     if (temp.disc_info !== undefined && temp.disc_info !== null) {
-      let disc_info = temp.disc_info;
+      const disc_info = temp.disc_info;
       this.cust_discount_type = disc_info.substring(disc_info.indexOf('~') + 1);
       this.cust_discount_prcnt = disc_info.substring(0, disc_info.indexOf('~'));
     } else {
@@ -648,13 +648,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       discerror: '',
     });
 
-    const tempArr = this.listArr.map((arrItem) => {
-      return parseFloat(arrItem.total_value);
-    });
+    const tempArr = this.listArr.map((arrItem) => parseFloat(arrItem.total_value));
 
-    const tempArrCostPrice = this.listArr.map((arr) => {
-      return parseFloat(arr.unit_price);
-    });
+    const tempArrCostPrice = this.listArr.map((arr) => parseFloat(arr.unit_price));
 
     this.total = tempArr
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
@@ -675,7 +671,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     this.sumTotalTax();
 
     if (type === 'loadingnow') {
-      let v1 = 240 + this.listArr.length * 70 + 70;
+      const v1 = 240 + this.listArr.length * 70 + 70;
       this.ScrollToPoint(0, v1);
     } else {
       this.ScrollToTop();
@@ -730,9 +726,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
   sumTotalTax() {
     if (this.i_gst) {
       this.igstTotal = this.listArr
-        .map((item) => {
-          return +item.tax_value;
-        }) // convert to number using +
+        .map((item) => +item.tax_value) // convert to number using +
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
         .toFixed(2);
 
@@ -744,16 +738,12 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       });
     } else {
       this.cgstTotal = this.listArr
-        .map((item) => {
-          return item.tax_value / 2;
-        })
+        .map((item) => item.tax_value / 2)
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
         .toFixed(2);
 
       this.sgstTotal = this.listArr
-        .map((item) => {
-          return item.tax_value / 2;
-        })
+        .map((item) => item.tax_value / 2)
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
         .toFixed(2);
       console.log('cgstTotal' + this.cgstTotal);
@@ -991,11 +981,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
           customerctrl: this.customerdata,
         });
 
-        const tot_qty_check_Arr = this.listArr.map((arrItem) => {
-          return parseFloat(arrItem.qty);
-        });
+        const tot_qty_check_Arr = this.listArr.map((arrItem) => parseFloat(arrItem.qty));
 
-        let tmpTotQty = tot_qty_check_Arr
+        const tmpTotQty = tot_qty_check_Arr
           .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
           .toFixed(2);
 
@@ -1028,7 +1016,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
   }
 
   getNetTotal(param) {
-    let tmp =
+    const tmp =
       parseFloat(this.total) +
       parseFloat(this.submitForm.value.transport_charges || 0) +
       parseFloat(this.submitForm.value.unloading_charges || 0) +
@@ -1105,7 +1093,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
   }
 
   handleDiscountChange($event, idx) {
-    let discVal = $event.target.value;
+    const discVal = $event.target.value;
 
     if (+discVal <= 100 && discVal !== '') {
       this.listArr[idx].disc_percent = $event.target.value;
@@ -1120,7 +1108,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
   }
 
   handleQtyChange($event, idx) {
-    let qtyval = $event.target.value;
+    const qtyval = $event.target.value;
 
     if (qtyval > 0) {
       this.listArr[idx].qty = $event.target.value;
@@ -1204,13 +1192,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
   }
 
   calc() {
-    const tempArr = this.listArr.map((arrItem) => {
-      return parseFloat(arrItem.taxable_value) + parseFloat(arrItem.tax_value);
-    });
+    const tempArr = this.listArr.map((arrItem) => parseFloat(arrItem.taxable_value) + parseFloat(arrItem.tax_value));
 
-    const tempArrCostPrice = this.listArr.map((arr) => {
-      return parseFloat(arr.unit_price) * parseFloat(arr.qty);
-    });
+    const tempArrCostPrice = this.listArr.map((arr) => parseFloat(arr.unit_price) * parseFloat(arr.qty));
 
     this.total = tempArr
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
@@ -1515,7 +1499,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       console.log('The result:', result);
 
       if (result.data !== undefined) {
-        let myCheckboxes = this.myCheckboxes.toArray();
+        const myCheckboxes = this.myCheckboxes.toArray();
 
         this.removeRowArr.forEach((idx) => {
           this.listArr[idx].taxrate = +result.data;
@@ -1556,7 +1540,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       console.log('The result:', result);
 
       if (result.data !== undefined) {
-        let myCheckboxes = this.myCheckboxes.toArray();
+        const myCheckboxes = this.myCheckboxes.toArray();
 
         this.removeRowArr.forEach((idx) => {
           this.listArr[idx].mrp = result.data;
@@ -1623,9 +1607,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
   }
 
   async setItemDesc(event, from) {
-    let onlyProductCodeArr = this.listArr.map((element) => {
-      return element.product_code;
-    });
+    const onlyProductCodeArr = this.listArr.map((element) => element.product_code);
 
     if (from === 'tab') {
       this.lineItemData = event;
@@ -1633,13 +1615,13 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       this.lineItemData = event.option.value;
     }
 
-    let isduplicate = onlyProductCodeArr.includes(
+    const isduplicate = onlyProductCodeArr.includes(
       this.lineItemData.product_code
     );
     let proceed = false;
 
     if (isduplicate) {
-      var index = onlyProductCodeArr.indexOf(this.lineItemData.product_code);
+      const index = onlyProductCodeArr.indexOf(this.lineItemData.product_code);
 
       const alert = await this.alertController.create({
         header: 'Confirm!',
@@ -1739,7 +1721,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
   }
 
   getLength() {
-    const control = <FormArray>this.submitForm.controls['productarr'];
+    const control = <FormArray>this.submitForm.controls.productarr;
     return control.length;
   }
 
@@ -1751,7 +1733,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
     }
 
-    this.submitForm.controls['productctrl'].valueChanges
+    this.submitForm.controls.productctrl.valueChanges
       .pipe(
         debounceTime(300),
         tap(() => (this.isLoading = true)),
@@ -1800,8 +1782,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       this.submitForm.value.tempdesc === '' ||
       this.submitForm.value.tempdesc === null
     ) {
-      this.submitForm.controls['tempdesc'].setErrors({ required: true });
-      this.submitForm.controls['tempdesc'].markAsTouched();
+      this.submitForm.controls.tempdesc.setErrors({ required: true });
+      this.submitForm.controls.tempdesc.markAsTouched();
 
       return false;
     }
@@ -1811,8 +1793,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       this.submitForm.value.tempqty === null ||
       this.submitForm.value.tempqty === 0
     ) {
-      this.submitForm.controls['tempqty'].setErrors({ required: true });
-      this.submitForm.controls['tempqty'].markAsTouched();
+      this.submitForm.controls.tempqty.setErrors({ required: true });
+      this.submitForm.controls.tempqty.markAsTouched();
 
       return false;
     }
@@ -1821,8 +1803,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       this.submitForm.value.tempmrp === null ||
       this.submitForm.value.tempmrp === 0
     ) {
-      this.submitForm.controls['tempmrp'].setErrors({ required: true });
-      this.submitForm.controls['tempmrp'].markAsTouched();
+      this.submitForm.controls.tempmrp.setErrors({ required: true });
+      this.submitForm.controls.tempmrp.markAsTouched();
 
       return false;
     }
@@ -1831,8 +1813,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       this.submitForm.value.customerctrl === '' ||
       this.submitForm.value.customerctrl === null
     ) {
-      this.submitForm.controls['customerctrl'].setErrors({ required: true });
-      this.submitForm.controls['customerctrl'].markAsTouched();
+      this.submitForm.controls.customerctrl.setErrors({ required: true });
+      this.submitForm.controls.customerctrl.markAsTouched();
 
       return false;
     }
@@ -1855,10 +1837,10 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       tempqty: 1,
     });
 
-    this.submitForm.controls['tempdesc'].setErrors(null);
-    this.submitForm.controls['tempqty'].setErrors(null);
-    this.submitForm.controls['tempmrp'].setErrors(null);
-    this.submitForm.controls['productctrl'].setErrors(null);
+    this.submitForm.controls.tempdesc.setErrors(null);
+    this.submitForm.controls.tempqty.setErrors(null);
+    this.submitForm.controls.tempmrp.setErrors(null);
+    this.submitForm.controls.productctrl.setErrors(null);
     // this.plist.nativeElement.focus();
     this.plist && this.plist.nativeElement.focus();
 
@@ -2020,8 +2002,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
       component: InventoryReportsDialogComponent,
       componentProps: {
         center_id: this.userdata.center_id,
-        product_code: product_code,
-        product_id: product_id,
+        product_code,
+        product_id,
       },
       cssClass: 'select-modal',
     });

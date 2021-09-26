@@ -5,9 +5,9 @@ export class FilterPipe implements PipeTransform {
     /**
      * Transform
      *
-     * @param {any[]} items
-     * @param {string} searchText
-     * @returns {any[]}
+     * @param items
+     * @param searchText
+     * @returns
      */
     transform(items: any[], searchText: string): any[] {
         if (!items) {
@@ -18,8 +18,6 @@ export class FilterPipe implements PipeTransform {
         }
         searchText = searchText.toLocaleLowerCase();
 
-        return items.filter(it => {
-            return (it.product_desc.toLocaleLowerCase().includes(searchText) || it.product_code.toLocaleLowerCase().includes(searchText));
-        });
+        return items.filter(it => (it.product_desc.toLocaleLowerCase().includes(searchText) || it.product_code.toLocaleLowerCase().includes(searchText)));
     }
 }

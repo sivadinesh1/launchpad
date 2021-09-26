@@ -67,13 +67,13 @@ export class InventoryReportsDialogComponent implements OnInit {
       this.openSaleDialog({
         id: sale_id,
         center_id: this.center_id,
-        customer_id: customer_id,
+        customer_id,
       });
     } else if (action.startsWith('Purchase')) {
       this.openPurchaseDialog({
         id: purchase_id,
         center_id: this.center_id,
-        vendor_id: vendor_id,
+        vendor_id,
       });
     }
   }

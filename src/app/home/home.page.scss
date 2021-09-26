@@ -1,46 +1,47 @@
-@import "../../breakpoints/breakpoints.scss";
+@import '../../breakpoints/breakpoints.scss';
 
 #toolbarMenu {
-  cursor: pointer;
-  margin-right: 20px;
+	margin-right: 20px;
+	cursor: pointer;
 }
+
 #mainToolbar .toolbar-spacer {
-  flex: 1 1 auto;
+	flex: 1 1 auto;
 }
 
 #mainToolbar .toolbar-icon {
-  cursor: pointer;
-  margin: 0 8px;
+	margin: 0 8px;
+	cursor: pointer;
 }
 
 #sideNavContainer {
-  margin-top: 60px;
+	margin-top: 60px;
 }
 
 #sideNav {
-  width: 180px;
+	width: 180px;
 }
 
 #sideNav.menu-close {
-  width: 60px;
-  transition: width 0.2s;
+	width: 60px;
+	transition: width 0.2s;
 }
 
 #sideNav.menu-open {
-  width: 180px;
-  transition: width 0.2s;
+	width: 180px;
+	transition: width 0.2s;
 }
 
 .example-toolbar {
-  display: flex;
-  padding: 1px 20px 0px 8px;
-  height: 56px;
-  color: #222;
-  background-color: #fff;
+	display: flex;
+	height: 56px;
+	padding: 1px 20px 0 8px;
+	color: #222;
+	background-color: #fff;
 
-  box-shadow: 0 0 9px -5px rgb(0 0 0 / 70%);
+	box-shadow: 0 0 9px -5px rgb(0 0 0 / 70%);
 }
 
 .test {
-  margin-left: 180px;
+	margin-left: 180px;
 }

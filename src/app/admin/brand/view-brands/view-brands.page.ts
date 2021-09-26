@@ -93,7 +93,7 @@ export class ViewBrandsPage implements OnInit {
     this._commonApiService.getAllActiveBrands('A').subscribe((data: any) => {
       // DnD - code to add a "key/Value" in every object of array
       this.dataSource.data = data.map((el) => {
-        var o = Object.assign({}, el);
+        const o = Object.assign({}, el);
         o.isExpanded = false;
         return o;
       });

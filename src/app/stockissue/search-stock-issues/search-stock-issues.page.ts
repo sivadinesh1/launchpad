@@ -187,9 +187,7 @@ export class SearchStockIssuesPage implements OnInit {
     this._commonApiService.getAllActiveCustomers().subscribe((data: any) => {
       this.customer_lis = data;
 
-      this.filteredCustomer = this.submitForm.controls[
-        'customerctrl'
-      ].valueChanges.pipe(
+      this.filteredCustomer = this.submitForm.controls.customerctrl.valueChanges.pipe(
         startWith(''),
         map((customer) =>
           customer ? this.filtercustomer(customer) : this.customer_lis.slice()
@@ -210,8 +208,8 @@ export class SearchStockIssuesPage implements OnInit {
     } else {
       this.submitForm.value.invoiceno = '';
       this.submitForm.get('customerctrl').enable();
-      this.submitForm.controls['invoiceno'].setErrors(null);
-      this.submitForm.controls['invoiceno'].markAsTouched();
+      this.submitForm.controls.invoiceno.setErrors(null);
+      this.submitForm.controls.invoiceno.markAsTouched();
     }
   }
   // this.yourFormName.controls.formFieldName.enable();
@@ -243,8 +241,8 @@ export class SearchStockIssuesPage implements OnInit {
       this.submitForm.value.invoiceno.trim().length === 0
     ) {
       console.log('invoice number is mandatory');
-      this.submitForm.controls['invoiceno'].setErrors({ required: true });
-      this.submitForm.controls['invoiceno'].markAsTouched();
+      this.submitForm.controls.invoiceno.setErrors({ required: true });
+      this.submitForm.controls.invoiceno.markAsTouched();
       return false;
     }
 
@@ -262,7 +260,7 @@ export class SearchStockIssuesPage implements OnInit {
 
     this.filteredSales$ = this.sales$;
 
-    let value = await lastValueFrom(this.filteredSales$);
+    const value = await lastValueFrom(this.filteredSales$);
 
     this.stockIssueSales$ = this.sales$.pipe(
       map((arr: any) =>
@@ -375,7 +373,7 @@ export class SearchStockIssuesPage implements OnInit {
   }
 
   async tabClick($event) {
-    let value = await lastValueFrom(this.filteredSales$);
+    const value = await lastValueFrom(this.filteredSales$);
 
     this.filteredValues = value.filter(
       (data: any) => data.status === 'D' && data.sale_type === 'stockissue'
@@ -390,16 +388,12 @@ export class SearchStockIssuesPage implements OnInit {
     this.sumNumItems = 0;
 
     this.sumTotalValue = this.filteredValues
-      .map((item) => {
-        return item.net_total;
-      })
+      .map((item) => item.net_total)
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
       .toFixed(2);
 
     this.sumNumItems = this.filteredValues
-      .map((item) => {
-        return item.no_of_items;
-      })
+      .map((item) => item.no_of_items)
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
   }
 
@@ -449,73 +443,73 @@ export class SearchStockIssuesPage implements OnInit {
 
     this.arr = await lastValueFrom(this.stockIssueSales$);
 
-    let reportData = JSON.parse(JSON.stringify(this.arr));
+    const reportData = JSON.parse(JSON.stringify(this.arr));
 
     reportData.forEach((e) => {
-      e['Customer Name'] = e['customer_name'];
-      delete e['customer_name'];
+      e['Customer Name'] = e.customer_name;
+      delete e.customer_name;
 
-      e['Invoice #'] = e['invoice_no'];
-      delete e['invoice_no'];
+      e['Invoice #'] = e.invoice_no;
+      delete e.invoice_no;
 
-      e['Invoice Date'] = e['invoice_date'];
-      delete e['invoice_date'];
+      e['Invoice Date'] = e.invoice_date;
+      delete e.invoice_date;
 
-      e['Sale Type'] = e['sale_type'];
-      delete e['sale_type'];
+      e['Sale Type'] = e.sale_type;
+      delete e.sale_type;
 
-      e['Total Qty'] = e['total_qty'];
-      delete e['total_qty'];
+      e['Total Qty'] = e.total_qty;
+      delete e.total_qty;
 
-      e['# of Items'] = e['no_of_items'];
-      delete e['no_of_items'];
+      e['# of Items'] = e.no_of_items;
+      delete e.no_of_items;
 
-      e['Taxable Value'] = e['taxable_value'];
-      delete e['taxable_value'];
+      e['Taxable Value'] = e.taxable_value;
+      delete e.taxable_value;
 
-      e['CGST'] = e['cgst'];
-      delete e['cgst'];
+      e.CGST = e.cgst;
+      delete e.cgst;
 
-      e['SGST'] = e['sgst'];
-      delete e['sgst'];
+      e.SGST = e.sgst;
+      delete e.sgst;
 
-      e['IGST'] = e['igst'];
-      delete e['igst'];
+      e.IGST = e.igst;
+      delete e.igst;
 
-      e['IGST'] = e['igst'];
-      delete e['igst'];
+      e.IGST = e.igst;
+      delete e.igst;
 
-      e['Total Value'] = e['total_value'];
-      delete e['total_value'];
+      e['Total Value'] = e.total_value;
+      delete e.total_value;
 
-      e['Net Total'] = e['net_total'];
-      delete e['net_total'];
+      e['Net Total'] = e.net_total;
+      delete e.net_total;
 
-      e['Sale Date Time'] = e['sale_datetime'];
-      delete e['sale_datetime'];
+      e['Sale Date Time'] = e.sale_datetime;
+      delete e.sale_datetime;
 
-      delete e['id'];
-      delete e['center_id'];
-      delete e['customer_id'];
-      delete e['lr_no'];
-      delete e['lr_date'];
-      delete e['received_date'];
-      delete e['order_no'];
-      delete e['order_date'];
-      delete e['transport_charges'];
+      delete e.id;
+      delete e.center_id;
+      delete e.customer_id;
+      delete e.lr_no;
+      delete e.lr_date;
+      delete e.received_date;
+      delete e.order_no;
+      delete e.order_date;
+      delete e.transport_charges;
 
-      delete e['unloading_charges'];
-      delete e['misc_charges'];
-      delete e['status'];
-      delete e['revision'];
-      delete e['tax_applicable'];
-      delete e['roundoff'];
-      delete e['retail_customer_name'];
-      delete e['retail_customer_address'];
-      delete e['no_of_boxes'];
+      delete e.unloading_charges;
+      delete e.misc_charges;
+      delete e.status;
+      delete e.revision;
+      delete e.tax_applicable;
+      delete e.roundoff;
+      delete e.retail_customer_name;
+      delete e.retail_customer_address;
+      delete e.no_of_boxes;
 
-      delete e['stock_issue_date_ref'];
-      delete e['stock_issue_ref'];
+      delete e.stock_issue_date_ref;
+      delete e.stock_issue_ref;
     });
     this.arr.splice(0, 1);
 

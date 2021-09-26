@@ -44,8 +44,8 @@ export class ChangeMrpComponent implements OnInit {
 
 
   ionViewDidEnter() {
-    let list = this.pArry;
-    let removeList = this.rArry;
+    const list = this.pArry;
+    const removeList = this.rArry;
 
 
 
@@ -66,10 +66,10 @@ export class ChangeMrpComponent implements OnInit {
     }
 
     if (+this.current_mrp === this.submitForm.value.mrp) {
-      this.msg = "No Change in MRP";
+      this.msg = 'No Change in MRP';
       return false;
     } else if (this.submitForm.value.mrp === 0) {
-      this.msg = "MRP Zero is not allowed";
+      this.msg = 'MRP Zero is not allowed';
       return false;
     }
 

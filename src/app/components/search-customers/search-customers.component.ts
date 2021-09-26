@@ -28,8 +28,8 @@ export class SearchCustomersComponent implements OnInit {
 
   submitForm: FormGroup;
 
-  customername: string = '';
-  customernameprint: string = '';
+  customername = '';
+  customernameprint = '';
 
   isLoading = false;
   isCLoading = false;
@@ -62,7 +62,7 @@ export class SearchCustomersComponent implements OnInit {
 
   // check hardcoded customer data and empty
   searchCustomers() {
-    this.submitForm.controls['customerctrl'].valueChanges
+    this.submitForm.controls.customerctrl.valueChanges
       .pipe(
         debounceTime(300),
         tap(() => (this.isCLoading = true)),

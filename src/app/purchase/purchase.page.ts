@@ -58,7 +58,7 @@ import { InventoryReportsDialogComponent } from '../components/reports/inventory
 })
 export class PurchasePage implements OnInit {
   breadmenu = 'New Purchase';
-  vendorname: string = '';
+  vendorname = '';
   vendorstate = '';
 
   listArr = [];
@@ -197,7 +197,7 @@ export class PurchasePage implements OnInit {
           this.init();
           this._authservice.setCurrentMenu('PURCHASE');
           this.listArr = [];
-          this.rawPurchaseData = data['rawpurchasedata'];
+          this.rawPurchaseData = data.rawpurchasedata;
         });
 
         // param change
@@ -319,7 +319,7 @@ export class PurchasePage implements OnInit {
         .purchaseDetails(this.rawPurchaseData[0].id)
         .subscribe((purchaseData: any) => {
           this.spinner.hide();
-          let pData = purchaseData;
+          const pData = purchaseData;
 
           pData.forEach((element) => {
             this.processItems(element, 'preload');
@@ -432,7 +432,7 @@ export class PurchasePage implements OnInit {
 
   searchVendors() {
     let search = '';
-    this.submitForm.controls['vendorctrl'].valueChanges
+    this.submitForm.controls.vendorctrl.valueChanges
       .pipe(
         debounceTime(300),
         tap(() => (this.isVLoading = true)),
@@ -466,7 +466,7 @@ export class PurchasePage implements OnInit {
       invdt = moment(this.submitForm.value.invoicedate).format('DD-MM-YYYY');
     }
 
-    this.submitForm.controls['productctrl'].valueChanges
+    this.submitForm.controls.productctrl.valueChanges
       .pipe(
         debounceTime(300),
         tap(() => (this.isLoading = true)),
@@ -492,9 +492,7 @@ export class PurchasePage implements OnInit {
 
   // type/search product code
   async setItemDesc(event, from) {
-    let onlyProductCodeArr = this.listArr.map((element) => {
-      return element.product_code;
-    });
+    const onlyProductCodeArr = this.listArr.map((element) => element.product_code);
 
     if (from === 'tab') {
       this.lineItemData = event;
@@ -502,13 +500,13 @@ export class PurchasePage implements OnInit {
       this.lineItemData = event.option.value;
     }
 
-    let isduplicate = onlyProductCodeArr.includes(
+    const isduplicate = onlyProductCodeArr.includes(
       this.lineItemData.product_code
     );
     let proceed = false;
 
     if (isduplicate) {
-      var index = onlyProductCodeArr.indexOf(this.lineItemData.product_code);
+      const index = onlyProductCodeArr.indexOf(this.lineItemData.product_code);
 
       const alert = await this.alertController.create({
         header: 'Confirm!',
@@ -636,13 +634,9 @@ export class PurchasePage implements OnInit {
       hsncode: temp.hsncode,
     });
 
-    const tempArr = this.listArr.map((arrItem) => {
-      return parseFloat(arrItem.total_value);
-    });
+    const tempArr = this.listArr.map((arrItem) => parseFloat(arrItem.total_value));
 
-    const tempArrCostPrice = this.listArr.map((arr) => {
-      return parseFloat(arr.purchase_price);
-    });
+    const tempArrCostPrice = this.listArr.map((arr) => parseFloat(arr.purchase_price));
 
     this.total = tempArr
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
@@ -659,7 +653,7 @@ export class PurchasePage implements OnInit {
     this.sumTotalTax();
 
     if (type === 'loadingnow') {
-      let v1 = 240 + this.listArr.length * 70 + 70;
+      const v1 = 240 + this.listArr.length * 70 + 70;
 
       this.ScrollToPoint(0, v1);
     } else {
@@ -719,11 +713,9 @@ export class PurchasePage implements OnInit {
   sumTotalTax() {
     if (this.i_gst) {
       this.igstTotal = this.listArr
-        .map((item) => {
-          return (
+        .map((item) => (
             (item.purchase_price * item.qty * parseFloat(item.taxrate)) / 100
-          );
-        })
+          ))
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
         .toFixed(2);
 
@@ -734,16 +726,12 @@ export class PurchasePage implements OnInit {
       });
     } else {
       this.cgstTotal = this.listArr
-        .map((item) => {
-          return item.purchase_price * item.qty * (parseFloat(this.cgst) / 100);
-        })
+        .map((item) => item.purchase_price * item.qty * (parseFloat(this.cgst) / 100))
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
         .toFixed(2);
 
       this.sgstTotal = this.listArr
-        .map((item) => {
-          return (item.purchase_price * item.qty * parseFloat(this.sgst)) / 100;
-        })
+        .map((item) => (item.purchase_price * item.qty * parseFloat(this.sgst)) / 100)
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
         .toFixed(2);
 
@@ -756,7 +744,7 @@ export class PurchasePage implements OnInit {
   }
 
   deleteProduct(idx) {
-    let test = this.listArr[idx];
+    const test = this.listArr[idx];
 
     if (this.listArr[idx].pur_det_id != '') {
       this.deletedRowArr.push(this.listArr[idx]);
@@ -916,11 +904,9 @@ export class PurchasePage implements OnInit {
           vendorctrl: this.vendordata,
         });
 
-        const tot_qty_check_Arr = this.listArr.map((arrItem) => {
-          return parseFloat(arrItem.qty);
-        });
+        const tot_qty_check_Arr = this.listArr.map((arrItem) => parseFloat(arrItem.qty));
 
-        let tmpTotQty = tot_qty_check_Arr
+        const tmpTotQty = tot_qty_check_Arr
           .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
           .toFixed(2);
 
@@ -951,7 +937,7 @@ export class PurchasePage implements OnInit {
   }
 
   getNetTotal(param) {
-    let tmp =
+    const tmp =
       parseFloat(this.total) +
       parseFloat(this.submitForm.value.transport_charges || 0) +
       parseFloat(this.submitForm.value.unloading_charges || 0) +
@@ -1033,13 +1019,9 @@ export class PurchasePage implements OnInit {
   }
 
   calc() {
-    const tempArr = this.listArr.map((arrItem) => {
-      return parseFloat(arrItem.taxable_value) + parseFloat(arrItem.tax_value);
-    });
+    const tempArr = this.listArr.map((arrItem) => parseFloat(arrItem.taxable_value) + parseFloat(arrItem.tax_value));
 
-    const tempArrCostPrice = this.listArr.map((arr) => {
-      return parseFloat(arr.purchase_price) * parseFloat(arr.qty);
-    });
+    const tempArrCostPrice = this.listArr.map((arr) => parseFloat(arr.purchase_price) * parseFloat(arr.qty));
 
     // this.total = "" + tempArr;
 
@@ -1233,7 +1215,7 @@ export class PurchasePage implements OnInit {
       console.log('The result:', result);
 
       if (result.data !== undefined) {
-        let myCheckboxes = this.myCheckboxes.toArray();
+        const myCheckboxes = this.myCheckboxes.toArray();
 
         this.removeRowArr.forEach((idx) => {
           this.listArr[idx].taxrate = result.data;
@@ -1268,7 +1250,7 @@ export class PurchasePage implements OnInit {
       console.log('The result:', result);
 
       if (result.data !== undefined) {
-        let myCheckboxes = this.myCheckboxes.toArray();
+        const myCheckboxes = this.myCheckboxes.toArray();
 
         this.removeRowArr.forEach((idx) => {
           this.listArr[idx].mrp = result.data;
@@ -1431,8 +1413,8 @@ export class PurchasePage implements OnInit {
       this.submitForm.value.tempdesc === '' ||
       this.submitForm.value.tempdesc === null
     ) {
-      this.submitForm.controls['tempdesc'].setErrors({ required: true });
-      this.submitForm.controls['tempdesc'].markAsTouched();
+      this.submitForm.controls.tempdesc.setErrors({ required: true });
+      this.submitForm.controls.tempdesc.markAsTouched();
 
       return false;
     }
@@ -1442,10 +1424,10 @@ export class PurchasePage implements OnInit {
       this.submitForm.value.temppurchaseprice === '0' ||
       this.submitForm.value.temppurchaseprice === null
     ) {
-      this.submitForm.controls['temppurchaseprice'].setErrors({
+      this.submitForm.controls.temppurchaseprice.setErrors({
         required: true,
       });
-      this.submitForm.controls['temppurchaseprice'].markAsTouched();
+      this.submitForm.controls.temppurchaseprice.markAsTouched();
 
       return false;
     }
@@ -1454,8 +1436,8 @@ export class PurchasePage implements OnInit {
       this.submitForm.value.tempqty === '' ||
       this.submitForm.value.tempqty === null
     ) {
-      this.submitForm.controls['tempqty'].setErrors({ required: true });
-      this.submitForm.controls['tempqty'].markAsTouched();
+      this.submitForm.controls.tempqty.setErrors({ required: true });
+      this.submitForm.controls.tempqty.markAsTouched();
 
       return false;
     }
@@ -1465,8 +1447,8 @@ export class PurchasePage implements OnInit {
       this.submitForm.value.tempmrp === null ||
       this.submitForm.value.tempmrp === 0
     ) {
-      this.submitForm.controls['tempmrp'].setErrors({ required: true });
-      this.submitForm.controls['tempmrp'].markAsTouched();
+      this.submitForm.controls.tempmrp.setErrors({ required: true });
+      this.submitForm.controls.tempmrp.markAsTouched();
 
       return false;
     }
@@ -1475,8 +1457,8 @@ export class PurchasePage implements OnInit {
       this.submitForm.value.customerctrl === '' ||
       this.submitForm.value.vendorctrl === null
     ) {
-      this.submitForm.controls['vendorctrl'].setErrors({ required: true });
-      this.submitForm.controls['vendorctrl'].markAsTouched();
+      this.submitForm.controls.vendorctrl.setErrors({ required: true });
+      this.submitForm.controls.vendorctrl.markAsTouched();
 
       return false;
     }
@@ -1540,11 +1522,11 @@ export class PurchasePage implements OnInit {
       tempqty: 1,
     });
 
-    this.submitForm.controls['tempdesc'].setErrors(null);
-    this.submitForm.controls['tempqty'].setErrors(null);
-    this.submitForm.controls['tempmrp'].setErrors(null);
-    this.submitForm.controls['temppurchaseprice'].setErrors(null);
-    this.submitForm.controls['productctrl'].setErrors(null);
+    this.submitForm.controls.tempdesc.setErrors(null);
+    this.submitForm.controls.tempqty.setErrors(null);
+    this.submitForm.controls.tempmrp.setErrors(null);
+    this.submitForm.controls.temppurchaseprice.setErrors(null);
+    this.submitForm.controls.productctrl.setErrors(null);
     this.plist && this.plist.nativeElement.focus();
 
     this.selected_description = '';
@@ -1592,7 +1574,7 @@ export class PurchasePage implements OnInit {
   }
 
   handleQtyChange($event, idx) {
-    let qtyval = $event.target.value;
+    const qtyval = $event.target.value;
 
     if (qtyval > 0) {
       this.listArr[idx].qty = $event.target.value;
@@ -1606,7 +1588,7 @@ export class PurchasePage implements OnInit {
   }
 
   handlePPChange($event, idx) {
-    let val = $event.target.value;
+    const val = $event.target.value;
 
     if (val > 0) {
       this.listArr[idx].purchase_price = $event.target.value;
@@ -1634,8 +1616,8 @@ export class PurchasePage implements OnInit {
       component: InventoryReportsDialogComponent,
       componentProps: {
         center_id: this.userdata.center_id,
-        product_code: product_code,
-        product_id: product_id,
+        product_code,
+        product_id,
       },
       cssClass: 'select-modal',
     });

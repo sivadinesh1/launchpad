@@ -12,8 +12,9 @@ export class VersionCheckService {
 
 	/**
 	 * Checks in every set frequency the version of frontend application
+	 *
 	 * @param url
-	 * @param {number} frequency - in milliseconds, defaults to 30 minutes
+	 * @param frequency - in milliseconds, defaults to 30 minutes
 	 */
 	public initVersionCheck(url, frequency = 1000 * 60 * 30) {
 		setInterval(() => {
@@ -23,6 +24,7 @@ export class VersionCheckService {
 
 	/**
 	 * Will do the call and check if the hash has changed or not
+	 *
 	 * @param url
 	 */
 	private checkVersion(url) {
@@ -56,9 +58,10 @@ export class VersionCheckService {
 	 * Checks if hash has changed.
 	 * This file has the JS hash, if it is a different one than in the version.json
 	 * we are dealing with version change
+	 *
 	 * @param currentHash
 	 * @param newHash
-	 * @returns {boolean}
+	 * @returns
 	 */
 	private hasHashChanged(currentHash, newHash) {
 		if (!currentHash || currentHash === '{{POST_BUILD_ENTERS_HASH_HERE}}') {

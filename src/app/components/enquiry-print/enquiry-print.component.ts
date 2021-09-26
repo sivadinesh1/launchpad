@@ -72,7 +72,7 @@ export class EnquiryPrintComponent implements OnInit {
 		this.selectedoptionArr = [];
 
 		//Get total checked items
-		for (let value of Object.values(this.checkbox_list)) {
+		for (const value of Object.values(this.checkbox_list)) {
 			if (value.checked) {
 				this.selectedoptionArr.push(value.name);
 			}
@@ -91,7 +91,7 @@ export class EnquiryPrintComponent implements OnInit {
 		this.isPrint = true;
 
 		if (this.selPrintType === 'estimateprint') {
-			let submitForm = {
+			const submitForm = {
 				sale_id: this.data.id,
 				print_type: ['Original for Buyer'],
 			};
@@ -102,7 +102,7 @@ export class EnquiryPrintComponent implements OnInit {
 				const blob = new Blob([data], { type: 'application/pdf' });
 
 				// dnd to open in new tab - does not work with pop up blocked
-				var link = document.createElement('a');
+				const link = document.createElement('a');
 				link.href = window.URL.createObjectURL(blob);
 
 				if (action === 'print') {
@@ -117,7 +117,7 @@ export class EnquiryPrintComponent implements OnInit {
 				}
 			});
 		} else {
-			let submitForm = {
+			const submitForm = {
 				sale_id: this.data.id,
 				print_type: this.selectedoptionArr,
 			};
@@ -128,7 +128,7 @@ export class EnquiryPrintComponent implements OnInit {
 				const blob = new Blob([data], { type: 'application/pdf' });
 
 				// dnd to open in new tab - does not work with pop up blocked
-				var link = document.createElement('a');
+				const link = document.createElement('a');
 				link.href = window.URL.createObjectURL(blob);
 
 				if (action === 'print') {

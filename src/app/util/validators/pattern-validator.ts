@@ -6,7 +6,7 @@ import { ValidatorFn, AbstractControl } from '@angular/forms';
       if (value === '') {
         return null;
       }
-      return !regexp.test(value) ? { 'patternInvalid': { regexp } } : null;
+      return !regexp.test(value) ? { patternInvalid: { regexp } } : null;
     };
   }
 

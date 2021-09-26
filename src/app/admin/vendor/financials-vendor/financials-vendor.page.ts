@@ -176,14 +176,14 @@ export class FinancialsVendorPage implements OnInit {
     });
 
     this._route.data.subscribe((data) => {
-      this.vendordata = data['vendordata'][0];
+      this.vendordata = data.vendordata[0];
       this.vendor_id = this.vendordata.id;
       this.vendor_credit_amount = this.vendordata.credit_amt;
     });
 
     this._route.params.subscribe((params) => {
-      this.center_id = params['center_id'];
-      this.vendor_id = params['vendor_id'];
+      this.center_id = params.center_id;
+      this.vendor_id = params.vendor_id;
       this.initForm();
       this.initStatementForm();
       this.init();
@@ -262,8 +262,8 @@ export class FinancialsVendorPage implements OnInit {
         searchtype: 'all',
       });
 
-      this.submitForm.controls['invoiceno'].setErrors(null);
-      this.submitForm.controls['invoiceno'].markAsTouched();
+      this.submitForm.controls.invoiceno.setErrors(null);
+      this.submitForm.controls.invoiceno.markAsTouched();
     }
     this._cdr.detectChanges();
   }
@@ -346,22 +346,22 @@ export class FinancialsVendorPage implements OnInit {
   }
 
   reloadPurchaseInvoiceByVendor() {
-    let center_id = this.center_id;
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
+    const center_id = this.center_id;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
 
-    let searchtype = this.submitForm.value.searchtype;
-    let invoiceno = this.submitForm.value.invoiceno;
+    const searchtype = this.submitForm.value.searchtype;
+    const invoiceno = this.submitForm.value.invoiceno;
 
     this._commonApiService
       .getPurhaseInvoiceByVendor({
         centerid: center_id,
         vendorid: this.vendor_id,
-        fromdate: fromdate,
-        todate: todate,
+        fromdate,
+        todate,
 
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.purchaseInvoicedataSource.data = data.body;
@@ -370,21 +370,21 @@ export class FinancialsVendorPage implements OnInit {
   }
 
   reloadPaymentsByVendor() {
-    let center_id = this.center_id;
-    let fromdate = this.submitForm.value.fromdate;
-    let todate = this.submitForm.value.todate;
+    const center_id = this.center_id;
+    const fromdate = this.submitForm.value.fromdate;
+    const todate = this.submitForm.value.todate;
 
-    let searchtype = this.submitForm.value.searchtype;
-    let invoiceno = this.submitForm.value.invoiceno;
+    const searchtype = this.submitForm.value.searchtype;
+    const invoiceno = this.submitForm.value.invoiceno;
     this._commonApiService
       .getPaymentsByVendor({
         centerid: center_id,
         vendorid: this.vendor_id,
-        fromdate: fromdate,
-        todate: todate,
+        fromdate,
+        todate,
 
-        searchtype: searchtype,
-        invoiceno: invoiceno,
+        searchtype,
+        invoiceno,
       })
       .subscribe((data: any) => {
         this.paymentdataSource.data = data.body;
@@ -399,7 +399,7 @@ export class FinancialsVendorPage implements OnInit {
       .subscribe((data: any) => {
         // DnD - code to add a "key/Value" in every object of array
         this.pymttransactionsdataSource.data = data.map((el) => {
-          var o = Object.assign({}, el);
+          const o = Object.assign({}, el);
           o.isExpanded = false;
           return o;
         });
