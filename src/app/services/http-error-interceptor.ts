@@ -1,10 +1,10 @@
 import {
-  HttpEvent,
-  HttpInterceptor,
-  HttpHandler,
-  HttpRequest,
-  HttpResponse,
-  HttpErrorResponse,
+    HttpEvent,
+    HttpInterceptor,
+    HttpHandler,
+    HttpRequest,
+    HttpResponse,
+    HttpErrorResponse,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError, map } from 'rxjs/operators';
@@ -17,61 +17,61 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
-  constructor(
-    private commonapiservice: CommonApiService,
-    private _errorservice: ErrorService,
-    private _loadingservice: LoadingService,
-    private _authservice: AuthenticationService
-  ) {}
+    constructor(
+        private commonapiservice: CommonApiService,
+        private _errorservice: ErrorService,
+        private _loadingservice: LoadingService,
+        private _authService: AuthenticationService
+    ) {}
 
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    request = request.clone({
-      withCredentials: true,
-    });
+    intercept(
+        request: HttpRequest<any>,
+        next: HttpHandler
+    ): Observable<HttpEvent<any>> {
+        request = request.clone({
+            withCredentials: true,
+        });
 
-    return next.handle(request).pipe(
-      catchError((error: HttpErrorResponse) => {
-        const errorMessage = this.setError(error);
-        return throwError(() => errorMessage);
-      })
-    );
-  }
-
-  setError(error: HttpErrorResponse): string {
-    let errorMessage = 'Unknown error occured';
-    if (error.error instanceof ErrorEvent) {
-      // Client side error
-      errorMessage = error.error.message;
-    } else {
-      // server side error
-      if (error.status !== 0) {
-        errorMessage = error.error.message;
-      }
-      if (error.status === 400) {
-        console.log('this should print your error!', error.error);
-      }
-      if (error.status === 401) {
-        console.log('this should print your error!', error.error);
-        this._authservice.redirectToLogin();
-        this._loadingservice.openSnackBar(
-          'Session expired, Login again!',
-          '',
-          'mat-warn'
+        return next.handle(request).pipe(
+            catchError((error: HttpErrorResponse) => {
+                const errorMessage = this.setError(error);
+                return throwError(() => errorMessage);
+            })
         );
-      }
-
-      if (
-        error.status === 500 &&
-        error.error.message.startsWith('connect ECONNREFUSED')
-      ) {
-        console.log('database connection error');
-      }
     }
-    return errorMessage;
-  }
+
+    setError(error: HttpErrorResponse): string {
+        let errorMessage = 'Unknown error occured';
+        if (error.error instanceof ErrorEvent) {
+            // Client side error
+            errorMessage = error.error.message;
+        } else {
+            // server side error
+            if (error.status !== 0) {
+                errorMessage = error.error.message;
+            }
+            if (error.status === 400) {
+                console.log('this should print your error!', error.error);
+            }
+            if (error.status === 401) {
+                console.log('this should print your error!', error.error);
+                this._authService.redirectToLogin();
+                this._loadingservice.openSnackBar(
+                    'Session expired, Login again!',
+                    '',
+                    'mat-warn'
+                );
+            }
+
+            if (
+                error.status === 500 &&
+                error.error.message.startsWith('connect ECONNREFUSED')
+            ) {
+                console.log('database connection error');
+            }
+        }
+        return errorMessage;
+    }
 }
 
 // export class HttpErrorInterceptor implements HttpInterceptor {
@@ -82,16 +82,16 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 //     private commonapiservice: CommonApiService,
 //     private _errorservice: ErrorService,
 //     private _loadingservice: LoadingService,
-//     private _authservice: AuthenticationService
+//     private _authService: AuthenticationService
 //   ) {}
 
 //   intercept(
 //     request: HttpRequest<any>,
 //     next: HttpHandler
 //   ): Observable<HttpEvent<any>> {
-//     const currentUser = this._authservice.currentUserValue;
+//     const currentUser = this._authService.currentUserValue;
 
-//     //  this.token = this._authservice.token;
+//     //  this.token = this._authService.token;
 //     this.username = currentUser.username;
 
 //     if (this.username && this.token) {
@@ -125,7 +125,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 //         if (request.url.indexOf('capture-error') === -1) {
 //           this._errorservice.logErrortoService(`errorMessage`, error);
 //           this._loadingservice.presentToastWithOptions(
-//             this._authservice.errormsg,
+//             this._authService.errormsg,
 //             'middle',
 //             false,
 //             ''

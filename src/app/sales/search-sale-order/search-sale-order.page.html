@@ -1,13 +1,6 @@
 <ion-content>
-    <div style="padding: 1rem">All Sale Orders</div>
-    <div
-        style="
-            background-color: #fff;
-            display: flex;
-            padding: 16px;
-            align-items: center;
-        "
-    >
+    <div class="search-sale-header" style="padding: 1rem">All Sale Orders</div>
+    <div class="search-bar">
         <div
             [matMenuTriggerFor]="menuN"
             #menuTriggerN
@@ -24,8 +17,8 @@
             (customerOutput)="customerInfoPage($event)"
         ></app-search-customers>
 
-        <div>
-            <ion-segment mode="ios" value="New Sale">
+        <div class="toggle_search_status">
+            <ion-segment mode="ios" value="New Sale" class="toggle_btn">
                 <ion-segment-button value="New Sale">
                     <ion-label>All</ion-label>
                 </ion-segment-button>
@@ -37,16 +30,8 @@
                 </ion-segment-button>
             </ion-segment>
         </div>
-        <div
-            style="
-                width: 240px;
-                display: flex;
-                justify-content: space-between;
-                padding: 0 16px 0 28px;
-                margin-left: auto;
-            "
-            [matMenuTriggerFor]="admin"
-        >
+
+        <div class="filter_date_range" [matMenuTriggerFor]="admin">
             <div>
                 <div>
                     {{this.fromdate | date:'MMM dd'}} - {{this.todate |
@@ -68,14 +53,33 @@
     </div>
 
     <div class="header header-style">
-        <div>#</div>
-        <div>Customer Name</div>
-        <div>Invoice #</div>
-        <div>Date</div>
+        <div class="column-item">#</div>
 
-        <div class="txt-right-align">Items</div>
-        <div class="txt-right-align">Total Value</div>
-        <div class="txt-center-align">Status</div>
+        <div
+            class="column-item"
+            [ngClass]="isSelectedColumn('Date')"
+            (click)="sortInvoiceDate()"
+        >
+            <span> Date </span>
+
+            <app-descending *ngIf="this.orderDefaultFlag === 'desc'">
+            </app-descending>
+            <app-ascending *ngIf="this.orderDefaultFlag === 'asc'">
+            </app-ascending>
+        </div>
+
+        <div class="column-item">Customer Name</div>
+        <div
+            class="column-item"
+            [ngClass]="isSelectedColumn('Invoice')"
+            (click)="sortInvoiceNo()"
+        >
+            Invoice #
+        </div>
+
+        <div class="column-item txt-right-align">Items</div>
+        <div class="column-item txt-right-align">Total Value</div>
+        <div class="column-item txt-center-align">Status</div>
         <div>
             <img
                 matTooltip="Download"
@@ -91,9 +95,9 @@
 
     <div *ngFor="let item of filteredValues; let idx = index" class="listItem">
         <div>{{idx + 1}}</div>
+        <div class="item">{{item.invoice_date}}</div>
         <div class="item">{{item.customer_name}}</div>
         <div class="item" (click)="openDialog(item)">{{item.invoice_no}}</div>
-        <div class="item">{{item.invoice_date}}</div>
 
         <div class="item" style="text-align: right">{{item.no_of_items}}</div>
         <div class="item" style="text-align: right">
@@ -194,25 +198,29 @@ DnD - sample vertical menu
 </mat-menu> -->
 
     <mat-menu #admin="matMenu" [overlapTrigger]="false" class="myMenu">
-        <div mat-menu-item (click)="dateFilter(7)">
+        <div mat-menu-item class="mat-menu-line-height" (click)="dateFilter(7)">
             <span>Last 7 days</span>
         </div>
 
-        <div mat-menu-item (click)="dateFilter(14)">
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="dateFilter(14)"
+        >
             <span>Last 14 days</span>
         </div>
     </mat-menu>
 
     <mat-menu #menuN="matMenu">
-        <button mat-menu-item (click)="openDialog1()">
+        <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
             Search By Invoice #
-        </button>
-        <button mat-menu-item (click)="openDialog1()">
+        </div>
+        <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
             Sort By Recent Invoice
-        </button>
-        <button mat-menu-item (click)="openDialog1()">
+        </div>
+        <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
             Sort By Old Invoice
-        </button>
+        </div>
     </mat-menu>
 </ion-content>
 <!-- 

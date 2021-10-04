@@ -1,263 +1,299 @@
-<div  class="header">
-  
-    <div style="display: grid; grid-template-columns: 60px 1fr;">
-       <button mat-icon-button (click)="onclick()">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <div style="display: grid; ">
-    <div 
-      style="display: inline-grid;
-        position: relative;
-        top: -8px;" >
-      <img
-        src="/assets/images/svg/launchpad-logo.svg"
-        width="80px"
-        height="13px"
-        alt=""
-      />
+<div class="header">
+    <div style="display: grid; grid-template-columns: 60px 1fr">
+        <button mat-icon-button (click)="onclick()">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <div style="display: grid">
+            <div style="display: inline-grid; position: relative; top: -8px">
+                <img
+                    src="/assets/images/svg/launchpad-logo.svg"
+                    width="80px"
+                    height="13px"
+                    alt=""
+                />
+            </div>
+            <div style="align-self: center; position: relative; top: -8px">
+                <div class="cname">
+                    {{ user_data?.center_name }}
+                </div>
+            </div>
+        </div>
     </div>
-    <div style="align-self: center; position: relative; top: -8px">
-      <div class="cname">
-        {{ userdata?.center_name }}
-      </div>
-    </div>
-  </div>
-    </div>
-
 
     <div>
-
-  <span class="right">
-    <div
-      style="
-        display: inline-block;
-        width: 500px;
-        border: 1px solid #d8d8d8;
-        border-radius: 5px;
-      "
-    >
-      <div>
-        <form *ngIf="submitForm" [formGroup]="submitForm">
-          <div
-            style="
-              width: 50px;
-              display: inline-block;
-              text-align: center;
-              vertical-align: middle;
-              padding: 0 6px;
-            "
-          >
-            <img
-              src="../../assets/images/svg/search-b.svg"
-              [matMenuTriggerFor]="admin"
-              width="18px"
-              height="18px"
-              class="img cursor"
-              #tooltip="matTooltip"
-              matTooltip="Quick Search (Items/Customer/Vendor/Brand)"
-              matTooltipClass="tooltip"
-              (mousedown)="tooltip.hide()"
-              style="padding-right: 3px"
-            />
-            <img
-              src="../../assets/images/svg/down-arrow.svg"
-              [matMenuTriggerFor]="admin"
-              width="8px"
-              height="8px"
-              class="img cursor"
-              #tooltip="matTooltip"
-              matTooltip="Quick Search (Items/Customer/Vendor/Brand)"
-              matTooltipClass="tooltip"
-              (mousedown)="tooltip.hide()"
-              style="position: relative; top: -4px"
-            />
-          </div>
-          <mat-form-field
-            *ngIf="searchByLbl === 'Inventory'"
-            floatLabel="never"
-            class="example-full-width"
-            style="padding-right: 10px; font-size: 16px"
-          >
-            <mat-label style="font-size: 14px; color: #808080"
-              >Search in {{ searchByLbl }}</mat-label
-            >
-            <input
-              matInput
-              [matAutocomplete]="auto2"
-              formControlName="productctrl"
-              #typehead2
-              #plist
-              matTooltipPosition="after"
-              tabindex="2"
-              autocomplete="off"
-            />
-
-            <button
-              mat-button
-              matSuffix
-              mat-icon-button
-              aria-label="Clear"
-              tabindex="-1"
-              type="button"
-              (click)="clearProdInput()"
-            >
-              <mat-icon tabindex="-1">close</mat-icon>
-            </button>
-
-            <mat-autocomplete
-              #auto2="matAutocomplete"
-              autoActiveFirstOption
-              [displayWith]="displayProdFn"
-              panelWidth="auto"
-              (optionSelected)="showTransactions($event, 'click')"
-            >
-              <mat-option
-                *ngIf="isLoading"
-                class="is-loading"
-                style="width: 380px"
-              >
-                <mat-spinner diameter="20"></mat-spinner>
-              </mat-option>
-              <ng-container
-                *ngIf="
-                  !isLoading && product_lis !== null && product_lis?.length > 0
+        <span class="right">
+            <div
+                style="
+                    display: inline-block;
+                    width: 500px;
+                    border: 1px solid #d8d8d8;
+                    border-radius: 5px;
                 "
-              >
-                <mat-option
-                  *ngFor="let product of product_lis"
-                  [value]="product"
-                  style="
-                    padding-top: 15px;
-                    height: 3.3em !important;
-                    padding-bottom: 15px;
-                    border-bottom: 1px solid lightsteelblue;
-                  "
-                >
-                  <div style="display: grid; grid-template-columns: 1fr 80px">
-                    <div>
-                      <div
-                        style="font-size: 15px; padding: 2px; line-height: 1em"
-                      >
-                        {{ product.product_code }} &nbsp;&nbsp;
-                        <span style="font-weight: 600">
-                          MRP: {{ product.mrp | currency: "INR" }}</span
+            >
+                <div>
+                    <form *ngIf="submitForm" [formGroup]="submitForm">
+                        <div
+                            style="
+                                width: 50px;
+                                display: inline-block;
+                                text-align: center;
+                                vertical-align: middle;
+                                padding: 0 6px;
+                            "
                         >
-                      </div>
-                      <div
-                        style="font-size: 14px; padding: 2px; line-height: 1em"
-                      >
-                        {{ product.description }}
-                      </div>
-                    </div>
-                    <div>
-                      <div
-                        style="
-                          font-size: 15px;
-                          padding: 2px;
-                          line-height: 1em;
-                          text-align: right;
-                        "
-                      >
-                        {{ product.name }}
-                      </div>
-                      <div
-                        style="
-                          font-size: 14px;
-                          padding: 2px;
-                          line-height: 1em;
-                          text-align: right;
-                          font-weight: 600;
-                        "
-                      >
-                        <span> {{ product.available_stock }} </span>
-                      </div>
-                    </div>
-                  </div>
-                </mat-option>
-              </ng-container>
-              <ng-container
-                *ngIf="
-                  !isLoading &&
-                  product_lis !== null &&
-                  product_lis?.length === 0
-                "
-              >
-                <mat-option
-                  style="
-                    padding-top: 15px;
-                    height: 3.3em !important;
-                    padding-bottom: 15px;
-                    border-bottom: 1px solid lightsteelblue;
-                  "
-                >
-                  <span style="color: darkorange">Item Not Found:</span>
-                </mat-option>
-              </ng-container>
-</mat-autocomplete>
+                            <img
+                                src="../../assets/images/svg/search-b.svg"
+                                [matMenuTriggerFor]="admin"
+                                width="18px"
+                                height="18px"
+                                class="img cursor"
+                                #tooltip="matTooltip"
+                                matTooltip="Quick Search (Items/Customer/Vendor/Brand)"
+                                matTooltipClass="tooltip"
+                                (mousedown)="tooltip.hide()"
+                                style="padding-right: 3px"
+                            />
+                            <img
+                                src="../../assets/images/svg/down-arrow.svg"
+                                [matMenuTriggerFor]="admin"
+                                width="8px"
+                                height="8px"
+                                class="img cursor"
+                                #tooltip="matTooltip"
+                                matTooltip="Quick Search (Items/Customer/Vendor/Brand)"
+                                matTooltipClass="tooltip"
+                                (mousedown)="tooltip.hide()"
+                                style="position: relative; top: -4px"
+                            />
+                        </div>
+                        <mat-form-field
+                            *ngIf="searchByLbl === 'Inventory'"
+                            floatLabel="never"
+                            class="example-full-width"
+                            style="padding-right: 10px; font-size: 16px"
+                        >
+                            <mat-label style="font-size: 14px; color: #808080"
+                                >Search in {{ searchByLbl }}</mat-label
+                            >
+                            <input
+                                matInput
+                                [matAutocomplete]="auto2"
+                                formControlName="productctrl"
+                                #typehead2
+                                #plist
+                                matTooltipPosition="after"
+                                tabindex="2"
+                                autocomplete="off"
+                            />
 
-            <mat-error
-              *ngIf="submitForm?.controls['productctrl'].hasError('incorrect')"
-            >
-              Invalid product code
-            </mat-error>
-          </mat-form-field>
+                            <button
+                                mat-button
+                                matSuffix
+                                mat-icon-button
+                                aria-label="Clear"
+                                tabindex="-1"
+                                type="button"
+                                (click)="clearProdInput()"
+                            >
+                                <mat-icon tabindex="-1">close</mat-icon>
+                            </button>
 
-          
+                            <mat-autocomplete
+                                #auto2="matAutocomplete"
+                                autoActiveFirstOption
+                                [displayWith]="displayProdFn"
+                                panelWidth="auto"
+                                (optionSelected)="
+                                    showTransactions($event, 'click')
+                                "
+                            >
+                                <mat-option
+                                    *ngIf="isLoading"
+                                    class="is-loading"
+                                    style="width: 380px"
+                                >
+                                    <mat-spinner diameter="20"></mat-spinner>
+                                </mat-option>
+                                <ng-container
+                                    *ngIf="
+                                        !isLoading &&
+                                        product_lis !== null &&
+                                        product_lis?.length > 0
+                                    "
+                                >
+                                    <mat-option
+                                        *ngFor="let product of product_lis"
+                                        [value]="product"
+                                        style="
+                                            padding-top: 15px;
+                                            height: 3.3em !important;
+                                            padding-bottom: 15px;
+                                            border-bottom: 1px solid
+                                                lightsteelblue;
+                                        "
+                                    >
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: 1fr 80px;
+                                            "
+                                        >
+                                            <div>
+                                                <div
+                                                    style="
+                                                        font-size: 15px;
+                                                        padding: 2px;
+                                                        line-height: 1em;
+                                                    "
+                                                >
+                                                    {{ product.product_code }}
+                                                    &nbsp;&nbsp;
+                                                    <span
+                                                        style="font-weight: 600"
+                                                    >
+                                                        MRP:
+                                                        {{
+                                                            product.mrp
+                                                                | currency
+                                                                    : "INR"
+                                                        }}</span
+                                                    >
+                                                </div>
+                                                <div
+                                                    style="
+                                                        font-size: 14px;
+                                                        padding: 2px;
+                                                        line-height: 1em;
+                                                    "
+                                                >
+                                                    {{ product.description }}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div
+                                                    style="
+                                                        font-size: 15px;
+                                                        padding: 2px;
+                                                        line-height: 1em;
+                                                        text-align: right;
+                                                    "
+                                                >
+                                                    {{ product.name }}
+                                                </div>
+                                                <div
+                                                    style="
+                                                        font-size: 14px;
+                                                        padding: 2px;
+                                                        line-height: 1em;
+                                                        text-align: right;
+                                                        font-weight: 600;
+                                                    "
+                                                >
+                                                    <span>
+                                                        {{
+                                                            product.available_stock
+                                                        }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </mat-option>
+                                </ng-container>
+                                <ng-container
+                                    *ngIf="
+                                        !isLoading &&
+                                        product_lis !== null &&
+                                        product_lis?.length === 0
+                                    "
+                                >
+                                    <mat-option
+                                        style="
+                                            padding-top: 15px;
+                                            height: 3.3em !important;
+                                            padding-bottom: 15px;
+                                            border-bottom: 1px solid
+                                                lightsteelblue;
+                                        "
+                                    >
+                                        <span style="color: darkorange"
+                                            >Item Not Found:</span
+                                        >
+                                    </mat-option>
+                                </ng-container>
+                            </mat-autocomplete>
 
-          <app-search-customers
-            *ngIf="searchByLbl === 'Customers'"
-            (customerOutput)="customerInfoPage($event)"
-          ></app-search-customers>
-        </form>
-      </div>
-    </div>
-  </span>
+                            <mat-error
+                                *ngIf="
+                                    submitForm?.controls[
+                                        'productctrl'
+                                    ].hasError('incorrect')
+                                "
+                            >
+                                Invalid product code
+                            </mat-error>
+                        </mat-form-field>
+
+                        <app-search-customers
+                            *ngIf="searchByLbl === 'Customers'"
+                            (customerOutput)="customerInfoPage($event)"
+                        ></app-search-customers>
+                    </form>
+                </div>
+            </div>
+        </span>
     </div>
     <div>
-      <span style="align-self: center; padding: 0px 0px 0px 40px">
-        <img
-          src="../../assets/images/svg/sales-b.svg"
-          (click)="showNewSales()"
-          width="24px"
-          height="24px"
-          class="img cursor"
-          #tooltip="matTooltip"
-          matTooltip="New Sale Order"
-          matTooltipClass="tooltip"
-          (mousedown)="tooltip.hide()"
-        />
-        <span (click)="showNewSales()" class="quick-links"> CREATE INVOICE </span>
-      </span>
+        <span style="align-self: center; padding: 0px 0px 0px 40px">
+            <img
+                src="../../assets/images/svg/sales-b.svg"
+                (click)="showNewSales()"
+                width="24px"
+                height="24px"
+                class="img cursor"
+                #tooltip="matTooltip"
+                matTooltip="New Sale Order"
+                matTooltipClass="tooltip"
+                (mousedown)="tooltip.hide()"
+            />
+            <span (click)="showNewSales()" class="quick-links">
+                CREATE INVOICE
+            </span>
+        </span>
     </div>
     <div>
-      <span style="align-self: center; padding: 0px 20px">
-        <img
-          src="../../assets/images/svg/enquiry-b.svg"
-          (click)="showNewEnquiry()"
-          width="24px"
-          height="24px"
-          class="img cursor"
-          #tooltip="matTooltip"
-          matTooltip="New Enquiry"
-          matTooltipClass="tooltip"
-          (mousedown)="tooltip.hide()"
-        />
-        <span (click)="showNewEnquiry()" class="quick-links"> NEW ENQUIRY </span>
-      </span>
+        <span style="align-self: center; padding: 0px 20px">
+            <img
+                src="../../assets/images/svg/enquiry-b.svg"
+                (click)="showNewEnquiry()"
+                width="24px"
+                height="24px"
+                class="img cursor"
+                #tooltip="matTooltip"
+                matTooltip="New Enquiry"
+                matTooltipClass="tooltip"
+                (mousedown)="tooltip.hide()"
+            />
+            <span (click)="showNewEnquiry()" class="quick-links">
+                NEW ENQUIRY
+            </span>
+        </span>
     </div>
-  </div>
-  
-
+</div>
 
 <mat-menu #admin="matMenu">
-  <div mat-menu-item style="height: 34px; line-height: 34px;"
-  (click)="searchBy('Inventory')">
-    Inventory
-  </div>
+    <div
+        mat-menu-item
+        style="height: 34px; line-height: 34px"
+        (click)="searchBy('Inventory')"
+    >
+        Inventory
+    </div>
 
-  <div mat-menu-item style="height: 34px;line-height: 34px;" (click)="searchBy('Customers')">
-    Customer
-  </div>
-
-  
+    <div
+        mat-menu-item
+        style="height: 34px; line-height: 34px"
+        (click)="searchBy('Customers')"
+    >
+        Customer
+    </div>
 </mat-menu>

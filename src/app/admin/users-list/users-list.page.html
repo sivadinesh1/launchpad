@@ -1,79 +1,87 @@
 <ion-content>
-	<div class="content">
-		<app-messages></app-messages>
-		<div class="header">
-			<div>
-				<div>List of Employees</div>
-			</div>
-			<div class="btn-grad add-btn" (click)="add()">
-				<mat-icon
-					style="
-						font-size: 30px;
-						width: 30px !important;
-						height: 30px !important;
-						color: #fff !important;
-					"
-					>add</mat-icon
-				>
-				<span style="padding-left: 10px; font-size: 20px">Add User</span>
-			</div>
-		</div>
+    <div class="content">
+        <app-messages></app-messages>
+        <div class="header">
+            <div>
+                <div>List of Employees</div>
+            </div>
+            <div class="btn-grad add-btn" (click)="add()">
+                <mat-icon
+                    style="
+                        font-size: 30px;
+                        width: 30px !important;
+                        height: 30px !important;
+                        color: #fff !important;
+                    "
+                    >add</mat-icon
+                >
+                <span style="padding-left: 10px; font-size: 20px"
+                    >Add User</span
+                >
+            </div>
+        </div>
 
-		<form [formGroup]="submitForm">
-			<div
-				style="
-					display: flex;
-					justify-content: space-between;
-					align-items: center;
-				"
-			>
-				<div>
-					<mat-form-field class="mat-width-ext" style="padding-top: 20px">
-						<mat-label>Status</mat-label>
-						<mat-select
-							formControlName="status"
-							(selectionChange)="statusChange($event)"
-							required
-							value="{statusFlag}"
-						>
-							<mat-option *ngFor="let item of status" [value]="item.id">
-								{{item.value}}
-							</mat-option>
-						</mat-select>
-					</mat-form-field>
-				</div>
-				<div style="font-size: 14px; color: #797979">
-					Showing {{listArr?.length }} Records
-				</div>
-			</div>
-		</form>
+        <form [formGroup]="submitForm">
+            <div
+                style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                "
+            >
+                <div>
+                    <mat-form-field
+                        class="mat-width-ext"
+                        style="padding-top: 20px"
+                    >
+                        <mat-label>Status</mat-label>
+                        <mat-select
+                            formControlName="status"
+                            (selectionChange)="statusChange($event)"
+                            required
+                            value="{statusFlag}"
+                        >
+                            <mat-option
+                                *ngFor="let item of status"
+                                [value]="item.id"
+                            >
+                                {{item.value}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div style="font-size: 14px; color: #797979">
+                    Showing {{listArr?.length }} Records
+                </div>
+            </div>
+        </form>
 
-		<ng-container>
-			<div class="header-row list-item">
-				<div>User Name</div>
-				<div>First Name</div>
-				<div>Role</div>
-				<div>&nbsp;</div>
-			</div>
-			<div
-				*ngFor="let item of listArr ? listArr : []; let idx = index"
-				class="list-item plain-row-color-nohover"
-			>
-				<div>{{item?.username}}</div>
-				<div>{{item?.firstname}}</div>
-				<div>{{item?.description}}</div>
-				<div
-					*ngIf="item.username !== this.userdata.username"
-					style="color: blue; font-size: 14px; cursor: pointer"
-					(click)="changestatus(item)"
-				>
-					{{item?.status === 'A' ? 'Deactivate': 'Activate'}}
-				</div>
-			</div>
+        <ng-container>
+            <div class="header-row list-item">
+                <div>User Name</div>
+                <div>First Name</div>
+                <div>Role</div>
+                <div>&nbsp;</div>
+            </div>
+            <div
+                *ngFor="let item of listArr ? listArr : []; let idx = index"
+                class="list-item plain-row-color-nohover"
+            >
+                <div>{{item?.username}}</div>
+                <div>{{item?.firstname}}</div>
+                <div>{{item?.description}}</div>
+                <div
+                    *ngIf="item.username !== this.user_data.username"
+                    style="color: blue; font-size: 14px; cursor: pointer"
+                    (click)="changestatus(item)"
+                >
+                    {{item?.status === 'A' ? 'Deactivate': 'Activate'}}
+                </div>
+            </div>
 
-			<div [hidden]="isTableHasData" class="center-message">
-				No Data available.
-			</div>
-		</ng-container>
-	</div>
+            <div [hidden]="isTableHasData" class="center-message">
+                No Data available.
+            </div>
+        </ng-container>
+    </div>
 </ion-content>

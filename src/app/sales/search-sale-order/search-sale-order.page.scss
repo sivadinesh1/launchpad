@@ -25,7 +25,7 @@
 .listItem,
 .headerRow {
     display: grid;
-    grid-template-columns: 40px 240px 120px 100px 100px 130px 90px 90px 90px 90px 90px;
+    grid-template-columns: 40px 100px 240px 120px 100px 130px 90px 90px 90px 90px 90px;
     align-items: center;
     padding: 5px;
 }
@@ -44,7 +44,7 @@
     color: #606060;
     font-weight: 600;
     font-size: 15px;
-    border: 1px solid #ccc;
+    border-bottom: 1px solid var(--lp-line-divider);
 }
 
 .listItem {
@@ -134,4 +134,52 @@
     font-weight: 600;
     font-size: 14px;
     margin-bottom: -1rem;
+}
+
+.search-bar {
+    background-color: #fff;
+    display: flex;
+    padding: 16px;
+    align-items: center;
+    border-top: 1px solid var(--lp-line-divider);
+    border-bottom: 1px solid var(--lp-line-divider);
+}
+
+.toggle_search_status {
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+.toggle_btn {
+    flex-basis: 240px;
+}
+
+.search-sale-header {
+    padding: 1rem;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+.column-item {
+    display: flex;
+    align-items: center;
+}
+
+.column-item:hover {
+    background-color: #f2f2f2;
+}
+
+.sorted_column {
+    color: red;
+}
+
+.filter_date_range {
+    width: 240px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 16px 0 28px;
+    margin-left: auto;
+    cursor: pointer;
 }

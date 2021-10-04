@@ -7,52 +7,47 @@ import { CommonApiService } from './common-api.service';
 import { AuthenticationService } from './authentication.service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class ErrorService implements OnInit, OnDestroy {
+    appErrorObj: any;
+    errorObj: any;
 
-  appErrorObj: any;
-  errorObj: any;
+    center_id: any;
+    userid: any;
 
-  centerid: any;
-  userid: any;
+    private unsubscribe$ = new SubSink();
 
+    constructor(
+        private _http: HttpClient,
+        private _authService: AuthenticationService,
+        private _commonapiservice: CommonApiService
+    ) {}
 
-  private unsubscribe$ = new SubSink();
+    ngOnInit() {
+        const currentUser = this._authService.currentUserValue;
+        this.center_id = currentUser.center_id;
+        this.userid = currentUser.userid;
+    }
 
-  constructor(private _http: HttpClient,
-    private _authservice: AuthenticationService,
-    private _commonapiservice: CommonApiService) { }
+    logErrortoService(params, err) {
+        this.errorObj = new ErrorObject(
+            myGlobals.appid,
+            this.center_id,
+            this.userid,
+            params,
+            err,
+            this._authService.device
+        );
 
-  ngOnInit() {
+        this.unsubscribe$.sink = this._commonapiservice
+            .captureError(this.errorObj)
+            .subscribe((data) => {
+                console.log('object' + JSON.stringify(data));
+            });
+    }
 
-    const currentUser = this._authservice.currentUserValue;
-    this.centerid = currentUser.center_id;
-    this.userid = currentUser.userid;
-
-
-  }
-
-  logErrortoService(params, err) {
-
-    this.errorObj = new ErrorObject(myGlobals.appid, this.centerid, this.userid, params, err, this._authservice.device);
-
-    this.unsubscribe$.sink = this._commonapiservice.captureError(this.errorObj).subscribe(
-      data => {
-        console.log('object' + JSON.stringify(data));
-      }
-    );
-
-  }
-
-
-  ngOnDestroy() {
-    this.unsubscribe$.unsubscribe();
-  }
-
-
-
+    ngOnDestroy() {
+        this.unsubscribe$.unsubscribe();
+    }
 }
-
-
-

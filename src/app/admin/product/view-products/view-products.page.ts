@@ -1,4 +1,12 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    ChangeDetectorRef,
+    ViewChild,
+    ElementRef,
+    ChangeDetectionStrategy,
+    ViewEncapsulation,
+} from '@angular/core';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -15,7 +23,7 @@ import { MatTableDataSource } from '@angular/material/table';
 
 import { MatSort } from '@angular/material/sort';
 import { Observable } from 'rxjs';
-import { Product } from 'src/app/models/Product';
+import { IProduct } from 'src/app/models/Product';
 import { ProductEditDialogComponent } from 'src/app/components/products/product-edit-dialog/product-edit-dialog.component';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -25,253 +33,292 @@ import { ProductCorrectionDialogComponent } from 'src/app/components/products/pr
 import { InventoryReportsDialogComponent } from 'src/app/components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
 
 @Component({
-	selector: 'app-view-products',
-	templateUrl: './view-products.page.html',
-	styleUrls: ['./view-products.page.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	encapsulation: ViewEncapsulation.None,
+    selector: 'app-view-products',
+    templateUrl: './view-products.page.html',
+    styleUrls: ['./view-products.page.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
 })
 export class ViewProductsPage implements OnInit {
-	productinfo: any;
+    productinfo: any;
 
-	center_id: any;
+    center_id: any;
 
-	pcount: any;
-	pageLength: any;
-	isTableHasData = false;
+    pcount: any;
+    pageLength: any;
+    isTableHasData = false;
 
-	userdata$: Observable<User>;
-	userdata: any;
+    user_data$: Observable<User>;
+    user_data: any;
 
-	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-	@ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-	@ViewChild('epltable', { static: false }) epltable: ElementRef;
+    @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
-	displayedColumns: string[] = ['productcode', 'description', 'name', 'rackno', 'avlstock', 'mrp', 'actions'];
-	dataSource = new MatTableDataSource<Product>();
+    displayedColumns: string[] = [
+        'productcode',
+        'description',
+        'name',
+        'rackno',
+        'avlstock',
+        'mrp',
+        'actions',
+    ];
+    dataSource = new MatTableDataSource<IProduct>();
 
-	tempsearchstring = '';
-	mrp_flag = false;
+    temp_product_search_text = '';
+    mrp_flag = false;
 
-	constructor(
-		private _cdr: ChangeDetectorRef,
-		private _commonApiService: CommonApiService,
-		private _snackBar: MatSnackBar,
-		private _route: ActivatedRoute,
-		private _dialog: MatDialog,
-		private _router: Router,
-		private _authservice: AuthenticationService,
-		private _modalcontroller: ModalController,
-	) {
-		this.userdata$ = this._authservice.currentUser;
-		this.userdata$.pipe(filter((data) => data !== null)).subscribe((data: any) => {
-			this.userdata = data;
-			this.center_id = this.userdata.center_id;
+    constructor(
+        private _cdr: ChangeDetectorRef,
+        private _commonApiService: CommonApiService,
+        private _snackBar: MatSnackBar,
+        private _route: ActivatedRoute,
+        private _dialog: MatDialog,
+        private _router: Router,
+        private _authService: AuthenticationService,
+        private _modalcontroller: ModalController
+    ) {
+        this.user_data$ = this._authService.currentUser;
+        this.user_data$
+            .pipe(filter((data) => data !== null))
+            .subscribe((data: any) => {
+                this.user_data = data;
+                this.center_id = this.user_data.center_id;
 
-			this._cdr.markForCheck();
-		});
+                this._cdr.markForCheck();
+            });
 
-		this._route.params.subscribe((params) => {
-			this.tempsearchstring = '';
-			if (this.userdata !== undefined) {
-				this.reset();
-			}
-		});
-	}
+        this._route.params.subscribe((params) => {
+            this.temp_product_search_text = '';
+            if (this.user_data !== undefined) {
+                this.reset();
+            }
+        });
+    }
 
-	ngOnInit() {
-		this.dataSource.paginator = this.paginator;
-	}
+    ngOnInit() {
+        this.dataSource.paginator = this.paginator;
+    }
 
-	addProduct() {
-		this._router.navigate([`/home/product/add`]);
-	}
+    addProduct() {
+        this._router.navigate([`/home/product/add`]);
+    }
 
-	editProduct(item) {
-		this._router.navigateByUrl(`/home/product/edit/${this.center_id}/${item.product_id}`);
-	}
+    editProduct(item) {
+        this._router.navigateByUrl(
+            `/home/product/edit/${this.center_id}/${item.product_id}`
+        );
+    }
 
-	ionViewDidEnter() {}
+    ionViewDidEnter() {}
 
-	openDialog(searchstring): void {
-		this._commonApiService.getProductInfo({ centerid: this.center_id, searchstring }).subscribe((data: any) => {
-			this.tempsearchstring = searchstring;
+    openDialog(product_search_text: string): void {
+        this._commonApiService
+            .getProductInfo({
+                center_id: this.center_id,
+                product_search_text,
+            })
+            .subscribe((data: any) => {
+                this.temp_product_search_text = product_search_text;
 
-			// DnD - code to add a "key/Value" in every object of array
-			this.dataSource.data = data.body.map((el) => {
-				const o = Object.assign({}, el);
-				o.isExpanded = false;
-				return o;
-			});
+                // DnD - code to add a "key/Value" in every object of array
+                this.dataSource.data = data.body.map((el) => {
+                    const o = Object.assign({}, el);
+                    o.isExpanded = false;
+                    return o;
+                });
 
-			this.dataSource.sort = this.sort;
-			this.pageLength = data.body.length;
+                this.dataSource.sort = this.sort;
+                this.pageLength = data.body.length;
 
-			if (data.body.length === 0) {
-				this.isTableHasData = false;
-			} else {
-				this.isTableHasData = true;
-			}
+                if (data.body.length === 0) {
+                    this.isTableHasData = false;
+                } else {
+                    this.isTableHasData = true;
+                }
 
-			if (searchstring.length === 0) {
-				this.reset();
-				this.isTableHasData = false;
-			}
+                if (product_search_text.length === 0) {
+                    this.reset();
+                    this.isTableHasData = false;
+                }
 
-			this._cdr.markForCheck();
-		});
-	}
+                this._cdr.markForCheck();
+            });
+    }
 
-	reset() {
-		this.dataSource.data = [];
-		this.pageLength = 0;
-		this.isTableHasData = false;
-	}
+    reset() {
+        this.dataSource.data = [];
+        this.pageLength = 0;
+        this.isTableHasData = false;
+    }
 
-	add() {
-		const dialogConfig = new MatDialogConfig();
-		dialogConfig.disableClose = true;
-		dialogConfig.autoFocus = true;
-		dialogConfig.width = '500px';
-		dialogConfig.height = '100%';
-		dialogConfig.position = { top: '0', right: '0' };
-		dialogConfig.panelClass = 'app-full-bleed-dialog';
+    add() {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '500px';
+        dialogConfig.height = '100%';
+        dialogConfig.position = { top: '0', right: '0' };
+        dialogConfig.panelClass = 'app-full-bleed-dialog';
 
-		const dialogRef = this._dialog.open(ProductAddDialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(
+            ProductAddDialogComponent,
+            dialogConfig
+        );
 
-		dialogRef
-			.afterClosed()
-			.pipe(
-				filter((val) => !!val),
-				tap(() => {
-					this._cdr.markForCheck();
-				}),
-			)
-			.subscribe((data: any) => {
-				if (data === 'success') {
-					this.openSnackBar('Product added successfully', '');
-				}
-			});
-	}
+        dialogRef
+            .afterClosed()
+            .pipe(
+                filter((val) => !!val),
+                tap(() => {
+                    this._cdr.markForCheck();
+                })
+            )
+            .subscribe((data: any) => {
+                if (data === 'success') {
+                    this.openSnackBar('Product added successfully', '');
+                }
+            });
+    }
 
-	checked(event) {
-		if (event.checked) {
-			this.mrp_flag = true;
-		} else {
-			this.mrp_flag = false;
-		}
-	}
+    checked(event) {
+        if (event.checked) {
+            this.mrp_flag = true;
+        } else {
+            this.mrp_flag = false;
+        }
+    }
 
-	openSnackBar(message: string, action: string) {
-		this._snackBar.open(message, action, {
-			duration: 2000,
-			panelClass: ['mat-toolbar', 'mat-primary'],
-		});
-	}
-	edit(product: Product) {
-		const dialogConfig = new MatDialogConfig();
-		dialogConfig.disableClose = true;
-		dialogConfig.autoFocus = true;
-		dialogConfig.width = '500px';
-		dialogConfig.height = '100%';
-		dialogConfig.data = product;
-		dialogConfig.position = { top: '0', right: '0' };
+    openSnackBar(message: string, action: string) {
+        this._snackBar.open(message, action, {
+            duration: 2000,
+            panelClass: ['mat-toolbar', 'mat-primary'],
+        });
+    }
+    edit(product: IProduct) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '500px';
+        dialogConfig.height = '100%';
+        dialogConfig.data = product;
+        dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(ProductEditDialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(
+            ProductEditDialogComponent,
+            dialogConfig
+        );
 
-		dialogRef
-			.afterClosed()
-			.pipe(
-				filter((val) => !!val),
-				tap(() => {
-					// do nothing
-					this.openDialog(this.tempsearchstring);
-					this._cdr.markForCheck();
-				}),
-			)
-			.subscribe((data: any) => {
-				if (data === 'success') {
-					this.openSnackBar('Product edited successfully', '');
-				}
-			});
-	}
+        dialogRef
+            .afterClosed()
+            .pipe(
+                filter((val) => !!val),
+                tap(() => {
+                    // do nothing
+                    this.openDialog(this.temp_product_search_text);
+                    this._cdr.markForCheck();
+                })
+            )
+            .subscribe((data: any) => {
+                if (data === 'success') {
+                    this.openSnackBar('Product edited successfully', '');
+                }
+            });
+    }
 
-	correctProduct(product: Product) {
-		const dialogConfig = new MatDialogConfig();
-		dialogConfig.disableClose = true;
-		dialogConfig.autoFocus = true;
-		dialogConfig.width = '600px';
-		dialogConfig.height = '100%';
-		dialogConfig.data = product;
-		dialogConfig.position = { top: '0', right: '0' };
+    correctProduct(product: IProduct) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '600px';
+        dialogConfig.height = '100%';
+        dialogConfig.data = product;
+        dialogConfig.position = { top: '0', right: '0' };
 
-		const dialogRef = this._dialog.open(ProductCorrectionDialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(
+            ProductCorrectionDialogComponent,
+            dialogConfig
+        );
 
-		dialogRef
-			.afterClosed()
-			.pipe(
-				filter((val) => !!val),
-				tap(() => {
-					// do nothing
-					this.openDialog(this.tempsearchstring);
-					this._cdr.markForCheck();
-				}),
-			)
-			.subscribe((data: any) => {
-				if (data === 'success') {
-					this.openSnackBar('Product Corrected successfully', '');
-				}
-			});
-	}
+        dialogRef
+            .afterClosed()
+            .pipe(
+                filter((val) => !!val),
+                tap(() => {
+                    // do nothing
+                    this.openDialog(this.temp_product_search_text);
+                    this._cdr.markForCheck();
+                })
+            )
+            .subscribe((data: any) => {
+                if (data === 'success') {
+                    this.openSnackBar('Product Corrected successfully', '');
+                }
+            });
+    }
 
-	async exportCompletedPurchaseToExcel() {
-		const fileName = `Full_Stock_List_${moment().format('DD-MM-YYYY')}.xlsx`;
+    async exportCompletedPurchaseToExcel() {
+        const fileName = `Full_Stock_List_${moment().format(
+            'DD-MM-YYYY'
+        )}.xlsx`;
 
-		this._commonApiService.fetchFullProductInventoryReports({ centerid: this.center_id, mrp_split: this.mrp_flag }).subscribe((reportdata: any) => {
-			const reportData = JSON.parse(JSON.stringify(reportdata.body));
+        this._commonApiService
+            .fetchFullProductInventoryReports({
+                center_id: this.center_id,
+                mrp_split: this.mrp_flag,
+            })
+            .subscribe((reportdata: any) => {
+                const reportData = JSON.parse(JSON.stringify(reportdata.body));
 
-			const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
-			const wb1: xlsx.WorkBook = xlsx.utils.book_new();
-			xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+                const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
+                const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+                xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
 
-			//then add ur Title txt
-			xlsx.utils.sheet_add_json(
-				wb1.Sheets.sheet1,
-				[
-					{
-						header: 'Full Stock Report on ' + moment().format('DD-MM-YYYY'),
-					},
-				],
-				{
-					skipHeader: true,
-					origin: 'A1',
-				},
-			);
+                //then add ur Title txt
+                xlsx.utils.sheet_add_json(
+                    wb1.Sheets.sheet1,
+                    [
+                        {
+                            header:
+                                'Full Stock Report on ' +
+                                moment().format('DD-MM-YYYY'),
+                        },
+                    ],
+                    {
+                        skipHeader: true,
+                        origin: 'A1',
+                    }
+                );
 
-			//start frm A2 here
-			xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
-				skipHeader: false,
-				origin: 'A2',
-			});
+                //start frm A2 here
+                xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+                    skipHeader: false,
+                    origin: 'A2',
+                });
 
-			xlsx.writeFile(wb1, fileName);
-		});
-	}
+                xlsx.writeFile(wb1, fileName);
+            });
+    }
 
-	async showInventoryReportsDialog(element) {
-		const modal = await this._modalcontroller.create({
-			component: InventoryReportsDialogComponent,
-			componentProps: { center_id: this.center_id, product_code: element.product_code, product_id: element.product_id },
-			cssClass: 'select-modal',
-		});
+    async showInventoryReportsDialog(element) {
+        const modal = await this._modalcontroller.create({
+            component: InventoryReportsDialogComponent,
+            componentProps: {
+                center_id: this.center_id,
+                product_code: element.product_code,
+                product_id: element.product_id,
+            },
+            cssClass: 'select-modal',
+        });
 
-		modal.onDidDismiss().then((result) => {
-			this._cdr.markForCheck();
-		});
+        modal.onDidDismiss().then((result) => {
+            this._cdr.markForCheck();
+        });
 
-		await modal.present();
-	}
+        await modal.present();
+    }
 }
 
 // available_stock: 0

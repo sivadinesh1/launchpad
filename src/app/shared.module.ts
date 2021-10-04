@@ -51,9 +51,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTabsModule } from '@angular/material/tabs';
 import {
-  MatStepperModule,
-  MatStep,
-  MatHorizontalStepper,
+    MatStepperModule,
+    MatStep,
+    MatHorizontalStepper,
 } from '@angular/material/stepper';
 
 import { AddProductComponent } from './components/add-product/add-product.component';
@@ -129,205 +129,209 @@ import { ProductCorrectionDialogComponent } from './components/products/product-
 import { ManualInvoiceNumberDialogComponent } from './components/sales/manual-invoice-number-dialog/manual-invoice-number-dialog.component';
 import { SearchInvoicenoComponent } from './components/search-invoiceno/search-invoiceno.component';
 import { SearchCustomersComponent } from './components/search-customers/search-customers.component';
+import { AscendingComponent } from './components/util/ascending/ascending.component';
+import { DescendingComponent } from './components/util/descending/descending.component';
 
 const components = [
-  NullToQuotePipe,
-  NullToZeroPipe,
-  NullToDashPipe,
-  NullToNaPipe,
-  CheckBooleanPipe,
-  SupDatePipe,
-  CustomPipe,
-  NoNullPipe,
-  TruncatePipe,
-  UrlidPipe,
-  SafePipe,
-  EscapeHtmlPipe,
-  DayWeekPipe,
-  ZeroToValPipe,
-  PricePipePipe,
-  FilterPipe,
+    NullToQuotePipe,
+    NullToZeroPipe,
+    NullToDashPipe,
+    NullToNaPipe,
+    CheckBooleanPipe,
+    SupDatePipe,
+    CustomPipe,
+    NoNullPipe,
+    TruncatePipe,
+    UrlidPipe,
+    SafePipe,
+    EscapeHtmlPipe,
+    DayWeekPipe,
+    ZeroToValPipe,
+    PricePipePipe,
+    FilterPipe,
 
-  AddProductComponent,
-  SearchDialogComponent,
-  SettingsDialogComponent,
-  InventoryReportsDialogComponent,
-  ManualInvoiceNumberDialogComponent,
-
-  VendorEditDialogComponent,
-  VendorAddDialogComponent,
-
-  CustomerAddDialogComponent,
-  CustomerEditDialogComponent,
-  CustomerPaymentDialogComponent,
-  VendorPaymentDialogComponent,
-  SalesInvoiceDialogComponent,
-  SalesReturnDialogComponent,
-  SaleReturnViewComponent,
-  SaleReturnReceiveComponent,
-  PurchaseEntryDialogComponent,
-  EnquiryViewDialogComponent,
-
-  WhatsappDialogComponent,
-
-  DeleteBrandDialogComponent,
-  DeleteVendorDialogComponent,
-
-  DeleteEnquiryDialogComponent,
-
-  AccountsReceivablesComponent,
-  AccountsPayablesComponent,
-
-  ProductAddDialogComponent,
-  ProductEditDialogComponent,
-  ProductCorrectionDialogComponent,
-
-  BrandAddDialogComponent,
-  BrandEditDialogComponent,
-
-  AddUserComponent,
-
-  DefaultDiscountsComponent,
-  BrandDiscountsComponent,
-
-  VendorViewDialogComponent,
-
-  CustomerViewDialogComponent,
-  CustomerEditShippingAddressComponent,
-
-  SuccessMessageDialogComponent,
-
-  CurrencyPadComponent,
-  InvoiceSuccessComponent,
-  SearchInvoicenoComponent,
-  EnquiryPrintComponent,
-  AddMoreEnquiryComponent,
-  ShowVendorsComponent,
-
-  ChangeTaxComponent,
-  ChangeMrpComponent,
-
-  ConvertToSaleDialogComponent,
-
-  AutoFocusDirective,
-  FocusedDirective,
-  PreventDoubleClickDirective,
-  SelectOnFocusDirective,
-  NumericDirective,
-  DisableControlDirective,
-
-  ShowHidePasswordComponent,
-
-  HeaderComponent,
-  SearchCustomersComponent,
-  LeftMenuComponent,
-
-  WindowComponent,
-  LoadingComponent,
-  MessagesComponent,
-  ShowStatementComponent,
-  ShowVendorStatementComponent,
-];
-
-const matcomponents = [
-  MatFormFieldModule,
-  MatInputModule,
-  MatIconModule,
-  MatSliderModule,
-  MatSelectModule,
-  MatRadioModule,
-
-  MatSlideToggleModule,
-  MatExpansionModule,
-  MatDatepickerModule,
-  MatCardModule,
-  MatNativeDateModule,
-
-  MatToolbarModule,
-  MatTooltipModule,
-  MatTableModule,
-  MatMenuModule,
-  MatPaginatorModule,
-  MatSortModule,
-  MatChipsModule,
-  MatButtonToggleModule,
-  MatButtonModule,
-
-  MatSidenavModule,
-  MatListModule,
-  MatCheckboxModule,
-  MatAutocompleteModule,
-  MatProgressBarModule,
-  MatProgressSpinnerModule,
-  MatBottomSheetModule,
-  MatDialogModule,
-  MatSnackBarModule,
-  MatBadgeModule,
-  MatTabsModule,
-  MatStepperModule,
-  ScrollingModule,
-];
-
-@NgModule({
-  declarations: [
-    ...components,
-    PreventCutCopyPasteDirective,
-
-    ArrowDivDirective,
-    SearchCustomersComponent,
-  ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    IonicModule,
-    RouterModule,
-    ...matcomponents,
-    NgxSpinnerModule,
-  ],
-  exports: [...matcomponents, ...components, IonicModule, NgxSpinnerModule],
-  entryComponents: [
     AddProductComponent,
-    CurrencyPadComponent,
-    ShowVendorsComponent,
-    ChangeTaxComponent,
-    ChangeMrpComponent,
+    SearchDialogComponent,
+    SettingsDialogComponent,
+    InventoryReportsDialogComponent,
+    ManualInvoiceNumberDialogComponent,
+
+    VendorEditDialogComponent,
     VendorAddDialogComponent,
-    VendorViewDialogComponent,
-    BrandAddDialogComponent,
-    BrandEditDialogComponent,
-    ConvertToSaleDialogComponent,
-    AddUserComponent,
-    DefaultDiscountsComponent,
-    BrandDiscountsComponent,
-    DeleteEnquiryDialogComponent,
+
     CustomerAddDialogComponent,
     CustomerEditDialogComponent,
-    CustomerAddDialogComponent,
-    AccountsReceivablesComponent,
-    AccountsPayablesComponent,
-    SuccessMessageDialogComponent,
+    CustomerPaymentDialogComponent,
+    VendorPaymentDialogComponent,
+    SalesInvoiceDialogComponent,
+    SalesReturnDialogComponent,
+    SaleReturnViewComponent,
+    SaleReturnReceiveComponent,
+    PurchaseEntryDialogComponent,
+    EnquiryViewDialogComponent,
+
+    WhatsappDialogComponent,
+
     DeleteBrandDialogComponent,
     DeleteVendorDialogComponent,
+
+    DeleteEnquiryDialogComponent,
+
+    AccountsReceivablesComponent,
+    AccountsPayablesComponent,
+
+    ProductAddDialogComponent,
+    ProductEditDialogComponent,
+    ProductCorrectionDialogComponent,
+
+    BrandAddDialogComponent,
+    BrandEditDialogComponent,
+
+    AddUserComponent,
+
+    DefaultDiscountsComponent,
+    BrandDiscountsComponent,
+
+    VendorViewDialogComponent,
+
     CustomerViewDialogComponent,
     CustomerEditShippingAddressComponent,
+
+    SuccessMessageDialogComponent,
+
+    CurrencyPadComponent,
     InvoiceSuccessComponent,
     SearchInvoicenoComponent,
     EnquiryPrintComponent,
     AddMoreEnquiryComponent,
-    SalesInvoiceDialogComponent,
-    PurchaseEntryDialogComponent,
-    EnquiryViewDialogComponent,
-    WhatsappDialogComponent,
-    SalesReturnDialogComponent,
-    SaleReturnViewComponent,
-    SaleReturnReceiveComponent,
-    SearchDialogComponent,
-    SettingsDialogComponent,
-    InventoryReportsDialogComponent,
+    ShowVendorsComponent,
+
+    ChangeTaxComponent,
+    ChangeMrpComponent,
+
+    ConvertToSaleDialogComponent,
+
+    AutoFocusDirective,
+    FocusedDirective,
+    PreventDoubleClickDirective,
+    SelectOnFocusDirective,
+    NumericDirective,
+    DisableControlDirective,
+
+    ShowHidePasswordComponent,
+
+    HeaderComponent,
+    SearchCustomersComponent,
+    AscendingComponent,
+    DescendingComponent,
+    LeftMenuComponent,
+
+    WindowComponent,
+    LoadingComponent,
+    MessagesComponent,
     ShowStatementComponent,
     ShowVendorStatementComponent,
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+];
+
+const matcomponents = [
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatSliderModule,
+    MatSelectModule,
+    MatRadioModule,
+
+    MatSlideToggleModule,
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatCardModule,
+    MatNativeDateModule,
+
+    MatToolbarModule,
+    MatTooltipModule,
+    MatTableModule,
+    MatMenuModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatChipsModule,
+    MatButtonToggleModule,
+    MatButtonModule,
+
+    MatSidenavModule,
+    MatListModule,
+    MatCheckboxModule,
+    MatAutocompleteModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatBottomSheetModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatBadgeModule,
+    MatTabsModule,
+    MatStepperModule,
+    ScrollingModule,
+];
+
+@NgModule({
+    declarations: [
+        ...components,
+        PreventCutCopyPasteDirective,
+
+        ArrowDivDirective,
+        SearchCustomersComponent,
+    ],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+        IonicModule,
+        RouterModule,
+        ...matcomponents,
+        NgxSpinnerModule,
+    ],
+    exports: [...matcomponents, ...components, IonicModule, NgxSpinnerModule],
+    entryComponents: [
+        AddProductComponent,
+        CurrencyPadComponent,
+        ShowVendorsComponent,
+        ChangeTaxComponent,
+        ChangeMrpComponent,
+        VendorAddDialogComponent,
+        VendorViewDialogComponent,
+        BrandAddDialogComponent,
+        BrandEditDialogComponent,
+        ConvertToSaleDialogComponent,
+        AddUserComponent,
+        DefaultDiscountsComponent,
+        BrandDiscountsComponent,
+        DeleteEnquiryDialogComponent,
+        CustomerAddDialogComponent,
+        CustomerEditDialogComponent,
+        CustomerAddDialogComponent,
+        AccountsReceivablesComponent,
+        AccountsPayablesComponent,
+        SuccessMessageDialogComponent,
+        DeleteBrandDialogComponent,
+        DeleteVendorDialogComponent,
+        CustomerViewDialogComponent,
+        CustomerEditShippingAddressComponent,
+        InvoiceSuccessComponent,
+        SearchInvoicenoComponent,
+        EnquiryPrintComponent,
+        AddMoreEnquiryComponent,
+        SalesInvoiceDialogComponent,
+        PurchaseEntryDialogComponent,
+        EnquiryViewDialogComponent,
+        WhatsappDialogComponent,
+        SalesReturnDialogComponent,
+        SaleReturnViewComponent,
+        SaleReturnReceiveComponent,
+        SearchDialogComponent,
+        SettingsDialogComponent,
+        InventoryReportsDialogComponent,
+        ShowStatementComponent,
+        ShowVendorStatementComponent,
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SharedModule {}

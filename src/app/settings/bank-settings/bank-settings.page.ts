@@ -1,9 +1,9 @@
 import {
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  ViewChild,
-  ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    ChangeDetectorRef,
+    ViewChild,
+    ChangeDetectionStrategy,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -16,163 +16,169 @@ import { filter } from 'rxjs/operators';
 import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
 
 @Component({
-  selector: 'app-bank-settings',
-  templateUrl: './bank-settings.page.html',
-  styleUrls: ['./bank-settings.page.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-bank-settings',
+    templateUrl: './bank-settings.page.html',
+    styleUrls: ['./bank-settings.page.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BankSettingsPage implements OnInit {
-  timezonesdata: any;
-  submitForm: any;
-  userdata$: Observable<User>;
-  userdata: any;
+    timezonesdata: any;
+    submitForm: any;
+    user_data$: Observable<User>;
+    user_data: any;
 
-  ready = 0;
-  bankList: any;
+    ready = 0;
+    bankList: any;
 
-  selectedItem = null;
+    selectedItem = null;
 
-  isAddBank = false;
-  isEditBank = false;
+    isAddBank = false;
+    isEditBank = false;
 
-  constructor(
-    private _formBuilder: FormBuilder,
-    private _cdr: ChangeDetectorRef,
-    private _router: Router,
-    private _fb: FormBuilder,
-    private _snackBar: MatSnackBar,
-    private _route: ActivatedRoute,
-    private _authservice: AuthenticationService,
-    private _commonApiService: CommonApiService
-  ) {
-    // init form
-    this.submitForm = this._formBuilder.group({
-      id: [],
-      center_id: [],
-      bankname: [],
-      accountno: [],
-      accountname: [],
-      branchdetails: [],
-      ifsccode: [],
-      isdefault: [false],
-      createdby: [],
-      updatedby: [],
-    });
+    constructor(
+        private _formBuilder: FormBuilder,
+        private _cdr: ChangeDetectorRef,
+        private _router: Router,
+        private _fb: FormBuilder,
+        private _snackBar: MatSnackBar,
+        private _route: ActivatedRoute,
+        private _authService: AuthenticationService,
+        private _commonApiService: CommonApiService
+    ) {
+        // init form
+        this.submitForm = this._formBuilder.group({
+            id: [],
+            center_id: [],
+            bankname: [],
+            accountno: [],
+            accountname: [],
+            branchdetails: [],
+            ifsccode: [],
+            isdefault: [false],
+            createdby: [],
+            updatedby: [],
+        });
 
-    this.userdata$ = this._authservice.currentUser;
-    this.userdata$
-      .pipe(filter((data) => data !== null))
-      .subscribe((data: any) => {
-        this.userdata = data;
+        this.user_data$ = this._authService.currentUser;
+        this.user_data$
+            .pipe(filter((data) => data !== null))
+            .subscribe((data: any) => {
+                this.user_data = data;
+                this.submitForm.patchValue({
+                    center_id: this.user_data.center_id,
+                    createdby: this.user_data.userid,
+                    updatedby: this.user_data.userid,
+                });
+                this.ready = 1;
+                this.reloadBankDetails();
+                this._cdr.markForCheck();
+            });
+    }
+
+    ngOnInit() {}
+
+    ngAfterViewInit() {}
+
+    reloadBankDetails() {
+        this._commonApiService.getBanks().subscribe((data: any) => {
+            this.bankList = data.result;
+
+            this._cdr.markForCheck();
+        });
+    }
+
+    handleChange(event) {
+        this.submitForm.reset();
+        this.isEditBank = true;
         this.submitForm.patchValue({
-          center_id: this.userdata.center_id,
-          createdby: this.userdata.userid,
-          updatedby: this.userdata.userid,
+            id: event.value.id,
+            bankname: event.value.bankname,
+            accountno: event.value.accountno,
+            accountname: event.value.accountname,
+            branchdetails: event.value.branch,
+            ifsccode: event.value.ifsccode,
+            center_id: this.user_data.center_id,
+            createdby: this.user_data.userid,
+            updatedby: this.user_data.userid,
+            isdefault: event.value.isdefault === 'Y' ? true : false,
         });
-        this.ready = 1;
-        this.reloadBankDetails();
+    }
+
+    addBank() {
+        this.isAddBank = true;
+        this.submitForm.reset();
+        this.submitForm.patchValue({
+            center_id: this.user_data.center_id,
+            createdby: this.user_data.userid,
+        });
+
         this._cdr.markForCheck();
-      });
-  }
-
-  ngOnInit() {}
-
-  ngAfterViewInit() {}
-
-  reloadBankDetails() {
-    this._commonApiService.getBanks().subscribe((data: any) => {
-      this.bankList = data.result;
-
-      this._cdr.markForCheck();
-    });
-  }
-
-  handleChange(event) {
-    this.submitForm.reset();
-    this.isEditBank = true;
-    this.submitForm.patchValue({
-      id: event.value.id,
-      bankname: event.value.bankname,
-      accountno: event.value.accountno,
-      accountname: event.value.accountname,
-      branchdetails: event.value.branch,
-      ifsccode: event.value.ifsccode,
-      center_id: this.userdata.center_id,
-      createdby: this.userdata.userid,
-      updatedby: this.userdata.userid,
-      isdefault: event.value.isdefault === 'Y' ? true : false,
-    });
-  }
-
-  addBank() {
-    this.isAddBank = true;
-    this.submitForm.reset();
-    this.submitForm.patchValue({
-      center_id: this.userdata.center_id,
-      createdby: this.userdata.userid,
-    });
-
-    this._cdr.markForCheck();
-  }
-
-  onSubmit(mode) {
-    if (!this.submitForm.valid) {
-      return false;
     }
 
-    if (mode === 'add') {
-      this._commonApiService
-        .insertBank(this.submitForm.value)
-        .subscribe((data: any) => {
-          if (data.body.message === 'success') {
-            this.openSnackBar('Added Bank Successfully', '');
-            this.reloadBankDetails();
-            this.isAddBank = false;
-            this._cdr.markForCheck();
-          }
-        });
-    } else if (mode === 'update') {
-      // check if atleast one bank has default enabled.
+    onSubmit(mode) {
+        if (!this.submitForm.valid) {
+            return false;
+        }
 
-      const list = this.bankList.filter((e) => e.isdefault === 'Y');
+        if (mode === 'add') {
+            this._commonApiService
+                .insertBank(this.submitForm.value)
+                .subscribe((data: any) => {
+                    if (data.body.message === 'success') {
+                        this.openSnackBar('Added Bank Successfully', '');
+                        this.reloadBankDetails();
+                        this.isAddBank = false;
+                        this._cdr.markForCheck();
+                    }
+                });
+        } else if (mode === 'update') {
+            // check if atleast one bank has default enabled.
 
-      if (
-        (list.length === 0 || list.length === 1) &&
-        this.submitForm.value.isdefault === false
-      ) {
-        this.openSnackBar('Need Atleast one Bank To Print in Invoice', '');
-        return false;
-      }
+            const list = this.bankList.filter((e) => e.isdefault === 'Y');
 
-      this._commonApiService
-        .updateBank(this.submitForm.value)
-        .subscribe((data: any) => {
-          if (data.body.message === 'success') {
-            this.openSnackBar('Bank Information Edited Successfully', '');
-            this.reloadBankDetails();
-            this.isAddBank = false;
-            this.isEditBank = false;
-            this._cdr.markForCheck();
-          }
+            if (
+                (list.length === 0 || list.length === 1) &&
+                this.submitForm.value.isdefault === false
+            ) {
+                this.openSnackBar(
+                    'Need Atleast one Bank To Print in Invoice',
+                    ''
+                );
+                return false;
+            }
+
+            this._commonApiService
+                .updateBank(this.submitForm.value)
+                .subscribe((data: any) => {
+                    if (data.body.message === 'success') {
+                        this.openSnackBar(
+                            'Bank Information Edited Successfully',
+                            ''
+                        );
+                        this.reloadBankDetails();
+                        this.isAddBank = false;
+                        this.isEditBank = false;
+                        this._cdr.markForCheck();
+                    }
+                });
+        }
+    }
+
+    openSnackBar(message: string, action: string) {
+        this._snackBar.open(message, action, {
+            duration: 2000,
+            panelClass: ['mat-toolbar', 'mat-primary'],
         });
     }
-  }
 
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action, {
-      duration: 2000,
-      panelClass: ['mat-toolbar', 'mat-primary'],
-    });
-  }
-
-  cancel() {
-    this.submitForm.reset();
-    this.submitForm.patchValue({
-      center_id: this.userdata.center_id,
-      createdby: this.userdata.userid,
-      updatedby: this.userdata.userid,
-    });
-    this.isAddBank = false;
-    this.isEditBank = false;
-  }
+    cancel() {
+        this.submitForm.reset();
+        this.submitForm.patchValue({
+            center_id: this.user_data.center_id,
+            createdby: this.user_data.userid,
+            updatedby: this.user_data.userid,
+        });
+        this.isAddBank = false;
+        this.isEditBank = false;
+    }
 }

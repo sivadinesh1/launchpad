@@ -24,7 +24,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CurrencyPadComponent } from '../currency-pad/currency-pad.component';
-import { Product } from 'src/app/models/Product';
+import { IProduct } from 'src/app/models/Product';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { RequireMatch as RequireMatch } from '../../util/directives/requireMatch';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
@@ -44,12 +44,12 @@ export class AddMoreEnquiryComponent implements OnInit {
 
     removeRowArr = [];
     showDelIcon = false;
-    centerid: any;
+    center_id: any;
     userid: any;
 
     data: any;
     isLoading = false;
-    product_lis: Product[];
+    product_lis: IProduct[];
 
     @ViewChild('myForm', { static: true }) myForm: NgForm;
 
@@ -69,12 +69,12 @@ export class AddMoreEnquiryComponent implements OnInit {
         private _route: ActivatedRoute,
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService,
-        private _authservice: AuthenticationService
+        private _authService: AuthenticationService
     ) {
         this.submitForm = this._fb.group({
             enquiry_id: [data.enquiry_id, Validators.required],
             customer: [data.customer_id, Validators.required],
-            centerid: [data.center_id, Validators.required],
+            center_id: [data.center_id, Validators.required],
             productctrl: [null, [RequireMatch]],
             remarks: [''],
 
@@ -259,7 +259,7 @@ export class AddMoreEnquiryComponent implements OnInit {
                     search = id;
                     if (id != null && id.length >= 0) {
                         return this._commonApiService.getProductInfo({
-                            centerid: this.submitForm.value.centerid,
+                            center_id: this.submitForm.value.center_id,
                             searchstring: id,
                         });
                     } else {

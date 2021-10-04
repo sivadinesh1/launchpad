@@ -38,7 +38,7 @@ import { User } from '../models/User';
 import { Customer } from 'src/app/models/Customer';
 
 import { RequireMatch as RequireMatch } from '../util/directives/requireMatch';
-import { Product } from '../models/Product';
+import { IProduct } from '../models/Product';
 import { empty, of } from 'rxjs';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { CustomerViewDialogComponent } from '../components/customers/customer-view-dialog/customer-view-dialog.component';
@@ -62,8 +62,8 @@ export class EnquiryPage {
     // center_id: any;
     tabIndex = 0;
 
-    userdata$: Observable<User>;
-    userdata: any;
+    user_data$: Observable<User>;
+    user_data: any;
 
     isLoading = false;
     isCLoading = false;
@@ -96,7 +96,7 @@ export class EnquiryPage {
     @ViewChild(IonContent, { static: false }) content: IonContent;
 
     customer_lis: Customer[];
-    product_lis: Product[];
+    product_lis: IProduct[];
 
     selectedCustomerName: any;
 
@@ -110,15 +110,15 @@ export class EnquiryPage {
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService,
         private _dialog: MatDialog,
-        private _authservice: AuthenticationService
+        private _authService: AuthenticationService
     ) {
         this.basicinit();
-        this.userdata$ = this._authservice.currentUser;
-        this.userdata$
+        this.user_data$ = this._authService.currentUser;
+        this.user_data$
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
-                this._authservice.setCurrentMenu('ENQUIRY');
-                this.userdata = data;
+                this._authService.setCurrentMenu('ENQUIRY');
+                this.user_data = data;
 
                 this.submitForm.patchValue({
                     center_id: data.center_id,
@@ -130,11 +130,11 @@ export class EnquiryPage {
 
         this._route.params.subscribe((params) => {
             this.clicked = false;
-            if (this.userdata !== undefined) {
+            if (this.user_data !== undefined) {
                 this.basicinit();
                 this.init();
                 this.submitForm.patchValue({
-                    center_id: this.userdata.center_id,
+                    center_id: this.user_data.center_id,
                 });
             }
             this._cdr.markForCheck();
@@ -188,7 +188,7 @@ export class EnquiryPage {
                     search = id;
                     if (id != null && id.length >= 2) {
                         return this._commonApiService.getCustomerInfo({
-                            centerid: this.userdata.center_id,
+                            center_id: this.user_data.center_id,
                             searchstr: id,
                         });
                     } else {
@@ -302,7 +302,7 @@ export class EnquiryPage {
                     search = id;
                     if (id != null && id.length >= 2) {
                         return this._commonApiService.getProductInfo({
-                            centerid: this.userdata.center_id,
+                            center_id: this.user_data.center_id,
                             searchstring: id,
                         });
                     } else {

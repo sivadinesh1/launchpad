@@ -1,32 +1,30 @@
-export class Product {
-    id: number;
+export interface IProduct {
+    id?: number;
     center_id: number;
-    vendor_id: number;
+    brand_id: number;
     product_code: string;
-    description: string;
-    unit: string;
-    packetsize: string;
-    hsncode: string;
-    currentstock: string;
-    available_stock: string;
-    unit_price: string;
-    mrp: string;
-    purchase_price: string;
-    salesprice: string;
-    rackno: string;
-    location: string;
-    maxdiscount: string;
-    alternatecode: string;
-    taxrate: number;
-    minqty: number;
-    itemdiscount: string;
-    reorderqty: number;
-    avgpurprice: number;
-    avgsaleprice: number;
-    margin: number;
-    brand_id: string;
-    name: string;
+    product_description: string;
     uom: string;
-    product_id: string;
-
+    packet_size: number;
+    hsn_code: string;
+    current_stock: number;
+    unit_price: number;
+    mrp: number;
+    purchase_price: number;
+    sales_price?: number;
+    rack_info: string;
+    location?: string;
+    max_discount?: number;
+    alternate_code?: string;
+    tax_rate: number;
+    minimum_quantity: number;
+    item_discount?: number;
+    reorder_quantity?: number;
+    average_purchase_price?: number;
+    average_sale_price?: number;
+    margin?: number;
+    createdAt?: Date;
+    updatedAt?: Date;
+    created_by?: number;
+    updated_by?: number;
 }

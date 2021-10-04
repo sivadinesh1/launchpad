@@ -1,23 +1,23 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Inject,
-  OnInit,
-  ViewChild,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Inject,
+    OnInit,
+    ViewChild,
 } from '@angular/core';
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    Validators,
 } from '@angular/forms';
 import {
-  MatDialog,
-  MatDialogConfig,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogConfig,
+    MatDialogRef,
+    MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -25,105 +25,105 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CommonApiService } from 'src/app/services/common-api.service';
 
 @Component({
-  selector: 'app-sale-return-receive',
-  templateUrl: './sale-return-receive.component.html',
-  styleUrls: ['./sale-return-receive.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-sale-return-receive',
+    templateUrl: './sale-return-receive.component.html',
+    styleUrls: ['./sale-return-receive.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SaleReturnReceiveComponent implements OnInit {
-  salemasterdata: any;
-  salereturndetailsdata: any;
-  customerdata: any;
-  centerdata: any;
+    salemasterdata: any;
+    salereturndetailsdata: any;
+    customerdata: any;
+    centerdata: any;
 
-  data: any;
-  returnArr = [];
+    data: any;
+    returnArr = [];
 
-  submitForm: FormGroup;
+    submitForm: FormGroup;
 
-  constructor(
-    private _cdr: ChangeDetectorRef,
-    private _router: Router,
-    private _formBuilder: FormBuilder,
-    private dialogRef: MatDialogRef<SaleReturnReceiveComponent>,
-    private _route: ActivatedRoute,
-    private _authservice: AuthenticationService,
-    @Inject(MAT_DIALOG_DATA) data: any,
-    public _dialog: MatDialog,
-    private _fb: FormBuilder,
-    private _commonApiService: CommonApiService
-  ) {
-    this.data = data;
-  }
+    constructor(
+        private _cdr: ChangeDetectorRef,
+        private _router: Router,
+        private _formBuilder: FormBuilder,
+        private dialogRef: MatDialogRef<SaleReturnReceiveComponent>,
+        private _route: ActivatedRoute,
+        private _authService: AuthenticationService,
+        @Inject(MAT_DIALOG_DATA) data: any,
+        public _dialog: MatDialog,
+        private _fb: FormBuilder,
+        private _commonApiService: CommonApiService
+    ) {
+        this.data = data;
+    }
 
-  ngOnInit() {
-    this._commonApiService
-      .getSaleReturnDetailsData(this.data.sale_return_id)
-      .subscribe((data: any) => {
-        this.salereturndetailsdata = data;
+    ngOnInit() {
+        this._commonApiService
+            .getSaleReturnDetailsData(this.data.sale_return_id)
+            .subscribe((data: any) => {
+                this.salereturndetailsdata = data;
 
-        this.salereturndetailsdata.forEach((element) => {
-          this.processItems(element);
+                this.salereturndetailsdata.forEach((element) => {
+                    this.processItems(element);
+                });
+
+                this._cdr.markForCheck();
+            });
+    }
+
+    processItems(element) {
+        this.returnArr.push({
+            id: element.id,
+            sale_return_id: element.sale_return_id,
+            product_code: element.product_code,
+            description: element.description,
+            return_qty: element.return_qty,
+            received_qty: element.received_qty,
+            received_now: element.return_qty - element.received_qty,
         });
+    }
 
-        this._cdr.markForCheck();
-      });
-  }
+    update_change(event$, idx) {
+        this.returnArr[idx].received_now = event$.target.value;
+    }
 
-  processItems(element) {
-    this.returnArr.push({
-      id: element.id,
-      sale_return_id: element.sale_return_id,
-      product_code: element.product_code,
-      description: element.description,
-      return_qty: element.return_qty,
-      received_qty: element.received_qty,
-      received_now: element.return_qty - element.received_qty,
-    });
-  }
+    close() {
+        this.dialogRef.close();
+    }
 
-  update_change(event$, idx) {
-    this.returnArr[idx].received_now = event$.target.value;
-  }
+    salesReturnReceive(): void {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '50%';
+        dialogConfig.height = '100%';
+        //dialogConfig.data = row;
+        dialogConfig.position = { top: '0', right: '0' };
 
-  close() {
-    this.dialogRef.close();
-  }
+        const dialogRef = this._dialog.open(
+            SaleReturnReceiveComponent,
+            dialogConfig
+        );
 
-  salesReturnReceive(): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '50%';
-    dialogConfig.height = '100%';
-    //dialogConfig.data = row;
-    dialogConfig.position = { top: '0', right: '0' };
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log('The dialog was closed');
+        });
+    }
 
-    const dialogRef = this._dialog.open(
-      SaleReturnReceiveComponent,
-      dialogConfig
-    );
+    search() {
+        console.log('object...' + this.returnArr);
 
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed');
-    });
-  }
+        this._commonApiService
+            .updateSaleReturnReceived(this.returnArr)
+            .subscribe((data: any) => {
+                console.log('object...' + data);
 
-  search() {
-    console.log('object...' + this.returnArr);
+                if (data.result === 'success') {
+                    this.dialogRef.close('success');
+                }
+            });
+    }
 
-    this._commonApiService
-      .updateSaleReturnReceived(this.returnArr)
-      .subscribe((data: any) => {
-        console.log('object...' + data);
-
-        if (data.result === 'success') {
-          this.dialogRef.close('success');
-        }
-      });
-  }
-
-  cancel() {
-    this.dialogRef.close();
-  }
+    cancel() {
+        this.dialogRef.close();
+    }
 }

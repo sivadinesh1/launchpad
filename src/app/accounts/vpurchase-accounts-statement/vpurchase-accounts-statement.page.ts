@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Inject,
-  OnInit,
-  ViewChild,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Inject,
+    OnInit,
+    ViewChild,
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -14,19 +14,19 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import {
-  FormGroup,
-  FormControl,
-  Validators,
-  FormBuilder,
+    FormGroup,
+    FormControl,
+    Validators,
+    FormBuilder,
 } from '@angular/forms';
 import * as xlsx from 'xlsx';
 import {
-  filter,
-  map,
-  startWith,
-  tap,
-  debounceTime,
-  switchMap,
+    filter,
+    map,
+    startWith,
+    tap,
+    debounceTime,
+    switchMap,
 } from 'rxjs/operators';
 
 import { User } from '../../models/User';
@@ -34,268 +34,280 @@ import { Vendor } from 'src/app/models/Vendor';
 import * as moment from 'moment';
 
 @Component({
-  selector: 'app-vpurchase-accounts-statement',
-  templateUrl: './vpurchase-accounts-statement.page.html',
-  styleUrls: ['./vpurchase-accounts-statement.page.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-vpurchase-accounts-statement',
+    templateUrl: './vpurchase-accounts-statement.page.html',
+    styleUrls: ['./vpurchase-accounts-statement.page.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VpurchaseAccountsStatementPage implements OnInit {
-  statementdata: any;
+    statementdata: any;
 
-  openingbalance: any;
-  closingbalance: any;
-  statementForm: FormGroup;
+    openingbalance: any;
+    closingbalance: any;
+    statementForm: FormGroup;
 
-  startdate = new Date();
-  enddate = new Date();
-  minDate = new Date();
-  maxDate = new Date();
+    startdate = new Date();
+    enddate = new Date();
+    minDate = new Date();
+    maxDate = new Date();
 
-  filteredVendor: Observable<any[]>;
-  vendor_lis: Vendor[];
+    filteredVendor: Observable<any[]>;
+    vendor_lis: Vendor[];
 
-  userdata$: Observable<User>;
-  userdata: any;
-  ready = 0; // flag check - centerid (localstorage) & vendorid (param)
+    user_data$: Observable<User>;
+    user_data: any;
+    ready = 0; // flag check - center_id (localstorage) & vendorid (param)
 
-  @ViewChild('epltable', { static: false }) epltable: ElementRef;
+    @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
-  constructor(
-    private _cdr: ChangeDetectorRef,
-    private _router: Router,
-    private _snackBar: MatSnackBar,
-    private _fb: FormBuilder,
-    private _route: ActivatedRoute,
-    private _authservice: AuthenticationService,
+    constructor(
+        private _cdr: ChangeDetectorRef,
+        private _router: Router,
+        private _snackBar: MatSnackBar,
+        private _fb: FormBuilder,
+        private _route: ActivatedRoute,
+        private _authService: AuthenticationService,
 
-    private _commonApiService: CommonApiService
-  ) {
-    this.init();
-    this.userdata$ = this._authservice.currentUser;
-    this.userdata$
-      .pipe(filter((data) => data !== null))
-      .subscribe((data: any) => {
-        // this._authservice.setCurrentMenu('SALE');
-        this.userdata = data;
+        private _commonApiService: CommonApiService
+    ) {
+        this.init();
+        this.user_data$ = this._authService.currentUser;
+        this.user_data$
+            .pipe(filter((data) => data !== null))
+            .subscribe((data: any) => {
+                // this._authService.setCurrentMenu('SALE');
+                this.user_data = data;
 
-        this.statementForm.patchValue({
-          center_id: data.center_id,
+                this.statementForm.patchValue({
+                    center_id: data.center_id,
+                });
+                this.getVendors(this.user_data.center_id);
+                this.ready = 1;
+
+                this._cdr.markForCheck();
+            });
+    }
+
+    ngOnInit() {}
+
+    startDateSelected($event) {
+        this.startdate = $event.target.value;
+    }
+
+    endDateSelected($event) {
+        this.enddate = $event.target.value;
+    }
+
+    getVendors(center_id) {
+        this._commonApiService.getAllActiveVendors().subscribe((data: any) => {
+            this.vendor_lis = data;
+
+            this.filteredVendor =
+                this.statementForm.controls.vendorctrl.valueChanges.pipe(
+                    startWith(''),
+                    map((vendor) =>
+                        vendor
+                            ? this.filtervendor(vendor)
+                            : this.vendor_lis.slice()
+                    )
+                );
         });
-        this.getVendors(this.userdata.center_id);
-        this.ready = 1;
+    }
+
+    async init() {
+        const dateOffset = 24 * 60 * 60 * 1000 * 30;
+        this.startdate.setTime(this.minDate.getTime() - dateOffset);
+
+        this.statementForm = this._fb.group({
+            startdate: [this.startdate, Validators.required],
+            enddate: [this.enddate, Validators.required],
+            vendorid: ['all'],
+            vendorctrl: new FormControl({
+                value: 'Select Vendor',
+                disabled: false,
+            }),
+            searchtype: ['all'],
+        });
+    }
+
+    filtervendor(value: any) {
+        if (typeof value == 'object') {
+            return this.vendor_lis.filter(
+                (vendor) =>
+                    vendor.name
+                        .toLowerCase()
+                        .indexOf(value.name.toLowerCase()) === 0
+            );
+        } else if (typeof value == 'string') {
+            return this.vendor_lis.filter(
+                (vendor) =>
+                    vendor.name.toLowerCase().indexOf(value.toLowerCase()) === 0
+            );
+        }
+    }
+
+    getPosts(event) {
+        this.statementForm.patchValue({
+            vendorid: event.option.value.id,
+            vendorctrl: event.option.value.name,
+        });
 
         this._cdr.markForCheck();
-      });
-  }
-
-  ngOnInit() {}
-
-  startDateSelected($event) {
-    this.startdate = $event.target.value;
-  }
-
-  endDateSelected($event) {
-    this.enddate = $event.target.value;
-  }
-
-  getVendors(center_id) {
-    this._commonApiService.getAllActiveVendors().subscribe((data: any) => {
-      this.vendor_lis = data;
-
-      this.filteredVendor = this.statementForm.controls.vendorctrl.valueChanges.pipe(
-        startWith(''),
-        map((vendor) =>
-          vendor ? this.filtervendor(vendor) : this.vendor_lis.slice()
-        )
-      );
-    });
-  }
-
-  async init() {
-    const dateOffset = 24 * 60 * 60 * 1000 * 30;
-    this.startdate.setTime(this.minDate.getTime() - dateOffset);
-
-    this.statementForm = this._fb.group({
-      startdate: [this.startdate, Validators.required],
-      enddate: [this.enddate, Validators.required],
-      vendorid: ['all'],
-      vendorctrl: new FormControl({
-        value: 'Select Vendor',
-        disabled: false,
-      }),
-      searchtype: ['all'],
-    });
-  }
-
-  filtervendor(value: any) {
-    if (typeof value == 'object') {
-      return this.vendor_lis.filter(
-        (vendor) =>
-          vendor.name.toLowerCase().indexOf(value.name.toLowerCase()) === 0
-      );
-    } else if (typeof value == 'string') {
-      return this.vendor_lis.filter(
-        (vendor) => vendor.name.toLowerCase().indexOf(value.toLowerCase()) === 0
-      );
-    }
-  }
-
-  getPosts(event) {
-    this.statementForm.patchValue({
-      vendorid: event.option.value.id,
-      vendorctrl: event.option.value.name,
-    });
-
-    this._cdr.markForCheck();
-  }
-
-  getStatement() {
-    const data = {
-      centerid: this.userdata.center_id,
-      vendorid: this.statementForm.value.vendorid,
-      startdate: this.statementForm.value.startdate,
-      enddate: this.statementForm.value.enddate,
-    };
-
-    if (this.statementForm.value.vendorid === 'all') {
-      this.openSnackBar('Select a Vendor', '');
-      return false;
     }
 
-    this._commonApiService.getVendorStatement(data).subscribe((data: any) => {
-      this.statementdata = data.body;
+    getStatement() {
+        const data = {
+            center_id: this.user_data.center_id,
+            vendorid: this.statementForm.value.vendorid,
+            startdate: this.statementForm.value.startdate,
+            enddate: this.statementForm.value.enddate,
+        };
 
-      if (this.statementdata[0].txn_type === 'purchase') {
-        this.openingbalance =
-          this.statementdata[0].balance_amt - this.statementdata[0].credit_amt;
-      } else if (this.statementdata[0].txn_type === 'Payment') {
-        this.openingbalance =
-          this.statementdata[0].balance_amt - this.statementdata[0].debit_amt;
-      }
+        if (this.statementForm.value.vendorid === 'all') {
+            this.openSnackBar('Select a Vendor', '');
+            return false;
+        }
 
-      this.closingbalance =
-        this.statementdata[this.statementdata.length - 1].balance_amt;
+        this._commonApiService
+            .getVendorStatement(data)
+            .subscribe((data: any) => {
+                this.statementdata = data.body;
 
-      this._cdr.markForCheck();
-    });
-  }
+                if (this.statementdata[0].txn_type === 'purchase') {
+                    this.openingbalance =
+                        this.statementdata[0].balance_amt -
+                        this.statementdata[0].credit_amt;
+                } else if (this.statementdata[0].txn_type === 'Payment') {
+                    this.openingbalance =
+                        this.statementdata[0].balance_amt -
+                        this.statementdata[0].debit_amt;
+                }
 
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action, {
-      duration: 2000,
-      panelClass: ['mat-toolbar', 'mat-primary'],
-    });
-  }
+                this.closingbalance =
+                    this.statementdata[
+                        this.statementdata.length - 1
+                    ].balance_amt;
 
-  clearInput() {
-    this.statementForm.patchValue({
-      vendorid: 'all',
-      vendorctrl: 'All Vendors',
-    });
-    this._cdr.markForCheck();
-  }
+                this._cdr.markForCheck();
+            });
+    }
 
-  reformatRefDate(reportData) {
-    reportData.forEach((element) => {
-      element.ledger_date = moment(element.ledger_date).format(
-        'DD-MM-YYYY'
-      );
-    });
-    return reportData;
-  }
+    openSnackBar(message: string, action: string) {
+        this._snackBar.open(message, action, {
+            duration: 2000,
+            panelClass: ['mat-toolbar', 'mat-primary'],
+        });
+    }
 
-  exportToExcel() {
-    const fileName = 'Vendor_Statement_Reports.xlsx';
+    clearInput() {
+        this.statementForm.patchValue({
+            vendorid: 'all',
+            vendorctrl: 'All Vendors',
+        });
+        this._cdr.markForCheck();
+    }
 
-    let reportData = JSON.parse(JSON.stringify(this.statementdata));
+    reformatRefDate(reportData) {
+        reportData.forEach((element) => {
+            element.ledger_date = moment(element.ledger_date).format(
+                'DD-MM-YYYY'
+            );
+        });
+        return reportData;
+    }
 
-    reportData = this.reformatRefDate(reportData);
+    exportToExcel() {
+        const fileName = 'Vendor_Statement_Reports.xlsx';
 
-    reportData.forEach((e) => {
-      delete e.center_id;
-      delete e.vendor_id;
-      delete e.txn_type;
+        let reportData = JSON.parse(JSON.stringify(this.statementdata));
 
-      e.Credit = e.credit_amt;
-      delete e.credit_amt;
+        reportData = this.reformatRefDate(reportData);
 
-      e.Debit = e.debit_amt;
-      delete e.debit_amt;
+        reportData.forEach((e) => {
+            delete e.center_id;
+            delete e.vendor_id;
+            delete e.txn_type;
 
-      e['Balance Amount'] = e.balance_amt;
-      delete e.balance_amt;
+            e.Credit = e.credit_amt;
+            delete e.credit_amt;
 
-      e['Purchase Reference'] = e.purchase_ref_id;
-      delete e.purchase_ref_id;
+            e.Debit = e.debit_amt;
+            delete e.debit_amt;
 
-      e['Payment Reference'] = e.payment_ref_id;
-      delete e.payment_ref_id;
+            e['Balance Amount'] = e.balance_amt;
+            delete e.balance_amt;
 
-      e.Date = e.ledger_date;
-      delete e.ledger_date;
-    });
+            e['Purchase Reference'] = e.purchase_ref_id;
+            delete e.purchase_ref_id;
 
-    const wb: xlsx.WorkBook = xlsx.utils.book_new();
-    //create sheet with empty json/there might be other ways to do this
-    const ws = xlsx.utils.json_to_sheet([]);
+            e['Payment Reference'] = e.payment_ref_id;
+            delete e.payment_ref_id;
 
-    ws['!cols'] = [
-      { width: 16 },
-      { width: 16 },
-      { width: 16 },
-      { width: 16 },
-      { width: 16 },
-      { width: 32 },
-    ];
+            e.Date = e.ledger_date;
+            delete e.ledger_date;
+        });
 
-    const wsrows = [
-      { hpt: 30 }, // row 1 sets to the height of 12 in points
-      { hpx: 30 }, // row 2 sets to the height of 16 in pixels
-    ];
+        const wb: xlsx.WorkBook = xlsx.utils.book_new();
+        //create sheet with empty json/there might be other ways to do this
+        const ws = xlsx.utils.json_to_sheet([]);
 
-    ws['!rows'] = wsrows; // ws - worksheet
+        ws['!cols'] = [
+            { width: 16 },
+            { width: 16 },
+            { width: 16 },
+            { width: 16 },
+            { width: 16 },
+            { width: 32 },
+        ];
 
-    const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+        const wsrows = [
+            { hpt: 30 }, // row 1 sets to the height of 12 in points
+            { hpx: 30 }, // row 2 sets to the height of 16 in pixels
+        ];
 
-    ws['!merges'] = merge;
+        ws['!rows'] = wsrows; // ws - worksheet
 
-    xlsx.utils.book_append_sheet(wb, ws, 'sheet1');
-    //then add ur Title txt
-    xlsx.utils.sheet_add_json(
-      wb.Sheets.sheet1,
-      [
-        {
-          header: 'Statement Reports',
-          dummy1: '',
-          fromdate: `From: ${moment(this.statementForm.value.startdate).format(
-            'DD/MM/YYYY'
-          )}`,
-          todate: `To: ${moment(this.statementForm.value.enddate).format(
-            'DD/MM/YYYY'
-          )}`,
-          openingbalance: `Open/Bal: ${this.openingbalance}`,
-          closingbalance: `Close/Bal: ${this.closingbalance}`,
-        },
-      ],
-      {
-        skipHeader: true,
-        origin: 'A1',
-      }
-    );
-    //start frm A2 here
-    xlsx.utils.sheet_add_json(wb.Sheets.sheet1, reportData, {
-      skipHeader: false,
-      origin: 'A2',
-      header: [
-        'Date',
-        'Credit',
-        'Debit',
-        'Balance Amount',
-        'Invoice Reference',
-        'Purchase Reference',
-        'Payment Reference',
-      ],
-    });
-    xlsx.writeFile(wb, fileName);
-  }
+        const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+
+        ws['!merges'] = merge;
+
+        xlsx.utils.book_append_sheet(wb, ws, 'sheet1');
+        //then add ur Title txt
+        xlsx.utils.sheet_add_json(
+            wb.Sheets.sheet1,
+            [
+                {
+                    header: 'Statement Reports',
+                    dummy1: '',
+                    fromdate: `From: ${moment(
+                        this.statementForm.value.startdate
+                    ).format('DD/MM/YYYY')}`,
+                    todate: `To: ${moment(
+                        this.statementForm.value.enddate
+                    ).format('DD/MM/YYYY')}`,
+                    openingbalance: `Open/Bal: ${this.openingbalance}`,
+                    closingbalance: `Close/Bal: ${this.closingbalance}`,
+                },
+            ],
+            {
+                skipHeader: true,
+                origin: 'A1',
+            }
+        );
+        //start frm A2 here
+        xlsx.utils.sheet_add_json(wb.Sheets.sheet1, reportData, {
+            skipHeader: false,
+            origin: 'A2',
+            header: [
+                'Date',
+                'Credit',
+                'Debit',
+                'Balance Amount',
+                'Invoice Reference',
+                'Purchase Reference',
+                'Payment Reference',
+            ],
+        });
+        xlsx.writeFile(wb, fileName);
+    }
 }

@@ -9,40 +9,43 @@ import { LoadingService } from '../loading/loading.service';
 import { CommonApiService } from 'src/app/services/common-api.service';
 
 @Component({
-  selector: 'app-delete-brand-dialog',
-  templateUrl: './delete-brand-dialog.component.html',
-  styleUrls: ['./delete-brand-dialog.component.scss'],
+    selector: 'app-delete-brand-dialog',
+    templateUrl: './delete-brand-dialog.component.html',
+    styleUrls: ['./delete-brand-dialog.component.scss'],
 })
 export class DeleteBrandDialogComponent implements OnInit {
-  center_id: any;
-  submitForm: any;
-  brand: Brand;
+    center_id: any;
+    submitForm: any;
+    brand: Brand;
 
-  constructor(private _cdr: ChangeDetectorRef, private _router: Router,
-    @Inject(MAT_DIALOG_DATA) brand: Brand,
-    private dialogRef: MatDialogRef<BrandEditDialogComponent>,
-    private _route: ActivatedRoute, private _authservice: AuthenticationService,
+    constructor(
+        private _cdr: ChangeDetectorRef,
+        private _router: Router,
+        @Inject(MAT_DIALOG_DATA) brand: Brand,
+        private dialogRef: MatDialogRef<BrandEditDialogComponent>,
+        private _route: ActivatedRoute,
+        private _authService: AuthenticationService,
 
-    private _commonApiService: CommonApiService) {
-    const currentUser = this._authservice.currentUserValue;
-    this.center_id = currentUser.center_id;
+        private _commonApiService: CommonApiService
+    ) {
+        const currentUser = this._authService.currentUserValue;
+        this.center_id = currentUser.center_id;
 
-    this.brand = brand;
+        this.brand = brand;
+    }
 
-  }
+    ngOnInit() {}
 
-  ngOnInit() { }
+    delete() {
+        this._commonApiService
+            .deleteBrand(this.brand.id)
+            .subscribe((data: any) => {
+                console.log('object.. brand deleted ..');
+                this.dialogRef.close('success');
+            });
+    }
 
-  delete() {
-    this._commonApiService.deleteBrand(this.brand.id).subscribe((data: any) => {
-      console.log('object.. brand deleted ..');
-      this.dialogRef.close('success');
-    });
-  }
-
-  cancel() {
-    this.dialogRef.close();
-  }
-
+    cancel() {
+        this.dialogRef.close();
+    }
 }
-
