@@ -29,8 +29,8 @@ import { IProduct } from 'src/app/models/Product';
 export class ProductEditDialogComponent implements OnInit {
     isLinear = true;
     center_id: any;
-    pexists = false;
-    temppcode: any;
+    product_exists = false;
+    temp_product_code: any;
 
     brands$: Observable<any>;
 
@@ -38,7 +38,7 @@ export class ProductEditDialogComponent implements OnInit {
 
     submitForm: FormGroup;
 
-    productinfo: any;
+    product_info: any;
 
     product_id: any;
 
@@ -48,7 +48,7 @@ export class ProductEditDialogComponent implements OnInit {
     uom = [
         { key: 'Nos', viewValue: 'Nos' },
         { key: 'Kg', viewValue: 'Kg' },
-        { key: 'Ltrs', viewValue: 'Ltrs' },
+        { key: 'Litres', viewValue: 'litres' },
         { key: 'pcs', viewValue: 'Pcs' },
     ];
     tax = [
@@ -77,16 +77,16 @@ export class ProductEditDialogComponent implements OnInit {
         this.brands$ = this._commonApiService.getAllActiveBrands('A');
 
         this.submitForm = this._formBuilder.group({
-            product_id: [this.product.id],
+            id: [this.product.id],
             center_id: [this.center_id],
             product_code: [this.product.product_code, Validators.required],
             product_description: [
                 this.product.product_description,
                 Validators.required,
             ],
-            brand_id: [this.product.brand_id, Validators.required],
+            brand_id: [this.product.brand_id.toString(), Validators.required],
 
-            unit: [this.product.uom, Validators.required],
+            uom: [this.product.uom, Validators.required],
             packet_size: [this.product.packet_size, Validators.required],
             hsn_code: [
                 this.product.hsn_code,
@@ -111,13 +111,6 @@ export class ProductEditDialogComponent implements OnInit {
 
             current_stock: [this.product.current_stock],
             rack_info: [this.product.rack_info],
-            location: [null],
-            alternate_code: [null],
-            reorder_quantity: [0],
-            average_purchase_price: [0],
-            average_sale_price: [0],
-            item_discount: [0],
-            margin: [0],
         });
     }
 
@@ -134,18 +127,36 @@ export class ProductEditDialogComponent implements OnInit {
     }
 
     submit() {
+        const product: IProduct = {
+            id: this.submitForm.value.id,
+            center_id: this.submitForm.value.center_id,
+            product_code: this.submitForm.value.product_code,
+            product_description: this.submitForm.value.product_description,
+            brand_id: this.submitForm.value.brand_id,
+            uom: this.submitForm.value.uom,
+            packet_size: this.submitForm.value.packet_size,
+            hsn_code: this.submitForm.value.hsn_code,
+            tax_rate: this.submitForm.value.tax_rate,
+            minimum_quantity: this.submitForm.value.minimum_quantity,
+            unit_price: this.submitForm.value.unit_price,
+            mrp: this.submitForm.value.mrp,
+            purchase_price: this.submitForm.value.purchase_price,
+            max_discount: this.submitForm.value.max_discount,
+
+            current_stock: this.submitForm.value.current_stock,
+            rack_info: this.submitForm.value.rack_info,
+        };
+
         this.submitForm.patchValue({
             unit_price: this.submitForm.value.purchase_price,
         });
 
-        this._commonApiService
-            .updateProduct(this.submitForm.value)
-            .subscribe((data: any) => {
-                if (data.body.result === 'success') {
-                    this.dialogRef.close('success');
-                    this.searchProducts();
-                }
-            });
+        this._commonApiService.updateProduct(product).subscribe((data: any) => {
+            if (data.status === 200 && data.body.result === 'success') {
+                this.dialogRef.close('success');
+                this.searchProducts();
+            }
+        });
     }
 
     addProduct() {
@@ -159,11 +170,11 @@ export class ProductEditDialogComponent implements OnInit {
                 .subscribe((data: any) => {
                     if (data.result.length > 0) {
                         if (data.result[0].id > 0) {
-                            this.pexists = true;
-                            this.temppcode = data.result[0];
+                            this.product_exists = true;
+                            this.temp_product_code = data.result[0];
                         }
                     } else {
-                        this.pexists = false;
+                        this.product_exists = false;
                     }
 
                     this._cdr.markForCheck();

@@ -52,7 +52,7 @@ export class ProductAddDialogComponent implements OnInit {
     uom = [
         { key: 'Nos', viewValue: 'Nos' },
         { key: 'Kg', viewValue: 'Kg' },
-        { key: 'Liters', viewValue: 'Liters' },
+        { key: 'Litres', viewValue: 'Litres' },
     ];
 
     tax = [

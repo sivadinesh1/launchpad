@@ -1,77 +1,123 @@
 <div class="screenheader">
-	<div>Edit Product</div>
-	<div>
-		<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
-	</div>
+    <div>Edit Product</div>
+    <div>
+        <img
+            class="cursor"
+            src="/assets/images/svg/close.svg"
+            (click)="close()"
+            width="20px"
+            height="20px"
+        />
+    </div>
 </div>
 
 <div class="content">
-	<form [formGroup]="submitForm">
-		<div>
-			<mat-form-field class="mat-width-ext">
-				<mat-label>Product Item Code</mat-label>
-				<input matInput (blur)="isProdExists()" formControlName="product_code" required autocomplete="off" />
-				<mat-error>This field is required</mat-error>
-			</mat-form-field>
+    <form [formGroup]="submitForm">
+        <div>
+            <mat-form-field class="mat-width-ext">
+                <mat-label>Product Item Code</mat-label>
+                <input
+                    matInput
+                    (blur)="isProdExists()"
+                    formControlName="product_code"
+                    required
+                    autocomplete="off"
+                />
+                <mat-error>This field is required</mat-error>
+            </mat-form-field>
 
-			<div *ngIf="pexists" class="error">Already Exists</div>
-		</div>
-		<div>
-			<mat-form-field class="mat-width-ext">
-				<mat-label>Product Description</mat-label>
-				<input matInput formControlName="description" required autocomplete="off" />
-				<mat-error>This field is required</mat-error>
-			</mat-form-field>
-		</div>
-		<div>
-			<mat-form-field class="mat-width-ext">
-				<mat-label>Product's Brand</mat-label>
-				<mat-select formControlName="brand_id">
-					<mat-option *ngFor="let item of brands$ | async" [value]="item.id">
-						{{ item.name }}
-					</mat-option>
-				</mat-select>
-				<mat-hint>ex. Swaraj, Sonalika</mat-hint>
-				<mat-error>This field is required</mat-error>
-			</mat-form-field>
-		</div>
-		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 16px">
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>UOM</mat-label>
-					<mat-select formControlName="unit">
-						<mat-option *ngFor="let item of uom" [value]="item.key">
-							{{ item.viewValue }}
-						</mat-option>
-					</mat-select>
-					<mat-hint>Unit of measurement</mat-hint>
-				</mat-form-field>
-			</div>
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Pack Size</mat-label>
-					<input type="number" matInput formControlName="packetsize" required autocomplete="off" />
-					<mat-error>This field is required</mat-error>
-				</mat-form-field>
-			</div>
-		</div>
-		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 16px">
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>HSN Code</mat-label>
-					<input type="text" matInput formControlName="hsncode" required autocomplete="off" />
-				</mat-form-field>
-			</div>
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Tax Rate (%)</mat-label>
-					<mat-select formControlName="taxrate">
-						<mat-option *ngFor="let item of tax" [value]="item.key">
-							{{ item.viewValue }}
-						</mat-option>
-					</mat-select>
-				</mat-form-field>
-				<!-- <mat-form-field class="mat-width-ext">
+            <div *ngIf="product_exists" class="error">Already Exists</div>
+        </div>
+        <div>
+            <mat-form-field class="mat-width-ext">
+                <mat-label>Product Description</mat-label>
+                <input
+                    matInput
+                    formControlName="product_description"
+                    required
+                    autocomplete="off"
+                />
+                <mat-error>This field is required</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field class="mat-width-ext">
+                <mat-label>Product's Brand</mat-label>
+                <mat-select formControlName="brand_id">
+                    <mat-option
+                        *ngFor="let item of brands$ | async"
+                        [value]="item.id"
+                    >
+                        {{ item.name }}
+                    </mat-option>
+                </mat-select>
+                <mat-hint>ex. Swaraj, Sonalika</mat-hint>
+                <mat-error>This field is required</mat-error>
+            </mat-form-field>
+        </div>
+        <div
+            style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                padding-top: 16px;
+            "
+        >
+            <div>
+                <mat-form-field class="mat-width-ext">
+                    <mat-label>UOM</mat-label>
+                    <mat-select formControlName="uom">
+                        <mat-option *ngFor="let item of uom" [value]="item.key">
+                            {{ item.viewValue }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-hint>Unit of measurement</mat-hint>
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field class="mat-width-ext">
+                    <mat-label>Pack Size</mat-label>
+                    <input
+                        type="number"
+                        matInput
+                        formControlName="packet_size"
+                        required
+                        autocomplete="off"
+                    />
+                    <mat-error>This field is required</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div
+            style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                padding-top: 16px;
+            "
+        >
+            <div>
+                <mat-form-field class="mat-width-ext">
+                    <mat-label>HSN Code</mat-label>
+                    <input
+                        type="text"
+                        matInput
+                        formControlName="hsn_code"
+                        required
+                        autocomplete="off"
+                    />
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field class="mat-width-ext">
+                    <mat-label>Tax Rate (%)</mat-label>
+                    <mat-select formControlName="tax_rate">
+                        <mat-option *ngFor="let item of tax" [value]="item.key">
+                            {{ item.viewValue }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- <mat-form-field class="mat-width-ext">
 					<mat-label>Tax Rate</mat-label>
 					<input
 						type="number"
@@ -82,41 +128,84 @@
 					/>
 					<mat-error>This field is required</mat-error>
 				</mat-form-field> -->
-			</div>
-		</div>
-		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 16px">
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Min. Qty</mat-label>
-					<input matInput formControlName="minqty" required autocomplete="off" />
-					<mat-error>This field is required</mat-error>
-				</mat-form-field>
-			</div>
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>MRP</mat-label>
-					<input type="number" matInput formControlName="mrp" required autocomplete="off" />
-					<mat-hint>Latest MRP</mat-hint>
-				</mat-form-field>
-			</div>
-		</div>
-		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 16px">
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Purchase Price</mat-label>
-					<input type="number" matInput formControlName="purchase_price" required autocomplete="off" />
-				</mat-form-field>
-			</div>
-			<div>
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Rack #</mat-label>
-					<input type="text" matInput formControlName="rackno" autocomplete="off" />
-				</mat-form-field>
-			</div>
-		</div>
+            </div>
+        </div>
+        <div
+            style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                padding-top: 16px;
+            "
+        >
+            <div>
+                <mat-form-field class="mat-width-ext">
+                    <mat-label>Min. Qty</mat-label>
+                    <input
+                        matInput
+                        formControlName="minimum_quantity"
+                        required
+                        autocomplete="off"
+                    />
+                    <mat-error>This field is required</mat-error>
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field class="mat-width-ext">
+                    <mat-label>MRP</mat-label>
+                    <input
+                        type="number"
+                        matInput
+                        formControlName="mrp"
+                        required
+                        autocomplete="off"
+                    />
+                    <mat-hint>Latest MRP</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div
+            style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                padding-top: 16px;
+            "
+        >
+            <div>
+                <mat-form-field class="mat-width-ext">
+                    <mat-label>Purchase Price</mat-label>
+                    <input
+                        type="number"
+                        matInput
+                        formControlName="purchase_price"
+                        required
+                        autocomplete="off"
+                    />
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field class="mat-width-ext">
+                    <mat-label>Rack #</mat-label>
+                    <input
+                        type="text"
+                        matInput
+                        formControlName="rack_info"
+                        autocomplete="off"
+                    />
+                </mat-form-field>
+            </div>
+        </div>
 
-		<div style="text-align: center">
-			<button mat-raised-button color="primary" (click)="submit()" type="button"> Edit Product Info</button>
-		</div>
-	</form>
+        <div style="text-align: center">
+            <button
+                mat-raised-button
+                color="primary"
+                (click)="submit()"
+                type="button"
+            >
+                Edit Product Info
+            </button>
+        </div>
+    </form>
 </div>

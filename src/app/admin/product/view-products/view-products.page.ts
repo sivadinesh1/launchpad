@@ -200,7 +200,7 @@ export class ViewProductsPage implements OnInit {
     edit(product: IProduct) {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
-        dialogConfig.autoFocus = true;
+        dialogConfig.autoFocus = false;
         dialogConfig.width = '500px';
         dialogConfig.height = '100%';
         dialogConfig.data = product;
