@@ -27,7 +27,8 @@ import { MessagesService } from '../../../components/messages/messages.service';
 import { AuthenticationService } from '../../../services/authentication.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { LoadingService } from 'src/app/services/loading.service';
-import { IProduct } from 'src/app/models/Product';
+import { IProduct, Product } from 'src/app/models/Product';
+import { plainToClass } from 'class-transformer';
 
 @Component({
     selector: 'app-product-add-dialog',
@@ -61,6 +62,11 @@ export class ProductAddDialogComponent implements OnInit {
         { key: '12', viewValue: '12' },
         { key: '18', viewValue: '18' },
         { key: '28', viewValue: '28' },
+    ];
+
+    productType = [
+        { name: 'Product', id: 'P', checked: true },
+        { name: 'Service', id: 'S', checked: false },
     ];
 
     constructor(
@@ -164,24 +170,7 @@ export class ProductAddDialogComponent implements OnInit {
     }
 
     addProduct() {
-        const product: IProduct = {
-            center_id: this.submitForm.value.center_id,
-            product_code: this.submitForm.value.product_code,
-            product_description: this.submitForm.value.product_description,
-            brand_id: this.submitForm.value.brand_id,
-            uom: this.submitForm.value.uom,
-            packet_size: this.submitForm.value.packet_size,
-            hsn_code: this.submitForm.value.hsn_code,
-            tax_rate: this.submitForm.value.tax_rate,
-            minimum_quantity: this.submitForm.value.minimum_quantity,
-            unit_price: this.submitForm.value.unit_price,
-            mrp: this.submitForm.value.mrp,
-            purchase_price: this.submitForm.value.purchase_price,
-            max_discount: this.submitForm.value.max_discount,
-
-            current_stock: this.submitForm.value.current_stock,
-            rack_info: this.submitForm.value.rack_info,
-        };
+        const product = plainToClass(Product, this.submitForm.value);
 
         this._commonApiService.addProduct(product).subscribe((data: any) => {
             if (data.status === 201) {
@@ -199,4 +188,21 @@ export class ProductAddDialogComponent implements OnInit {
     close() {
         this.dialogRef.close();
     }
+
+    // radioClickHandle() {
+    //     if (this.submitForm.value.product_type === 'product') {
+    //         this.submitForm.get('customerctrl').disable();
+    //     } else {
+    //         this.submitForm.value.invoiceno = '';
+    //         this.submitForm.patchValue({
+    //             invoiceno: '',
+    //             searchtype: 'all',
+    //         });
+
+    //         this.submitForm.get('customerctrl').enable();
+    //         this.submitForm.controls.invoiceno.setErrors(null);
+    //         this.submitForm.controls.invoiceno.markAsTouched();
+    //     }
+    //     this._cdr.detectChanges();
+    // }
 }

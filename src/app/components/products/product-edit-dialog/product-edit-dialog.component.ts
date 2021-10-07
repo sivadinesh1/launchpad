@@ -18,7 +18,8 @@ import { Observable } from 'rxjs';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
 import { HSN_CODE_REGEX, DISC_REGEX } from 'src/app/util/helper/patterns';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { IProduct } from 'src/app/models/Product';
+import { IProduct, Product } from 'src/app/models/Product';
+import { plainToClass } from 'class-transformer';
 
 @Component({
     selector: 'app-product-edit-dialog',
@@ -58,6 +59,12 @@ export class ProductEditDialogComponent implements OnInit {
         { key: '18', viewValue: '18' },
         { key: '28', viewValue: '28' },
     ];
+
+    productType = [
+        { name: 'Product', id: 'P', checked: true },
+        { name: 'Service', id: 'S', checked: false },
+    ];
+
     constructor(
         private _formBuilder: FormBuilder,
         private _router: Router,
@@ -75,10 +82,16 @@ export class ProductEditDialogComponent implements OnInit {
         this.product = product;
 
         this.brands$ = this._commonApiService.getAllActiveBrands('A');
+        debugger;
+        if (this.product.product_type === 'S') {
+            this.productType[1].checked = true;
+            this.productType[0].checked = false;
+        }
 
         this.submitForm = this._formBuilder.group({
             id: [this.product.id],
             center_id: [this.center_id],
+            product_type: [this.product.product_type],
             product_code: [this.product.product_code, Validators.required],
             product_description: [
                 this.product.product_description,
@@ -127,25 +140,7 @@ export class ProductEditDialogComponent implements OnInit {
     }
 
     submit() {
-        const product: IProduct = {
-            id: this.submitForm.value.id,
-            center_id: this.submitForm.value.center_id,
-            product_code: this.submitForm.value.product_code,
-            product_description: this.submitForm.value.product_description,
-            brand_id: this.submitForm.value.brand_id,
-            uom: this.submitForm.value.uom,
-            packet_size: this.submitForm.value.packet_size,
-            hsn_code: this.submitForm.value.hsn_code,
-            tax_rate: this.submitForm.value.tax_rate,
-            minimum_quantity: this.submitForm.value.minimum_quantity,
-            unit_price: this.submitForm.value.unit_price,
-            mrp: this.submitForm.value.mrp,
-            purchase_price: this.submitForm.value.purchase_price,
-            max_discount: this.submitForm.value.max_discount,
-
-            current_stock: this.submitForm.value.current_stock,
-            rack_info: this.submitForm.value.rack_info,
-        };
+        const product = plainToClass(Product, this.submitForm.value);
 
         this.submitForm.patchValue({
             unit_price: this.submitForm.value.purchase_price,

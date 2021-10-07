@@ -83,6 +83,9 @@ html:not(.style-scope) {
     --lp-badge-blue-solid: #f2f8fc;
     --lp-badge-green: #e5f1e5;
     --lp-badge-red: #f9e5e5;
+
+    --lp-header-text-color: #606060;
+    --lp-header-height: 40px;
 }
 
 .select-modal {
@@ -443,4 +446,18 @@ input[type="number"] {
 .mat-menu-line-height {
     height: 34px !important;
     line-height: 34px !important;
+}
+
+.lp-table-header {
+    font-weight: 600;
+
+    letter-spacing: 0.011em;
+    font-size: 12px;
+    line-height: 20px;
+    height: var(--lp-header-height, 20px);
+    line-height: var(--lp-header-height, 20px);
+    display: flex;
+    border-top: var(--header-border-top, 0) solid var(--lp-line-divider);
+    border-bottom: 1px solid var(--lp-line-divider);
+    color: var(--lp-header-text-color, #000);
 }

@@ -25,6 +25,7 @@ import { Enquiry } from '../models/Enquiry';
 import { Brand } from '../models/Brand';
 import { DashboardPage } from '../dashboard/dashboard.page';
 import { IProduct } from '../models/Product';
+import { IStock } from '../models/Stock';
 
 @Injectable({
     providedIn: 'root',
@@ -1105,10 +1106,10 @@ export class CommonApiService {
         );
     }
 
-    stockCorrection(submitForm) {
+    stockCorrection(stock: IStock) {
         return this.httpClient.post(
             `${this.restApiUrl}/v1/api/stock/stock-correction`,
-            submitForm,
+            stock,
             { observe: 'response' }
         );
     }

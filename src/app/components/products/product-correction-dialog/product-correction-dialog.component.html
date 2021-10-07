@@ -1,101 +1,144 @@
 <div class="screenheader">
-	<div>Product Corrections</div>
-	<div>
-		<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
-	</div>
+    <div>Product Corrections</div>
+    <div>
+        <img
+            class="cursor"
+            src="/assets/images/svg/close.svg"
+            (click)="close()"
+            width="20px"
+            height="20px"
+        />
+    </div>
 </div>
 
 <div class="content">
-	<div>
-		<div style="font-size: 18px">
-			{{ this.data.product_code }}
-		</div>
-		<div style="font-size: 16px; color: grey">
-			{{ this.data.description }}
-		</div>
-	</div>
-	<div>
-		<div style="font-size: 18px; padding: 1rem 0rem 0rem"> List of Products in Stock </div>
+    <div>
+        <div style="font-size: 18px">
+            {{ this.data.product_code }}
+        </div>
+        <div style="font-size: 16px; color: grey">
+            {{ this.data.product_description }}
+        </div>
+    </div>
+    <div>
+        <div style="font-size: 18px; padding: 1rem 0rem 0rem">
+            List of Products in Stock
+        </div>
 
-		<div class="listHeader">
-			<div>MRP</div>
-			<div>Avl. Stock</div>
-			<div>&nbsp;</div>
-			<div>&nbsp;</div>
-		</div>
-		<div *ngFor="let item of stocklist" class="listItem">
-			<div style="text-align: left">{{ item.mrp }}</div>
-			<div style="text-align: left">{{ item.available_stock }}</div>
-			<div *ngIf="this.stocklist?.length > 1" style="color: red; cursor: pointer; text-align: center" (click)="delete(item)">{{ 'Delete' }}</div>
+        <div class="listHeader">
+            <div>MRP</div>
+            <div>Avl. Stock</div>
+            <div>&nbsp;</div>
+            <div>&nbsp;</div>
+        </div>
+        <div *ngFor="let item of stock_list_array" class="listItem">
+            <div style="text-align: left">{{ item.mrp }}</div>
+            <div style="text-align: left">{{ item.available_stock }}</div>
+            <div
+                *ngIf="this.stock_list_array?.length > 1"
+                style="color: red; cursor: pointer; text-align: center"
+                (click)="delete(item)"
+            >
+                {{ "Delete" }}
+            </div>
 
-			<div *ngIf="this.stocklist?.length === 1"> &nbsp; </div>
-			<div (click)="correct(item)" style="color: blue; cursor: pointer">Adjust Stock</div>
-		</div>
-	</div>
-	<br />
-	<div>
-		<div style="font-size: 18px; padding: 1rem 0rem 0rem" *ngIf="selecteditem"> Stock Correction </div>
+            <div *ngIf="this.stock_list_array?.length === 1">&nbsp;</div>
+            <div (click)="correct(item)" style="color: blue; cursor: pointer">
+                Adjust Stock
+            </div>
+        </div>
+    </div>
+    <br />
+    <div>
+        <div
+            style="font-size: 18px; padding: 1rem 0rem 0rem"
+            *ngIf="selected_item"
+        >
+            Stock Correction
+        </div>
 
-		<div class="listHeader1" *ngIf="selecteditem">
-			<div>MRP</div>
-			<div style="text-align: right">Avl. Stock</div>
-			<div style="text-align: right; width: 90px">Adjusted Qty</div>
-			<div>&nbsp;</div>
-		</div>
-		<div *ngIf="selecteditem">
-			<form #loginForm="ngForm">
-				<div class="listItem1">
-					<div style="text-align: left">{{ selecteditem?.mrp }}</div>
-					<div style="text-align: right">{{ selecteditem?.available_stock }}</div>
-					<div style="text-align: right">
-						<mat-form-field style="width: 60px; text-align: right">
-							<input type="number" matInput value="0" name="qty" #qty="ngModel" [(ngModel)]="val.qty" />
-						</mat-form-field>
-					</div>
-					<div style="text-align: center">
-						<mat-form-field style="width: 150px">
-							<mat-select [(value)]="selected" placeholder="Select Reason" required (selectionChange)="handleChange($event)">
-								<mat-option value="Missing">Missing</mat-option>
-								<mat-option value="Others">Others</mat-option>
-							</mat-select>
-						</mat-form-field>
-					</div>
-				</div>
+        <div class="listHeader1" *ngIf="selected_item">
+            <div>MRP</div>
+            <div style="text-align: right">Avl. Stock</div>
+            <div style="text-align: right; width: 90px">Adjusted Qty</div>
+            <div>&nbsp;</div>
+        </div>
+        <div *ngIf="selected_item">
+            <form #loginForm="ngForm">
+                <div class="listItem1">
+                    <div style="text-align: left">{{ selected_item?.mrp }}</div>
+                    <div style="text-align: right">
+                        {{ selected_item?.available_stock }}
+                    </div>
+                    <div style="text-align: right">
+                        <mat-form-field style="width: 60px; text-align: right">
+                            <input
+                                type="number"
+                                matInput
+                                value="0"
+                                name="qty"
+                                #qty="ngModel"
+                                [(ngModel)]="val.qty"
+                            />
+                        </mat-form-field>
+                    </div>
+                    <div style="text-align: center">
+                        <mat-form-field style="width: 150px">
+                            <mat-select
+                                [(value)]="selected"
+                                placeholder="Select Reason"
+                                required
+                                (selectionChange)="handleChange($event)"
+                            >
+                                <mat-option value="Missing">Missing</mat-option>
+                                <mat-option value="Others">Others</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
 
-				<div style="display: grid; grid-template-columns: 1fr 1fr; justify-items: center">
-					<div
-						(click)="clear()"
-						style="
-							color: rgb(109, 109, 109);
-							cursor: pointer;
-							border-radius: 20px;
-							border-color: blue;
-							border: 1px solid;
-							width: 120px;
-							text-align: center;
-							padding: 4px;
-							font-size: 14px;
-						"
-						>CANCEL
-					</div>
+                <div
+                    style="
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        justify-items: center;
+                    "
+                >
+                    <div
+                        (click)="clear()"
+                        style="
+                            color: rgb(109, 109, 109);
+                            cursor: pointer;
+                            border-radius: 20px;
+                            border-color: blue;
+                            border: 1px solid;
+                            width: 120px;
+                            text-align: center;
+                            padding: 4px;
+                            font-size: 14px;
+                        "
+                    >
+                        CANCEL
+                    </div>
 
-					<div
-						(click)="update(loginForm)"
-						style="
-							color: blue;
-							cursor: pointer;
-							border-radius: 20px;
-							border-color: blue;
-							border: 1px solid;
-							width: 120px;
-							text-align: center;
-							padding: 4px;
-							font-size: 14px;
-						"
-						>UPDATE
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+                    <div
+                        (click)="update(loginForm)"
+                        style="
+                            color: blue;
+                            cursor: pointer;
+                            border-radius: 20px;
+                            border-color: blue;
+                            border: 1px solid;
+                            width: 120px;
+                            text-align: center;
+                            padding: 4px;
+                            font-size: 14px;
+                        "
+                    >
+                        UPDATE
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>

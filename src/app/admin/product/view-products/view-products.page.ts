@@ -69,6 +69,7 @@ export class ViewProductsPage implements OnInit {
 
     temp_product_search_text = '';
     mrp_flag = false;
+    resultArray: any = [];
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -123,12 +124,7 @@ export class ViewProductsPage implements OnInit {
             .subscribe((data: any) => {
                 this.temp_product_search_text = product_search_text;
 
-                // DnD - code to add a "key/Value" in every object of array
-                this.dataSource.data = data.body.map((el) => {
-                    const o = Object.assign({}, el);
-                    o.isExpanded = false;
-                    return o;
-                });
+                this.resultArray = data.body;
 
                 this.dataSource.sort = this.sort;
                 this.pageLength = data.body.length;
@@ -320,16 +316,3 @@ export class ViewProductsPage implements OnInit {
         await modal.present();
     }
 }
-
-// available_stock: 0
-// description: "Bolt Hex (M12X1.75X25X8.8)"
-// hsncode: "73181900"
-// mrp: "19"
-// name: "Swaraj"
-// packetsize: 0
-// product_code: "000011104P03"
-// product_id: 63355
-// purchase_price: "11.76"
-// rackno: ""
-// taxrate: 18
-// unit: "Pcs"

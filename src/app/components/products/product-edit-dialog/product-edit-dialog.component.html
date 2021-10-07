@@ -14,6 +14,21 @@
 <div class="content">
     <form [formGroup]="submitForm">
         <div>
+            <mat-radio-group
+                formControlName="product_type"
+                class="example-radio-group"
+            >
+                <mat-radio-button
+                    style="padding-top: 10px"
+                    value="{{ op.id }}"
+                    *ngFor="let op of productType"
+                    [checked]="op.checked"
+                    >{{ op.name }}</mat-radio-button
+                >
+            </mat-radio-group>
+        </div>
+
+        <div>
             <mat-form-field class="mat-width-ext">
                 <mat-label>Product Item Code</mat-label>
                 <input

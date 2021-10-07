@@ -6,6 +6,7 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
 import { hmrBootstrap } from './hmr';
+import 'reflect-metadata';
 
 if (environment.production) {
     enableProdMode();

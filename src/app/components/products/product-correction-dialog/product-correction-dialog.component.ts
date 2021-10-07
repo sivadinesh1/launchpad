@@ -20,6 +20,8 @@ import { HSN_CODE_REGEX, DISC_REGEX } from 'src/app/util/helper/patterns';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IProduct } from 'src/app/models/Product';
 import { NgForm } from '@angular/forms';
+import { plainToClass } from 'class-transformer';
+import { Stock } from 'src/app/models/Stock';
 
 @Component({
     selector: 'app-product-correction-dialog',
@@ -39,19 +41,19 @@ export class ProductCorrectionDialogComponent implements OnInit {
 
     submitForm: FormGroup;
 
-    productinfo: any;
+    product_info: any;
 
     product_id: any;
 
     loading = false;
     currentStep: any;
 
-    stocklist: any;
+    stock_list_array: any;
 
-    selecteditem: any;
+    selected_item: any;
 
     selected = 'Others';
-    selreason = false;
+    selected_reason = false;
 
     val = {
         qty: '0',
@@ -88,7 +90,8 @@ export class ProductCorrectionDialogComponent implements OnInit {
         this._commonApiService
             .getProductStockWithAllMRP(this.data.id)
             .subscribe((data: any) => {
-                this.stocklist = data.result;
+                debugger;
+                this.stock_list_array = data;
 
                 this._cdr.markForCheck();
             });
@@ -117,41 +120,41 @@ export class ProductCorrectionDialogComponent implements OnInit {
     }
 
     handleChange(event) {
-        this.selreason = true;
+        this.selected_reason = true;
     }
 
     correct(item) {
-        this.selecteditem = item;
+        this.selected_item = item;
     }
 
     update(loginForm: NgForm) {
         console.log(loginForm.value, loginForm.valid);
 
         console.log(loginForm.value.qty);
-        console.log('selected item ' + JSON.stringify(this.selecteditem));
+        console.log('selected item ' + JSON.stringify(this.selected_item));
 
         const submitForm = {
-            stock_id: this.selecteditem.stock_id,
-            product_id: this.selecteditem.product_id,
-            mrp: this.selecteditem.mrp,
-            available_stock: +this.selecteditem.available_stock,
+            id: this.selected_item.stock_id,
+            product_id: this.selected_item.product_id,
+            mrp: this.selected_item.mrp,
+            available_stock: +this.selected_item.available_stock,
             corrected_stock: loginForm.value.qty,
             reason: this.selected,
             center_id: this.center_id,
         };
 
-        this._commonApiService
-            .stockCorrection(submitForm)
-            .subscribe((data: any) => {
-                if (data.body.result === 'updated') {
-                    this.dialogRef.close('success');
-                }
+        const stock = plainToClass(Stock, submitForm);
 
-                this._cdr.markForCheck();
-            });
+        this._commonApiService.stockCorrection(stock).subscribe((data: any) => {
+            if (data.body.result === 'updated') {
+                this.dialogRef.close('success');
+            }
+
+            this._cdr.markForCheck();
+        });
     }
 
     clear() {
-        this.selecteditem = null;
+        this.selected_item = null;
     }
 }
