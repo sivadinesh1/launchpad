@@ -14,6 +14,9 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { User } from 'src/app/models/User';
+import { plainToClass } from 'class-transformer';
+import { Product } from 'src/app/models/Product';
+import { Brand } from 'src/app/models/Brand';
 
 @Component({
     selector: 'app-brand-add-dialog',
@@ -43,7 +46,7 @@ export class BrandAddDialogComponent implements OnInit {
 
         this.submitForm = this._formBuilder.group({
             center_id: [],
-            name: [null, Validators.required],
+            brand_name: [null, Validators.required],
         });
 
         this.user_data$ = this._authService.currentUser;
@@ -84,19 +87,24 @@ export class BrandAddDialogComponent implements OnInit {
             return false;
         }
 
-        if (this.submitForm.value.name.length > 0) {
+        if (this.submitForm.value.brand_name.length > 0) {
             this._commonApiService
-                .isBrandExists(this.submitForm.value.name)
+                .isBrandExists(this.submitForm.value.brand_name)
                 .subscribe((data: any) => {
                     if (data.result.length > 0) {
                         if (data.result[0].id > 0) {
                             this.errmsg = 'Brand already exists!';
                         }
                     } else {
+                        const brand = plainToClass(
+                            Brand,
+                            this.submitForm.value
+                        );
+
                         this._commonApiService
-                            .addBrand(this.submitForm.value)
+                            .addBrand(brand)
                             .subscribe((data: any) => {
-                                if (data.body.affectedRows === 1) {
+                                if (data.status === 200) {
                                     this.dialogRef.close('success');
                                 }
                             });

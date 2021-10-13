@@ -90,7 +90,6 @@ export class ProductCorrectionDialogComponent implements OnInit {
         this._commonApiService
             .getProductStockWithAllMRP(this.data.id)
             .subscribe((data: any) => {
-                debugger;
                 this.stock_list_array = data;
 
                 this._cdr.markForCheck();

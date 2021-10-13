@@ -69,7 +69,8 @@ import { SuccessMessageDialogComponent } from '../../components/success-message-
 import { InventoryReportsDialogComponent } from '../../components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
 import { ManualInvoiceNumberDialogComponent } from '../../components/sales/manual-invoice-number-dialog/manual-invoice-number-dialog.component';
 import { formatDate } from '@angular/common';
-import { ComponentCanDeactivate } from 'src/app/services/dirtycheck.guard';
+import { ComponentCanDeactivate } from 'src/app/services/dirty-check.guard';
+import { IProductSearchDto } from 'src/app/dto/product-search.dto';
 
 @Component({
     selector: 'app-sale-order',
@@ -87,7 +88,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         }
     }
 
-    breadmenu = 'New Sale';
+    breadMenu = 'New Sale';
 
     listArr = [];
 
@@ -96,23 +97,23 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     customer_state_code: any;
     center_state_code: any;
     i_gst: any;
-    customerdata: any;
+    customer_data: any;
 
     submitForm: FormGroup;
 
-    customername = '';
-    customernameprint = '';
+    customer_name = '';
+    customer_name_print = '';
 
     no_of_boxes: any;
 
     selNoOfBoxes: any;
-    igst: any;
-    cgst: any;
-    sgst: any;
+    igs_t: any;
+    cgs_t: any;
+    sgs_t: any;
 
-    igstTotal = '0.00';
-    cgstTotal = '0.00';
-    sgstTotal = '0.00';
+    igs_t_Total = '0.00';
+    cgs_t_Total = '0.00';
+    sgs_t_Total = '0.00';
 
     tax_percentage: any;
     taxable_value: any;
@@ -123,7 +124,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
     showDelIcon = false;
     singleRowSelected = false;
-    salesid: any;
+    sales_id: any;
     rawSalesData: any;
 
     maxDate = new Date();
@@ -131,21 +132,21 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
     editCompletedSales: any;
 
-    cust_discount_prcnt: any;
-    cust_discount_type: any;
+    customer_discount_percent: any;
+    customer_discount_type: any;
     mode: string;
     id: string;
-    saletype: string;
+    sale_type: string;
 
     testTotal: any;
-    invoiceid: any;
+    invoice_id: any;
     final_invoice_no: any;
-    invoicedate = new Date();
+    invoice_date = new Date();
 
     isLoading = false;
     isCLoading = false;
 
-    iscustomerselected = true;
+    is_customer_selected = true;
 
     lineItemData: any;
     selInvType: any;
@@ -161,28 +162,28 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
     isRetailCustomer = 'N';
 
-    @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
+    @ViewChild('orderNo', { static: false }) orderNoEl: ElementRef;
     @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
 
-    @ViewChild('newrow', { static: true }) newrow: any;
+    @ViewChild('newRow', { static: true }) newRow: any;
 
     // TAB navigation for customer list
-    @ViewChild('typehead1', { read: MatAutocompleteTrigger })
+    @ViewChild('typeHead1', { read: MatAutocompleteTrigger })
     autoTrigger1: MatAutocompleteTrigger;
 
     @ViewChild(FormGroupDirective) formRef: FormGroupDirective;
 
-    @ViewChild('typehead2', { static: false, read: MatAutocompleteTrigger })
+    @ViewChild('typeHead2', { static: false, read: MatAutocompleteTrigger })
     autoTrigger2: MatAutocompleteTrigger;
-    @ViewChild('plist', { static: true }) plist: any;
-    @ViewChild('clist', { static: true }) clist: any;
+    @ViewChild('p_list', { static: true }) p_list: any;
+    @ViewChild('c_list', { static: true }) c_list: any;
 
     @ViewChild('qty', { static: true }) qty: any;
     @ViewChildren('para') paras: any;
     paraElements: any;
 
     customer_lis: Customer[];
-    product_lis: IProduct[];
+    product_lis: IProductSearchDto[];
 
     user_data$: Observable<User>;
     user_data: any;
@@ -190,19 +191,19 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     @ViewChild(IonContent, { static: false }) content: IonContent;
 
     question = '+ Add Customer"';
-    //ready = 0; // flag check - center_id (localstorage) & customerid (param)
+    //ready = 0; // flag check - center_id (local_storage) & customer_id (param)
 
     // 3 Entry Ways. Via (i)Enquiry to Sale (ii) draft/completed Sale (iii) New Sale
-    // (i && iii) - ignore customerchange flag, if (ii) process customer change flag
+    // (i && iii) - ignore customer_change flag, if (ii) process customer change flag
     // onload store customer id & check during submit. Handling Customer change for draft/completed sale
-    orig_customerid: string;
+    original_customer_id: string;
     isFreshSale = false;
     fromEnquiry: any;
 
     cart_product_meta: IProduct[];
 
     constructor(
-        private _modalcontroller: ModalController,
+        private _modalController: ModalController,
         public dialog: MatDialog,
         public alertController: AlertController,
         private _router: Router,
@@ -216,7 +217,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         private spinner: NgxSpinnerService,
         private _cdr: ChangeDetectorRef
     ) {
-        this.basicinit();
+        this.basicInit();
         this.user_data$ = this._authService.currentUser;
         this.user_data$
             .pipe(filter((data) => data !== null))
@@ -225,12 +226,12 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
                 // data change
                 this._route.data.subscribe((data) => {
-                    // this.basicinit();
+                    // this.basic_init();
 
-                    this.selInvType = 'gstinvoice';
+                    this.selInvType = 'gstInvoice';
                     this.listArr = [];
                     this.cancel();
-                    this.rawSalesData = data.rawsalesdata;
+                    this.rawSalesData = data.raw_sales_data;
                 });
                 // param change
                 this._route.params.subscribe((params) => {
@@ -242,13 +243,13 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
                     this.id = params.id;
                     this.mode = params.mode;
-                    this.saletype = params.saletype;
+                    this.sale_type = params.sale_type;
 
-                    if (this.saletype === 'SI') {
-                        this.selInvType = 'stockissue';
+                    if (this.sale_type === 'SI') {
+                        this.selInvType = 'stockIssue';
                         this._authService.setCurrentMenu('Stock Issue');
-                    } else if (this.saletype === 'TI') {
-                        this.selInvType = 'gstinvoice';
+                    } else if (this.sale_type === 'TI') {
+                        this.selInvType = 'gstInvoice';
                         this._authService.setCurrentMenu('Sale Orders');
                     }
 
@@ -258,13 +259,13 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                             center_id: this.user_data.center_id,
                         });
 
-                        if (this.saletype === 'SI') {
+                        if (this.sale_type === 'SI') {
                             this.submitForm.patchValue({
-                                invoicetype: 'stockissue',
+                                invoice_type: 'stockIssue',
                             });
                         } else {
                             this.submitForm.patchValue({
-                                invoicetype: 'gstinvoice',
+                                invoice_type: 'gstInvoice',
                             });
                         }
                     }
@@ -274,41 +275,44 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             });
     }
 
-    basicinit() {
+    basicInit() {
         this.submitForm = this._fb.group({
             center_id: [null],
-            salesid: new FormControl(''),
+            sales_id: new FormControl(''),
 
-            invoiceno: [null],
-            invoicedate: new FormControl(this.invoicedate, Validators.required),
-            orderno: new FormControl(''),
-            orderdate: new FormControl(''),
-            lrno: new FormControl(''),
-            lrdate: new FormControl(''),
-            noofboxes: new FormControl(0),
-            orderrcvddt: new FormControl(''),
-            noofitems: [0],
-            totalqty: [0],
+            invoice_no: [null],
+            invoice_date: new FormControl(
+                this.invoice_date,
+                Validators.required
+            ),
+            order_no: new FormControl(''),
+            order_date: new FormControl(''),
+            lr_no: new FormControl(''),
+            lr_date: new FormControl(''),
+            no_of_boxes: new FormControl(0),
+            order_received_date: new FormControl(''),
+            no_of_items: [0],
+            total_quantity: [0],
             value: new FormControl(0),
-            totalvalue: new FormControl(0),
-            igst: new FormControl(0),
-            cgst: [0],
-            sgst: new FormControl(0),
+            total_value: new FormControl(0),
+            igs_t: new FormControl(0),
+            cgs_t: [0],
+            sgs_t: new FormControl(0),
             transport_charges: [0],
             unloading_charges: [0],
             misc_charges: [0],
             net_total: new FormControl(0),
             taxable_value: new FormControl(0),
             status: new FormControl(''),
-            enqref: [0],
+            enquiry_ref: [0],
             revision: [0],
-            invoicetype: ['gstinvoice', [Validators.required]],
+            invoice_type: ['gstInvoice', [Validators.required]],
 
-            customerctrl: [null, [Validators.required, RequireMatch]],
-            productctrl: [null, [RequireMatch]],
-            tempdesc: [''],
-            tempmrp: [0],
-            tempqty: [
+            customer_ctrl: [null, [Validators.required, RequireMatch]],
+            product_ctrl: [null, [RequireMatch]],
+            temp_desc: [''],
+            temp_mrp: [0],
+            temp_qty: [
                 '1',
                 [
                     Validators.required,
@@ -318,8 +322,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                 ],
             ],
 
-            productarr: new FormControl(null),
-            roundoff: [0],
+            product_arr: new FormControl(null),
+            round_off: [0],
             retail_customer_name: ['Cash Sale'],
             retail_customer_address: [''],
             retail_customer_phone: [''],
@@ -335,16 +339,16 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         if (this.id === '0') {
             // id ===0 means fresh sale
             this.isFreshSale = true;
-            this.getInvoiceSequence('gstinvoice');
+            this.getInvoiceSequence('gstInvoice');
         }
 
         // comes from MOVE TO SALE: Enquiry -> sale process
         if (this.mode === 'enquiry') {
-            this.getInvoiceSequence('gstinvoice');
-            // id refers to enquiry id, also recorded as orderno in sales table
+            this.getInvoiceSequence('gstInvoice');
+            // id refers to enquiry id, also recorded as orderNo in sales table
             this.submitForm.patchValue({
-                enqref: this.id,
-                orderno: this.id,
+                enq_ref: this.id,
+                order_no: this.id,
             });
 
             this.fromEnquiry = true;
@@ -352,45 +356,45 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             this.spinner.show();
             this._commonApiService
                 .getCustomerData(this.id)
-                .subscribe((custData: any) => {
-                    this.customerdata = custData[0];
+                .subscribe((customer_data: any) => {
+                    this.customer_data = customer_data[0];
 
                     this.submitForm.patchValue({
-                        customerctrl: custData[0],
+                        customer_ctrl: customer_data[0],
                     });
 
-                    this.customername = custData[0].name;
-                    this.customernameprint = custData[0].name;
-                    // record orignal customer id from enquiry, can ignore while submitting
+                    this.customer_name = customer_data[0].name;
+                    this.customer_name_print = customer_data[0].name;
+                    // record original customer id from enquiry, can ignore while submitting
                     // as there will be no reference in ledger/payment tables
-                    this.orig_customerid = custData[0].id;
-                    this.iscustomerselected = true;
+                    this.original_customer_id = customer_data[0].id;
+                    this.is_customer_selected = true;
 
-                    this.setTaxLabel(custData[0].code);
+                    this.setTaxLabel(customer_data[0].code);
 
-                    const invdt = moment(
-                        this.submitForm.value.invoicedate
+                    const inv_dt = moment(
+                        this.submitForm.value.invoice_date
                     ).format('DD-MM-YYYY');
 
                     // prod details
                     this._commonApiService
                         .getEnquiredProductData(
-                            this.customerdata.id,
+                            this.customer_data.id,
                             this.id,
-                            invdt
+                            inv_dt
                         )
                         .subscribe((prodData: any) => {
                             this.spinner.hide();
-                            const proddata = prodData;
+                            const prod_data = prodData;
 
                             this.submitForm.patchValue({
-                                orderdate:
-                                    proddata[0].enquiry_date === ''
+                                order_date:
+                                    prod_data[0].enquiry_date === ''
                                         ? ''
                                         : new Date(
                                               new NullToQuotePipe()
                                                   .transform(
-                                                      proddata[0].enquiry_date
+                                                      prodData[0].enquiry_date
                                                   )
                                                   .replace(
                                                       /(\d{2})-(\d{2})-(\d{4})/,
@@ -399,7 +403,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                                           ),
                             });
 
-                            proddata.forEach((element) => {
+                            prod_data.forEach((element) => {
                                 this.processItems(element, 'preload');
                             });
 
@@ -418,10 +422,10 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         if (this.rawSalesData !== null && this.rawSalesData !== undefined) {
             if (this.rawSalesData[0] !== undefined) {
                 if (this.rawSalesData[0].id !== 0) {
-                    if (this.rawSalesData[0].sale_type === 'gstinvoice') {
-                        this.breadmenu = 'Modify Sale #';
+                    if (this.rawSalesData[0].sale_type === 'gstInvoice') {
+                        this.breadMenu = 'Modify Sale #';
                     } else {
-                        this.breadmenu = 'Modify Stock Issue #';
+                        this.breadMenu = 'Modify Stock Issue #';
                     }
 
                     this.selInvType = this.rawSalesData[0].sale_type;
@@ -429,19 +433,20 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                     this.stock_issue_ref = this.rawSalesData[0].stock_issue_ref;
                     this.stock_issue_date_ref =
                         this.rawSalesData[0].stock_issue_date_ref;
-                    this.orig_customerid = this.rawSalesData[0].customer_id; //capture customer id while loading
+                    this.original_customer_id =
+                        this.rawSalesData[0].customer_id; //capture customer id while loading
 
                     this.submitForm.patchValue({
-                        salesid: this.rawSalesData[0].id,
-                        invoiceno: this.rawSalesData[0].invoice_no,
-                        invoicetype: this.rawSalesData[0].sale_type,
-                        invoicedate: new Date(
+                        sales_id: this.rawSalesData[0].id,
+                        invoice_no: this.rawSalesData[0].invoice_no,
+                        invoice_type: this.rawSalesData[0].sale_type,
+                        invoice_date: new Date(
                             new NullToQuotePipe()
                                 .transform(this.rawSalesData[0].invoice_date)
                                 .replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
                         ),
 
-                        orderdate:
+                        order_date:
                             this.rawSalesData[0].order_date === ''
                                 ? ''
                                 : new Date(
@@ -455,9 +460,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                                           )
                                   ),
 
-                        lrno: this.rawSalesData[0].lr_no,
+                        lr_no: this.rawSalesData[0].lr_no,
 
-                        lrdate:
+                        lr_date:
                             this.rawSalesData[0].lr_date === ''
                                 ? ''
                                 : new Date(
@@ -470,10 +475,10 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                                               '$2/$1/$3'
                                           )
                                   ),
-                        orderno: this.rawSalesData[0].order_no,
-                        noofboxes: this.rawSalesData[0].no_of_boxes,
+                        order_no: this.rawSalesData[0].order_no,
+                        no_of_boxes: this.rawSalesData[0].no_of_boxes,
 
-                        orderrcvddt:
+                        order_received_date:
                             this.rawSalesData[0].received_date === '' ||
                             this.rawSalesData[0].received_date === null
                                 ? ''
@@ -488,13 +493,13 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                                           )
                                   ),
 
-                        noofitems: this.rawSalesData[0].no_of_items,
-                        totalqty: this.rawSalesData[0].total_qty,
+                        no_of_items: this.rawSalesData[0].no_of_items,
+                        total_qty: this.rawSalesData[0].total_qty,
                         value: this.rawSalesData[0].total_value,
-                        totalvalue: this.rawSalesData[0].total_value,
-                        igst: this.rawSalesData[0].igst,
-                        cgst: this.rawSalesData[0].cgst,
-                        sgst: this.rawSalesData[0].sgst,
+                        total_value: this.rawSalesData[0].total_value,
+                        igs_t: this.rawSalesData[0].igs_t,
+                        cgs_t: this.rawSalesData[0].cgs_t,
+                        sgs_t: this.rawSalesData[0].sgs_t,
                         transport_charges:
                             this.rawSalesData[0].transport_charges,
                         unloading_charges:
@@ -524,20 +529,20 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
                     this._commonApiService
                         .getCustomerDetails(this.rawSalesData[0].customer_id)
-                        .subscribe((custData: any) => {
-                            this.customerdata = custData[0];
+                        .subscribe((customer_data: any) => {
+                            this.customer_data = customer_data[0];
 
                             this.submitForm.patchValue({
-                                customerctrl: custData[0],
+                                customer_ctrl: customer_data[0],
                             });
 
-                            this.customername = custData[0].name;
-                            this.customernameprint = custData[0].name;
-                            this.iscustomerselected = true;
+                            this.customer_name = customer_data[0].name;
+                            this.customer_name_print = customer_data[0].name;
+                            this.is_customer_selected = true;
 
-                            this.setTaxLabel(custData[0].code);
+                            this.setTaxLabel(customer_data[0].code);
 
-                            if (this.customername === 'Walk In') {
+                            if (this.customer_name === 'Walk In') {
                                 this.isRetailCustomer = 'Y';
                             } else {
                                 this.isRetailCustomer = 'N';
@@ -572,7 +577,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     searchCustomers() {
-        this.submitForm.controls.customerctrl.valueChanges
+        this.submitForm.controls.customer_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isCLoading = true)),
@@ -584,7 +589,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                     ) {
                         return this._commonApiService.getCustomerInfo({
                             center_id: this.user_data.center_id,
-                            searchstr: id,
+                            search_text: id,
                         });
                     } else {
                         return empty();
@@ -601,11 +606,11 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     processItems(temp, type) {
-        this.setTaxSegment(temp.taxrate);
+        this.setTaxSegment(temp.tax_rate);
         let subtotal = 0;
-        let taxableval = 0;
-        let totalval = 0;
-        let discval = 0;
+        let taxable_val = 0;
+        let total_val = 0;
+        let disc_val = 0;
 
         let sid = '';
         if (this.rawSalesData !== null && this.rawSalesData !== undefined) {
@@ -614,46 +619,52 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             }
         }
 
-        let oldval = 0;
+        let old_val = 0;
 
         if (new NullToQuotePipe().transform(temp.id) !== '') {
-            oldval = temp.qty;
+            old_val = temp.qty;
         }
 
         // else part is when navigating via edit sale,
-        // when disc_info present its fresh adding products, if not, take it from saledetail tbl
+        // when disc_info present its fresh adding products, if not, take it from sale_detail tbl
         if (temp.disc_info !== undefined && temp.disc_info !== null) {
             const disc_info = temp.disc_info;
-            this.cust_discount_type = disc_info.substring(
+            this.customer_discount_type = disc_info.substring(
                 disc_info.indexOf('~') + 1
             );
-            this.cust_discount_prcnt = disc_info.substring(
+            this.customer_discount_percent = disc_info.substring(
                 0,
                 disc_info.indexOf('~')
             );
         } else {
-            this.cust_discount_type = temp.disc_type;
-            this.cust_discount_prcnt = temp.disc_percent;
+            this.customer_discount_type = temp.disc_type;
+            this.customer_discount_percent = temp.disc_percent;
         }
 
-        if (this.cust_discount_type === 'NET') {
+        if (this.customer_discount_type === 'NET') {
             subtotal = temp.qty * temp.mrp;
-            taxableval =
-                (temp.qty * temp.mrp * (100 - this.cust_discount_prcnt)) /
-                (100 + temp.taxrate);
-            discval = temp.qty * temp.mrp * (this.cust_discount_prcnt / 100);
+            taxable_val =
+                (temp.qty * temp.mrp * (100 - this.customer_discount_percent)) /
+                (100 + temp.tax_rate);
+            disc_val =
+                temp.qty * temp.mrp * (this.customer_discount_percent / 100);
 
-            totalval =
-                (temp.qty * temp.mrp * (100 - this.cust_discount_prcnt)) / 100;
-        } else if (this.cust_discount_type === 'GROSS') {
+            total_val =
+                (temp.qty * temp.mrp * (100 - this.customer_discount_percent)) /
+                100;
+        } else if (this.customer_discount_type === 'GROSS') {
             subtotal = temp.qty * temp.mrp;
-            taxableval =
-                (temp.qty * temp.mrp * (100 - this.cust_discount_prcnt)) / 100;
-            discval = (temp.qty * temp.mrp * this.cust_discount_prcnt) / 100;
-            totalval =
-                ((temp.qty * temp.mrp * (100 - this.cust_discount_prcnt)) /
+            taxable_val =
+                (temp.qty * temp.mrp * (100 - this.customer_discount_percent)) /
+                100;
+            disc_val =
+                (temp.qty * temp.mrp * this.customer_discount_percent) / 100;
+            total_val =
+                ((temp.qty *
+                    temp.mrp *
+                    (100 - this.customer_discount_percent)) /
                     100) *
-                (1 + temp.taxrate / 100);
+                (1 + temp.tax_rate / 100);
         }
 
         // from product tbl
@@ -665,30 +676,30 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             product_code: temp.product_code,
             product_desc: temp.description,
             qty: temp.qty,
-            packetsize: temp.packetsize,
+            packet_size: temp.packet_size,
             unit_price: temp.unit_price,
             mrp: temp.mrp,
             mrp_change_flag: 'N',
-            taxrate: temp.taxrate,
+            tax_rate: temp.tax_rate,
 
             sub_total: subtotal.toFixed(2),
-            taxable_value: taxableval.toFixed(2),
-            disc_value: discval.toFixed(2),
-            disc_percent: this.cust_discount_prcnt,
-            disc_type: this.cust_discount_type,
-            total_value: totalval.toFixed(2),
-            tax_value: (totalval - taxableval).toFixed(2),
+            taxable_value: taxable_val.toFixed(2),
+            disc_value: disc_val.toFixed(2),
+            disc_percent: this.customer_discount_percent,
+            disc_type: this.customer_discount_type,
+            total_value: total_val.toFixed(2),
+            tax_value: (total_val - taxable_val).toFixed(2),
 
-            igst: this.igst,
-            cgst: this.cgst,
-            sgst: this.sgst,
-            old_val: oldval,
+            igs_t: this.igs_t,
+            cgs_t: this.cgs_t,
+            sgs_t: this.sgs_t,
+            old_val: old_val,
             stock_pk: temp.stock_pk,
             del_flag: 'N',
             margin:
-                totalval / temp.qty - temp.unit_price < 0 ? 'marginNeg' : '',
-            qtyerror: '',
-            discerror: '',
+                total_val / temp.qty - temp.unit_price < 0 ? 'marginNeg' : '',
+            qty_error: '',
+            disc_error: '',
         });
 
         const tempArr = this.listArr.map((arrItem) =>
@@ -723,7 +734,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
         this.sumTotalTax();
 
-        if (type === 'loadingnow') {
+        if (type === 'loading_now') {
             const v1 = 240 + this.listArr.length * 70 + 70;
             this.ScrollToPoint(0, v1);
         } else {
@@ -739,16 +750,16 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
     clearInput() {
         this.submitForm.patchValue({
-            customerctrl: null,
+            customer_ctrl: null,
         });
 
-        this.iscustomerselected = false;
+        this.is_customer_selected = false;
 
         this._cdr.markForCheck();
     }
 
     async handleCustomerChange() {
-        this.clist && this.clist.nativeElement.focus();
+        this.c_list && this.c_list.nativeElement.focus();
         const alert = await this.alertController.create({
             header: 'Confirm!',
             message:
@@ -778,7 +789,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
     sumTotalTax() {
         if (this.i_gst) {
-            this.igstTotal = this.listArr
+            this.igs_t_Total = this.listArr
                 .map((item) => +item.tax_value) // convert to number using +
                 .reduce(
                     (accumulator, currentValue) => accumulator + currentValue,
@@ -786,14 +797,14 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                 )
                 .toFixed(2);
 
-            console.log('dines' + this.igstTotal);
+            console.log('dines' + this.igs_t_Total);
             this.submitForm.patchValue({
-                igst: this.igstTotal,
-                cgst: 0,
-                sgst: 0,
+                igs_t: this.igs_t_Total,
+                cgs_t: 0,
+                sgs_t: 0,
             });
         } else {
-            this.cgstTotal = this.listArr
+            this.cgs_t_Total = this.listArr
                 .map((item) => item.tax_value / 2)
                 .reduce(
                     (accumulator, currentValue) => accumulator + currentValue,
@@ -801,20 +812,18 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                 )
                 .toFixed(2);
 
-            this.sgstTotal = this.listArr
+            this.sgs_t_Total = this.listArr
                 .map((item) => item.tax_value / 2)
                 .reduce(
                     (accumulator, currentValue) => accumulator + currentValue,
                     0
                 )
                 .toFixed(2);
-            console.log('cgstTotal' + this.cgstTotal);
-            console.log('sgstTotal' + this.sgstTotal);
 
             this.submitForm.patchValue({
-                cgst: this.cgstTotal,
-                sgst: this.sgstTotal,
-                igst: 0,
+                cgs_t: this.cgs_t_Total,
+                sgs_t: this.sgs_t_Total,
+                igs_t: 0,
             });
         }
         this._cdr.markForCheck();
@@ -823,10 +832,10 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     ngAfterViewInit() {
         this.spinner.hide();
         setTimeout(() => {
-            this.clist && this.clist.nativeElement.focus();
+            this.c_list && this.c_list.nativeElement.focus();
 
             if (this.mode === 'edit' && this.id !== '0') {
-                this.plist && this.plist.nativeElement.focus();
+                this.p_list && this.p_list.nativeElement.focus();
                 this.openSnackBar(
                     'WARNING: Editing completed sales!',
                     '',
@@ -844,7 +853,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                     this.autoTrigger1.activeOption.value !== undefined
                 ) {
                     this.submitForm.patchValue({
-                        customerctrl: this.autoTrigger1.activeOption.value,
+                        customer_ctrl: this.autoTrigger1.activeOption.value,
                     });
                     this.setCustomerInfo(
                         this.autoTrigger1.activeOption.value,
@@ -860,7 +869,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                     this.autoTrigger2.activeOption.value !== undefined
                 ) {
                     this.submitForm.patchValue({
-                        productctrl: this.autoTrigger2.activeOption.value,
+                        product_ctrl: this.autoTrigger2.activeOption.value,
                     });
 
                     this.setItemDesc(
@@ -905,17 +914,17 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         }
     }
 
-    setTaxSegment(taxrate: number) {
+    setTaxSegment(tax_rate: number) {
         if (this.i_gst) {
             this.i_gst = true;
-            this.igst = taxrate;
-            this.cgst = 0;
-            this.sgst = 0;
+            this.igs_t = tax_rate;
+            this.cgs_t = 0;
+            this.sgs_t = 0;
         } else {
             this.i_gst = false;
-            this.igst = 0;
-            this.cgst = taxrate / 2;
-            this.sgst = taxrate / 2;
+            this.igs_t = 0;
+            this.cgs_t = tax_rate / 2;
+            this.sgs_t = tax_rate / 2;
         }
     }
 
@@ -928,20 +937,20 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     validateForms() {
-        if (this.submitForm.value.invoicedate == null) {
+        if (this.submitForm.value.invoice_date == null) {
             this.presentAlert('Enter Invoice Date!');
             return false;
         }
 
         if (this.mode === 'enquiry') {
             if (
-                this.submitForm.value.invoicedate !== null &&
-                this.submitForm.value.orderdate !== '' &&
-                this.submitForm.value.orderdate != null
+                this.submitForm.value.invoice_date !== null &&
+                this.submitForm.value.order_date !== '' &&
+                this.submitForm.value.order_date != null
             ) {
                 if (
-                    this.submitForm.value.orderno === '' &&
-                    this.submitForm.value.orderdate != null
+                    this.submitForm.value.order_no === '' &&
+                    this.submitForm.value.order_date != null
                 ) {
                     this.orderNoEl && this.orderNoEl.nativeElement.focus();
                     this.presentAlert(
@@ -951,10 +960,10 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                 }
 
                 if (
-                    moment(this.submitForm.value.orderdate).format(
+                    moment(this.submitForm.value.order_date).format(
                         'DD-MM-YYYY'
                     ) >
-                    moment(this.submitForm.value.invoicedate).format(
+                    moment(this.submitForm.value.invoice_date).format(
                         'DD-MM-YYYY'
                     )
                 ) {
@@ -967,23 +976,23 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         }
 
         if (
-            this.submitForm.value.invoicedate !== null &&
-            this.submitForm.value.lrdate !== '' &&
-            this.submitForm.value.lrdate !== null
+            this.submitForm.value.invoice_date !== null &&
+            this.submitForm.value.lr_date !== '' &&
+            this.submitForm.value.lr_date !== null
         ) {
-            if (this.submitForm.value.lrno === '') {
+            if (this.submitForm.value.lr_no === '') {
                 this.presentAlert('Lr Date without Lr # not allowed');
                 return false;
             }
 
             if (
                 formatDate(
-                    this.submitForm.value.lrdate,
+                    this.submitForm.value.lr_date,
                     'dd-MM-yyyy',
                     'en-US'
                 ) <
                 formatDate(
-                    this.submitForm.value.invoicedate,
+                    this.submitForm.value.invoice_date,
                     'dd-MM-yyyy',
                     'en-US'
                 )
@@ -996,17 +1005,17 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         return true;
     }
 
-    checkerrors() {
+    checkErrors() {
         return this.listArr.some((e) => {
-            if (e.qtyerror !== '') {
+            if (e.qty_error !== '') {
                 return true;
             }
         });
     }
 
-    checkdiscerrors() {
+    checkDiscountErrors() {
         return this.listArr.some((e) => {
-            if (e.discerror !== '') {
+            if (e.disc_error !== '') {
                 return true;
             }
         });
@@ -1025,7 +1034,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         return invalid;
     }
 
-    checkisNumber(param: string) {
+    checkIsNumber(param: string) {
         if (
             this.submitForm.get(param).value === '' ||
             this.submitForm.get(param).value === null ||
@@ -1035,7 +1044,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         }
     }
 
-    onSubmit(action, subaction) {
+    onSubmit(action, sub_action) {
         if (this.listArr.length == 0) {
             return this.presentAlert('No products added to save!');
         }
@@ -1048,25 +1057,25 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         }
 
         if (this.listArr.length > 0) {
-            if (this.checkerrors()) {
+            if (this.checkErrors()) {
                 return this.presentAlert('Fix errors in products quantity !');
             }
 
-            if (this.checkdiscerrors()) {
+            if (this.checkDiscountErrors()) {
                 return this.presentAlert('Fix errors in products discount !');
             }
 
             if (this.validateForms()) {
                 this.submitForm.patchValue({
-                    productarr: this.listArr,
+                    product_arr: this.listArr,
                 });
 
                 this.submitForm.patchValue({
-                    noofitems: this.listArr.length,
+                    no_of_items: this.listArr.length,
                 });
 
                 this.submitForm.patchValue({
-                    customerctrl: this.customerdata,
+                    customer_ctrl: this.customer_data,
                 });
 
                 const tot_qty_check_Arr = this.listArr.map((arrItem) =>
@@ -1082,25 +1091,25 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                     .toFixed(2);
 
                 this.submitForm.patchValue({
-                    totalqty: tmpTotQty,
+                    total_qty: tmpTotQty,
                 });
 
                 this.submitForm.patchValue({
-                    totalvalue: this.total,
+                    total_value: this.total,
                 });
 
                 this.submitForm.patchValue({
                     net_total: this.getNetTotal('rounding'),
-                    roundoff: (
+                    round_off: (
                         this.getNetTotal('rounding') -
-                        this.getNetTotal('withoutrounding')
+                        this.getNetTotal('withoutRounding')
                     ).toFixed(2),
                 });
 
                 if (action === 'add') {
                     this.mainSubmit('add', 'back');
                 } else if (action === 'draft') {
-                    if (subaction === 'continue') {
+                    if (sub_action === 'continue') {
                         this.mainSubmit('draft', 'stay');
                     } else {
                         this.mainSubmit('draft', 'back');
@@ -1118,7 +1127,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             parseFloat(this.submitForm.value.misc_charges || 0);
         if (param === 'rounding') {
             return Math.round(+tmp.toFixed(2));
-        } else if (param === 'withoutrounding') {
+        } else if (param === 'without_rounding') {
             return +tmp.toFixed(2);
         }
     }
@@ -1141,8 +1150,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         dialogConfig.width = '600px';
 
         dialogConfig.data = {
-            customer_name: this.customernameprint,
-            id: this.invoiceid,
+            customer_name: this.customer_name_print,
+            id: this.invoice_id,
             invoice_no: this.final_invoice_no,
         };
 
@@ -1161,8 +1170,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         dialogConfig.width = '400px';
 
         dialogConfig.data = {
-            invoiceid: invoice_id,
-            invoicedate: invoice_date,
+            invoice_id: invoice_id,
+            invoice_date: invoice_date,
         };
 
         const dialogRef = this.dialog.open(
@@ -1200,24 +1209,24 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             this.listArr[idx].disc_percent = $event.target.value;
 
             this.qtyChange(idx);
-            this.listArr[idx].discerror = '';
+            this.listArr[idx].disc_error = '';
             this._cdr.detectChanges();
         } else {
-            this.listArr[idx].discerror = 'error';
+            this.listArr[idx].disc_error = 'error';
             this._cdr.detectChanges();
         }
     }
 
     handleQtyChange($event, idx) {
-        const qtyval = $event.target.value;
+        const qty_val = $event.target.value;
 
-        if (qtyval > 0) {
+        if (qty_val > 0) {
             this.listArr[idx].qty = $event.target.value;
             this.qtyChange(idx);
-            this.listArr[idx].qtyerror = '';
+            this.listArr[idx].qty_error = '';
             this._cdr.detectChanges();
         } else {
-            this.listArr[idx].qtyerror = 'error';
+            this.listArr[idx].qty_error = 'error';
             this._cdr.detectChanges();
         }
     }
@@ -1227,7 +1236,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     qtyChange(idx) {
-        if (this.cust_discount_type === 'NET') {
+        if (this.customer_discount_type === 'NET') {
             this.listArr[idx].sub_total = (
                 this.listArr[idx].qty * this.listArr[idx].mrp
             ).toFixed(2);
@@ -1250,7 +1259,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                 (this.listArr[idx].qty *
                     this.listArr[idx].mrp *
                     (100 - this.listArr[idx].disc_percent)) /
-                (100 + this.listArr[idx].taxrate)
+                (100 + this.listArr[idx].tax_rate)
             ).toFixed(2);
             this.listArr[idx].tax_value = (
                 this.listArr[idx].total_value - this.listArr[idx].taxable_value
@@ -1264,14 +1273,14 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                     this.listArr[idx].mrp *
                     (100 - this.listArr[idx].disc_percent)) /
                     100) *
-                (1 + this.listArr[idx].taxrate / 100)
+                (1 + this.listArr[idx].tax_rate / 100)
             ).toFixed(2);
             this.listArr[idx].disc_value = (
                 ((this.listArr[idx].qty *
                     this.listArr[idx].mrp *
                     this.listArr[idx].disc_percent) /
                     100) *
-                (1 + this.listArr[idx].taxrate / 100)
+                (1 + this.listArr[idx].tax_rate / 100)
             ).toFixed(2);
             this.listArr[idx].taxable_value = (
                 (this.listArr[idx].qty *
@@ -1326,7 +1335,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         });
 
         this.submitForm.patchValue({
-            totalvalue: this.total,
+            total_value: this.total,
         });
 
         this.sumTotalTax();
@@ -1335,7 +1344,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
     marginCheck(margin) {
         if (margin === 'marginNeg') {
-            return 'marginneg';
+            return 'marginNeg';
         }
     }
 
@@ -1358,15 +1367,16 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         this.spinner.show();
 
         // Check if customer changed and set status
-        // shoun't be fresh sale or movetosale(enquiry-sale)
+        // shouldn't be fresh sale or move_to_sale(enquiry-sale)
 
         if (!this.isFreshSale && !this.fromEnquiry) {
             if (
-                this.orig_customerid !== this.submitForm.value.customerctrl.id
+                this.original_customer_id !==
+                this.submitForm.value.customer_ctrl.id
             ) {
                 this.submitForm.patchValue({
                     hasCustomerChange: 'YS',
-                    old_customer_id: this.orig_customerid,
+                    old_customer_id: this.original_customer_id,
                 });
             }
         }
@@ -1379,23 +1389,23 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                 // console.log('saveSaleOrder ' + JSON.stringify(data));
 
                 if (data.body.result === 'success') {
-                    this.invoiceid = data.body.id;
-                    this.final_invoice_no = data.body.invoiceno;
+                    this.invoice_id = data.body.id;
+                    this.final_invoice_no = data.body.invoice_no;
 
                     // check
                     // this.cancel();
                     // this.formRef.resetForm();
 
-                    // reinit after successful insert
-                    //  this.getInvoiceSequence(this.user_data.center_id, "gstinvoice");
+                    // re_init after successful insert
+                    //  this.getInvoiceSequence(this.user_data.center_id, "gstInvoice");
 
                     this._cdr.markForCheck();
                     if (action === 'add') {
                         this.cancel();
                         this.formRef.resetForm();
-                        this.invoiceSuccess(this.invoiceid);
+                        this.invoiceSuccess(this.invoice_id);
                         this.submitForm.patchValue({
-                            invoicedate: new Date(),
+                            invoice_date: new Date(),
                         });
                         // invoice add dialog
                     } else {
@@ -1412,8 +1422,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                         this.mode = 'edit';
                         this.listArr = [];
                         this.submitForm.patchValue({
-                            invoiceno: data.body.invoiceno,
-                            salesid: data.body.id,
+                            invoice_no: data.body.invoice_no,
+                            sales_id: data.body.id,
                         });
                         this._commonApiService
                             .salesMasterData(data.body.id)
@@ -1424,9 +1434,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                             });
                     }
 
-                    if (navto === 'back' && this.saletype === 'SI') {
+                    if (navto === 'back' && this.sale_type === 'SI') {
                         this.stockIssuesDashboard();
-                    } else if (navto === 'back' && this.saletype === 'TI') {
+                    } else if (navto === 'back' && this.sale_type === 'TI') {
                         this.salesDashboard();
                     }
                 } else {
@@ -1439,17 +1449,15 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             });
     }
 
-    // Fn: to get & set invoiceno and invoice type
-    getInvoiceSequence(invoicetype) {
+    // Fn: to get & set invoice_no and invoice type
+    getInvoiceSequence(invoice_type) {
         this._saleApiService
-            .getNxtSaleInvoiceNo(invoicetype)
+            .getNxtSaleInvoiceNo(invoice_type)
             .subscribe((data: any) => {
                 this.submitForm.patchValue({
-                    invoiceno: data[0].NxtInvNo,
-                    // invoicetype: invoicetype,
+                    invoice_no: data[0].NxtInvNo,
                 });
 
-                // this.selInvType = invoicetype;
                 this._cdr.markForCheck();
             });
     }
@@ -1471,7 +1479,6 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                     text: 'Okay',
                     handler: () => {
                         console.log('Confirm Okay');
-                        // this.cancel();
                         this._router.navigateByUrl('/home/search-sales');
                     },
                 },
@@ -1509,17 +1516,17 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     cancel() {
-        this.customerdata = null;
+        this.customer_data = null;
 
-        this.customername = '';
-        this.iscustomerselected = false;
+        this.customer_name = '';
+        this.is_customer_selected = false;
         this.editCompletedSales = false;
         this.listArr = [];
 
         this.total = '0.00';
-        this.igstTotal = '0.00';
-        this.cgstTotal = '0.00';
-        this.sgstTotal = '0.00';
+        this.igs_t_Total = '0.00';
+        this.cgs_t_Total = '0.00';
+        this.sgs_t_Total = '0.00';
 
         this.customer_lis = null;
     }
@@ -1532,9 +1539,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             .convertToSale({
                 center_id: this.user_data.center_id,
                 sales_id: this.id,
-                old_invoice_no: this.submitForm.value.invoiceno,
-                old_stock_issued_date: this.submitForm.value.invoicedate,
-                customer_id: this.submitForm.value.customerctrl.id,
+                old_invoice_no: this.submitForm.value.invoice_no,
+                old_stock_issued_date: this.submitForm.value.invoice_date,
+                customer_id: this.submitForm.value.customer_ctrl.id,
                 net_total: this.submitForm.value.net_total,
             })
             .subscribe((data: any) => {
@@ -1591,11 +1598,11 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         this._commonApiService
             .deleteSalesDetails({
                 id: elem.sale_det_id,
-                salesid: elem.sales_id,
+                sales_id: elem.sales_id,
                 qty: elem.qty,
                 product_id: elem.product_id,
                 stock_id: elem.stock_pk,
-                autidneeded: this.editCompletedSales,
+                audit_needed: this.editCompletedSales,
                 center_id: this.user_data.center_id,
                 mrp: elem.mrp,
             })
@@ -1615,13 +1622,13 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     async editTax() {
-        const modalTax = await this._modalcontroller.create({
+        const modalTax = await this._modalController.create({
             component: ChangeTaxComponent,
-            componentProps: { pArry: this.listArr, rArry: this.removeRowArr },
+            componentProps: { pArry: this.listArr, rArray: this.removeRowArr },
             cssClass: 'tax-edit-modal',
         });
 
-        // after permanent or tax change reload the igst,sgst,cgst as per new tax slab
+        // after permanent or tax change reload the igs_t,sgs_t,cgs_t as per new tax slab
         modalTax.onDidDismiss().then((result) => {
             console.log('The result:', result);
 
@@ -1629,13 +1636,13 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                 const myCheckboxes = this.myCheckboxes.toArray();
 
                 this.removeRowArr.forEach((idx) => {
-                    this.listArr[idx].taxrate = +result.data;
+                    this.listArr[idx].tax_rate = +result.data;
 
-                    if (this.igst) {
-                        this.listArr[idx].igst = +result.data;
+                    if (this.igs_t) {
+                        this.listArr[idx].igs_t = +result.data;
                     } else {
-                        this.listArr[idx].sgst = +result.data / 2;
-                        this.listArr[idx].cgst = +result.data / 2;
+                        this.listArr[idx].sgs_t = +result.data / 2;
+                        this.listArr[idx].cgs_t = +result.data / 2;
                     }
 
                     this.listArr[idx].checkbox = false;
@@ -1657,9 +1664,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     async editMrp() {
-        const modalTax = await this._modalcontroller.create({
+        const modalTax = await this._modalController.create({
             component: ChangeMrpComponent,
-            componentProps: { pArry: this.listArr, rArry: this.removeRowArr },
+            componentProps: { pArry: this.listArr, rArray: this.removeRowArr },
             cssClass: 'tax-edit-modal',
         });
 
@@ -1722,10 +1729,10 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
     clearProdInput() {
         this.submitForm.patchValue({
-            productctrl: null,
-            tempdesc: null,
-            tempmrp: 0,
-            tempqty: 1,
+            product_ctrl: null,
+            temp_desc: null,
+            temp_mrp: 0,
+            temp_qty: 1,
         });
         this.product_lis = null;
         this.selected_description = '';
@@ -1744,12 +1751,12 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             this.lineItemData = event.option.value;
         }
 
-        const isduplicate = onlyProductCodeArr.includes(
+        const is_duplicate = onlyProductCodeArr.includes(
             this.lineItemData.product_code
         );
         let proceed = false;
 
-        if (isduplicate) {
+        if (is_duplicate) {
             const index = onlyProductCodeArr.indexOf(
                 this.lineItemData.product_code
             );
@@ -1767,8 +1774,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                         handler: (blah) => {
                             console.log('Confirm Cancel: blah');
                             this.clearProdInput();
-                            this.plist && this.plist.nativeElement.focus();
-                            this.plist && this.plist.nativeElement.select();
+                            this.p_list && this.p_list.nativeElement.focus();
+                            this.p_list && this.p_list.nativeElement.select();
                         },
                     },
                     {
@@ -1776,7 +1783,6 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
                         cssClass: 'secondary',
                         handler: (blah) => {
-                            //this.qty.nativeElement.focus();
                             this.clearProdInput();
 
                             setTimeout(() => {
@@ -1810,17 +1816,12 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         this._cdr.markForCheck();
     }
 
-    // colorMe(index) {
-    // 	console.log('Index: ', index);
-    // 	this.paraElements[index].style.backgroundColor = '#5789D8';
-    //   }
-
     addLineItemData(event, from) {
         if (from === 'tab') {
             this.submitForm.patchValue({
-                tempdesc: event.description,
-                tempqty: event.qty === 0 ? 1 : event.qty,
-                tempmrp: event.mrp,
+                temp_desc: event.description,
+                temp_qty: event.qty === 0 ? 1 : event.qty,
+                temp_mrp: event.mrp,
             });
             this.lineItemData = event;
             this.selected_description = event.description;
@@ -1829,10 +1830,10 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             //this.qty && this.qty.nativeElement.focus();
         } else {
             this.submitForm.patchValue({
-                tempdesc: event.option.value.description,
-                tempqty:
+                temp_desc: event.option.value.description,
+                temp_qty:
                     event.option.value.qty === 0 ? 1 : event.option.value.qty,
-                tempmrp: event.option.value.mrp,
+                temp_mrp: event.option.value.mrp,
             });
             this.lineItemData = event.option.value;
             this.selected_description = event.option.value.description;
@@ -1855,21 +1856,21 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     getLength() {
-        const control = <FormArray>this.submitForm.controls.productarr;
+        const control = <FormArray>this.submitForm.controls.product_arr;
         return control.length;
     }
 
     searchProducts() {
-        let invdt = '';
-        if (this.submitForm.value.invoicedate === null) {
-            invdt = moment().format('DD-MM-YYYY');
+        let inv_dt = '';
+        if (this.submitForm.value.invoice_date === null) {
+            inv_dt = moment().format('DD-MM-YYYY');
         } else {
-            invdt = moment(this.submitForm.value.invoicedate).format(
+            inv_dt = moment(this.submitForm.value.invoice_date).format(
                 'DD-MM-YYYY'
             );
         }
 
-        this.submitForm.controls.productctrl.valueChanges
+        this.submitForm.controls.product_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isLoading = true)),
@@ -1877,9 +1878,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                     if (id != null && id.length >= 1) {
                         return this._commonApiService.getProductInformation({
                             center_id: this.user_data.center_id,
-                            customerid: this.customerdata.id,
-                            orderdate: invdt,
-                            searchstr: id,
+                            customer_id: this.customer_data.id,
+                            order_date: inv_dt,
+                            search_text: id,
                         });
                     } else {
                         return empty();
@@ -1887,9 +1888,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                 })
             )
 
-            .subscribe((data: any) => {
+            .subscribe((data: IProductSearchDto[]) => {
                 this.isLoading = false;
-                this.product_lis = data.body;
+                this.product_lis = data;
 
                 this._cdr.markForCheck();
             });
@@ -1907,80 +1908,82 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     async add($event) {
         $event.preventDefault();
 
-        let invdt = '';
-        if (this.submitForm.value.invoicedate === null) {
-            invdt = moment().format('DD-MM-YYYY');
+        let inv_dt = '';
+        if (this.submitForm.value.invoice_date === null) {
+            inv_dt = moment().format('DD-MM-YYYY');
         } else {
-            invdt = moment(this.submitForm.value.invoicedate).format(
+            inv_dt = moment(this.submitForm.value.invoice_date).format(
                 'DD-MM-YYYY'
             );
         }
 
         if (
-            this.submitForm.value.tempdesc === '' ||
-            this.submitForm.value.tempdesc === null
+            this.submitForm.value.temp_desc === '' ||
+            this.submitForm.value.temp_desc === null
         ) {
-            this.submitForm.controls.tempdesc.setErrors({ required: true });
-            this.submitForm.controls.tempdesc.markAsTouched();
+            this.submitForm.controls.temp_desc.setErrors({ required: true });
+            this.submitForm.controls.temp_desc.markAsTouched();
 
             return false;
         }
 
         if (
-            this.submitForm.value.tempqty === '' ||
-            this.submitForm.value.tempqty === null ||
-            this.submitForm.value.tempqty === 0
+            this.submitForm.value.temp_qty === '' ||
+            this.submitForm.value.temp_qty === null ||
+            this.submitForm.value.temp_qty === 0
         ) {
-            this.submitForm.controls.tempqty.setErrors({ required: true });
-            this.submitForm.controls.tempqty.markAsTouched();
+            this.submitForm.controls.temp_qty.setErrors({ required: true });
+            this.submitForm.controls.temp_qty.markAsTouched();
 
             return false;
         }
         if (
-            this.submitForm.value.tempmrp === '' ||
-            this.submitForm.value.tempmrp === null ||
-            this.submitForm.value.tempmrp === 0
+            this.submitForm.value.temp_mrp === '' ||
+            this.submitForm.value.temp_mrp === null ||
+            this.submitForm.value.temp_mrp === 0
         ) {
-            this.submitForm.controls.tempmrp.setErrors({ required: true });
-            this.submitForm.controls.tempmrp.markAsTouched();
+            this.submitForm.controls.temp_mrp.setErrors({ required: true });
+            this.submitForm.controls.temp_mrp.markAsTouched();
 
             return false;
         }
 
         if (
-            this.submitForm.value.customerctrl === '' ||
-            this.submitForm.value.customerctrl === null
+            this.submitForm.value.customer_ctrl === '' ||
+            this.submitForm.value.customer_ctrl === null
         ) {
-            this.submitForm.controls.customerctrl.setErrors({ required: true });
-            this.submitForm.controls.customerctrl.markAsTouched();
+            this.submitForm.controls.customer_ctrl.setErrors({
+                required: true,
+            });
+            this.submitForm.controls.customer_ctrl.markAsTouched();
 
             return false;
         }
 
         // this line over writes default qty vs entered qty
-        this.lineItemData.qty = this.submitForm.value.tempqty;
-        this.lineItemData.mrp = this.submitForm.value.tempmrp;
+        this.lineItemData.qty = this.submitForm.value.temp_qty;
+        this.lineItemData.mrp = this.submitForm.value.temp_mrp;
 
         this.itemAdd(this.lineItemData);
     }
 
     itemAdd(lineItemData) {
-        // lineitemdata is the input box row to add items
-        this.processItems(this.lineItemData, 'loadingnow');
+        // line_item_data is the input box row to add items
+        this.processItems(this.lineItemData, 'loadingNow');
 
         this.submitForm.patchValue({
-            productctrl: '',
-            tempdesc: '',
-            tempmrp: 0,
-            tempqty: 1,
+            product_ctrl: '',
+            temp_desc: '',
+            temp_mrp: 0,
+            temp_qty: 1,
         });
 
-        this.submitForm.controls.tempdesc.setErrors(null);
-        this.submitForm.controls.tempqty.setErrors(null);
-        this.submitForm.controls.tempmrp.setErrors(null);
-        this.submitForm.controls.productctrl.setErrors(null);
+        this.submitForm.controls.temp_desc.setErrors(null);
+        this.submitForm.controls.temp_qty.setErrors(null);
+        this.submitForm.controls.temp_mrp.setErrors(null);
+        this.submitForm.controls.product_ctrl.setErrors(null);
         // this.plist.nativeElement.focus();
-        this.plist && this.plist.nativeElement.focus();
+        this.p_list && this.p_list.nativeElement.focus();
 
         this.selected_description = '';
         this.selected_mrp = '';
@@ -1990,13 +1993,13 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
     setCustomerInfo(event, from) {
         if (event !== undefined) {
-            this.iscustomerselected = true;
+            this.is_customer_selected = true;
             if (from === 'tab') {
                 this.customer_state_code = event.code;
 
-                this.customerdata = event;
+                this.customer_data = event;
 
-                if (this.customerdata.name === 'Walk In') {
+                if (this.customer_data.name === 'Walk In') {
                     this.isRetailCustomer = 'Y';
                 } else {
                     this.isRetailCustomer = 'N';
@@ -2007,9 +2010,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             } else {
                 this.customer_state_code = event.option.value.code;
 
-                this.customerdata = event.option.value;
+                this.customer_data = event.option.value;
 
-                if (this.customerdata.name === 'Walk In') {
+                if (this.customer_data.name === 'Walk In') {
                     this.isRetailCustomer = 'Y';
                 } else {
                     this.isRetailCustomer = 'N';
@@ -2018,7 +2021,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                 this._cdr.detectChanges();
                 this.setTaxLabel(this.customer_state_code);
 
-                this.plist && this.plist.nativeElement.focus();
+                this.p_list && this.p_list.nativeElement.focus();
             }
         }
     }
@@ -2029,7 +2032,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         dialogConfig.autoFocus = true;
         dialogConfig.width = '600px';
         dialogConfig.height = '100%';
-        dialogConfig.data = this.customerdata;
+        dialogConfig.data = this.customer_data;
         dialogConfig.position = { top: '0', right: '0' };
 
         const dialogRef = this._dialog.open(
@@ -2136,7 +2139,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     async showInventoryReportsDialog(product_code, product_id) {
-        const modal = await this._modalcontroller.create({
+        const modal = await this._modalController.create({
             component: InventoryReportsDialogComponent,
             componentProps: {
                 center_id: this.user_data.center_id,
@@ -2159,7 +2162,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         dialogConfig.autoFocus = true;
         dialogConfig.width = '600px';
         dialogConfig.height = '100%';
-        dialogConfig.data = this.customerdata;
+        dialogConfig.data = this.customer_data;
         dialogConfig.position = { top: '0', right: '0' };
 
         const dialogRef = this._dialog.open(
@@ -2177,11 +2180,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             )
             .subscribe((data: any) => {
                 if (data !== '') {
-                    console.log('dinesh manual invoice #' + data);
-
                     this.submitForm.patchValue({
                         inv_gen_mode: 'M',
-                        invoiceno: data,
+                        invoice_no: data,
                     });
 
                     this.openSnackBar(
@@ -2195,7 +2196,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     // @HostListener('window:beforeunload', ['$event'])
-    // beforeUnloadHander($event) {
+    // beforeUnloadHandler($event) {
     //   $event.returnValue = 'Your changes will not be saved';
 
     //   return true;

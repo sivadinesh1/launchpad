@@ -30,7 +30,7 @@ import { SearchInvoicenoComponent } from 'src/app/components/search-invoiceno/se
 import { Customer } from 'src/app/models/Customer';
 import { User } from 'src/app/models/User';
 import * as xlsx from 'xlsx';
-import { Sales } from '../../models/Sales';
+import { Sale } from '../../models/Sale';
 import { AuthenticationService } from '../../services/authentication.service';
 import { CommonApiService } from '../../services/common-api.service';
 
@@ -42,12 +42,12 @@ import { CommonApiService } from '../../services/common-api.service';
     encapsulation: ViewEncapsulation.None,
 })
 export class SearchSaleOrderPage implements OnInit {
-    sales$: Observable<Sales[]>;
+    sales$: Observable<Sale[]>;
 
-    draftSales$: Observable<Sales[]>;
-    fullfilledSales$: Observable<Sales[]>;
+    draftSales$: Observable<Sale[]>;
+    fullfilledSales$: Observable<Sale[]>;
 
-    filteredSales$: Observable<Sales[]>;
+    filteredSales$: Observable<Sale[]>;
 
     filteredValues: any;
     tabIndex = 1;
@@ -217,7 +217,7 @@ export class SearchSaleOrderPage implements OnInit {
                     ) {
                         return this._commonApiService.getCustomerInfo({
                             center_id: this.user_data.center_id,
-                            searchstr: id,
+                            search_text: id,
                         });
                     } else {
                         return empty();

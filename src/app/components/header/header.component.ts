@@ -106,7 +106,7 @@ export class HeaderComponent implements OnInit {
                             center_id: this.user_data.center_id,
                             customerid: 1,
                             orderdate: invdt,
-                            searchstr: id,
+                            search_text: id,
                         });
                     } else {
                         return empty();

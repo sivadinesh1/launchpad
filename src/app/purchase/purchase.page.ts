@@ -459,7 +459,7 @@ export class PurchasePage implements OnInit {
                     if (id != null && id.length >= 2) {
                         return this._commonApiService.getVendorInfo({
                             center_id: this.user_data.center_id,
-                            searchstr: id,
+                            search_text: id,
                         });
                     } else {
                         return empty();
@@ -493,7 +493,7 @@ export class PurchasePage implements OnInit {
                     if (id != null && id.length >= 2) {
                         return this._commonApiService.getProductInfo({
                             center_id: this.user_data.center_id,
-                            searchstr: id,
+                            search_text: id,
                         });
                     } else {
                         return empty();
@@ -653,7 +653,7 @@ export class PurchasePage implements OnInit {
             sgst: this.sgst,
             old_val: oldval,
             stock_pk: temp.stock_pk,
-            qtyerror: '',
+            quantity_error: '',
             pperror: '',
             hsncode: temp.hsncode,
         });
@@ -920,7 +920,7 @@ export class PurchasePage implements OnInit {
 
     checkerrors() {
         return this.listArr.some((e) => {
-            if (e.qtyerror !== '') {
+            if (e.quantity_error !== '') {
                 return true;
             }
         });
@@ -1673,10 +1673,10 @@ export class PurchasePage implements OnInit {
         if (qtyval > 0) {
             this.listArr[idx].qty = $event.target.value;
             this.qtyChange(idx);
-            this.listArr[idx].qtyerror = '';
+            this.listArr[idx].quantity_error = '';
             this._cdr.detectChanges();
         } else {
-            this.listArr[idx].qtyerror = 'error';
+            this.listArr[idx].quantity_error = 'error';
             this._cdr.detectChanges();
         }
     }

@@ -133,14 +133,16 @@ export class VendorStatementReportsPage implements OnInit {
         if (typeof value == 'object') {
             return this.vendor_lis.filter(
                 (vendor) =>
-                    vendor.name
+                    vendor.vendor_name
                         .toLowerCase()
                         .indexOf(value.name.toLowerCase()) === 0
             );
         } else if (typeof value == 'string') {
             return this.vendor_lis.filter(
                 (vendor) =>
-                    vendor.name.toLowerCase().indexOf(value.toLowerCase()) === 0
+                    vendor.vendor_name
+                        .toLowerCase()
+                        .indexOf(value.toLowerCase()) === 0
             );
         }
     }

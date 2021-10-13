@@ -1,104 +1,169 @@
 <ion-content>
-	<div class="search-wrap">
-		<form [formGroup]="statementForm" style="display: grid; grid-template-columns: 250px 180px 180px 1fr; gap: 60px; padding-left: 32px">
-			<div class="vendors" style="padding-top: 20px">
-				<mat-form-field style="width: 200px">
-					<mat-label>Vendors</mat-label>
-					<input
-						matInput
-						[matAutocomplete]="auto"
-						formControlName="vendorctrl"
-						required
-						matTooltip="Type to filter the Vendor list"
-						matTooltipPosition="after"
-					/>
-					<button
-						mat-button
-						matSuffix
-						mat-icon-button
-						aria-label="Clear"
-						*ngIf="this.statementForm.value.searchtype === 'all'"
-						type="button"
-						(click)="clearInput()"
-					>
-						<mat-icon>close</mat-icon>
-					</button>
-					<mat-autocomplete #auto="matAutocomplete" panelWidth="auto" (optionSelected)="getPosts($event)">
-						<mat-option *ngFor="let vendor of filteredVendor | async" [value]="vendor" style="height: 70px; border-bottom: 1px solid lightsteelblue">
-							<!-- <span>{{ vendor.name }} </span> -->
-							<div style="display: grid; grid-template-columns: 1fr">
-								<div>
-									<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ vendor.name }}</div>
-									<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ vendor.address1 }}</div>
-									<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ vendor.district }}</div>
-								</div>
-							</div>
-						</mat-option>
-					</mat-autocomplete>
-				</mat-form-field>
-			</div>
-			<div>
-				<mat-form-field style="padding-top: 20px">
-					<mat-label>Start</mat-label>
-					<input
-						matInput
-						readonly
-						[max]="maxDate"
-						[matDatepicker]="startdate"
-						formControlName="startdate"
-						(focus)="startdate.open()"
-						required
-						(dateChange)="startDateSelected($event)"
-					/>
-					<mat-datepicker-toggle matSuffix [for]="startdate"></mat-datepicker-toggle>
-					<mat-datepicker #startdate></mat-datepicker>
-				</mat-form-field>
-			</div>
+    <div class="search-wrap">
+        <form
+            [formGroup]="statementForm"
+            style="
+                display: grid;
+                grid-template-columns: 250px 180px 180px 1fr;
+                gap: 60px;
+                padding-left: 32px;
+            "
+        >
+            <div class="vendors" style="padding-top: 20px">
+                <mat-form-field style="width: 200px">
+                    <mat-label>Vendors</mat-label>
+                    <input
+                        matInput
+                        [matAutocomplete]="auto"
+                        formControlName="vendorctrl"
+                        required
+                        matTooltip="Type to filter the Vendor list"
+                        matTooltipPosition="after"
+                    />
+                    <button
+                        mat-button
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        *ngIf="this.statementForm.value.searchtype === 'all'"
+                        type="button"
+                        (click)="clearInput()"
+                    >
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-autocomplete
+                        #auto="matAutocomplete"
+                        panelWidth="auto"
+                        (optionSelected)="getPosts($event)"
+                    >
+                        <mat-option
+                            *ngFor="let vendor of filteredVendor | async"
+                            [value]="vendor"
+                            style="
+                                height: 70px;
+                                border-bottom: 1px solid lightsteelblue;
+                            "
+                        >
+                            <div
+                                style="
+                                    display: grid;
+                                    grid-template-columns: 1fr;
+                                "
+                            >
+                                <div>
+                                    <div
+                                        style="
+                                            font-size: 15px;
+                                            padding: 2px;
+                                            line-height: 1em;
+                                        "
+                                    >
+                                        {{ vendor.vendor_name }}
+                                    </div>
+                                    <div
+                                        style="
+                                            font-size: 14px;
+                                            padding: 2px;
+                                            line-height: 1em;
+                                            color: grey;
+                                        "
+                                    >
+                                        {{ vendor.address1 }}
+                                    </div>
+                                    <div
+                                        style="
+                                            font-size: 14px;
+                                            padding: 2px;
+                                            line-height: 1em;
+                                            color: grey;
+                                        "
+                                    >
+                                        {{ vendor.district }}
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field style="padding-top: 20px">
+                    <mat-label>Start</mat-label>
+                    <input
+                        matInput
+                        readonly
+                        [max]="maxDate"
+                        [matDatepicker]="startdate"
+                        formControlName="startdate"
+                        (focus)="startdate.open()"
+                        required
+                        (dateChange)="startDateSelected($event)"
+                    />
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="startdate"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #startdate></mat-datepicker>
+                </mat-form-field>
+            </div>
 
-			<div style="padding-top: 20px">
-				<mat-form-field>
-					<mat-label>End</mat-label>
-					<input
-						matInput
-						readonly
-						[matDatepicker]="enddate"
-						[max]="maxDate"
-						formControlName="enddate"
-						(focus)="enddate.open()"
-						required
-						(dateChange)="endDateSelected($event)"
-					/>
-					<mat-datepicker-toggle matSuffix [for]="enddate"></mat-datepicker-toggle>
-					<mat-datepicker #enddate></mat-datepicker>
-				</mat-form-field>
-			</div>
-			<div class="search-btn" style="padding-top: 20px">
-				<button mat-raised-button [disabled]="!statementForm.valid" color="primary" style="font-size: 1rem" (click)="getStatement()">
-					Get Statement
-				</button>
-			</div>
-		</form>
-	</div>
+            <div style="padding-top: 20px">
+                <mat-form-field>
+                    <mat-label>End</mat-label>
+                    <input
+                        matInput
+                        readonly
+                        [matDatepicker]="enddate"
+                        [max]="maxDate"
+                        formControlName="enddate"
+                        (focus)="enddate.open()"
+                        required
+                        (dateChange)="endDateSelected($event)"
+                    />
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="enddate"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #enddate></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="search-btn" style="padding-top: 20px">
+                <button
+                    mat-raised-button
+                    [disabled]="!statementForm.valid"
+                    color="primary"
+                    style="font-size: 1rem"
+                    (click)="getStatement()"
+                >
+                    Get Statement
+                </button>
+            </div>
+        </form>
+    </div>
 
-	<div class="action-row" style="width: 80%; display: flex; margin: 0 auto">
-		<div style="font-size: 16px; padding: 6px"> Opening Bal: {{ openingbalance | number: '1.2-2' }} </div>
-		<div style="font-size: 16px; padding: 0px 6px 6px 6px"> Closing Bal: {{ closingbalance | number: '1.2-2' }} </div>
-		<div>
-			<span style="padding: 0px 6px"
-				><img
-					matTooltip="Download"
-					matTooltipClass="tooltip"
-					src="/assets/images/svg/direct-download.svg"
-					style="cursor: pointer"
-					width="24px"
-					height="24px"
-					(click)="exportToExcel()"
-			/></span>
-			<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-		</div>
-	</div>
+    <div class="action-row" style="width: 80%; display: flex; margin: 0 auto">
+        <div style="font-size: 16px; padding: 6px">
+            Opening Bal: {{ openingbalance | number: '1.2-2' }}
+        </div>
+        <div style="font-size: 16px; padding: 0px 6px 6px 6px">
+            Closing Bal: {{ closingbalance | number: '1.2-2' }}
+        </div>
+        <div>
+            <span style="padding: 0px 6px"
+                ><img
+                    matTooltip="Download"
+                    matTooltipClass="tooltip"
+                    src="/assets/images/svg/direct-download.svg"
+                    style="cursor: pointer"
+                    width="24px"
+                    height="24px"
+                    (click)="exportToExcel()"
+            /></span>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </div>
+    </div>
 
-	<!-- <td style="grid-column: 1/-1">
+    <!-- <td style="grid-column: 1/-1">
 		<div style="display: grid; grid-template-columns: 1fr 1fr; padding: 8px 0px; margin-bottom: 6px; background-color: aliceblue">
 			<div style="font-size: 16px; font-weight: 400; padding-left: 8px"> &nbsp; </div>
 			<div style="justify-self: right">
@@ -112,39 +177,48 @@
 		</div>
 	</td> -->
 
-	<div #epltable style="width: 80%; display: flex; margin: 0 auto">
-		<table style="width: 100%">
-			<thead>
-				<tr class="header">
-					<th style="text-align: left">SNo</th>
-					<th style="text-align: left">Txn Type</th>
-					<th style="text-align: left">Credit</th>
-					<th style="text-align: right">Debit</th>
+    <div #epltable style="width: 80%; display: flex; margin: 0 auto">
+        <table style="width: 100%">
+            <thead>
+                <tr class="header">
+                    <th style="text-align: left">SNo</th>
+                    <th style="text-align: left">Txn Type</th>
+                    <th style="text-align: left">Credit</th>
+                    <th style="text-align: right">Debit</th>
 
-					<th style="text-align: right">Bal. Amnt</th>
-					<th style="text-align: right">Inv. Ref</th>
+                    <th style="text-align: right">Bal. Amnt</th>
+                    <th style="text-align: right">Inv. Ref</th>
 
-					<th style="text-align: right">Pymt. Ref</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr
-					*ngFor="
+                    <th style="text-align: right">Pymt. Ref</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                    *ngFor="
 						let item of statementdata ? statementdata : [];
 						let idx = index
 					"
-					class="list-item row-color"
-				>
-					<td style="text-align: left">{{ idx + 1 }}</td>
-					<td> {{ item.txn_type === 'purchase' ? 'Buy Materials' : 'Payment'}} </td>
-					<td>{{ item.credit_amt }}</td>
+                    class="list-item row-color"
+                >
+                    <td style="text-align: left">{{ idx + 1 }}</td>
+                    <td>
+                        {{ item.txn_type === 'purchase' ? 'Buy Materials' :
+                        'Payment'}}
+                    </td>
+                    <td>{{ item.credit_amt }}</td>
 
-					<td style="text-align: right">{{ item?.debit_amt }}</td>
-					<td style="text-align: right"> {{ (+item?.balance_amt).toFixed(2) }} </td>
-					<td style="text-align: right">{{ item?.purchase_ref_id }}</td>
-					<td style="text-align: right">{{ item?.payment_ref_id }}</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+                    <td style="text-align: right">{{ item?.debit_amt }}</td>
+                    <td style="text-align: right">
+                        {{ (+item?.balance_amt).toFixed(2) }}
+                    </td>
+                    <td style="text-align: right">
+                        {{ item?.purchase_ref_id }}
+                    </td>
+                    <td style="text-align: right">
+                        {{ item?.payment_ref_id }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </ion-content>

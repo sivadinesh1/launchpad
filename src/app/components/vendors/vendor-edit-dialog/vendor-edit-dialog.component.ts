@@ -25,6 +25,7 @@ import {
 } from '../../../util/helper/patterns';
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { plainToClass } from 'class-transformer';
 
 @Component({
     selector: 'app-vendor-dialog',
@@ -35,11 +36,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class VendorEditDialogComponent implements OnInit {
     center_id: any;
-    vendor_id: any;
+    id: any;
     resultList: any;
     submitForm: any;
 
-    statesdata: any;
+    states_data: any;
     isLinear = true;
 
     vendor: Vendor;
@@ -62,15 +63,15 @@ export class VendorEditDialogComponent implements OnInit {
         this.vendor = vendor;
 
         this.submitForm = this._formBuilder.group({
-            vendor_id: [this.vendor.id],
+            id: [this.vendor.id],
             center_id: [this.center_id],
-            name: [this.vendor.name, Validators.required],
+            vendor_name: [this.vendor.vendor_name, Validators.required],
             address1: [this.vendor.address1],
             address2: [this.vendor.address2],
             address3: [this.vendor.address3],
 
             district: [this.vendor.district],
-            state_id: [this.vendor.state_id, Validators.required],
+            state_id: [this.vendor.state_id.toString(), Validators.required],
             pin: [this.vendor.pin, [patternValidator(PINCODE_REGEX)]],
 
             gst: [this.vendor.gst, [patternValidator(GSTN_REGEX)]],
@@ -111,7 +112,8 @@ export class VendorEditDialogComponent implements OnInit {
         });
 
         this._commonApiService.getStates().subscribe((data: any) => {
-            this.statesdata = data;
+            this.states_data = data;
+            this._cdr.markForCheck();
         });
     }
 
@@ -128,11 +130,9 @@ export class VendorEditDialogComponent implements OnInit {
     }
 
     onSubmit() {
-        const changes = this.submitForm.value;
-        const updateVendor$ = this._commonApiService.updateVendor(
-            this.vendor.id,
-            changes
-        );
+        const vendor = plainToClass(Vendor, this.submitForm.value);
+
+        const updateVendor$ = this._commonApiService.updateVendor(vendor);
 
         this._loadingService
             .showLoaderUntilCompleted(updateVendor$)

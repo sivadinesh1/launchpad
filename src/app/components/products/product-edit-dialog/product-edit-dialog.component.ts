@@ -82,7 +82,7 @@ export class ProductEditDialogComponent implements OnInit {
         this.product = product;
 
         this.brands$ = this._commonApiService.getAllActiveBrands('A');
-        debugger;
+
         if (this.product.product_type === 'S') {
             this.productType[1].checked = true;
             this.productType[0].checked = false;

@@ -36,11 +36,14 @@ export class AddProductComponent implements OnInit {
         this.searchbar.setFocus();
     }
 
-    openDialog(searchstring): void {
-        if (searchstring.length > 2) {
+    openDialog(search_texting): void {
+        if (search_texting.length > 2) {
             if (this.customer_id === 0) {
                 this._commonApiService
-                    .getProductInfo({ center_id: this.center_id, searchstring })
+                    .getProductInfo({
+                        center_id: this.center_id,
+                        search_texting,
+                    })
                     .subscribe((data) => {
                         this.resultList = data.body;
 
@@ -58,7 +61,7 @@ export class AddProductComponent implements OnInit {
                         center_id: this.center_id,
                         customerid: this.customer_id,
                         orderdate: this.order_date,
-                        searchstr: searchstring,
+                        search_text: search_texting,
                     })
                     .subscribe((data) => {
                         this.resultList = data.body;

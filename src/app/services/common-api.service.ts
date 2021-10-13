@@ -17,7 +17,7 @@ import { map, shareReplay, retry, catchError } from 'rxjs/operators';
 
 import * as FileSaver from 'file-saver';
 import { Purchase } from '../models/Purchase';
-import { Sales } from '../models/Sales';
+import { Sale } from '../models/Sale';
 import { Customer } from '../models/Customer';
 import { Vendor } from '../models/Vendor';
 import { EnquiryDetail } from '../models/EnquiryDetail';
@@ -26,6 +26,7 @@ import { Brand } from '../models/Brand';
 import { DashboardPage } from '../dashboard/dashboard.page';
 import { IProduct } from '../models/Product';
 import { IStock } from '../models/Stock';
+import { IProductSearchDto } from '../dto/product-search.dto';
 
 @Injectable({
     providedIn: 'root',
@@ -81,11 +82,13 @@ export class CommonApiService {
     }
 
     getProductInformation(submitForm) {
-        return this.httpClient.post(
-            `${this.restApiUrl}/v1/api/search-product-information`,
-            submitForm,
-            { observe: 'response' }
-        );
+        return this.httpClient
+            .post(
+                `${this.restApiUrl}/v1/api/search-product-information`,
+                submitForm,
+                { observe: 'response' }
+            )
+            .pipe(map((res: any) => res.body));
     }
 
     getCustomerInfo(submitForm) {
@@ -324,10 +327,10 @@ export class CommonApiService {
         );
     }
 
-    updateVendor(id: number, changes: Partial<Vendor>): Observable<any> {
-        return this.httpClient.put<any>(
-            `${this.restApiUrl}/v1/api/admin/update-vendor/${id}`,
-            changes
+    updateVendor(vendor: Partial<Vendor>): Observable<any> {
+        return this.httpClient.post<any>(
+            `${this.restApiUrl}/v1/api/admin/update-vendor`,
+            vendor
         );
     }
 
@@ -339,10 +342,10 @@ export class CommonApiService {
         );
     }
     //brands
-    updateBrand(id: number, changes: Partial<Vendor>): Observable<any> {
-        return this.httpClient.put<any>(
-            `${this.restApiUrl}/v1/api/admin/update-brand/${id}`,
-            changes
+    updateBrand(brand: Partial<Brand>): Observable<any> {
+        return this.httpClient.post<any>(
+            `${this.restApiUrl}/v1/api/admin/update-brand`,
+            brand
         );
     }
 
@@ -459,9 +462,9 @@ export class CommonApiService {
             .pipe(shareReplay());
     }
 
-    searchSales(submitForm): Observable<Sales[]> {
+    searchSales(submitForm): Observable<Sale[]> {
         return this.httpClient
-            .post<Sales[]>(
+            .post<Sale[]>(
                 `${this.restApiUrl}/v1/api/stock/search-sales`,
                 submitForm
             )

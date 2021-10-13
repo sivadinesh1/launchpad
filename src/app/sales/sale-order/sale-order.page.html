@@ -3,7 +3,7 @@
         <!-- Header Row -->
         <div class="screen-header">
             <div style="font-size: 18px; letter-spacing: 1px; color: #4e53b7">
-                {{this.submitForm?.value?.invoicetype === 'gstinvoice' ? "SALE
+                {{this.submitForm?.value?.invoice_type === 'gstInvoice' ? "SALE
                 ORDER - Tax Invoice": "STOCK ISSUE"}}
             </div>
             <div>
@@ -17,16 +17,16 @@
                 </ion-segment>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr">
-                <div *ngIf="iscustomerselected">
+                <div *ngIf="is_customer_selected">
                     <div style="height: 53px">
-                        <div *ngIf="this.saletype !== 'SI'" class="label-text">
+                        <div *ngIf="this.sale_type !== 'SI'" class="label-text">
                             Invoice #
                         </div>
                         <div
-                            *ngIf="this.saletype !== 'SI'"
+                            *ngIf="this.sale_type !== 'SI'"
                             style="font-size: 18px; font-weight: 500"
                         >
-                            {{this.submitForm?.value?.invoiceno}}
+                            {{this.submitForm?.value?.invoice_no}}
                             <span *ngIf="this.id === '0'"
                                 ><mat-icon
                                     #tooltip="matTooltip"
@@ -40,34 +40,34 @@
                             >
                         </div>
                         <div
-                            *ngIf="this.saletype === 'SI' && this.mode === 'edit' && this.id !== '0' "
+                            *ngIf="this.sale_type === 'SI' && this.mode === 'edit' && this.id !== '0' "
                             class="label-text"
                         >
                             Stock Issue #
                         </div>
                         <div
-                            *ngIf="this.saletype === 'SI' && this.mode === 'edit' && this.id !== '0' "
+                            *ngIf="this.sale_type === 'SI' && this.mode === 'edit' && this.id !== '0' "
                         >
-                            {{this.submitForm?.value?.invoiceno}}
+                            {{this.submitForm?.value?.invoice_no}}
                         </div>
                     </div>
 
                     <div
-                        *ngIf="mode === 'enquiry' && this.submitForm?.value?.orderdate !== '' "
+                        *ngIf="mode === 'enquiry' && this.submitForm?.value?.order_date !== '' "
                     >
                         <mat-form-field>
                             <mat-label class="label-text">Enquiry #</mat-label>
                             <input
                                 matInput
-                                #orderno
+                                #orderNo
                                 type="text"
                                 tabindex="-1"
-                                formControlName="orderno"
+                                formControlName="orderNo"
                                 autocomplete="off"
                             />
 
                             <mat-error
-                                *ngIf="(submitForm?.get('orderno').hasError('required') || submitForm?.get('orderno').hasError('patternInvalid'))  && submitForm?.get('orderno').touched"
+                                *ngIf="(submitForm?.get('orderNo').hasError('required') || submitForm?.get('orderNo').hasError('patternInvalid'))  && submitForm?.get('orderNo').touched"
                             >
                                 Invalid (or) Missing entry
                             </mat-error>
@@ -77,11 +77,11 @@
 
                 <div
                     style="position: relative; top: 10px"
-                    *ngIf="iscustomerselected"
+                    *ngIf="is_customer_selected"
                 >
                     <mat-form-field>
                         <mat-label class="label-text"
-                            >{{this.saletype === 'SI'? 'Stock Issue Date' :
+                            >{{this.sale_type === 'SI'? 'Stock Issue Date' :
                             'Invoice Date'}}</mat-label
                         >
                         <input
@@ -89,7 +89,7 @@
                             readonly
                             required
                             tabindex="-1"
-                            formControlName="invoicedate"
+                            formControlName="invoice_date"
                             [matDatepicker]="picker1"
                             type="text"
                             (focus)="picker1.open()"
@@ -104,7 +104,7 @@
                         <mat-datepicker tabindex="-1" #picker1></mat-datepicker>
 
                         <mat-error
-                            *ngIf="(submitForm?.get('invoicedate').hasError('required') || submitForm?.get('invoicedate').hasError('patternInvalid'))  && submitForm?.get('invoicedate').touched"
+                            *ngIf="(submitForm?.get('invoice_date').hasError('required') || submitForm?.get('invoice_date').hasError('patternInvalid'))  && submitForm?.get('invoice_date').touched"
                         >
                             Invalid (or) Missing entry
                         </mat-error>
@@ -126,12 +126,12 @@
                         <input
                             matInput
                             [matAutocomplete]="auto"
-                            formControlName="customerctrl"
-                            [readOnly]="iscustomerselected"
-                            #typehead1
+                            formControlName="customer_ctrl"
+                            [readOnly]="is_customer_selected"
+                            #typeHead1
                             required
                             panelWidth="auto"
-                            #clist
+                            #c_list
                             autofocus
                             matTooltipPosition="after"
                             tabindex="1"
@@ -217,12 +217,12 @@
                             </ng-container>
                         </mat-autocomplete>
                         <mat-error
-                            *ngIf="submitForm?.controls['customerctrl'].hasError('required')"
+                            *ngIf="submitForm?.controls['customer_ctrl'].hasError('required')"
                         >
                             Please enter a value
                         </mat-error>
                         <mat-error
-                            *ngIf="submitForm?.controls['customerctrl'].hasError('incorrect')"
+                            *ngIf="submitForm?.controls['customer_ctrl'].hasError('incorrect')"
                         >
                             <span style="color: darkorange"
                                 >Customer Not Found:</span
@@ -238,7 +238,7 @@
                             >
                         </mat-error>
                         <mat-hint
-                            *ngIf="iscustomerselected && isRetailCustomer !== 'Y'"
+                            *ngIf="is_customer_selected && isRetailCustomer !== 'Y'"
                         >
                             <span
                                 (click)="openDialog($event)"
@@ -318,7 +318,7 @@
                     "
                 >
                     <div
-                        *ngIf="mode === 'enquiry' && this.submitForm?.value?.orderdate !== '' "
+                        *ngIf="mode === 'enquiry' && this.submitForm?.value?.order_date !== '' "
                     >
                         <mat-form-field>
                             <mat-label>Enquiry Date</mat-label>
@@ -327,7 +327,7 @@
                                 readonly
                                 [matDatepicker]="pickerod"
                                 tabindex="-1"
-                                formControlName="orderdate"
+                                formControlName="order_date"
                                 (focus)="pickerod.open()"
                                 autocomplete="off"
                             />
@@ -343,7 +343,7 @@
         </div>
 
         <!-- Customer Not Yet added -->
-        <ng-container *ngIf="!iscustomerselected">
+        <ng-container *ngIf="!is_customer_selected">
             <div style="display: grid; place-items: center; padding: 2rem 2rem">
                 <div style="color: #333333"><h4>Customer not selected</h4></div>
                 <div style="color: #666666">
@@ -363,8 +363,8 @@
             animationDuration="0ms"
             style="width: 96%; margin: 0 auto"
         >
-            <mat-tab label="Add Items" *ngIf="iscustomerselected">
-                <div class="purchase-wrap" [hidden]="!iscustomerselected">
+            <mat-tab label="Add Items" *ngIf="is_customer_selected">
+                <div class="purchase-wrap" [hidden]="!is_customer_selected">
                     <!-- main-box ribbon -->
                     <div class="wrap">
                         <div class="acton-btns">
@@ -439,7 +439,7 @@
                         </div>
                         <div class="row2">
                             <ng-container
-                                *ngIf="listArr?.length === 0 && iscustomerselected"
+                                *ngIf="listArr?.length === 0 && is_customer_selected"
                             >
                                 <div
                                     style="
@@ -480,8 +480,6 @@
                                     <div>{{item.product_code}}</div>
                                     <div>{{item.product_desc}}</div>
                                 </div>
-                                <!-- <div>&nbsp;</div> -->
-                                <!-- <div class="item2">{{item.product_desc}}</div> -->
 
                                 <div style="text-align: right">
                                     <mat-form-field
@@ -507,13 +505,13 @@
                                             #para
                                         />
                                         <mat-hint
-                                            *ngIf="item.qtyerror!== '' "
+                                            *ngIf="item.quantity_error!== '' "
                                             style="
                                                 color: red;
                                                 font-size: 12px;
                                                 margin-top: -4px;
                                             "
-                                            >{{item.qtyerror}}</mat-hint
+                                            >{{item.qty_error}}</mat-hint
                                         >
                                     </mat-form-field>
                                 </div>
@@ -572,13 +570,13 @@
                                             autocomplete="off"
                                         />
                                         <mat-hint
-                                            *ngIf="item.discerror!== '' "
+                                            *ngIf="item.disc_error!== '' "
                                             style="
                                                 color: red;
                                                 font-size: 12px;
                                                 margin-top: -4px;
                                             "
-                                            >{{item.discerror}}</mat-hint
+                                            >{{item.disc_error}}</mat-hint
                                         >
                                     </mat-form-field>
                                 </div>
@@ -590,7 +588,7 @@
                                         num-format-cell-style
                                     "
                                 >
-                                    {{item.taxrate}}
+                                    {{item.tax_rate}}
                                 </div>
 
                                 <div
@@ -617,9 +615,9 @@
                                         <input
                                             matInput
                                             [matAutocomplete]="auto2"
-                                            [readonly]="!iscustomerselected"
-                                            formControlName="productctrl"
-                                            #typehead2
+                                            [readonly]="!is_customer_selected"
+                                            formControlName="product_ctrl"
+                                            #typeHead2
                                             #plist
                                             autofocus
                                             matTooltipPosition="after"
@@ -713,7 +711,7 @@
                                                                 "
                                                             >
                                                                 {{
-                                                                product.description
+                                                                product.product_description
                                                                 }}
                                                             </div>
                                                         </div>
@@ -780,7 +778,7 @@
                                         </mat-autocomplete>
 
                                         <mat-error
-                                            *ngIf="submitForm?.controls['productctrl'].hasError('incorrect')"
+                                            *ngIf="submitForm?.controls['product_ctrl'].hasError('incorrect')"
                                         >
                                             Invalid product code
                                         </mat-error>
@@ -796,14 +794,14 @@
                                         min="1"
                                         max="100000"
                                         tabindex="3"
-                                        formControlName="tempmrp"
+                                        formControlName="temp_mrp"
                                         required
                                     />
 
                                     <mat-error
-                                        *ngIf="submitForm?.controls['tempmrp'].hasError('required')"
+                                        *ngIf="submitForm?.controls['temp_mrp'].hasError('required')"
                                     >
-                                        Required feild
+                                        Required field
                                     </mat-error>
                                 </mat-form-field>
                             </div>
@@ -816,7 +814,7 @@
                                         min="1"
                                         max="9999"
                                         tabindex="4"
-                                        formControlName="tempqty"
+                                        formControlName="temp_qty"
                                         required
                                         #qty
                                         (keydown.enter)="add($event)"
@@ -831,8 +829,8 @@
                                             style="font-size: 11px; color: grey"
                                             >TOTAL:
                                         </span>
-                                        {{(this.submitForm?.value?.tempmrp *
-                                        this.submitForm?.value?.tempqty) |
+                                        {{(this.submitForm?.value?.temp_mrp *
+                                        this.submitForm?.value?.temp_qty) |
                                         currency: "INR"}}
                                     </mat-hint>
                                 </mat-form-field>
@@ -842,8 +840,8 @@
                                     mat-stroked-button
                                     color="primary"
                                     tabindex="4"
-                                    #newrow
-                                    [disabled]="!iscustomerselected"
+                                    #newRow
+                                    [disabled]="!is_customer_selected"
                                     type="button"
                                     (click)="add($event)"
                                 >
@@ -895,7 +893,7 @@
                                     "
                                     *ngIf="i_gst"
                                 >
-                                    {{igstTotal | number:'1.2-2'}}
+                                    {{igs_t_Total | number:'1.2-2'}}
                                 </div>
 
                                 <div
@@ -916,7 +914,7 @@
                                     "
                                     *ngIf="!i_gst"
                                 >
-                                    {{cgstTotal | number:'1.2-2'}}
+                                    {{cgs_t_Total | number:'1.2-2'}}
                                 </div>
 
                                 <div
@@ -937,7 +935,7 @@
                                     "
                                     *ngIf="!i_gst"
                                 >
-                                    {{sgstTotal | number:'1.2-2'}}
+                                    {{sgs_t_Total | number:'1.2-2'}}
                                 </div>
                             </div>
                             <div>
@@ -965,7 +963,7 @@
                     </div>
                 </div>
             </mat-tab>
-            <mat-tab label="Misc Cost" *ngIf="iscustomerselected">
+            <mat-tab label="Misc Cost" *ngIf="is_customer_selected">
                 <div
                     style="
                         display: grid;
@@ -998,15 +996,15 @@
                                 <mat-label>Lr #</mat-label>
                                 <input
                                     matInput
-                                    #lrno
+                                    #lr_no
                                     type="text"
                                     tabindex="5"
-                                    formControlName="lrno"
+                                    formControlName="lr_no"
                                     autocomplete="off"
                                 />
 
                                 <mat-error
-                                    *ngIf="(submitForm?.get('lrno').hasError('required') || submitForm?.get('lrno').hasError('patternInvalid'))  && submitForm?.get('lrno').touched"
+                                    *ngIf="(submitForm?.get('lr_no').hasError('required') || submitForm?.get('lr_no').hasError('patternInvalid'))  && submitForm?.get('lr_no').touched"
                                 >
                                     Invalid (or) Missing entry
                                 </mat-error>
@@ -1021,7 +1019,7 @@
                                     tabindex="-1"
                                     [matDatepicker]="pickerlr"
                                     (focus)="pickerlr.open()"
-                                    formControlName="lrdate"
+                                    formControlName="lr_date"
                                     [max]="maxDate"
                                     autocomplete="off"
                                 />
@@ -1044,7 +1042,7 @@
                                     readonly
                                     tabindex="7"
                                     [matDatepicker]="pickerrcvd"
-                                    formControlName="orderrcvddt"
+                                    formControlName="order_received_date"
                                     (focus)="pickerrcvd.open()"
                                     [max]="maxDate"
                                     autocomplete="off"
@@ -1067,8 +1065,8 @@
                                     matInput
                                     tabindex="8"
                                     type="number"
-                                    formControlName="noofboxes"
-                                    (change)="checkisNumber('noofboxes')"
+                                    formControlName="no_of_boxes"
+                                    (change)="checkIsNumber('no_of_boxes')"
                                     appSelectOnFocus
                                     autocomplete="off"
                                 />
@@ -1104,7 +1102,7 @@
                                     type="number"
                                     formControlName="transport_charges"
                                     appSelectOnFocus
-                                    (change)="checkisNumber('transport_charges')"
+                                    (change)="checkIsNumber('transport_charges')"
                                     autocomplete="off"
                                 />
                             </mat-form-field>
@@ -1117,7 +1115,7 @@
                                     tabindex="-1"
                                     type="number"
                                     formControlName="unloading_charges"
-                                    (change)="checkisNumber('unloading_charges')"
+                                    (change)="checkIsNumber('unloading_charges')"
                                     appSelectOnFocus
                                     autocomplete="off"
                                 />
@@ -1132,7 +1130,7 @@
                                     type="number"
                                     tabindex="-1"
                                     formControlName="misc_charges"
-                                    (change)="checkisNumber('misc_charges')"
+                                    (change)="checkIsNumber('misc_charges')"
                                     appSelectOnFocus
                                     autocomplete="off"
                                 />
@@ -1144,7 +1142,7 @@
         </mat-tab-group>
 
         <ng-container>
-            <div class="footer" *ngIf="iscustomerselected">
+            <div class="footer" *ngIf="is_customer_selected">
                 <!-- <div>
 					<div style="font-size: 12px; color: #797979">Net Total</div>
 					<div style="font-size: 32px">
@@ -1186,7 +1184,7 @@
                         Cancel</button
                     >&nbsp;
                     <button
-                        *ngIf="((submitForm?.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
+                        *ngIf="((submitForm?.get('status').value !== 'C') && (selInvType !== 'stock_issue')) "
                         style="border-radius: 0px"
                         appPreventDoubleClick
                         class="cursor"
@@ -1202,7 +1200,7 @@
                         Save as Draft
                     </button>
                     <button
-                        *ngIf="((submitForm?.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
+                        *ngIf="((submitForm?.get('status').value !== 'C') && (selInvType !== 'stock_issue')) "
                         mat-stroked-button
                         color="primary"
                         tabindex="-1"
@@ -1214,7 +1212,7 @@
                     </button>
                     &nbsp;
                     <button
-                        *ngIf="((submitForm?.get('status').value === '') && (selInvType === 'stockissue')) "
+                        *ngIf="((submitForm?.get('status').value === '') && (selInvType === 'stock_issue')) "
                         style="border-radius: 0px"
                         appPreventDoubleClick
                         class="cursor"
@@ -1231,7 +1229,7 @@
                     </button>
 
                     <button
-                        *ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stockissue')) "
+                        *ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stock_issue')) "
                         style="border-radius: 0px"
                         appPreventDoubleClick
                         class="cursor"
@@ -1248,7 +1246,7 @@
                     </button>
 
                     <button
-                        *ngIf="((submitForm.get('status').value !== 'C') && (selInvType !== 'stockissue')) "
+                        *ngIf="((submitForm.get('status').value !== 'C') && (selInvType !== 'stock_issue')) "
                         style="border-radius: 0px"
                         appPreventDoubleClick
                         class="cursor"
@@ -1265,7 +1263,7 @@
                     </button>
                     <!-- (click)="actionMethod(); btn.disabled = true;" -->
                     <button
-                        *ngIf="((submitForm.get('status').value === 'C') && (selInvType !== 'stockissue')) "
+                        *ngIf="((submitForm.get('status').value === 'C') && (selInvType !== 'stock_issue')) "
                         style="border-radius: 0px"
                         appPreventDoubleClick
                         class="cursor"
@@ -1284,7 +1282,7 @@
                     &nbsp;
 
                     <!-- <button
-						*ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stockissue')) "
+						*ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stock_issue')) "
 						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"

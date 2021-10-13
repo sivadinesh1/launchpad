@@ -52,14 +52,14 @@ export class SearchDialogComponent implements OnInit {
         }, 400);
     }
 
-    openDialog(searchstring): void {
+    openDialog(search_texting): void {
         this.resultList = [];
 
         if (this.searchByFlag === 'Item') {
             this._commonApiService
                 .getProductInfo({
                     center_id: this.center_id,
-                    searchstring,
+                    search_texting,
                     searchby: this.searchByFlag,
                 })
                 .subscribe((data) => {
@@ -77,7 +77,7 @@ export class SearchDialogComponent implements OnInit {
             this._commonApiService
                 .getCustomerInfo({
                     center_id: this.center_id,
-                    searchstr: searchstring,
+                    search_text: search_texting,
                 })
                 .subscribe((data) => {
                     this.resultList = data.body;
@@ -95,7 +95,7 @@ export class SearchDialogComponent implements OnInit {
             this._commonApiService
                 .getVendorInfo({
                     center_id: this.center_id,
-                    searchstr: searchstring,
+                    search_text: search_texting,
                 })
                 .subscribe((data) => {
                     this.resultList = data.body;
@@ -113,7 +113,7 @@ export class SearchDialogComponent implements OnInit {
             this._commonApiService
                 .getBrandInfo({
                     center_id: this.center_id,
-                    searchstr: searchstring,
+                    search_text: search_texting,
                 })
                 .subscribe((data) => {
                     this.resultList = data.body;

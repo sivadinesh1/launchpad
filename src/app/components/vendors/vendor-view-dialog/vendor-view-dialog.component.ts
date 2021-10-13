@@ -59,7 +59,7 @@ export class VendorViewDialogComponent implements OnInit {
         this.submitForm = this._formBuilder.group({
             vendor_id: [this.vendor.id],
             center_id: [this.center_id],
-            name: [this.vendor.name, Validators.required],
+            name: [this.vendor.vendor_name, Validators.required],
             address1: [this.vendor.address1],
             address2: [this.vendor.address2],
             address3: [this.vendor.address3],

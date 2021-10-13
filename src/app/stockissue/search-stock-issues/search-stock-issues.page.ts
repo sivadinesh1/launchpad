@@ -17,7 +17,7 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, lastValueFrom, of } from 'rxjs';
-import { Sales } from '../../models/Sales';
+import { Sale } from '../../models/Sale';
 import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
 import { filter, map, startWith } from 'rxjs/operators';
@@ -42,11 +42,11 @@ import { ConvertToSaleDialogComponent } from 'src/app/components/convert-to-sale
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchStockIssuesPage implements OnInit {
-    sales$: Observable<Sales[]>;
+    sales$: Observable<Sale[]>;
 
-    stockIssueSales$: Observable<Sales[]>;
+    stockIssueSales$: Observable<Sale[]>;
 
-    filteredSales$: Observable<Sales[]>;
+    filteredSales$: Observable<Sale[]>;
 
     filteredValues: any;
     tabIndex = 0;

@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, lastValueFrom } from 'rxjs';
-import { Sales } from '../../../models/Sales';
+import { Sale } from '../../../models/Sale';
 import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
 import { filter, map, startWith } from 'rxjs/operators';
@@ -37,12 +37,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchReturnSalesPage implements OnInit {
-    sales$: Observable<Sales[]>;
+    sales$: Observable<Sale[]>;
 
-    draftSales$: Observable<Sales[]>;
-    fullfilledSales$: Observable<Sales[]>;
+    draftSales$: Observable<Sale[]>;
+    fullfilledSales$: Observable<Sale[]>;
 
-    filteredSales$: Observable<Sales[]>;
+    filteredSales$: Observable<Sale[]>;
 
     filteredValues: any;
     tabIndex = 0;

@@ -15,6 +15,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { LoadingService } from '../../loading/loading.service';
 import { Brand } from 'src/app/models/Brand';
+import { plainToClass } from 'class-transformer';
 
 @Component({
     selector: 'app-brand-dialog',
@@ -45,9 +46,9 @@ export class BrandEditDialogComponent implements OnInit {
         this.brand = brand;
 
         this.submitForm = this._formBuilder.group({
-            brand_id: [this.brand.id],
+            id: [this.brand.id],
             center_id: [this.center_id],
-            name: [this.brand.name, Validators.required],
+            brand_name: [this.brand.brand_name, Validators.required],
         });
     }
 
@@ -68,11 +69,9 @@ export class BrandEditDialogComponent implements OnInit {
             return false;
         }
 
-        const changes = this.submitForm.value;
-        const updateBrand$ = this._commonApiService.updateBrand(
-            this.brand.id,
-            changes
-        );
+        const brand = plainToClass(Brand, this.submitForm.value);
+
+        const updateBrand$ = this._commonApiService.updateBrand(brand);
 
         this._loadingService
             .showLoaderUntilCompleted(updateBrand$)

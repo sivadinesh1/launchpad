@@ -74,7 +74,7 @@ export class SearchCustomersComponent implements OnInit {
                     ) {
                         return this._commonApiService.getCustomerInfo({
                             center_id: 1,
-                            searchstr: id,
+                            search_text: id,
                         });
                     } else {
                         return empty();

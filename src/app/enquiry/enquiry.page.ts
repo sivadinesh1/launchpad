@@ -189,7 +189,7 @@ export class EnquiryPage {
                     if (id != null && id.length >= 2) {
                         return this._commonApiService.getCustomerInfo({
                             center_id: this.user_data.center_id,
-                            searchstr: id,
+                            search_text: id,
                         });
                     } else {
                         return empty();
@@ -303,7 +303,7 @@ export class EnquiryPage {
                     if (id != null && id.length >= 2) {
                         return this._commonApiService.getProductInfo({
                             center_id: this.user_data.center_id,
-                            searchstring: id,
+                            search_texting: id,
                         });
                     } else {
                         return empty();

@@ -64,6 +64,7 @@ export class ViewVendorsPage implements OnInit {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     @ViewChild('epltable', { static: false }) epltable: ElementRef;
+    resultArray: any = [];
 
     constructor(
         private _authService: AuthenticationService,
@@ -101,18 +102,9 @@ export class ViewVendorsPage implements OnInit {
 
     reloadVendors() {
         this._commonApiService.getAllActiveVendors().subscribe((data: any) => {
-            // DnD - code to add a "key/Value" in every object of array
-            this.dataSource.data = data.map((el) => {
-                const o = Object.assign({}, el);
-                o.isExpanded = false;
-                return o;
-            });
-
-            this.dataSource.sort = this.sort;
-            this.pageLength = data.length;
+            this.resultArray = data;
+            this._cdr.markForCheck();
         });
-
-        this._cdr.markForCheck();
     }
 
     addVendor() {
@@ -188,7 +180,8 @@ export class ViewVendorsPage implements OnInit {
     applyFilter(filterValue: string) {
         filterValue = filterValue.trim(); // Remove whitespace
         filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-        this.dataSource.filter = filterValue;
+
+        this.resultArray = filterValue;
 
         if (this.dataSource.filteredData.length > 0) {
             this.isTableHasData = true;

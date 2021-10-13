@@ -260,7 +260,7 @@ export class AddMoreEnquiryComponent implements OnInit {
                     if (id != null && id.length >= 0) {
                         return this._commonApiService.getProductInfo({
                             center_id: this.submitForm.value.center_id,
-                            searchstring: id,
+                            search_texting: id,
                         });
                     } else {
                         return empty();

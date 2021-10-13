@@ -55,6 +55,8 @@ export class ViewBrandsPage implements OnInit {
 
     @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
+    resultArray: any = [];
+
     constructor(
         private _authService: AuthenticationService,
         private _cdr: ChangeDetectorRef,
@@ -93,18 +95,19 @@ export class ViewBrandsPage implements OnInit {
         this._commonApiService
             .getAllActiveBrands('A')
             .subscribe((data: any) => {
-                // DnD - code to add a "key/Value" in every object of array
-                this.dataSource.data = data.map((el) => {
-                    const o = Object.assign({}, el);
-                    o.isExpanded = false;
-                    return o;
-                });
+                this.resultArray = data;
+                this._cdr.markForCheck();
 
-                this.dataSource.sort = this.sort;
-                this.pageLength = data.length;
+                // // DnD - code to add a "key/Value" in every object of array
+                // this.dataSource.data = data.map((el) => {
+                //     const o = Object.assign({}, el);
+                //     o.isExpanded = false;
+                //     return o;
+                // });
+
+                // this.dataSource.sort = this.sort;
+                // this.pageLength = data.length;
             });
-
-        this._cdr.markForCheck();
     }
 
     addBrand() {
