@@ -26,15 +26,15 @@ export class AuthenticationService {
     public currentMenu: Observable<any> =
         this.currentMenuSubject.asObservable();
 
-    private currentPermisssionSubject = new BehaviorSubject<any>(null);
-    public currentPermisssion: Observable<any> =
-        this.currentPermisssionSubject.asObservable();
+    private currentPermissionSubject = new BehaviorSubject<any>(null);
+    public currentPermission: Observable<any> =
+        this.currentPermissionSubject.asObservable();
 
     restApiUrl = environment.restApiUrl;
 
-    storagemode: any;
+    storage_mode: any;
     device: any;
-    errormsg = 'Something went wrong. Contact administrator.';
+    error_msg = 'Something went wrong. Contact administrator.';
 
     token: any;
 
@@ -49,7 +49,7 @@ export class AuthenticationService {
         this.plt.ready().then(async () => {
             if (isPlatformBrowser(this.platformId)) {
                 await this.storage.create();
-                this.storagemode = this.storage;
+                this.storage_mode = this.storage;
                 this.device = 'browser';
             } else {
                 this.device = 'mobile';
@@ -74,16 +74,16 @@ export class AuthenticationService {
         }
 
         if (tempCurrentPermission) {
-            this.currentPermisssionSubject.next(tempCurrentPermission);
+            this.currentPermissionSubject.next(tempCurrentPermission);
         }
     }
 
     async setLocalStoreItems(key, value) {
-        await this.storagemode.set(key, value);
+        await this.storage_mode.set(key, value);
     }
 
     async getLocalStoreItems(key): Promise<string> {
-        return await this.storagemode.get(key);
+        return await this.storage_mode.get(key);
     }
 
     register(username, password) {
@@ -94,13 +94,13 @@ export class AuthenticationService {
             })
             .pipe(
                 map(async (user_data: any) => {
-                    await this.storagemode.clear();
+                    await this.storage_mode.clear();
 
-                    const tokenStr = 'Bearer ' + user_data.additionalinfo;
+                    const tokenStr = 'Bearer ' + user_data.additional_info;
 
-                    await this.storagemode.set('username', username);
-                    await this.storagemode.set('token', tokenStr);
-                    await this.storagemode.set(
+                    await this.storage_mode.set('username', username);
+                    await this.storage_mode.set('token', tokenStr);
+                    await this.storage_mode.set(
                         'currentUser',
                         JSON.stringify(user_data.obj)
                     );
@@ -113,7 +113,7 @@ export class AuthenticationService {
     }
 
     async logOut() {
-        await this.storagemode.clear();
+        await this.storage_mode.clear();
         this.currentUserSubject.next(null);
     }
 
@@ -121,7 +121,7 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    superadmin(center_id: string) {
+    superAdmin(center_id: string) {
         return this.httpClient
             .post<any>(`${this.restApiUrl}/v1/api/auth/super-admin`, {
                 center_id,
@@ -129,9 +129,9 @@ export class AuthenticationService {
             .pipe(
                 map(async (data: any) => {
                     if (data.result === 'success') {
-                        await this.storagemode.clear();
+                        await this.storage_mode.clear();
 
-                        await this.storagemode.set(
+                        await this.storage_mode.set(
                             'currentUser',
                             JSON.stringify(data)
                         );
@@ -142,33 +142,6 @@ export class AuthenticationService {
                 })
             );
     }
-
-    // login(username: string, password: string) {
-    //   return this.httpClient
-    //     .post<any>(`${this.restApiUrl}/v1/api/auth/login`, { username, password })
-    //     .pipe(
-    //       map(async (data: any) => {
-    //         if (data.result === 'success') {
-    //           await this.storagemode.clear();
-
-    //           await this.storagemode.set('currentUser', JSON.stringify(data.obj));
-
-    //           this.currentUserSubject.next(data.obj);
-    //         }
-    //         return data;
-    //       })
-    //     );
-    // }
-
-    // getAllActiveVendors(center_id): Observable<Vendor[]> {
-    //   return this.httpClient
-    //     .get<Vendor[]>(
-    //       `${this.restApiUrl}/v1/api/all-active-vendors1/${center_id}`
-    //     )
-    //     .pipe(catchError((err) => of([])));
-    // }
-
-    // const floApi = axios.create({ baseURL: `${hostname}`, withCredentials: true });
 
     login(username: string, password: string) {
         return this.httpClient
@@ -185,9 +158,9 @@ export class AuthenticationService {
             .pipe(
                 map(async (data: any) => {
                     if (data.result === 'success') {
-                        await this.storagemode.clear();
+                        await this.storage_mode.clear();
 
-                        await this.storagemode.set(
+                        await this.storage_mode.set(
                             'currentUser',
                             JSON.stringify(data)
                         );
@@ -203,16 +176,16 @@ export class AuthenticationService {
         this._commonApiService
             .fetchPermissions(role_id)
             .subscribe(async (data) => {
-                await this.storagemode.set(
+                await this.storage_mode.set(
                     'currentPermission',
                     JSON.stringify(data)
                 );
-                this.currentPermisssionSubject.next(data);
+                this.currentPermissionSubject.next(data);
             });
     }
 
     async setCurrentMenu(clickedMenu) {
-        await this.storagemode.set('currentMenu', clickedMenu);
+        await this.storage_mode.set('currentMenu', clickedMenu);
         this.currentMenuSubject.next(clickedMenu);
     }
 

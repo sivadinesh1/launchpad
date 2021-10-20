@@ -174,7 +174,7 @@ export class CustomerAccountsStatementPage implements OnInit {
                 customerid: this.statementForm.value.customerid,
                 startdate: this.statementForm.value.startdate,
                 enddate: this.statementForm.value.enddate,
-                saletype: 'gstinvoice',
+                saletype: 'gstInvoice',
             })
             .subscribe((data: any) => {
                 this.statementdata = data.body;
@@ -231,7 +231,7 @@ export class CustomerAccountsStatementPage implements OnInit {
                 customerid: this.statementForm.value.customerid,
                 startdate: this.statementForm.value.startdate,
                 enddate: this.statementForm.value.enddate,
-                saletype: 'gstinvoice',
+                saletype: 'gstInvoice',
             })
             .subscribe((data: any) => {
                 if (mode === 'all') {
@@ -251,7 +251,7 @@ export class CustomerAccountsStatementPage implements OnInit {
                 customerid: this.statementForm.value.customerid,
                 startdate: this.statementForm.value.startdate,
                 enddate: this.statementForm.value.enddate,
-                saletype: 'gstinvoice',
+                saletype: 'gstInvoice',
             })
             .subscribe((data: any) => {
                 if (mode === 'all') {

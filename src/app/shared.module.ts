@@ -127,7 +127,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { PricePipePipe } from './util/pipes/price-formatter.pipe';
 import { ProductCorrectionDialogComponent } from './components/products/product-correction-dialog/product-correction-dialog.component';
 import { ManualInvoiceNumberDialogComponent } from './components/sales/manual-invoice-number-dialog/manual-invoice-number-dialog.component';
-import { SearchInvoicenoComponent } from './components/search-invoiceno/search-invoiceno.component';
+import { SearchInvoiceNoComponent } from './components/search-invoice-no/search-invoice-no.component';
 import { SearchCustomersComponent } from './components/search-customers/search-customers.component';
 import { AscendingComponent } from './components/util/ascending/ascending.component';
 import { DescendingComponent } from './components/util/descending/descending.component';
@@ -201,7 +201,7 @@ const components = [
 
     CurrencyPadComponent,
     InvoiceSuccessComponent,
-    SearchInvoicenoComponent,
+    SearchInvoiceNoComponent,
     EnquiryPrintComponent,
     AddMoreEnquiryComponent,
     ShowVendorsComponent,
@@ -316,7 +316,7 @@ const matcomponents = [
         CustomerViewDialogComponent,
         CustomerEditShippingAddressComponent,
         InvoiceSuccessComponent,
-        SearchInvoicenoComponent,
+        SearchInvoiceNoComponent,
         EnquiryPrintComponent,
         AddMoreEnquiryComponent,
         SalesInvoiceDialogComponent,

@@ -379,8 +379,8 @@ export class SearchPurchasePage implements OnInit {
             e['# of Items'] = e.no_of_items;
             delete e.no_of_items;
 
-            e['Taxable Value'] = e.taxable_value;
-            delete e.taxable_value;
+            e['Taxable Value'] = e.after_tax_value;
+            delete e.after_tax_value;
 
             e.CGST = e.cgst;
             delete e.cgst;
@@ -480,8 +480,8 @@ export class SearchPurchasePage implements OnInit {
             e['# of Items'] = e.no_of_items;
             delete e.no_of_items;
 
-            e['Taxable Value'] = e.taxable_value;
-            delete e.taxable_value;
+            e['Taxable Value'] = e.after_tax_value;
+            delete e.after_tax_value;
 
             e.CGST = e.cgst;
             delete e.cgst;

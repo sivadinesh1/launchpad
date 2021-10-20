@@ -568,8 +568,7 @@ export class CommonApiService {
     saveSaleOrder(saleObj) {
         return this.httpClient.post<any>(
             this.restApiUrl + '/v1/api/sale/insert-sale-details/',
-            saleObj,
-            { observe: 'response' }
+            saleObj
         );
     }
 

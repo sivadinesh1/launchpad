@@ -27,8 +27,8 @@ export class SuperadminPage implements OnInit {
 
     countries: Array<CountryPhone>;
 
-    responsemsg: any;
-    apiresponse: any;
+    response_msg: any;
+    api_response: any;
 
     ipAddress: any;
 
@@ -136,8 +136,8 @@ export class SuperadminPage implements OnInit {
         const username = '9999999990';
         const password = 'tts1234';
 
-        const predata = await lastValueFrom(
-            this.authenticationService.superadmin(this.selectedCompany)
+        const pre_data = await lastValueFrom(
+            this.authenticationService.superAdmin(this.selectedCompany)
         );
 
         const data = await lastValueFrom(
@@ -146,7 +146,7 @@ export class SuperadminPage implements OnInit {
 
         if (data.result === 'success') {
             const role = data.role;
-            this.responsemsg = '';
+            this.response_msg = '';
 
             this.authenticationService.fetchPermissions(
                 data.center_id,
@@ -166,11 +166,11 @@ export class SuperadminPage implements OnInit {
         } else if (data.result === 'error') {
             this.invalidLogin = true;
             if (data.statusCode === '601') {
-                this.responsemsg = 'User not Found.';
+                this.response_msg = 'User not Found.';
             } else if (data.statusCode === '600') {
-                this.responsemsg = 'Login Failed. Invalid Credentials';
+                this.response_msg = 'Login Failed. Invalid Credentials';
             } else if (data.statusCode === '100') {
-                this.responsemsg = 'Login Failed. Database Connection Error';
+                this.response_msg = 'Login Failed. Database Connection Error';
             }
             this._cdr.detectChanges();
         }

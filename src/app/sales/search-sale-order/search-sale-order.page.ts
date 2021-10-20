@@ -26,7 +26,8 @@ import { EnquiryPrintComponent } from 'src/app/components/enquiry-print/enquiry-
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { SalesReturnDialogComponent } from 'src/app/components/sales/sales-return-dialog/sales-return-dialog.component';
-import { SearchInvoicenoComponent } from 'src/app/components/search-invoiceno/search-invoiceno.component';
+import { SearchInvoiceNoComponent } from 'src/app/components/search-invoice-no/search-invoice-no.component';
+
 import { Customer } from 'src/app/models/Customer';
 import { User } from 'src/app/models/User';
 import * as xlsx from 'xlsx';
@@ -45,7 +46,7 @@ export class SearchSaleOrderPage implements OnInit {
     sales$: Observable<Sale[]>;
 
     draftSales$: Observable<Sale[]>;
-    fullfilledSales$: Observable<Sale[]>;
+    full_filled_sales$: Observable<Sale[]>;
 
     filteredSales$: Observable<Sale[]>;
 
@@ -55,9 +56,8 @@ export class SearchSaleOrderPage implements OnInit {
     resultList: any;
 
     statusFlag = 'D';
-    selectedCust = 'all';
 
-    saletypeFlag = 'all';
+    sale_typeFlag = 'all';
 
     orderDefaultFlag = 'desc';
 
@@ -67,44 +67,32 @@ export class SearchSaleOrderPage implements OnInit {
     minDate = new Date();
     dobMaxDate = new Date();
 
-    fromdate = new Date();
-    todate = new Date();
+    from_date = new Date();
+    to_date = new Date();
 
     filteredCustomer: Observable<any[]>;
     customer_lis: Customer[];
 
-    @ViewChild('epltable', { static: false }) epltable: ElementRef;
     @ViewChild('menuTriggerN', { static: true }) menuTriggerN: any;
 
     user_data: any;
 
     user_data$: Observable<User>;
 
-    statusList = [
-        { id: 'all', value: 'All' },
-        { id: 'D', value: 'Draft' },
-        { id: 'C', value: 'Fullfilled' },
-    ];
-
     orderList = [
         { id: 'desc', value: 'Recent Orders First' },
         { id: 'asc', value: 'Old Orders First' },
     ];
 
-    saletypeList = [
+    sale_typeList = [
         { id: 'all', value: 'All' },
         { id: 'GI', value: 'Invoice' },
-    ];
-
-    searchType = [
-        { name: 'All', id: 'all', checked: true },
-        { name: 'Invoice Only', id: 'invonly', checked: false },
     ];
 
     sumTotalValue = 0.0;
     sumNumItems = 0;
 
-    permissionsdata = [];
+    permissions_data = [];
     permissions$: Observable<any>;
 
     deleteAccess;
@@ -125,7 +113,7 @@ export class SearchSaleOrderPage implements OnInit {
 
     searchByDays = 7;
     isCLoading = false;
-    customerdata: any;
+    customer_data: any;
 
     animal: string;
     name: string;
@@ -144,18 +132,18 @@ export class SearchSaleOrderPage implements OnInit {
         private _authService: AuthenticationService
     ) {
         this.submitForm = this._fb.group({
-            customerid: ['all'],
-            customerctrl: new FormControl({
+            customer_id: ['all'],
+            customer_ctrl: new FormControl({
                 value: '',
                 disabled: false,
             }),
-            //customerctrl: [{ value: 'All Customers', disabled: false }],
-            todate: [this.todate, Validators.required],
-            fromdate: [this.fromdate, Validators.required],
+            //customer_ctrl: [{ value: 'All Customers', disabled: false }],
+            to_date: [this.to_date, Validators.required],
+            from_date: [this.from_date, Validators.required],
             status: new FormControl('all'),
-            saletype: new FormControl('all'),
-            invoiceno: [''],
-            searchtype: ['all'],
+            sale_type: new FormControl('all'),
+            invoice_no: [''],
+            search_type: ['all'],
             order: ['desc'],
         });
 
@@ -170,7 +158,7 @@ export class SearchSaleOrderPage implements OnInit {
             });
 
         const dateOffset = 24 * 60 * 60 * 1000 * 7;
-        this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+        this.from_date.setTime(this.minDate.getTime() - dateOffset);
 
         this._route.params.subscribe((params) => {
             if (this.user_data !== undefined) {
@@ -178,15 +166,15 @@ export class SearchSaleOrderPage implements OnInit {
             }
         });
 
-        this.permissions$ = this._authService.currentPermisssion;
+        this.permissions$ = this._authService.currentPermission;
 
         this.permissions$
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
-                this.permissionsdata = data;
+                this.permissions_data = data;
 
-                if (Array.isArray(this.permissionsdata)) {
-                    this.deleteAccess = this.permissionsdata.filter(
+                if (Array.isArray(this.permissions_data)) {
+                    this.deleteAccess = this.permissions_data.filter(
                         (f) => f.resource === 'SALE' && f.operation === 'DELETE'
                     )[0].is_access;
                 }
@@ -205,7 +193,7 @@ export class SearchSaleOrderPage implements OnInit {
     ngOnInit() {}
 
     searchCustomers() {
-        this.submitForm.controls.customerctrl.valueChanges
+        this.submitForm.controls.customer_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isCLoading = true)),
@@ -234,21 +222,21 @@ export class SearchSaleOrderPage implements OnInit {
     }
 
     radioClickHandle() {
-        if (this.submitForm.value.searchtype === 'invonly') {
-            this.submitForm.get('customerctrl').disable();
+        if (this.submitForm.value.search_type === 'inv_only') {
+            this.submitForm.get('customer_ctrl').disable();
         } else {
-            this.submitForm.value.invoiceno = '';
-            this.submitForm.get('customerctrl').enable();
-            this.submitForm.controls.invoiceno.setErrors(null);
-            this.submitForm.controls.invoiceno.markAsTouched();
+            this.submitForm.value.invoice_no = '';
+            this.submitForm.get('customer_ctrl').enable();
+            this.submitForm.controls.invoice_no.setErrors(null);
+            this.submitForm.controls.invoice_no.markAsTouched();
         }
     }
     // this.yourFormName.controls.formFieldName.enable();
 
     clearInput() {
         this.submitForm.patchValue({
-            customerid: 'all',
-            customerctrl: '',
+            customer_id: 'all',
+            customer_ctrl: '',
         });
         this._cdr.markForCheck();
         this.search();
@@ -256,26 +244,21 @@ export class SearchSaleOrderPage implements OnInit {
 
     clear() {
         const dateOffset = 24 * 60 * 60 * 1000 * 7;
-        this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+        this.from_date.setTime(this.minDate.getTime() - dateOffset);
 
         this.submitForm.patchValue({
-            customerid: ['all'],
-            customerctrl: 'All Customers',
-            fromdate: this.fromdate,
-            todate: new Date(),
-            invoiceno: [''],
-            searchtype: 'all',
+            customer_id: ['all'],
+            customer_ctrl: 'All Customers',
+            from_date: this.from_date,
+            to_date: new Date(),
+            invoice_no: [''],
+            search_type: 'all',
         });
 
-        this.submitForm.value.invoiceno = '';
-        this.submitForm.get('customerctrl').enable();
-        this.submitForm.controls.invoiceno.setErrors(null);
-        this.submitForm.controls.invoiceno.markAsTouched();
-
-        this.searchType = [
-            { name: 'All', id: 'all', checked: true },
-            { name: 'Invoice Only', id: 'invonly', checked: false },
-        ];
+        this.submitForm.value.invoice_no = '';
+        this.submitForm.get('customer_ctrl').enable();
+        this.submitForm.controls.invoice_no.setErrors(null);
+        this.submitForm.controls.invoice_no.markAsTouched();
 
         this._cdr.markForCheck();
     }
@@ -286,8 +269,8 @@ export class SearchSaleOrderPage implements OnInit {
 
     getPosts(event) {
         this.submitForm.patchValue({
-            customerid: event.option.value.id,
-            customerctrl: event.option.value.name,
+            customer_id: event.option.value.id,
+            customer_ctrl: event.option.value.name,
         });
 
         this.tabIndex = 1;
@@ -298,11 +281,11 @@ export class SearchSaleOrderPage implements OnInit {
     setCustomerInfo(event, from) {
         if (event !== undefined) {
             if (from === 'tab') {
-                this.customerdata = event;
+                this.customer_data = event;
 
                 this._cdr.detectChanges();
             } else {
-                this.customerdata = event.option.value;
+                this.customer_data = event.option.value;
 
                 this._cdr.detectChanges();
             }
@@ -316,9 +299,9 @@ export class SearchSaleOrderPage implements OnInit {
     dateFilter(value: number) {
         this.searchByDays = value;
         const dateOffset = 24 * 60 * 60 * 1000 * this.searchByDays;
-        this.fromdate = new Date(this.minDate.getTime() - dateOffset);
+        this.from_date = new Date(this.minDate.getTime() - dateOffset);
         this.submitForm.patchValue({
-            fromdate: this.fromdate,
+            from_date: this.from_date,
         });
 
         this._cdr.detectChanges();
@@ -328,24 +311,24 @@ export class SearchSaleOrderPage implements OnInit {
 
     async search() {
         if (
-            this.submitForm.value.searchtype !== 'all' &&
-            this.submitForm.value.invoiceno.trim().length === 0
+            this.submitForm.value.search_type !== 'all' &&
+            this.submitForm.value.invoice_no.trim().length === 0
         ) {
             console.log('invoice number is mandatory');
-            this.submitForm.controls.invoiceno.setErrors({ required: true });
-            this.submitForm.controls.invoiceno.markAsTouched();
+            this.submitForm.controls.invoice_no.setErrors({ required: true });
+            this.submitForm.controls.invoice_no.markAsTouched();
             return false;
         }
 
         this.sales$ = this._commonApiService.searchSales({
             center_id: this.user_data.center_id,
-            customerid: this.submitForm.value.customerid,
+            customer_id: this.submitForm.value.customer_id,
             status: this.submitForm.value.status,
-            fromdate: this.submitForm.value.fromdate,
-            todate: this.submitForm.value.todate,
-            saletype: this.submitForm.value.saletype,
-            searchtype: this.submitForm.value.searchtype,
-            invoiceno: this.submitForm.value.invoiceno,
+            from_date: this.submitForm.value.from_date,
+            to_date: this.submitForm.value.to_date,
+            sale_type: this.submitForm.value.sale_type,
+            search_type: this.submitForm.value.search_type,
+            invoice_no: this.submitForm.value.invoice_no,
             order: this.submitForm.value.order,
         });
 
@@ -355,19 +338,19 @@ export class SearchSaleOrderPage implements OnInit {
 
         this.filteredValues = value.filter(
             (data: any) =>
-                data.status === 'C' && data.sale_type === 'gstinvoice'
+                data.status === 'C' && data.invoice_type === 'gstInvoice'
         );
 
         // to calculate the count on each status
         this.draftSales$ = this.sales$.pipe(
             map((arr: any) =>
                 arr.filter(
-                    (f) => f.status === 'D' && f.sale_type === 'gstinvoice'
+                    (f) => f.status === 'D' && f.invoice_type === 'gstInvoice'
                 )
             )
         );
 
-        this.fullfilledSales$ = this.sales$.pipe(
+        this.full_filled_sales$ = this.sales$.pipe(
             map((arr: any) => arr.filter((f) => f.status === 'C'))
         );
         this.calculateSumTotals();
@@ -402,7 +385,7 @@ export class SearchSaleOrderPage implements OnInit {
         });
     }
 
-    sortInvoiceNo() {
+    sortInvoice_no() {
         this.clickedColumn = 'Invoice';
         if (this.orderDefaultFlag === 'desc') {
             this.submitForm.patchValue({
@@ -454,22 +437,22 @@ export class SearchSaleOrderPage implements OnInit {
         this._router.navigateByUrl(`/home/sales/edit/0/TI`);
     }
 
-    toDateSelected($event) {
-        this.todate = $event.target.value;
+    to_dateSelected($event) {
+        this.to_date = $event.target.value;
         this.tabIndex = 1;
         //	this.search();
         this._cdr.markForCheck();
     }
 
-    fromDateSelected($event) {
-        this.fromdate = $event.target.value;
+    from_dateSelected($event) {
+        this.from_date = $event.target.value;
         this.tabIndex = 1;
         //this.search();
         this._cdr.markForCheck();
     }
 
-    // two types of delete, (i) Sale Details lineitem, (ii) Sale Master both
-    // are different scenarios, just recording it. Only 'DRAFT(D)' or 'STOCKISSUE(D)' STATUS ARE DELETED
+    // two types of delete, (i) Sale Details lineItem, (ii) Sale Master both
+    // are different scenarios, just recording it. Only 'DRAFT(D)' or 'STOCK ISSUE(D)' STATUS ARE DELETED
     // first delete sale details(update audit) then delete sale master
     delete(item) {
         this._commonApiService
@@ -497,7 +480,7 @@ export class SearchSaleOrderPage implements OnInit {
     async presentAlertConfirm(item) {
         const alert = await this.alertController.create({
             header: 'Confirm!',
-            message: 'Permantently removes sale. Are you sure to Delete?',
+            message: 'Permanently removes sale. Are you sure to Delete?',
             buttons: [
                 {
                     text: 'Cancel',
@@ -526,7 +509,7 @@ export class SearchSaleOrderPage implements OnInit {
         if ($event.index === 0) {
             this.filteredValues = value.filter(
                 (data: any) =>
-                    data.status === 'D' && data.sale_type === 'gstinvoice'
+                    data.status === 'D' && data.invoice_type === 'gstInvoice'
             );
         } else if ($event.index === 1) {
             this.filteredValues = value.filter(
@@ -625,7 +608,7 @@ export class SearchSaleOrderPage implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result === 'success') {
                 // throw success alert
-                this.presentAlert('Return Recorded succcessfully!');
+                this.presentAlert('Return Recorded successfully!');
             }
         });
     }
@@ -658,7 +641,7 @@ export class SearchSaleOrderPage implements OnInit {
         this.arr = [];
         const fileName = 'Completed_Sale_Reports.xlsx';
 
-        this.arr = await lastValueFrom(this.fullfilledSales$);
+        this.arr = await lastValueFrom(this.full_filled_sales$);
 
         const reportData = JSON.parse(JSON.stringify(this.arr));
 
@@ -672,8 +655,8 @@ export class SearchSaleOrderPage implements OnInit {
             e['Invoice Date'] = e.invoice_date;
             delete e.invoice_date;
 
-            e['Sale Type'] = e.sale_type;
-            delete e.sale_type;
+            e['Sale Type'] = e.invoice_type;
+            delete e.invoice_type;
 
             e['Total Qty'] = e.total_qty;
             delete e.total_qty;
@@ -681,20 +664,20 @@ export class SearchSaleOrderPage implements OnInit {
             e['# of Items'] = e.no_of_items;
             delete e.no_of_items;
 
-            e['Taxable Value'] = e.taxable_value;
-            delete e.taxable_value;
+            e['Taxable Value'] = e.after_tax_value;
+            delete e.after_tax_value;
 
-            e.CGST = e.cgst;
-            delete e.cgst;
+            e.cgs_t = e.cgs_t;
+            delete e.cgs_t;
 
-            e.SGST = e.sgst;
-            delete e.sgst;
+            e.sgs_t = e.sgs_t;
+            delete e.sgs_t;
 
-            e.IGST = e.igst;
-            delete e.igst;
+            e.igs_t = e.igs_t;
+            delete e.igs_t;
 
-            e.IGST = e.igst;
-            delete e.igst;
+            e.igs_t = e.igs_t;
+            delete e.igs_t;
 
             e['Total Value'] = e.total_value;
             delete e.total_value;
@@ -702,8 +685,8 @@ export class SearchSaleOrderPage implements OnInit {
             e['Net Total'] = e.net_total;
             delete e.net_total;
 
-            e['Sale Date Time'] = e.sale_datetime;
-            delete e.sale_datetime;
+            e['Sale Date Time'] = e.sale_date_time;
+            delete e.sale_date_time;
 
             delete e.id;
             delete e.center_id;
@@ -722,7 +705,7 @@ export class SearchSaleOrderPage implements OnInit {
             delete e.tax_applicable;
             delete e.stock_issue_ref;
             delete e.stock_issue_date_ref;
-            delete e.roundoff;
+            delete e.round_off;
             delete e.retail_customer_name;
             delete e.retail_customer_address;
             delete e.no_of_boxes;
@@ -739,12 +722,12 @@ export class SearchSaleOrderPage implements OnInit {
             [
                 {
                     header: 'Completed Sale Reports',
-                    fromdate: `From: ${moment(
-                        this.submitForm.value.fromdate
+                    from_date: `From: ${moment(
+                        this.submitForm.value.from_date
                     ).format('DD/MM/YYYY')}`,
-                    todate: `To: ${moment(this.submitForm.value.todate).format(
-                        'DD/MM/YYYY'
-                    )}`,
+                    to_date: `To: ${moment(
+                        this.submitForm.value.to_date
+                    ).format('DD/MM/YYYY')}`,
                 },
             ],
             {
@@ -780,8 +763,8 @@ export class SearchSaleOrderPage implements OnInit {
             e['Invoice Date'] = e.invoice_date;
             delete e.invoice_date;
 
-            e['Sale Type'] = e.sale_type;
-            delete e.sale_type;
+            e['Sale Type'] = e.invoice_type;
+            delete e.invoice_type;
 
             e['Total Qty'] = e.total_qty;
             delete e.total_qty;
@@ -789,20 +772,20 @@ export class SearchSaleOrderPage implements OnInit {
             e['# of Items'] = e.no_of_items;
             delete e.no_of_items;
 
-            e['Taxable Value'] = e.taxable_value;
-            delete e.taxable_value;
+            e['Taxable Value'] = e.after_tax_value;
+            delete e.after_tax_value;
 
-            e.CGST = e.cgst;
-            delete e.cgst;
+            e.cgs_t = e.cgs_t;
+            delete e.cgs_t;
 
-            e.SGST = e.sgst;
-            delete e.sgst;
+            e.sgs_t = e.sgs_t;
+            delete e.sgs_t;
 
-            e.IGST = e.igst;
-            delete e.igst;
+            e.igs_t = e.igs_t;
+            delete e.igs_t;
 
-            e.IGST = e.igst;
-            delete e.igst;
+            e.igs_t = e.igs_t;
+            delete e.igs_t;
 
             e['Total Value'] = e.total_value;
             delete e.total_value;
@@ -810,8 +793,8 @@ export class SearchSaleOrderPage implements OnInit {
             e['Net Total'] = e.net_total;
             delete e.net_total;
 
-            e['Sale Date Time'] = e.sale_datetime;
-            delete e.sale_datetime;
+            e['Sale Date Time'] = e.sale_date_time;
+            delete e.sale_date_time;
 
             delete e.id;
             delete e.center_id;
@@ -828,7 +811,7 @@ export class SearchSaleOrderPage implements OnInit {
             delete e.status;
             delete e.revision;
             delete e.tax_applicable;
-            delete e.roundoff;
+            delete e.round_off;
             delete e.retail_customer_name;
             delete e.retail_customer_address;
 
@@ -846,12 +829,12 @@ export class SearchSaleOrderPage implements OnInit {
             [
                 {
                     header: 'Draft Sale Reports',
-                    fromdate: `From: ${moment(
-                        this.submitForm.value.fromdate
+                    from_date: `From: ${moment(
+                        this.submitForm.value.from_date
                     ).format('DD/MM/YYYY')}`,
-                    todate: `To: ${moment(this.submitForm.value.todate).format(
-                        'DD/MM/YYYY'
-                    )}`,
+                    to_date: `To: ${moment(
+                        this.submitForm.value.to_date
+                    ).format('DD/MM/YYYY')}`,
                 },
             ],
             {
@@ -873,7 +856,7 @@ export class SearchSaleOrderPage implements OnInit {
         const rect = this.menuTriggerN.nativeElement.getBoundingClientRect();
         console.log('zzz' + rect.left);
 
-        const dialogRef = this._dialog1.open(SearchInvoicenoComponent, {
+        const dialogRef = this._dialog1.open(SearchInvoiceNoComponent, {
             width: '250px',
             data: { name: this.name, animal: this.animal },
 
@@ -892,5 +875,9 @@ export class SearchSaleOrderPage implements OnInit {
         } else {
             return 'none';
         }
+    }
+
+    customerInfoPage(item) {
+        console.log('object.......' + JSON.stringify(item));
     }
 }

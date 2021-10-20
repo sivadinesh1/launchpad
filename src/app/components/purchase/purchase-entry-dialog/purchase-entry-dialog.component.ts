@@ -121,9 +121,9 @@ export class PurchaseEntryDialogComponent implements OnInit {
             delete e.revision;
             delete e.sgst;
             delete e.stock_id;
-            delete e.stock_pk;
+            delete e.stock_id;
             delete e.tax_value;
-            delete e.taxable_value;
+            delete e.after_tax_value;
             delete e.taxrate;
             delete e.total_value;
         });

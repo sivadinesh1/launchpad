@@ -503,7 +503,7 @@ export class FinancialsCustomerPage implements OnInit {
             customerid: this.customer_id,
             startdate: this.statementForm.value.startdate,
             enddate: this.statementForm.value.enddate,
-            saletype: 'gstinvoice',
+            saletype: 'gstInvoice',
         };
 
         dialogConfig.position = { top: '0', right: '0' };

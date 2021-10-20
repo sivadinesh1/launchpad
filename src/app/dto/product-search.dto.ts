@@ -8,7 +8,7 @@ export interface IProductSearchDto {
     qty: number;
     disc_info: string;
     rack_info: string;
-    stock_pk: number;
+    stock_id: number;
     tax_rate: number;
     unit_price: number;
 }

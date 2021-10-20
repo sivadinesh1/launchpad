@@ -73,7 +73,7 @@ export class HeaderComponent implements OnInit {
             });
 
         this.submitForm = this._fb.group({
-            productctrl: [null],
+            product_ctrl: [null],
         });
     }
 
@@ -96,7 +96,7 @@ export class HeaderComponent implements OnInit {
         }
 
         // check customer_id, empty
-        this.submitForm.controls.productctrl.valueChanges
+        this.submitForm.controls.product_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isLoading = true)),
@@ -132,7 +132,7 @@ export class HeaderComponent implements OnInit {
 
     clearProdInput() {
         this.submitForm.patchValue({
-            productctrl: null,
+            product_ctrl: null,
         });
         this.product_lis = null;
 

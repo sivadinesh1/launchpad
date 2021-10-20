@@ -329,7 +329,7 @@ export class ProcessEnquiryPage implements OnInit {
             unit_price: element.unit_price,
             mrp: element.mrp,
             available_stock: element.available_stock,
-            stockid: element.stock_pk,
+            stock_id: element.stock_id,
             processed: element.processed,
             check_box: false,
         });
@@ -963,7 +963,7 @@ export class ProcessEnquiryPage implements OnInit {
             unit_price: formObject.unit_price,
             mrp: formObject.mrp,
             status: 'P',
-            stockid: formObject.stock_pk,
+            stock_id: formObject.stock_id,
             available_stock: formObject.available_stock,
             rackno: formObject.rackno,
         });

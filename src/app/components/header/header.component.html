@@ -78,7 +78,7 @@
                             <input
                                 matInput
                                 [matAutocomplete]="auto2"
-                                formControlName="productctrl"
+                                formControlName="product_ctrl"
                                 #typehead2
                                 #plist
                                 matTooltipPosition="after"
@@ -166,7 +166,9 @@
                                                         line-height: 1em;
                                                     "
                                                 >
-                                                    {{ product.description }}
+                                                    {{
+                                                        product.product_description
+                                                    }}
                                                 </div>
                                             </div>
                                             <div>
@@ -178,7 +180,7 @@
                                                         text-align: right;
                                                     "
                                                 >
-                                                    {{ product.name }}
+                                                    {{ product.product_name }}
                                                 </div>
                                                 <div
                                                     style="
@@ -225,7 +227,7 @@
                             <mat-error
                                 *ngIf="
                                     submitForm?.controls[
-                                        'productctrl'
+                                        'product_ctrl'
                                     ].hasError('incorrect')
                                 "
                             >

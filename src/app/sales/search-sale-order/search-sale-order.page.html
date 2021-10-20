@@ -34,7 +34,7 @@
         <div class="filter_date_range" [matMenuTriggerFor]="admin">
             <div>
                 <div>
-                    {{this.fromdate | date:'MMM dd'}} - {{this.todate |
+                    {{this.from_date | date:'MMM dd'}} - {{this.to_date |
                     date:'dd, yyyy'}}
                 </div>
 
@@ -72,7 +72,7 @@
         <div
             class="column-item"
             [ngClass]="isSelectedColumn('Invoice')"
-            (click)="sortInvoiceNo()"
+            (click)="sortInvoice_no()"
         >
             Invoice #
         </div>
@@ -95,7 +95,7 @@
 
     <div *ngFor="let item of filteredValues; let idx = index" class="listItem">
         <div>{{idx + 1}}</div>
-        <div class="item">{{item.invoice_date}}</div>
+        <div class="item">{{item.invoice_date | date:'yyyy-d-M' }}</div>
         <div class="item">{{item.customer_name}}</div>
         <div class="item" (click)="openDialog(item)">{{item.invoice_no}}</div>
 
@@ -127,7 +127,7 @@
         <div
             class="item"
             style="text-align: center"
-            *ngIf="item.sale_type === 'gstinvoice' && item.status !== 'D'"
+            *ngIf="item.invoice_type === 'gstInvoice' && item.status !== 'D'"
         >
             <mat-icon
                 #tooltip="matTooltip"

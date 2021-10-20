@@ -86,8 +86,8 @@ export class ItemWiseSaleReportsPage implements OnInit {
 
     saletypeList = [
         { id: 'all', value: 'All' },
-        { id: 'gstinvoice', value: 'GST Invoice' },
-        { id: 'stockissue', value: 'Stock Issue' },
+        { id: 'gstInvoice', value: 'GST Invoice' },
+        { id: 'stockIssue', value: 'Stock Issue' },
     ];
 
     visible = true;

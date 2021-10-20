@@ -86,7 +86,7 @@ export class PurchasePage implements OnInit {
     sgstTotal = '0.00';
 
     tax_percentage: any;
-    taxable_value: any;
+    after_tax_value: any;
     // center_id: any;
 
     removeRowArr = [];
@@ -300,7 +300,7 @@ export class PurchasePage implements OnInit {
                 unloading_charges: this.rawPurchaseData[0].unloading_charges,
                 misc_charges: this.rawPurchaseData[0].misc_charges,
                 net_total: this.rawPurchaseData[0].net_total,
-                taxable_value: this.rawPurchaseData[0].taxable_value,
+                after_tax_value: this.rawPurchaseData[0].after_tax_value,
                 status: this.rawPurchaseData[0].status,
                 revision: this.rawPurchaseData[0].revision,
             });
@@ -365,7 +365,7 @@ export class PurchasePage implements OnInit {
             unloading_charges: new FormControl(0),
             misc_charges: new FormControl(0),
             net_total: new FormControl(0),
-            taxable_value: new FormControl(0),
+            after_tax_value: new FormControl(0),
             status: new FormControl('D'),
 
             vendorctrl: [null, [Validators.required, RequireMatch]],
@@ -642,7 +642,7 @@ export class PurchasePage implements OnInit {
                 (temp.taxrate / 100)
             ).toFixed(2),
 
-            taxable_value: temp.purchase_price * temp.qty,
+            after_tax_value: temp.purchase_price * temp.qty,
             total_value: (
                 temp.purchase_price * temp.qty +
                 (temp.purchase_price * temp.qty * temp.taxrate) / 100
@@ -652,7 +652,7 @@ export class PurchasePage implements OnInit {
             cgst: this.cgst,
             sgst: this.sgst,
             old_val: oldval,
-            stock_pk: temp.stock_pk,
+            stock_id: temp.stock_id,
             quantity_error: '',
             pperror: '',
             hsncode: temp.hsncode,
@@ -673,7 +673,7 @@ export class PurchasePage implements OnInit {
             )
             .toFixed(2);
 
-        this.taxable_value = tempArrCostPrice
+        this.after_tax_value = tempArrCostPrice
             .reduce(
                 (accumulator, currentValue) => accumulator + currentValue,
                 0
@@ -681,7 +681,7 @@ export class PurchasePage implements OnInit {
             .toFixed(2);
 
         this.submitForm.patchValue({
-            taxable_value: this.taxable_value,
+            after_tax_value: this.after_tax_value,
         });
 
         this.sumTotalTax();
@@ -1077,11 +1077,11 @@ export class PurchasePage implements OnInit {
                 this.listArr[idx].taxrate) /
                 100
         ).toFixed(2);
-        this.listArr[idx].taxable_value = (
+        this.listArr[idx].after_tax_value = (
             this.listArr[idx].qty * this.listArr[idx].purchase_price
         ).toFixed(2);
         this.listArr[idx].tax_value = (
-            this.listArr[idx].taxable_value *
+            this.listArr[idx].after_tax_value *
             (this.listArr[idx].taxrate / 100)
         ).toFixed(2);
 
@@ -1093,7 +1093,7 @@ export class PurchasePage implements OnInit {
     calc() {
         const tempArr = this.listArr.map(
             (arrItem) =>
-                parseFloat(arrItem.taxable_value) +
+                parseFloat(arrItem.after_tax_value) +
                 parseFloat(arrItem.tax_value)
         );
 
@@ -1110,7 +1110,7 @@ export class PurchasePage implements OnInit {
                 0
             )
             .toFixed(2);
-        this.taxable_value = tempArrCostPrice
+        this.after_tax_value = tempArrCostPrice
             .reduce(
                 (accumulator, currentValue) => accumulator + currentValue,
                 0
@@ -1118,7 +1118,7 @@ export class PurchasePage implements OnInit {
             .toFixed(2);
 
         this.submitForm.patchValue({
-            taxable_value: this.taxable_value,
+            after_tax_value: this.after_tax_value,
         });
 
         this.submitForm.patchValue({
@@ -1271,7 +1271,7 @@ export class PurchasePage implements OnInit {
                 purchaseid: elem.purchase_id,
                 qty: elem.qty,
                 product_id: elem.product_id,
-                stock_id: elem.stock_pk,
+                stock_id: elem.stock_id,
                 mrp: elem.mrp,
                 autidneeded: true,
             })

@@ -97,7 +97,7 @@ export class SearchStockIssuesPage implements OnInit {
     sumTotalValue = 0.0;
     sumNumItems = 0;
 
-    permissionsdata = [];
+    permissions_data = [];
     permissions$: Observable<any>;
 
     deleteAccess;
@@ -154,15 +154,15 @@ export class SearchStockIssuesPage implements OnInit {
             }
         });
 
-        this.permissions$ = this._authService.currentPermisssion;
+        this.permissions$ = this._authService.currentPermission;
 
         this.permissions$
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
-                this.permissionsdata = data;
+                this.permissions_data = data;
 
-                if (Array.isArray(this.permissionsdata)) {
-                    this.deleteAccess = this.permissionsdata.filter(
+                if (Array.isArray(this.permissions_data)) {
+                    this.deleteAccess = this.permissions_data.filter(
                         (f) => f.resource === 'SALE' && f.operation === 'DELETE'
                     )[0].is_access;
                 }
@@ -270,14 +270,14 @@ export class SearchStockIssuesPage implements OnInit {
         this.stockIssueSales$ = this.sales$.pipe(
             map((arr: any) =>
                 arr.filter(
-                    (f) => f.status === 'D' && f.sale_type === 'stockissue'
+                    (f) => f.status === 'D' && f.sale_type === 'stockIssue'
                 )
             )
         );
 
         this.filteredValues = value.filter(
             (data: any) =>
-                data.status === 'D' && data.sale_type === 'stockissue'
+                data.status === 'D' && data.sale_type === 'stockIssue'
         );
 
         this.calculateSumTotals();
@@ -396,7 +396,7 @@ export class SearchStockIssuesPage implements OnInit {
 
         this.filteredValues = value.filter(
             (data: any) =>
-                data.status === 'D' && data.sale_type === 'stockissue'
+                data.status === 'D' && data.sale_type === 'stockIssue'
         );
 
         this.calculateSumTotals();
@@ -490,8 +490,8 @@ export class SearchStockIssuesPage implements OnInit {
             e['# of Items'] = e.no_of_items;
             delete e.no_of_items;
 
-            e['Taxable Value'] = e.taxable_value;
-            delete e.taxable_value;
+            e['Taxable Value'] = e.after_tax_value;
+            delete e.after_tax_value;
 
             e.CGST = e.cgst;
             delete e.cgst;

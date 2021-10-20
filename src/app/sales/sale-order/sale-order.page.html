@@ -493,7 +493,7 @@
                                         <input
                                             matInput
                                             class="num-format-cell-style"
-                                            value="{{item.qty}}"
+                                            value="{{item.quantity}}"
                                             (keyup)="handleQtyChange($event, idx)"
                                             required
                                             numeric
@@ -588,7 +588,7 @@
                                         num-format-cell-style
                                     "
                                 >
-                                    {{item.tax_rate}}
+                                    {{item.tax}}
                                 </div>
 
                                 <div
@@ -1034,30 +1034,7 @@
                                 ></mat-datepicker>
                             </mat-form-field>
                         </div>
-                        <div>
-                            <mat-form-field>
-                                <mat-label>Shipped Date</mat-label>
-                                <input
-                                    matInput
-                                    readonly
-                                    tabindex="7"
-                                    [matDatepicker]="pickerrcvd"
-                                    formControlName="order_received_date"
-                                    (focus)="pickerrcvd.open()"
-                                    [max]="maxDate"
-                                    autocomplete="off"
-                                />
-                                <mat-datepicker-toggle
-                                    tabindex="-1"
-                                    matSuffix
-                                    [for]="pickerrcvd"
-                                ></mat-datepicker-toggle>
-                                <mat-datepicker
-                                    tabindex="-1"
-                                    #pickerrcvd
-                                ></mat-datepicker>
-                            </mat-form-field>
-                        </div>
+                        <div>&nbsp;</div>
                         <div>
                             <mat-form-field>
                                 <mat-label># of boxes</mat-label>
