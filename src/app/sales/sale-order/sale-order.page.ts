@@ -8,6 +8,7 @@ import {
     ChangeDetectionStrategy,
     HostListener,
     OnInit,
+    AfterViewInit,
 } from '@angular/core';
 import {
     ModalController,
@@ -82,15 +83,25 @@ import { SaleDetail } from 'src/app/models/SaleDetail';
     styleUrls: ['./sale-order.page.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SaleOrderPage implements ComponentCanDeactivate {
-    @HostListener('window:beforeunload')
-    canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-        if (this.submitForm.pristine) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
+    @ViewChild('orderNo', { static: false }) orderNoEl: ElementRef;
+    @ViewChild('newRow', { static: true }) newRow: any;
+    @ViewChildren('myCheckbox') myCheckboxes: QueryList<any>;
+
+    // TAB navigation for customer list
+    @ViewChild('typeHead1', { read: MatAutocompleteTrigger })
+    autoTrigger1: MatAutocompleteTrigger;
+
+    @ViewChild(FormGroupDirective) formRef: FormGroupDirective;
+
+    @ViewChild('typeHead2', { static: false, read: MatAutocompleteTrigger })
+    autoTrigger2: MatAutocompleteTrigger;
+    @ViewChild('p_list', { static: true }) p_list: any;
+    @ViewChild('c_list', { static: true }) c_list: any;
+
+    @ViewChild('qty', { static: true }) qty: any;
+    @ViewChildren('para') paras: any;
+    @ViewChild(IonContent, { static: false }) content: IonContent;
 
     breadMenu = 'New Sale';
 
@@ -166,24 +177,6 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
     isRetailCustomer = 'N';
 
-    @ViewChild('orderNo', { static: false }) orderNoEl: ElementRef;
-    @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
-
-    @ViewChild('newRow', { static: true }) newRow: any;
-
-    // TAB navigation for customer list
-    @ViewChild('typeHead1', { read: MatAutocompleteTrigger })
-    autoTrigger1: MatAutocompleteTrigger;
-
-    @ViewChild(FormGroupDirective) formRef: FormGroupDirective;
-
-    @ViewChild('typeHead2', { static: false, read: MatAutocompleteTrigger })
-    autoTrigger2: MatAutocompleteTrigger;
-    @ViewChild('p_list', { static: true }) p_list: any;
-    @ViewChild('c_list', { static: true }) c_list: any;
-
-    @ViewChild('qty', { static: true }) qty: any;
-    @ViewChildren('para') paras: any;
     paraElements: any;
 
     customer_lis: Customer[];
@@ -191,8 +184,6 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
     user_data$: Observable<User>;
     user_data: any;
-
-    @ViewChild(IonContent, { static: false }) content: IonContent;
 
     question = '+ Add Customer"';
     //ready = 0; // flag check - center_id (local_storage) & customer_id (param)
@@ -229,11 +220,11 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                 this.user_data = data;
 
                 // data change
-                this._route.data.subscribe((data) => {
+                this._route.data.subscribe((data1) => {
                     this.selInvType = 'gstInvoice';
                     this.listArr = [];
                     this.cancel();
-                    this.rawSalesData = data.raw_sales_data;
+                    this.rawSalesData = data1.raw_sales_data;
                 });
                 // param change
                 this._route.params.subscribe((params) => {
@@ -275,6 +266,15 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
                 this._cdr.markForCheck();
             });
+    }
+
+    @HostListener('window:beforeunload')
+    canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+        if (this.submitForm.pristine) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     basicInit() {
@@ -665,7 +665,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             igs_t: this.igs_t,
             cgs_t: this.cgs_t,
             sgs_t: this.sgs_t,
-            old_val: old_val,
+            old_val,
             stock_id: temp.stock_pk,
             del_flag: 'N',
             margin:
@@ -733,7 +733,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     async handleCustomerChange() {
-        this.c_list && this.c_list.nativeElement.focus();
+        this.c_list.nativeElement.focus();
         const alert = await this.alertController.create({
             header: 'Confirm!',
             message:
@@ -806,10 +806,10 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     ngAfterViewInit() {
         this.spinner.hide();
         setTimeout(() => {
-            this.c_list && this.c_list.nativeElement.focus();
+            this.c_list.nativeElement.focus();
 
             if (this.mode === 'edit' && this.id !== '0') {
-                this.p_list && this.p_list.nativeElement.focus();
+                this.p_list.nativeElement.focus();
                 this.openSnackBar(
                     'WARNING: Editing completed sales!',
                     '',
@@ -820,38 +820,33 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             this._cdr.detectChanges();
         }, 100);
 
-        this.autoTrigger1 &&
-            this.autoTrigger1.panelClosingActions.subscribe((x) => {
-                if (
-                    this.autoTrigger1.activeOption &&
-                    this.autoTrigger1.activeOption.value !== undefined
-                ) {
-                    this.submitForm.patchValue({
-                        customer_ctrl: this.autoTrigger1.activeOption.value,
-                    });
-                    this.setCustomerInfo(
-                        this.autoTrigger1.activeOption.value,
-                        'tab'
-                    );
-                }
-            });
+        this.autoTrigger1.panelClosingActions.subscribe((x) => {
+            if (
+                this.autoTrigger1.activeOption &&
+                this.autoTrigger1.activeOption.value !== undefined
+            ) {
+                this.submitForm.patchValue({
+                    customer_ctrl: this.autoTrigger1.activeOption.value,
+                });
+                this.setCustomerInfo(
+                    this.autoTrigger1.activeOption.value,
+                    'tab'
+                );
+            }
+        });
 
-        this.autoTrigger2 &&
-            this.autoTrigger2.panelClosingActions.subscribe((x) => {
-                if (
-                    this.autoTrigger2.activeOption &&
-                    this.autoTrigger2.activeOption.value !== undefined
-                ) {
-                    this.submitForm.patchValue({
-                        product_ctrl: this.autoTrigger2.activeOption.value,
-                    });
+        this.autoTrigger2.panelClosingActions.subscribe((x) => {
+            if (
+                this.autoTrigger2.activeOption &&
+                this.autoTrigger2.activeOption.value !== undefined
+            ) {
+                this.submitForm.patchValue({
+                    product_ctrl: this.autoTrigger2.activeOption.value,
+                });
 
-                    this.setItemDesc(
-                        this.autoTrigger2.activeOption.value,
-                        'tab'
-                    );
-                }
-            });
+                this.setItemDesc(this.autoTrigger2.activeOption.value, 'tab');
+            }
+        });
 
         setTimeout(() => {
             console.log('inside set time para');
@@ -926,7 +921,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                     this.submitForm.value.order_no === '' &&
                     this.submitForm.value.order_date != null
                 ) {
-                    this.orderNoEl && this.orderNoEl.nativeElement.focus();
+                    this.orderNoEl.nativeElement.focus();
                     this.presentAlert(
                         'Enquiry Date without Enquiry # not allowed'
                     );
@@ -1019,7 +1014,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     onSubmit(action, sub_action) {
-        if (this.listArr.length == 0) {
+        if (this.listArr.length === 0) {
             return this.presentAlert('No products added to save!');
         }
 
@@ -1052,11 +1047,11 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                     customer_ctrl: this.customer_data,
                 });
 
-                const tot_qty_check_Arr = this.listArr.map((arrItem) =>
+                const totalQuantityCheckArr = this.listArr.map((arrItem) =>
                     parseFloat(arrItem.qty)
                 );
 
-                const tmpTotQty = tot_qty_check_Arr
+                const tmpTotQty = totalQuantityCheckArr
                     .reduce(
                         (accumulator, currentValue) =>
                             accumulator + currentValue,
@@ -1144,8 +1139,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         dialogConfig.width = '400px';
 
         dialogConfig.data = {
-            invoice_id: invoice_id,
-            invoice_date: invoice_date,
+            invoice_id,
+            invoice_date,
         };
 
         const dialogRef = this.dialog.open(
@@ -1367,14 +1362,23 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             this.submitForm.value.product_arr
         );
 
+        // this._commonApiService
+        // .salesMasterData(data.id)
+        // .subscribe((data) => {
+        //     this.rawSalesData = data;
+        //     this._cdr.markForCheck();
+        //     this.buildRawSaleData();
+        // });
+
         // Main Submit to BE
         this._commonApiService.saveSaleOrder({ sale, saleDetails }).subscribe(
-            (data: any) => {
+            (data) => {
                 this.spinner.hide();
 
                 if (data.status === 'success') {
                     this.invoice_id = data.id;
                     this.final_invoice_no = data.invoice_no;
+                    this.clicked = false;
 
                     // check
                     // this.cancel();
@@ -1387,6 +1391,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
 
                     if (action === 'add') {
                         this.cancel();
+
                         this.formRef.resetForm();
                         this.invoiceSuccess(this.invoice_id);
                         this.submitForm.patchValue({
@@ -1412,8 +1417,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                         });
                         this._commonApiService
                             .salesMasterData(data.id)
-                            .subscribe((data) => {
-                                this.rawSalesData = data;
+                            .subscribe((data2) => {
+                                this.rawSalesData = data2;
                                 this._cdr.markForCheck();
                                 this.buildRawSaleData();
                             });
@@ -1766,8 +1771,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                         handler: (blah) => {
                             console.log('Confirm Cancel: blah');
                             this.clearProdInput();
-                            this.p_list && this.p_list.nativeElement.focus();
-                            this.p_list && this.p_list.nativeElement.select();
+                            this.p_list.nativeElement.focus();
+                            this.p_list.nativeElement.select();
                         },
                     },
                     {
@@ -1778,10 +1783,9 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                             this.clearProdInput();
 
                             setTimeout(() => {
-                                this.paraElements[index] &&
-                                    this.paraElements[index].focus();
-                                this.paraElements[index] &&
-                                    this.paraElements[index].select();
+                                this.paraElements[index].focus();
+
+                                this.paraElements[index].select();
 
                                 //	this.qty && this.qty.nativeElement.focus();
                                 // this.qty && this.qty.nativeElement.select();
@@ -1832,11 +1836,11 @@ export class SaleOrderPage implements ComponentCanDeactivate {
             this.selected_mrp = event.option.value.mrp;
 
             setTimeout(() => {
-                this.qty && this.qty.nativeElement.focus();
+                this.qty.nativeElement.focus();
                 // this.qty && this.qty.nativeElement.select();
             }, 10);
         }
-        this.qty && this.qty.nativeElement.focus();
+        this.qty.nativeElement.focus();
     }
 
     displayFn(obj: any): string | undefined {
@@ -1848,7 +1852,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
     }
 
     getLength() {
-        const control = <FormArray>this.submitForm.controls.product_arr;
+        const control = this.submitForm.controls.product_arr as FormArray;
         return control.length;
     }
 
@@ -1974,8 +1978,8 @@ export class SaleOrderPage implements ComponentCanDeactivate {
         this.submitForm.controls.temp_qty.setErrors(null);
         this.submitForm.controls.temp_mrp.setErrors(null);
         this.submitForm.controls.product_ctrl.setErrors(null);
-        // this.plist.nativeElement.focus();
-        this.p_list && this.p_list.nativeElement.focus();
+
+        this.p_list.nativeElement.focus();
 
         this.selected_description = '';
         this.selected_mrp = '';
@@ -2013,7 +2017,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                 this._cdr.detectChanges();
                 this.setTaxLabel(this.customer_state_code);
 
-                this.p_list && this.p_list.nativeElement.focus();
+                this.p_list.nativeElement.focus();
             }
         }
     }
@@ -2118,7 +2122,7 @@ export class SaleOrderPage implements ComponentCanDeactivate {
                     dialogConfigSuccess.height = '25%';
                     dialogConfigSuccess.data = 'Product added successfully';
 
-                    const dialogRef = this._dialog.open(
+                    const dialogRef1 = this._dialog.open(
                         SuccessMessageDialogComponent,
                         dialogConfigSuccess
                     );

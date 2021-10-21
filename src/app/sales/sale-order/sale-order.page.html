@@ -963,7 +963,7 @@
                     </div>
                 </div>
             </mat-tab>
-            <mat-tab label="Misc Cost" *ngIf="is_customer_selected">
+            <mat-tab label="Additional Cost" *ngIf="is_customer_selected">
                 <div
                     style="
                         display: grid;
@@ -1161,7 +1161,7 @@
                         Cancel</button
                     >&nbsp;
                     <button
-                        *ngIf="((submitForm?.get('status').value !== 'C') && (selInvType !== 'stock_issue')) "
+                        *ngIf="((submitForm?.get('status').value !== 'C') && (selInvType !== 'stockIssue')) "
                         style="border-radius: 0px"
                         appPreventDoubleClick
                         class="cursor"
@@ -1177,7 +1177,7 @@
                         Save as Draft
                     </button>
                     <button
-                        *ngIf="((submitForm?.get('status').value !== 'C') && (selInvType !== 'stock_issue')) "
+                        *ngIf="((submitForm?.get('status').value !== 'C') && (selInvType !== 'stockIssue')) "
                         mat-stroked-button
                         color="primary"
                         tabindex="-1"
