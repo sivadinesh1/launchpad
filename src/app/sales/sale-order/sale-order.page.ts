@@ -52,7 +52,7 @@ import { InvoiceSuccessComponent } from '../../components/invoice-success/invoic
 
 import { Customer } from 'src/app/models/Customer';
 import { IProduct } from '../../models/Product';
-import { empty } from 'rxjs';
+import { EMPTY, empty } from 'rxjs';
 import { RequireMatch } from '../../util/directives/requireMatch';
 import {
     MatAutocomplete,
@@ -76,6 +76,7 @@ import { IProductSearchDto } from 'src/app/dto/product-search.dto';
 import { plainToClass } from 'class-transformer';
 import { Sale } from 'src/app/models/Sale';
 import { SaleDetail } from 'src/app/models/SaleDetail';
+import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
     selector: 'app-sale-order',
@@ -94,8 +95,9 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
 
     @ViewChild(FormGroupDirective) formRef: FormGroupDirective;
 
-    @ViewChild('typeHead2', { static: false, read: MatAutocompleteTrigger })
-    autoTrigger2: MatAutocompleteTrigger;
+    @ViewChild('typehead2', { read: MatAutocompleteTrigger })
+    prodCtrlTrigger: MatAutocompleteTrigger;
+
     @ViewChild('p_list', { static: true }) p_list: any;
     @ViewChild('c_list', { static: true }) c_list: any;
 
@@ -224,7 +226,8 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                     this.selInvType = 'gstInvoice';
                     this.listArr = [];
                     this.cancel();
-                    this.rawSalesData = data1.raw_sales_data;
+
+                    this.rawSalesData = data1.rawSalesData;
                 });
                 // param change
                 this._route.params.subscribe((params) => {
@@ -236,7 +239,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
 
                     this.id = params.id;
                     this.mode = params.mode;
-                    this.sale_type = params.sale_type;
+                    this.sale_type = params.saleType;
 
                     if (this.sale_type === 'SI') {
                         this.selInvType = 'stockIssue';
@@ -290,7 +293,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
             order_no: new FormControl(''),
             order_date: new FormControl(),
             lr_no: new FormControl(''),
-            lr_date: new FormControl(),
+            lr_date: new FormControl(null),
             no_of_boxes: new FormControl(0),
 
             no_of_items: [0],
@@ -424,14 +427,14 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
         if (this.rawSalesData !== null && this.rawSalesData !== undefined) {
             if (this.rawSalesData[0] !== undefined) {
                 if (this.rawSalesData[0].id !== 0) {
-                    if (this.rawSalesData[0].sale_type === 'gstInvoice') {
+                    if (this.rawSalesData[0].invoice_type === 'gstInvoice') {
                         this.breadMenu = 'Modify Sale #';
                     } else {
                         this.breadMenu = 'Modify Stock Issue #';
                     }
 
-                    this.selInvType = this.rawSalesData[0].sale_type;
-                    this.orig_selInvType = this.rawSalesData[0].sale_type;
+                    this.selInvType = this.rawSalesData[0].invoice_type;
+                    this.orig_selInvType = this.rawSalesData[0].invoice_type;
                     this.stock_issue_ref = this.rawSalesData[0].stock_issue_ref;
                     this.stock_issue_date_ref =
                         this.rawSalesData[0].stock_issue_date_ref;
@@ -441,7 +444,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                     this.submitForm.patchValue({
                         id: this.rawSalesData[0].id,
                         invoice_no: this.rawSalesData[0].invoice_no,
-                        invoice_type: this.rawSalesData[0].sale_type,
+                        invoice_type: this.rawSalesData[0].invoice_type,
                         invoice_date: new Date(
                             new NullToQuotePipe()
                                 .transform(this.rawSalesData[0].invoice_date)
@@ -449,7 +452,8 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                         ),
 
                         order_date:
-                            this.rawSalesData[0].order_date === ''
+                            this.rawSalesData[0].order_date === '' &&
+                            this.rawSalesData[0].invoice_type === null
                                 ? ''
                                 : new Date(
                                       new NullToQuotePipe()
@@ -465,8 +469,9 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                         lr_no: this.rawSalesData[0].lr_no,
 
                         lr_date:
-                            this.rawSalesData[0].lr_date === ''
-                                ? ''
+                            this.rawSalesData[0].lr_date === '' ||
+                            this.rawSalesData[0].lr_date === null
+                                ? null
                                 : new Date(
                                       new NullToQuotePipe()
                                           .transform(
@@ -593,7 +598,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
     }
 
     processItems(temp, type) {
-        this.setTaxSegment(temp.tax_rate);
+        this.setTaxSegment(temp.tax);
         let subtotal = 0;
         let taxable_val = 0;
         let total_val = 0;
@@ -609,7 +614,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
         let old_val = 0;
 
         if (new NullToQuotePipe().transform(temp.id) !== '') {
-            old_val = temp.qty;
+            old_val = temp.quantity;
         }
 
         // else part is when navigating via edit sale,
@@ -627,32 +632,51 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
             this.customer_discount_percent = temp.disc_percent;
         }
 
-        // DISCOUNT CALCUATIONS
-        subtotal = temp.qty * temp.mrp;
+        // Discount Calculation
+        subtotal = temp.quantity * temp.mrp;
         taxable_val =
-            (temp.qty * temp.mrp * (100 - this.customer_discount_percent)) /
-            (100 + temp.tax_rate);
-        disc_val = temp.qty * temp.mrp * (this.customer_discount_percent / 100);
+            (temp.quantity *
+                temp.mrp *
+                (100 - this.customer_discount_percent)) /
+            (100 + temp.tax);
+        disc_val =
+            temp.quantity * temp.mrp * (this.customer_discount_percent / 100);
 
         total_val =
-            (temp.qty * temp.mrp * (100 - this.customer_discount_percent)) /
+            (temp.quantity *
+                temp.mrp *
+                (100 - this.customer_discount_percent)) /
             100;
 
         // from product tbl
         this.listArr.push({
             center_id: this.user_data.center_id,
             sale_id: sid,
-            sale_det_id: new NullToQuotePipe().transform(temp.id),
+            id: new NullToQuotePipe().transform(temp.id),
             checkbox: false,
-            product_id: temp.product_id,
-            product_code: temp.product_code,
-            product_desc: temp.description,
+            product_id:
+                temp.product !== undefined ? temp.product.id : temp.product_id,
+            hsn_code:
+                temp.product !== undefined
+                    ? temp.product.hsn_code
+                    : temp.hsn_code,
+            product_code:
+                temp.product !== undefined
+                    ? temp.product.product_code
+                    : temp.product_code,
+            product_desc:
+                temp.product !== undefined
+                    ? temp.product.product_description
+                    : temp.product_desc,
+            packet_size:
+                temp.product !== undefined
+                    ? temp.product.packet_size
+                    : temp.packet_size,
             quantity: temp.quantity,
-            packet_size: temp.packet_size,
             unit_price: temp.unit_price,
             mrp: temp.mrp,
             mrp_change_flag: 'N',
-            tax: temp.tax_rate,
+            tax: temp.tax,
 
             sub_total: subtotal.toFixed(2),
             after_tax_value: taxable_val.toFixed(2),
@@ -666,7 +690,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
             cgs_t: this.cgs_t,
             sgs_t: this.sgs_t,
             old_val,
-            stock_id: temp.stock_pk,
+            stock_id: temp.stock !== undefined ? temp.stock.id : temp.stock_id,
             del_flag: 'N',
             margin:
                 total_val / temp.quantity - temp.unit_price < 0
@@ -733,7 +757,10 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
     }
 
     async handleCustomerChange() {
-        this.c_list.nativeElement.focus();
+        if (this.c_list !== undefined) {
+            this.c_list.nativeElement.focus();
+        }
+
         const alert = await this.alertController.create({
             header: 'Confirm!',
             message:
@@ -806,10 +833,15 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
     ngAfterViewInit() {
         this.spinner.hide();
         setTimeout(() => {
-            this.c_list.nativeElement.focus();
+            if (this.c_list !== undefined) {
+                this.c_list.nativeElement.focus();
+            }
 
             if (this.mode === 'edit' && this.id !== '0') {
-                this.p_list.nativeElement.focus();
+                if (this.p_list !== undefined) {
+                    this.p_list.nativeElement.focus();
+                }
+
                 this.openSnackBar(
                     'WARNING: Editing completed sales!',
                     '',
@@ -820,34 +852,40 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
             this._cdr.detectChanges();
         }, 100);
 
-        this.autoTrigger1.panelClosingActions.subscribe((x) => {
-            if (
-                this.autoTrigger1.activeOption &&
-                this.autoTrigger1.activeOption.value !== undefined
-            ) {
-                this.submitForm.patchValue({
-                    customer_ctrl: this.autoTrigger1.activeOption.value,
-                });
-                this.setCustomerInfo(
-                    this.autoTrigger1.activeOption.value,
-                    'tab'
-                );
-            }
-        });
+        if (this.autoTrigger1 !== undefined) {
+            this.autoTrigger1.panelClosingActions.subscribe((x) => {
+                if (
+                    this.autoTrigger1.activeOption &&
+                    this.autoTrigger1.activeOption.value !== undefined
+                ) {
+                    this.submitForm.patchValue({
+                        customer_ctrl: this.autoTrigger1.activeOption.value,
+                    });
+                    this.setCustomerInfo(
+                        this.autoTrigger1.activeOption.value,
+                        'tab'
+                    );
+                }
+            });
+        }
 
-        this.autoTrigger2.panelClosingActions.subscribe((x) => {
-            if (
-                this.autoTrigger2.activeOption &&
-                this.autoTrigger2.activeOption.value !== undefined
-            ) {
-                this.submitForm.patchValue({
-                    product_ctrl: this.autoTrigger2.activeOption.value,
-                });
+        if (this.prodCtrlTrigger !== undefined) {
+            this.prodCtrlTrigger.panelClosingActions.subscribe((x) => {
+                if (
+                    this.prodCtrlTrigger.activeOption &&
+                    this.prodCtrlTrigger.activeOption.value !== undefined
+                ) {
+                    this.submitForm.patchValue({
+                        product_ctrl: this.prodCtrlTrigger.activeOption.value,
+                    });
 
-                this.setItemDesc(this.autoTrigger2.activeOption.value, 'tab');
-            }
-        });
-
+                    this.setItemDesc(
+                        this.prodCtrlTrigger.activeOption.value,
+                        'tab'
+                    );
+                }
+            });
+        }
         setTimeout(() => {
             console.log('inside set time para');
             this.paraElements = this.paras.map((para) => {
@@ -858,10 +896,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
     }
 
     deleteProduct(idx) {
-        if (
-            this.listArr[idx].sale_det_id !== '' &&
-            this.listArr[idx].sale_det_id !== undefined
-        ) {
+        if (this.listArr[idx].id !== '' && this.listArr[idx].id !== undefined) {
             this.listArr[idx].del_flag = 'Y';
             this.deletedRowArr.push(this.listArr[idx]);
         }
@@ -921,7 +956,10 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                     this.submitForm.value.order_no === '' &&
                     this.submitForm.value.order_date != null
                 ) {
-                    this.orderNoEl.nativeElement.focus();
+                    if (this.orderNoEl !== undefined) {
+                        this.orderNoEl.nativeElement.focus();
+                    }
+
                     this.presentAlert(
                         'Enquiry Date without Enquiry # not allowed'
                     );
@@ -1048,7 +1086,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                 });
 
                 const totalQuantityCheckArr = this.listArr.map((arrItem) =>
-                    parseFloat(arrItem.qty)
+                    parseFloat(arrItem.quantity)
                 );
 
                 const tmpTotQty = totalQuantityCheckArr
@@ -1190,7 +1228,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
         const qty_val = $event.target.value;
 
         if (qty_val > 0) {
-            this.listArr[idx].qty = $event.target.value;
+            this.listArr[idx].quantity = $event.target.value;
             this.qtyChange(idx);
             this.listArr[idx].qty_error = '';
             this._cdr.detectChanges();
@@ -1207,25 +1245,25 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
     qtyChange(idx) {
         if (this.customer_discount_type === 'NET') {
             this.listArr[idx].sub_total = (
-                this.listArr[idx].qty * this.listArr[idx].mrp
+                this.listArr[idx].quantity * this.listArr[idx].mrp
             ).toFixed(2);
 
             this.listArr[idx].total_value = (
-                (this.listArr[idx].qty *
+                (this.listArr[idx].quantity *
                     this.listArr[idx].mrp *
                     (100 - this.listArr[idx].disc_percent)) /
                 100
             ).toFixed(2);
 
             this.listArr[idx].disc_value = (
-                (this.listArr[idx].qty *
+                (this.listArr[idx].quantity *
                     this.listArr[idx].mrp *
                     this.listArr[idx].disc_percent) /
                 100
             ).toFixed(2);
 
             this.listArr[idx].after_tax_value = (
-                (this.listArr[idx].qty *
+                (this.listArr[idx].quantity *
                     this.listArr[idx].mrp *
                     (100 - this.listArr[idx].disc_percent)) /
                 (100 + this.listArr[idx].tax)
@@ -1236,24 +1274,24 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
             ).toFixed(2);
         } else {
             this.listArr[idx].sub_total = (
-                this.listArr[idx].qty * this.listArr[idx].mrp
+                this.listArr[idx].quantity * this.listArr[idx].mrp
             ).toFixed(2);
             this.listArr[idx].total_value = (
-                ((this.listArr[idx].qty *
+                ((this.listArr[idx].quantity *
                     this.listArr[idx].mrp *
                     (100 - this.listArr[idx].disc_percent)) /
                     100) *
                 (1 + this.listArr[idx].tax / 100)
             ).toFixed(2);
             this.listArr[idx].disc_value = (
-                ((this.listArr[idx].qty *
+                ((this.listArr[idx].quantity *
                     this.listArr[idx].mrp *
                     this.listArr[idx].disc_percent) /
                     100) *
                 (1 + this.listArr[idx].tax / 100)
             ).toFixed(2);
             this.listArr[idx].after_tax_value = (
-                (this.listArr[idx].qty *
+                (this.listArr[idx].quantity *
                     this.listArr[idx].mrp *
                     (100 - this.listArr[idx].disc_percent)) /
                 100
@@ -1265,7 +1303,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
         }
 
         this.listArr[idx].margin =
-            this.listArr[idx].total_value / this.listArr[idx].qty -
+            this.listArr[idx].total_value / this.listArr[idx].quantity -
                 this.listArr[idx].unit_price <
             0
                 ? 'marginNeg'
@@ -1284,7 +1322,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
         );
 
         const tempArrCostPrice = this.listArr.map(
-            (arr) => parseFloat(arr.unit_price) * parseFloat(arr.qty)
+            (arr) => parseFloat(arr.unit_price) * parseFloat(arr.quantity)
         );
 
         this.total = tempArr
@@ -1362,14 +1400,6 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
             this.submitForm.value.product_arr
         );
 
-        // this._commonApiService
-        // .salesMasterData(data.id)
-        // .subscribe((data) => {
-        //     this.rawSalesData = data;
-        //     this._cdr.markForCheck();
-        //     this.buildRawSaleData();
-        // });
-
         // Main Submit to BE
         this._commonApiService.saveSaleOrder({ sale, saleDetails }).subscribe(
             (data) => {
@@ -1379,13 +1409,6 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                     this.invoice_id = data.id;
                     this.final_invoice_no = data.invoice_no;
                     this.clicked = false;
-
-                    // check
-                    // this.cancel();
-                    // this.formRef.resetForm();
-
-                    // re_init after successful insert
-                    //  this.getInvoiceSequence(this.user_data.center_id, "gstInvoice");
 
                     this._cdr.markForCheck();
 
@@ -1415,6 +1438,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                             invoice_no: data.invoice_no,
                             id: data.id,
                         });
+
                         this._commonApiService
                             .salesMasterData(data.id)
                             .subscribe((data2) => {
@@ -1422,6 +1446,8 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                                 this._cdr.markForCheck();
                                 this.buildRawSaleData();
                             });
+
+                        this.submitForm.markAsPristine();
                     }
 
                     if (navto === 'back' && this.sale_type === 'SI') {
@@ -1440,8 +1466,17 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
             (error) => {
                 this.spinner.hide();
                 this.clicked = false;
+                this.cancel();
+
+                this.formRef.resetForm();
+
+                this.submitForm.patchValue({
+                    invoice_date: new Date(),
+                });
                 this._cdr.markForCheck();
-                this.presentAlert('Error: Something went wrong Contact Admin!');
+                this.presentAlert(
+                    'Error: Something went wrong Contact Admin!!!'
+                );
             }
         );
     }
@@ -1586,6 +1621,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
 
     executeDeletes() {
         this.deletedRowArr.sort().reverse();
+
         this.deletedRowArr.forEach((e) => {
             this.executeDeleteProduct(e);
         });
@@ -1594,9 +1630,9 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
     executeDeleteProduct(elem) {
         this._commonApiService
             .deleteSalesDetails({
-                id: elem.sale_det_id,
+                id: elem.id,
                 sale_id: elem.sale_id,
-                qty: elem.qty,
+                quantity: elem.quantity,
                 product_id: elem.product_id,
                 stock_id: elem.stock_id,
                 audit_needed: this.editCompletedSales,
@@ -1771,8 +1807,10 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                         handler: (blah) => {
                             console.log('Confirm Cancel: blah');
                             this.clearProdInput();
-                            this.p_list.nativeElement.focus();
-                            this.p_list.nativeElement.select();
+                            if (this.p_list !== undefined) {
+                                this.p_list.nativeElement.focus();
+                                this.p_list.nativeElement.select();
+                            }
                         },
                     },
                     {
@@ -1786,9 +1824,6 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                                 this.paraElements[index].focus();
 
                                 this.paraElements[index].select();
-
-                                //	this.qty && this.qty.nativeElement.focus();
-                                // this.qty && this.qty.nativeElement.select();
                             }, 10);
                         },
                     },
@@ -1816,19 +1851,19 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
         if (from === 'tab') {
             this.submitForm.patchValue({
                 temp_desc: event.description,
-                temp_qty: event.qty === 0 ? 1 : event.qty,
+                temp_qty: event.packet_size === 0 ? 1 : event.packet_size,
                 temp_mrp: event.mrp,
             });
             this.lineItemData = event;
             this.selected_description = event.description;
             this.selected_mrp = event.mrp;
-
-            //this.qty && this.qty.nativeElement.focus();
         } else {
             this.submitForm.patchValue({
                 temp_desc: event.option.value.description,
                 temp_qty:
-                    event.option.value.qty === 0 ? 1 : event.option.value.qty,
+                    event.option.value.packet_size === 0
+                        ? 1
+                        : event.option.value.packet_size,
                 temp_mrp: event.option.value.mrp,
             });
             this.lineItemData = event.option.value;
@@ -1836,11 +1871,14 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
             this.selected_mrp = event.option.value.mrp;
 
             setTimeout(() => {
-                this.qty.nativeElement.focus();
-                // this.qty && this.qty.nativeElement.select();
+                if (this.qty !== undefined) {
+                    this.qty.nativeElement.focus();
+                }
             }, 10);
         }
-        this.qty.nativeElement.focus();
+        if (this.qty !== undefined) {
+            this.qty.nativeElement.focus();
+        }
     }
 
     displayFn(obj: any): string | undefined {
@@ -1879,7 +1917,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                             search_text: id,
                         });
                     } else {
-                        return empty();
+                        return EMPTY;
                     }
                 })
             )
@@ -1965,7 +2003,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
 
     itemAdd() {
         // line_item_data is the input box row to add items
-        this.processItems(this.lineItemData, 'loadingNow');
+        this.processItems(this.lineItemData, 'loading_now');
 
         this.submitForm.patchValue({
             product_ctrl: '',
@@ -1978,8 +2016,9 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
         this.submitForm.controls.temp_qty.setErrors(null);
         this.submitForm.controls.temp_mrp.setErrors(null);
         this.submitForm.controls.product_ctrl.setErrors(null);
-
-        this.p_list.nativeElement.focus();
+        if (this.p_list !== undefined) {
+            this.p_list.nativeElement.focus();
+        }
 
         this.selected_description = '';
         this.selected_mrp = '';
@@ -2016,8 +2055,9 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
 
                 this._cdr.detectChanges();
                 this.setTaxLabel(this.customer_state_code);
-
-                this.p_list.nativeElement.focus();
+                if (this.p_list) {
+                    this.p_list.nativeElement.focus();
+                }
             }
         }
     }
@@ -2080,8 +2120,8 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
             this.autoTrigger1.closePanel();
         }
 
-        if (this.autoTrigger2 && this.autoTrigger2.panelOpen) {
-            this.autoTrigger2.closePanel();
+        if (this.prodCtrlTrigger && this.prodCtrlTrigger.panelOpen) {
+            this.prodCtrlTrigger.closePanel();
         }
     }
 

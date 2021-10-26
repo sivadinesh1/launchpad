@@ -1,65 +1,99 @@
 <div class="content">
-	<div class="header" style="display: flex; color: blue; font-size: 18px">
-		<div>
-			<label id="example-radio-group-label"
-				><div> {{ this.data.customer_name }} </div></label
-			>
-		</div>
-		<div>
-			<img src="/assets/images/svg/close.svg" (click)="cancel()" width="20px" height="20px" style="cursor: pointer" />
-		</div>
-	</div>
+    <div class="header" style="display: flex; color: blue; font-size: 18px">
+        <div>
+            <label id="example-radio-group-label"
+                ><div>{{ this.data.customer_name }}</div></label
+            >
+        </div>
+        <div>
+            <img
+                src="/assets/images/svg/close.svg"
+                (click)="cancel()"
+                width="20px"
+                height="20px"
+                style="cursor: pointer"
+            />
+        </div>
+    </div>
 
-	<div>
-		<div style="display: grid; grid-template-columns: 1fr 1fr">
-			<div> Stock Invoice# {{ this.data.invoice_no }} </div>
-			<div>&nbsp;</div>
-		</div>
+    <div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr">
+            <div>Stock Invoice# {{ this.data.invoice_no }}</div>
+            <div>&nbsp;</div>
+        </div>
 
-		<div style="display: grid; grid-column: 1/-1">
-			<label style="font-size: 16px; padding: 6px 0rem; color: cornflowerblue">Print Options:</label>
-		</div>
+        <div style="display: grid; grid-column: 1/-1">
+            <label
+                style="
+                    font-size: 16px;
+                    padding: 6px 0rem;
+                    color: cornflowerblue;
+                "
+                >Print Options:</label
+            >
+        </div>
 
-		<form [formGroup]="submitForm">
-			<mat-form-field appearance="fill">
-				<mat-select formControlName="printtype" value="{selPrintType}" tabindex="-1" (selectionChange)="printTypeChange($event)" required>
-					<mat-option value="estimateprint">Estimate Print</mat-option>
-					<mat-option value="stockissueprint">Stock Issue Print</mat-option>
-				</mat-select>
-			</mat-form-field>
-		</form>
-	</div>
+        <form [formGroup]="submitForm">
+            <mat-form-field appearance="fill">
+                <mat-select
+                    formControlName="printtype"
+                    value="{selPrintType}"
+                    tabindex="-1"
+                    (selectionChange)="printTypeChange($event)"
+                    required
+                >
+                    <mat-option value="estimateprint"
+                        >Estimate Print</mat-option
+                    >
+                    <mat-option value="stockissueprint"
+                        >Stock Issue Print</mat-option
+                    >
+                </mat-select>
+            </mat-form-field>
+        </form>
+    </div>
 
-	<!-- <div style="padding: 0px 8px 10px 10px" *ngIf="selPrintType === 'stockissueprint'">
-		<mat-list-item *ngFor="let item of checkbox_list">
-			<mat-checkbox [(ngModel)]="item.checked" (change)="list_change()" [disabled]="item.disabled" [labelPosition]="item.labelPosition">{{
-				item.name
-			}}</mat-checkbox>
-		</mat-list-item>
-	</div> -->
+    <div
+        style="display: flex; flex-direction: row; flex-wrap: wrap"
+        *ngIf="selPrintType === 'stockissueprint'"
+    >
+        <mat-list-item
+            *ngFor="let item of checkbox_list"
+            style="width: 50%; font-size: 16px"
+        >
+            <mat-checkbox
+                [(ngModel)]="item.checked"
+                (change)="list_change()"
+                [disabled]="item.disabled"
+                >{{ item.name }}</mat-checkbox
+            >
+        </mat-list-item>
+    </div>
 
-	<div style="display: flex; flex-direction: row; flex-wrap: wrap" *ngIf="selPrintType === 'stockissueprint'">
-		<mat-list-item *ngFor="let item of checkbox_list" style="width: 50%; font-size: 16px">
-			<mat-checkbox [(ngModel)]="item.checked" (change)="list_change()" [disabled]="item.disabled" [labelPosition]="item.labelPosition">{{
-				item.name
-			}}</mat-checkbox>
-		</mat-list-item>
-	</div>
-
-	<div class="invoice-details" style="padding-top: 1rem">
-		<div>
-			<button mat-stroked-button color="primary" (click)="view()"> View as PDF </button>
-		</div>
-		&nbsp;&nbsp;
-		<div>
-			<button *ngIf="isPrint" [disabled]="selectedoptionArr.length === 0" (click)="print()" mat-raised-button color="primary"> Print </button>
-			<div style="text-align: center">
-				<span style="font-size: 11px; color: grey">Printed:</span>
-				<span style="font-size: 14px; color: blue">
-					{{ this.printcount }}
-				</span>
-				<span style="font-size: 11px; color: grey">times</span>
-			</div>
-		</div>
-	</div>
+    <div class="invoice-details" style="padding-top: 1rem">
+        <div>
+            <button mat-stroked-button color="primary" (click)="view()">
+                View as PDF
+            </button>
+        </div>
+        &nbsp;&nbsp;
+        <div>
+            <button
+                *ngIf="isPrint"
+                [disabled]="selectedoptionArr.length === 0"
+                (click)="print()"
+                mat-raised-button
+                color="primary"
+            >
+                Print
+            </button>
+            <div style="text-align: center">
+                <span style="font-size: 11px; color: grey">Printed:</span>
+                <span style="font-size: 14px; color: blue">
+                    {{ this.printcount }}
+                </span>
+                <span style="font-size: 11px; color: grey">times</span>
+            </div>
+        </div>
+    </div>
 </div>

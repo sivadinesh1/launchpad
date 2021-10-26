@@ -59,7 +59,7 @@
                             #searchbartab1
                             show-cancel-button="focus"
                             (ionClear)="resetTab1()"
-                            (ionInput)="applyFilterTab1($event.target.value)"
+                            (ionInput)="applyFilterTab1($event)"
                         ></ion-searchbar>
                         <div style="display: flex; align-items: center">
                             <div>
@@ -451,7 +451,7 @@
                     #searchbartab1
                     show-cancel-button="focus"
                     (ionClear)="resetTab2()"
-                    (ionInput)="applyFilterTab2($event.target.value)"
+                    (ionInput)="applyFilterTab2($event)"
                 ></ion-searchbar>
                 <div style="display: flex; align-items: center">
                     <div>

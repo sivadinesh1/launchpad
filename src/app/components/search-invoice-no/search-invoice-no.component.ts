@@ -9,10 +9,13 @@ import { DialogData } from '../invoice-success/invoice-success.component';
     styleUrls: ['./search-invoice-no.component.scss'],
 })
 export class SearchInvoiceNoComponent {
+    invoice_no: any;
     constructor(
         public dialogRef: MatDialogRef<SearchInvoiceNoComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData
-    ) {}
+    ) {
+        this.invoice_no = data.invoice_no;
+    }
 
     onNoClick(): void {
         this.dialogRef.close();

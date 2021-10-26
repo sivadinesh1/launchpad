@@ -324,10 +324,10 @@ export class AccountsPaymentsPage implements OnInit {
     // 		this.isTableHasData = false;
     // 	}
     // }
-
-    applyFilterTab1(filterValue: string) {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    // $event.target.value
+    applyFilterTab1(filterValue: any) {
+        filterValue = filterValue.target.value.trim(); // Remove whitespace
+        filterValue = filterValue.target.value.toLowerCase(); // Datasource defaults to lowercase matches
         this.saleInvoicedataSource.filter = filterValue;
 
         if (this.saleInvoicedataSource.filteredData.length > 0) {
@@ -337,9 +337,9 @@ export class AccountsPaymentsPage implements OnInit {
         }
     }
 
-    applyFilterTab2(filterValue: string) {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    applyFilterTab2(filterValue: any) {
+        filterValue = filterValue.target.value.trim(); // Remove whitespace
+        filterValue = filterValue.target.value.toLowerCase(); // Datasource defaults to lowercase matches
         this.paymentOverviewdataSource.filter = filterValue;
 
         if (this.paymentOverviewdataSource.filteredData.length > 0) {
@@ -349,9 +349,9 @@ export class AccountsPaymentsPage implements OnInit {
         }
     }
 
-    applyFilterTab3(filterValue: string) {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    applyFilterTab3(filterValue: any) {
+        filterValue = filterValue.target.value.trim(); // Remove whitespace
+        filterValue = filterValue.target.value.toLowerCase(); // Datasource defaults to lowercase matches
         this.paymentdataSource.filter = filterValue;
 
         if (this.paymentdataSource.filteredData.length > 0) {

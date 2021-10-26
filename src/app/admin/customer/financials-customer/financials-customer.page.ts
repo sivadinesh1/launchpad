@@ -282,9 +282,9 @@ export class FinancialsCustomerPage implements OnInit {
         this._cdr.detectChanges();
     }
 
-    applyFilter3(filterValue: string) {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    applyFilter3(filterValue: any) {
+        filterValue = filterValue.target.value.trim(); // Remove whitespace
+        filterValue = filterValue.target.value.toLowerCase(); // Datasource defaults to lowercase matches
         this.paymentdataSource.filter = filterValue;
 
         if (this.paymentdataSource.filteredData.length > 0) {
@@ -294,9 +294,9 @@ export class FinancialsCustomerPage implements OnInit {
         }
     }
 
-    applyFilter2(filterValue: string) {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    applyFilter2(filterValue: any) {
+        filterValue = filterValue.target.value.trim(); // Remove whitespace
+        filterValue = filterValue.target.value.toLowerCase(); // Datasource defaults to lowercase matches
         this.paymentOverviewdataSource.filter = filterValue;
 
         if (this.paymentOverviewdataSource.filteredData.length > 0) {
@@ -322,9 +322,9 @@ export class FinancialsCustomerPage implements OnInit {
         this.enddate = $event.target.value;
     }
 
-    applyFilter1(filterValue: string) {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    applyFilter1(filterValue: any) {
+        filterValue = filterValue.target.value.trim(); // Remove whitespace
+        filterValue = filterValue.target.value.toLowerCase(); // Datasource defaults to lowercase matches
 
         this.saleInvoicedataSource.filter = filterValue;
 

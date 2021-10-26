@@ -287,7 +287,7 @@ export class EnquiryPage {
     }
 
     getLength() {
-        const control = <FormArray>this.submitForm.controls.productarr;
+        const control = this.submitForm.controls.productarr as FormArray;
         return control.length;
     }
 
@@ -417,7 +417,7 @@ export class EnquiryPage {
             return false;
         }
 
-        const control = <FormArray>this.submitForm.controls.productarr;
+        const control = this.submitForm.controls.productarr as FormArray;
 
         // DnD insert adds new row in starting of the array {idx : 0}
         // control.insert(0, this._fb.group({

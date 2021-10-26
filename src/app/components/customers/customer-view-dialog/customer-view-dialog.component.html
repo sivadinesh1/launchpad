@@ -1,99 +1,125 @@
 <ion-content>
-	<div class="screen-header">
-		<div style="padding: 10px 0px">Customer Details</div>
-		<div style="align-items: center">
-			<img
-				class="cursor"
-				src="/assets/images/svg/close.svg"
-				(click)="close()"
-				width="16px"
-				height="16px"
-			/>
-		</div>
-	</div>
+    <div class="screen-header">
+        <div style="padding: 10px 0px">Customer Details</div>
+        <div style="align-items: center">
+            <img
+                class="cursor"
+                src="/assets/images/svg/close.svg"
+                (click)="close()"
+                width="16px"
+                height="16px"
+            />
+        </div>
+    </div>
 
-	<div class="customer-info">
-		<div style="padding: 10px 0px; color: #222222; font-size: 14px">
-			{{ customer.name }}
-		</div>
-		<div style="padding: 10px 0px; display: grid">
-			<div style="color: #666666; font-size: 14px">Outstanding Receivables</div>
-			<div style="color: #222222; font-size: 14px">N/A</div>
-		</div>
-	</div>
+    <div class="customer-info">
+        <div style="padding: 10px 0px; color: #222222; font-size: 14px">
+            {{ customer.name }}
+        </div>
+        <div style="padding: 10px 0px; display: grid">
+            <div style="color: #666666; font-size: 14px">
+                Outstanding Receivables
+            </div>
+            <div style="color: #222222; font-size: 14px">N/A</div>
+        </div>
+    </div>
 
-	<div class="customer-info">
-		<div style="padding: 10px 0px 0px 0px; color: #222222; font-size: 14px">
-			Discounts
-		</div>
-		<div
-			style="
-				padding: 10px 0px;
-				display: grid;
-				grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-				text-align: center;
-			"
-		>
-			<div>
-				<div style="color: #666666; font-size: 12px">GST (0%)</div>
-				<div style="color: #222222; font-size: 16px; padding: 5px">
-					{{ customerdiscountdata?.gstzero }}%
-				</div>
-			</div>
-			<div>
-				<div style="color: #666666; font-size: 12px">GST (5%)</div>
-				<div style="color: #222222; font-size: 16px; padding: 5px">
-					{{ customerdiscountdata?.gstfive }}%
-				</div>
-			</div>
-			<div>
-				<div style="color: #666666; font-size: 12px">GST (12%)</div>
-				<div style="color: #222222; font-size: 16px; padding: 5px">
-					{{ customerdiscountdata?.gsttwelve }}%
-				</div>
-			</div>
-			<div>
-				<div style="color: #666666; font-size: 12px">GST (18%)</div>
-				<div style="color: #222222; font-size: 16px; padding: 5px">
-					{{ customerdiscountdata?.gsteighteen }}%
-				</div>
-			</div>
-			<div>
-				<div style="color: #666666; font-size: 12px">GST (28%)</div>
-				<div style="color: #222222; font-size: 16px; padding: 5px">
-					{{ customerdiscountdata?.gsttwentyeight }}%
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="customer-info">
+        <div style="padding: 10px 0px 0px 0px; color: #222222; font-size: 14px">
+            Discounts
+        </div>
+        <div
+            style="
+                padding: 10px 0px;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+                text-align: center;
+            "
+        >
+            <div>
+                <div style="color: #666666; font-size: 12px">GST (0%)</div>
+                <div style="color: #222222; font-size: 16px; padding: 5px">
+                    {{ customerdiscountdata?.gstzero }}%
+                </div>
+            </div>
+            <div>
+                <div style="color: #666666; font-size: 12px">GST (5%)</div>
+                <div style="color: #222222; font-size: 16px; padding: 5px">
+                    {{ customerdiscountdata?.gstfive }}%
+                </div>
+            </div>
+            <div>
+                <div style="color: #666666; font-size: 12px">GST (12%)</div>
+                <div style="color: #222222; font-size: 16px; padding: 5px">
+                    {{ customerdiscountdata?.gsttwelve }}%
+                </div>
+            </div>
+            <div>
+                <div style="color: #666666; font-size: 12px">GST (18%)</div>
+                <div style="color: #222222; font-size: 16px; padding: 5px">
+                    {{ customerdiscountdata?.gsteighteen }}%
+                </div>
+            </div>
+            <div>
+                <div style="color: #666666; font-size: 12px">GST (28%)</div>
+                <div style="color: #222222; font-size: 16px; padding: 5px">
+                    {{ customerdiscountdata?.gsttwentyeight }}%
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<mat-tab-group class="tab-group">
-		<mat-tab label="Address" class="demo-tab-content">
-			<div style="padding: 10px 0px 0px 0px; color: #222222; font-size: 14px">
-				BILLING ADDRESS
-			</div>
-			<div style="padding: 10px 0px 0px 0px; font-size: 12px; color: #666666">
-				<div>{{ customer.address1 }}</div>
-				<div>{{ customer.address2 }}</div>
+    <mat-tab-group class="tab-group">
+        <mat-tab label="Address" class="demo-tab-content">
+            <div
+                style="
+                    padding: 10px 0px 0px 0px;
+                    color: #222222;
+                    font-size: 14px;
+                "
+            >
+                BILLING ADDRESS
+            </div>
+            <div
+                style="
+                    padding: 10px 0px 0px 0px;
+                    font-size: 12px;
+                    color: #666666;
+                "
+            >
+                <div>{{ customer.address1 }}</div>
+                <div>{{ customer.address2 }}</div>
 
-				<div>{{ customer.district }}</div>
-				<div>{{ customer.pin }}</div>
-			</div>
+                <div>{{ customer.district }}</div>
+                <div>{{ customer.pin }}</div>
+            </div>
 
-			<div style="padding: 10px 0px 0px 0px; color: #222222; font-size: 14px">
-				SHIPPING ADDRESS
-			</div>
-			<div style="padding: 10px 0px 0px 0px; font-size: 12px; color: #666666">
-				<div>{{ customer.csa_address1 }}</div>
-				<div>{{ customer.csa_address2 }}</div>
+            <div
+                style="
+                    padding: 10px 0px 0px 0px;
+                    color: #222222;
+                    font-size: 14px;
+                "
+            >
+                SHIPPING ADDRESS
+            </div>
+            <div
+                style="
+                    padding: 10px 0px 0px 0px;
+                    font-size: 12px;
+                    color: #666666;
+                "
+            >
+                <div>{{ customer.address1 }}</div>
+                <div>{{ customer.address2 }}</div>
 
-				<div>{{ customer.csa_district }}</div>
-				<div>{{ customer.csa_pin }}</div>
-			</div>
-		</mat-tab>
-		<mat-tab label="Contact Persons" class="demo-tab-content">
-			CONTACT PERSONS
-		</mat-tab>
-		<mat-tab label="Latest" class="demo-tab-content"> LATEST </mat-tab>
-	</mat-tab-group>
+                <div>{{ customer.district }}</div>
+                <div>{{ customer.pin }}</div>
+            </div>
+        </mat-tab>
+        <mat-tab label="Contact Persons" class="demo-tab-content">
+            CONTACT PERSONS
+        </mat-tab>
+        <mat-tab label="Latest" class="demo-tab-content"> LATEST </mat-tab>
+    </mat-tab-group>
 </ion-content>

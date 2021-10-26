@@ -276,9 +276,9 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
         }
     }
 
-    applyFilterTab1(filterValue: string) {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    applyFilterTab1(filterValue: any) {
+        filterValue = filterValue.target.value.trim(); // Remove whitespace
+        filterValue = filterValue.target.value.toLowerCase(); // Datasource defaults to lowercase matches
         this.purchaseInvoicedataSource.filter = filterValue;
 
         if (this.purchaseInvoicedataSource.filteredData.length > 0) {
@@ -288,9 +288,9 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
         }
     }
 
-    applyFilterTab2(filterValue: string) {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    applyFilterTab2(filterValue: any) {
+        filterValue = filterValue.target.value.trim(); // Remove whitespace
+        filterValue = filterValue.target.value.toLowerCase(); // Datasource defaults to lowercase matches
         this.paymentdataSource.filter = filterValue;
 
         if (this.paymentdataSource.filteredData.length > 0) {

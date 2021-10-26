@@ -1,6 +1,17 @@
 <ion-content>
     <div class="search-sale-header" style="padding: 1rem">All Sale Orders</div>
     <div class="search-bar">
+        <div>
+            <img
+                src="/assets/images/svg/refresh.svg"
+                width="22px"
+                height="22px"
+                style="cursor: pointer"
+                matTooltip="Reset Search Filter"
+                matTooltipClass="tooltip"
+                (click)="reset()"
+            />
+        </div>
         <div
             [matMenuTriggerFor]="menuN"
             #menuTriggerN
@@ -10,22 +21,31 @@
                 src="/assets/images/svg/filter-results-button.svg"
                 width="22px"
                 height="22px"
+                style="cursor: pointer"
+                matTooltip="Advance Filter"
+                matTooltipClass="tooltip"
             />
         </div>
 
         <app-search-customers
             (customerOutput)="customerInfoPage($event)"
+            (customerSearchResetOutput)="customerSearchReset()"
         ></app-search-customers>
 
         <div class="toggle_search_status">
-            <ion-segment mode="ios" value="New Sale" class="toggle_btn">
-                <ion-segment-button value="New Sale">
+            <ion-segment
+                mode="ios"
+                value="all"
+                class="toggle_btn"
+                (ionChange)="statusFilterChanged($event)"
+            >
+                <ion-segment-button value="all">
                     <ion-label>All</ion-label>
                 </ion-segment-button>
-                <ion-segment-button value="Sales & Services">
+                <ion-segment-button value="D">
                     <ion-label>Draft</ion-label>
                 </ion-segment-button>
-                <ion-segment-button value="invoiced">
+                <ion-segment-button value="C">
                     <ion-label>Invoiced</ion-label>
                 </ion-segment-button>
             </ion-segment>
@@ -88,14 +108,19 @@
                 style="cursor: pointer"
                 width="32px"
                 height="32px"
-                (click)="exportDraftSalesToExcel()"
+                (click)="exportCompletedSalesToExcel()"
             />
         </div>
+        <div>View</div>
+        <div>Edit</div>
+        <div>&nbsp;</div>
     </div>
-
+    <div *ngIf="filteredValues?.length === 0" class="no-records-found">
+        No records found
+    </div>
     <div *ngFor="let item of filteredValues; let idx = index" class="listItem">
         <div>{{idx + 1}}</div>
-        <div class="item">{{item.invoice_date | date:'yyyy-d-M' }}</div>
+        <div class="item">{{item.invoice_date | date:'d-M-yyyy' }}</div>
         <div class="item">{{item.customer_name}}</div>
         <div class="item" (click)="openDialog(item)">{{item.invoice_no}}</div>
 
@@ -105,7 +130,22 @@
         </div>
 
         <div class="item" style="text-align: right">
-            {{item.status === 'D' ? 'Draft' : 'Completed'}}
+            <span [ngClass]="isCompleted(item.status)">
+                {{item.status === 'D' ? 'Draft' : 'Invoiced'}}
+            </span>
+        </div>
+
+        <div class="item" style="text-align: right">&nbsp;</div>
+        <div class="item" style="text-align: center">
+            <mat-icon
+                #tooltip="matTooltip"
+                matTooltip="View"
+                matTooltipClass="tooltip"
+                (mousedown)="tooltip.hide()"
+                [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
+                (click)="openDialog(item)"
+                >remove_red_eye
+            </mat-icon>
         </div>
 
         <div class="item" style="text-align: center">
@@ -118,12 +158,8 @@
                 (click)="goSalesEditScreen(item)"
                 >edit
             </mat-icon>
-            <span style="position: relative; color: #6d78d2; top: -5px"
-                >&nbsp;Edit</span
-            >
         </div>
 
-        <div class="item" style="text-align: center">&nbsp;</div>
         <div
             class="item"
             style="text-align: center"
@@ -138,12 +174,12 @@
                 (click)="goPrintInvoice(item)"
                 >print
             </mat-icon>
-            <span style="font-size: 12px; font-weight: 600"
+
+            <span style="font-size: 12px; font-weight: 600; color: grey"
                 >[{{item.print_count === -1 ? 'M': item.print_count}}]
             </span>
         </div>
 
-        <!-- *ngIf="this.deleteAccess === 'Y'" -->
         <div
             class="item"
             *ngIf="item.status === 'D'"
@@ -156,23 +192,8 @@
                 (mousedown)="tooltip.hide()"
                 [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
                 (click)="presentAlertConfirm(item)"
-                >delete_outline </mat-icon
-            ><span style="position: relative; color: red; top: -5px"
-                >&nbsp;Delete</span
-            >
-        </div>
-
-        <div *ngIf="tabIndex === 1">
-            <img
-                matTooltip="Sales Return"
-                matTooltipClass="tooltip"
-                src="/assets/images/svg/return.svg"
-                style="cursor: pointer"
-                width="24px"
-                height="24px"
-                color="red"
-                (click)="salesReturn(item)"
-            />
+                >delete_outline
+            </mat-icon>
         </div>
     </div>
 
@@ -214,12 +235,6 @@ DnD - sample vertical menu
     <mat-menu #menuN="matMenu">
         <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
             Search By Invoice #
-        </div>
-        <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
-            Sort By Recent Invoice
-        </div>
-        <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
-            Sort By Old Invoice
         </div>
     </mat-menu>
 </ion-content>

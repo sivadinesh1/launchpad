@@ -461,3 +461,29 @@ input[type="number"] {
     border-bottom: 1px solid var(--lp-line-divider);
     color: var(--lp-header-text-color, #000);
 }
+
+.no-records-found {
+    padding: 1rem;
+    text-align: center;
+    font-size: 1rem;
+    color: #0000f1;
+}
+
+.link_text {
+    color: #4e53b7;
+    font-weight: bold;
+    font-size: 13px;
+    font-style: normal;
+    line-height: 16px;
+    cursor: pointer;
+}
+
+.completed {
+    color: green;
+    font-weight: 500;
+}
+
+.draft {
+    color: blue;
+    font-weight: 500;
+}

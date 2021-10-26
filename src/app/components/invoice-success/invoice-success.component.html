@@ -1,55 +1,79 @@
 <div class="content">
-	<div class="header" style="display: flex; color: blue; font-size: 16px">
-		<div> {{ this.data.customer_name }} </div>
+    <div class="header" style="display: flex; color: blue; font-size: 16px">
+        <div>{{ this.data.customer_name }}</div>
 
-		<div>
-			<img src="/assets/images/svg/close.svg" (click)="cancel()" width="20px" height="20px" style="cursor: pointer" />
-		</div>
-	</div>
+        <div>
+            <img
+                src="/assets/images/svg/close.svg"
+                (click)="cancel()"
+                width="20px"
+                height="20px"
+                style="cursor: pointer"
+            />
+        </div>
+    </div>
 
-	<div style="padding: 0px 8px 10px 0px; font-size: 16px">
-		<div style="display: grid; grid-template-columns: 1fr 1fr">
-			<div> INVOICE# {{ this.data.invoice_no }} </div>
-			<div>&nbsp;</div>
-		</div>
+    <div style="padding: 0px 8px 10px 0px; font-size: 16px">
+        <div style="display: grid; grid-template-columns: 1fr 1fr">
+            <div>INVOICE# {{ this.data.invoice_no }}</div>
+            <div>&nbsp;</div>
+        </div>
 
-		<div style="display: grid; grid-column: 1/-1">
-			<label style="font-size: 16px; padding: 6px 0rem; color: cornflowerblue">Print Options:</label>
-		</div>
+        <div style="display: grid; grid-column: 1/-1">
+            <label
+                style="
+                    font-size: 16px;
+                    padding: 6px 0rem;
+                    color: cornflowerblue;
+                "
+                >Print Options:</label
+            >
+        </div>
 
-		<div style="display: flex; flex-direction: row; flex-wrap: wrap">
-			<mat-list-item *ngFor="let item of checkbox_list" style="width: 50%; font-size: 16px">
-				<mat-checkbox [(ngModel)]="item.checked" (change)="list_change()" [disabled]="item.disabled" [labelPosition]="item.labelPosition">{{
-					item.name
-				}}</mat-checkbox>
-			</mat-list-item>
-		</div>
-	</div>
-	<div style="text-align: right; font-size: 13px; padding: 2px 0">
-		<mat-checkbox class="example-margin" [(ngModel)]="checked">Include Ship To</mat-checkbox>
-		<!-- <mat-checkbox
-				[(ngModel)]="item.checked"
-				(change)="list_change()"
-				[disabled]="item.disabled"
-				[labelPosition]="item.labelPosition"
-				>Include Ship To</mat-checkbox
-			> -->
-	</div>
+        <div style="display: flex; flex-direction: row; flex-wrap: wrap">
+            <mat-list-item
+                *ngFor="let item of checkbox_list"
+                style="width: 50%; font-size: 16px"
+            >
+                <mat-checkbox
+                    [(ngModel)]="item.checked"
+                    (change)="list_change()"
+                    [disabled]="item.disabled"
+                    >{{ item.name }}</mat-checkbox
+                >
+            </mat-list-item>
+        </div>
+    </div>
+    <div style="text-align: right; font-size: 13px; padding: 2px 0">
+        <mat-checkbox class="example-margin" [(ngModel)]="checked"
+            >Include Ship To</mat-checkbox
+        >
+    </div>
 
-	<div class="invoice-details">
-		<div>
-			<button mat-stroked-button color="primary" (click)="view()"> View as PDF </button>
-		</div>
-		&nbsp;&nbsp;
-		<div>
-			<button *ngIf="isPrint" [disabled]="selectedoptionArr.length === 0" (click)="print()" mat-raised-button color="primary"> Print Invoice</button>
-			<div style="text-align: center">
-				<span style="font-size: 11px; color: grey">Printed:</span>
-				<span style="font-size: 14px; color: blue">
-					{{ this.printcount === -1 ? 'M' : this.printcount }}
-				</span>
-				<span style="font-size: 11px; color: grey">times</span>
-			</div>
-		</div>
-	</div>
+    <div class="invoice-details">
+        <div>
+            <button mat-stroked-button color="primary" (click)="view()">
+                View as PDF
+            </button>
+        </div>
+        &nbsp;&nbsp;
+        <div>
+            <button
+                *ngIf="isPrint"
+                [disabled]="selectedoptionArr.length === 0"
+                (click)="print()"
+                mat-raised-button
+                color="primary"
+            >
+                Print Invoice
+            </button>
+            <div style="text-align: center">
+                <span style="font-size: 11px; color: grey">Printed:</span>
+                <span style="font-size: 14px; color: blue">
+                    {{ this.printcount === -1 ? "M" : this.printcount }}
+                </span>
+                <span style="font-size: 11px; color: grey">times</span>
+            </div>
+        </div>
+    </div>
 </div>

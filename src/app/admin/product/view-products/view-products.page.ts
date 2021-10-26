@@ -115,7 +115,7 @@ export class ViewProductsPage implements OnInit {
 
     ionViewDidEnter() {}
 
-    openDialog(product_search_text: string): void {
+    openDialog(product_search_text: any): void {
         this._commonApiService
             .getProductInfo({
                 center_id: this.center_id,

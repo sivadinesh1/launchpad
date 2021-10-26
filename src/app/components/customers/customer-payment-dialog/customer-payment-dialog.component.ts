@@ -4,6 +4,7 @@ import {
     ChangeDetectorRef,
     ChangeDetectionStrategy,
     Inject,
+    AfterViewInit,
 } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 
@@ -31,7 +32,7 @@ import { CurrencyPipe } from '@angular/common';
     styleUrls: ['./customer-payment-dialog.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CustomerPaymentDialogComponent implements OnInit {
+export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
     customerAdded = false;
     submitForm: FormGroup;
     customerData: any;
@@ -148,7 +149,7 @@ export class CustomerPaymentDialogComponent implements OnInit {
     }
 
     addAccount() {
-        const control = <FormArray>this.submitForm.controls.accountarr;
+        const control = this.submitForm.controls.accountarr as FormArray;
         control.push(this.initAccount());
 
         this._cdr.markForCheck();

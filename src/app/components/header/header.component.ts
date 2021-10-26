@@ -10,7 +10,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import * as moment from 'moment';
-import { empty, Observable } from 'rxjs';
+
+import { EMPTY, Observable } from 'rxjs';
+
 import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { Customer } from 'src/app/models/Customer';
 import { IProduct } from 'src/app/models/Product';
@@ -27,6 +29,9 @@ import { SearchDialogComponent } from '../search/search-dialog/search-dialog.com
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent implements OnInit {
+    @Output()
+    hbMenuClick = new EventEmitter<any>();
+
     user_data: any;
     center_id: any;
 
@@ -34,9 +39,6 @@ export class HeaderComponent implements OnInit {
 
     public today = Date.now();
     filled = false;
-
-    @Output()
-    onHBMenuClick = new EventEmitter<any>();
 
     customerdata: any;
 
@@ -86,15 +88,6 @@ export class HeaderComponent implements OnInit {
     }
 
     searchProducts() {
-        let invdt = '';
-        if (this.submitForm.value.invoicedate === null) {
-            invdt = moment().format('DD-MM-YYYY');
-        } else {
-            invdt = moment(this.submitForm.value.invoicedate).format(
-                'DD-MM-YYYY'
-            );
-        }
-
         // check customer_id, empty
         this.submitForm.controls.product_ctrl.valueChanges
             .pipe(
@@ -102,20 +95,19 @@ export class HeaderComponent implements OnInit {
                 tap(() => (this.isLoading = true)),
                 switchMap((id: any) => {
                     if (id != null && id.length >= 1) {
-                        return this._commonApiService.getProductInformation({
+                        return this._commonApiService.getProductInfo({
                             center_id: this.user_data.center_id,
-                            customerid: 1,
-                            orderdate: invdt,
                             search_text: id,
                         });
                     } else {
-                        return empty();
+                        return EMPTY;
                     }
                 })
             )
 
             .subscribe((data: any) => {
                 this.isLoading = false;
+
                 this.product_lis = data.body;
 
                 this._cdr.markForCheck();
@@ -150,23 +142,21 @@ export class HeaderComponent implements OnInit {
 
     async showTransactions(event, from) {
         if (from === 'tab') {
-            this.showInventoryReportsDialog(
-                event.product_code,
-                event.product_id
-            );
+            this.showInventoryReportsDialog(event.product_code, event.id);
         } else {
             this.showInventoryReportsDialog(
                 event.option.value.product_code,
-                event.option.value.product_id
+                event.option.value.id
             );
         }
     }
 
     async showInventoryReportsDialog(product_code, product_id) {
+        debugger;
         const modal = await this._modalcontroller.create({
             component: InventoryReportsDialogComponent,
             componentProps: {
-                center_id: this.center_id,
+                center_id: this.user_data.center_id,
                 product_code,
                 product_id,
             },
@@ -197,6 +187,6 @@ export class HeaderComponent implements OnInit {
     }
 
     onclick() {
-        this.onHBMenuClick.emit();
+        this.hbMenuClick.emit();
     }
 }

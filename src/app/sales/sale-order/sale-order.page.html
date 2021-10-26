@@ -4,7 +4,7 @@
         <div class="screen-header">
             <div style="font-size: 18px; letter-spacing: 1px; color: #4e53b7">
                 {{this.submitForm?.value?.invoice_type === 'gstInvoice' ? "SALE
-                ORDER - Tax Invoice": "STOCK ISSUE"}}
+                ORDER - Tax Invoice ": "STOCK ISSUE"}}
             </div>
             <div>
                 <ion-segment mode="ios" value="New Sale">
@@ -483,7 +483,6 @@
 
                                 <div style="text-align: right">
                                     <mat-form-field
-                                        appearance="none"
                                         style="
                                             margin-bottom: -1.25em;
                                             width: 80px;
@@ -522,7 +521,6 @@
 
                                 <div style="text-align: right">
                                     <mat-form-field
-                                        appearance="none"
                                         style="
                                             margin-bottom: -1.25em;
                                             width: 80px;
@@ -602,7 +600,7 @@
                                         {{item.total_value }}
                                     </span>
                                 </div>
-                                <div>delete</div>
+                                <div>&nbsp;</div>
                             </div>
                         </div>
                     </div>
@@ -614,11 +612,11 @@
                                         <mat-label>Select Item Code</mat-label>
                                         <input
                                             matInput
-                                            [matAutocomplete]="auto2"
+                                            [matAutocomplete]="auto3"
                                             [readonly]="!is_customer_selected"
                                             formControlName="product_ctrl"
-                                            #typeHead2
-                                            #plist
+                                            #typehead2
+                                            #p_list
                                             autofocus
                                             matTooltipPosition="after"
                                             tabindex="2"
@@ -646,7 +644,7 @@
                                         </button>
 
                                         <mat-autocomplete
-                                            #auto2="matAutocomplete"
+                                            #auto3="matAutocomplete"
                                             autoActiveFirstOption
                                             [displayWith]="displayProdFn"
                                             panelWidth="auto"
@@ -791,7 +789,7 @@
                                     <input
                                         matInput
                                         type="number"
-                                        min="1"
+                                        min="0"
                                         max="100000"
                                         tabindex="3"
                                         formControlName="temp_mrp"

@@ -138,7 +138,7 @@ export class VendorPaymentDialogComponent implements OnInit {
     }
 
     addAccount() {
-        const control = <FormArray>this.submitForm.controls.accountarr;
+        const control = this.submitForm.controls.accountarr as FormArray;
         control.push(this.initAccount());
 
         this._cdr.markForCheck();
@@ -151,7 +151,7 @@ export class VendorPaymentDialogComponent implements OnInit {
     // method to calculate total payed now and balance due
     checkTotalSum() {
         this.summed = 0;
-        const ctrl = <FormArray>this.submitForm.controls.accountarr;
+        const ctrl = this.submitForm.controls.accountarr as FormArray;
         // iterate each object in the form array
         ctrl.controls.forEach((x) => {
             // get the itemmt value and need to parse the input to number

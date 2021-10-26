@@ -1,142 +1,169 @@
 <div class="add-prod-wrap">
-	<div class="row1">
-		<div style="position: relative; top: 16px">
-			<mat-form-field class="readonly-wrapper" style="position: absolute">
-				<mat-label>Search By</mat-label>
-				<mat-select required value="{{ searchByFlag }}" (selectionChange)="handleSearchBy($event)">
-					<mat-option *ngFor="let item of searchBy" [value]="item.searchby">
-						{{ item.searchby }}
-					</mat-option>
-				</mat-select>
-			</mat-form-field>
-		</div>
-		<div class="search_box">
-			<ion-searchbar
-				style="width: 300px"
-				autofocus
-				debounce="400"
-				placeholder="{{ placeHolderTxt }}"
-				#mySearchbar
-				show-cancel-button="focus"
-				(ionClear)="reset()"
-				(ionChange)="openDialog($event.target.value)"
-			></ion-searchbar>
-		</div>
-		<div class="close">
-			<img src="/assets/images/svg/close.svg" (click)="closeModal()" width="20px" height="20px" />
-		</div>
-	</div>
+    <div class="row1">
+        <div style="position: relative; top: 16px">
+            <mat-form-field class="readonly-wrapper" style="position: absolute">
+                <mat-label>Search By</mat-label>
+                <mat-select
+                    required
+                    value="{{ searchByFlag }}"
+                    (selectionChange)="handleSearchBy($event)"
+                >
+                    <mat-option
+                        *ngFor="let item of searchBy"
+                        [value]="item.searchby"
+                    >
+                        {{ item.searchby }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="search_box">
+            <ion-searchbar
+                style="width: 300px"
+                autofocus
+                debounce="400"
+                placeholder="{{ placeHolderTxt }}"
+                #mySearchbar
+                show-cancel-button="focus"
+                (ionClear)="reset()"
+                (ionChange)="openDialog($event)"
+            ></ion-searchbar>
+        </div>
+        <div class="close">
+            <img
+                src="/assets/images/svg/close.svg"
+                (click)="closeModal()"
+                width="20px"
+                height="20px"
+            />
+        </div>
+    </div>
 
-	<ng-container *ngIf="this.searchByFlag === 'Item'">
-		<div class="header-row">
-			<div class="col">#</div>
-			<div class="col">Product Info</div>
-			<div class="col">Brand</div>
-			<div class="col">Rack Info</div>
-			<div class="col txt-right-align">Available Stock</div>
+    <ng-container *ngIf="this.searchByFlag === 'Item'">
+        <div class="header-row">
+            <div class="col">#</div>
+            <div class="col">Product Info</div>
+            <div class="col">Brand</div>
+            <div class="col">Rack Info</div>
+            <div class="col txt-right-align">Available Stock</div>
 
-			<div class="col txt-right-align">MRP</div>
-		</div>
-		<div class="row2">
-			<ng-container *ngFor="let item of resultList; let idx = index">
-				<div class="list-item plain-row-color-nohover">
-					<div class="item1">{{ idx + 1 }}</div>
-					<div class="item2">
-						<div class="item21">
-							{{ item.product_code }}
-							<span style="color: blue; cursor: pointer" (click)="showInventoryReportsDialog(item.product_code, item.product_id)"
-								>(View Transactions)</span
-							>
-						</div>
-						<div class="item22 desc-styl">
-							{{ item.description }}
-						</div>
-					</div>
-					<div class="item3">{{ item.name }}</div>
-					<div class="item3">{{ item.rackno }}</div>
-					<div class="item3" style="text-align: right">
-						{{ item.available_stock }}
-					</div>
+            <div class="col txt-right-align">MRP</div>
+        </div>
+        <div class="row2">
+            <ng-container *ngFor="let item of resultList; let idx = index">
+                <div class="list-item plain-row-color-nohover">
+                    <div class="item1">{{ idx + 1 }}</div>
+                    <div class="item2">
+                        <div class="item21">
+                            {{ item.product_code }}
+                            <span
+                                style="color: blue; cursor: pointer"
+                                (click)="
+                                    showInventoryReportsDialog(
+                                        item.product_code,
+                                        item.product_id
+                                    )
+                                "
+                                >(View Transactions)</span
+                            >
+                        </div>
+                        <div class="item22 desc-styl">
+                            {{ item.description }}
+                        </div>
+                    </div>
+                    <div class="item3">{{ item.name }}</div>
+                    <div class="item3">{{ item.rackno }}</div>
+                    <div class="item3" style="text-align: right">
+                        {{ item.available_stock }}
+                    </div>
 
-					<div class="item3" style="text-align: right">{{ item.mrp }}</div>
-				</div>
-			</ng-container>
-		</div>
-	</ng-container>
-	<ng-container *ngIf="this.searchByFlag === 'Customer'">
-		<div class="header-row-customer">
-			<div class="col">#</div>
-			<div class="col">NAME</div>
-			<div class="col">ADDRESS</div>
-			<div class="col">CONTACT</div>
-		</div>
-		<div class="row2-customer">
-			<ng-container *ngFor="let item of resultList; let idx = index">
-				<div class="list-item plain-row-color-nohover">
-					<div class="item1">{{ idx + 1 }}</div>
-					<div class="item1">{{ item.name }}</div>
-					<div class="item2">
-						<div class="item21">{{ item.csa_address1 }}</div>
-						<div class="item22 desc-styl">{{ item.csa_address2 }}</div>
-					</div>
-					<div class="item3">
-						<div>Primary #: {{ item.mobile }}</div>
-						<div>Secondary #: {{ item.mobile }}</div>
-					</div>
-				</div>
-			</ng-container>
-		</div>
-	</ng-container>
+                    <div class="item3" style="text-align: right">
+                        {{ item.mrp }}
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="this.searchByFlag === 'Customer'">
+        <div class="header-row-customer">
+            <div class="col">#</div>
+            <div class="col">NAME</div>
+            <div class="col">ADDRESS</div>
+            <div class="col">CONTACT</div>
+        </div>
+        <div class="row2-customer">
+            <ng-container *ngFor="let item of resultList; let idx = index">
+                <div class="list-item plain-row-color-nohover">
+                    <div class="item1">{{ idx + 1 }}</div>
+                    <div class="item1">{{ item.name }}</div>
+                    <div class="item2">
+                        <div class="item21">{{ item.csa_address1 }}</div>
+                        <div class="item22 desc-styl">
+                            {{ item.csa_address2 }}
+                        </div>
+                    </div>
+                    <div class="item3">
+                        <div>Primary #: {{ item.mobile }}</div>
+                        <div>Secondary #: {{ item.mobile }}</div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
 
-	<ng-container *ngIf="this.searchByFlag === 'Vendor'">
-		<div class="header-row-vendor">
-			<div class="col">#</div>
-			<div class="col">NAME</div>
-			<div class="col">ADDRESS</div>
-			<div class="col">CONTACT</div>
-		</div>
-		<div class="row2-vendor">
-			<ng-container *ngFor="let item of resultList; let idx = index">
-				<div class="list-item plain-row-color-nohover">
-					<div class="item1">{{ idx + 1 }}</div>
-					<div class="item1">{{ item.name }}</div>
-					<div class="item2">
-						<div class="item21">{{ item.address1 }}</div>
-						<div class="item22 desc-styl">{{ item.address2 }}</div>
-					</div>
-					<div class="item3">
-						<div>Primary #: {{ item.mobile }}</div>
-						<div>Secondary #: {{ item.phone }}</div>
-					</div>
-				</div>
-			</ng-container>
-		</div>
-	</ng-container>
+    <ng-container *ngIf="this.searchByFlag === 'Vendor'">
+        <div class="header-row-vendor">
+            <div class="col">#</div>
+            <div class="col">NAME</div>
+            <div class="col">ADDRESS</div>
+            <div class="col">CONTACT</div>
+        </div>
+        <div class="row2-vendor">
+            <ng-container *ngFor="let item of resultList; let idx = index">
+                <div class="list-item plain-row-color-nohover">
+                    <div class="item1">{{ idx + 1 }}</div>
+                    <div class="item1">{{ item.name }}</div>
+                    <div class="item2">
+                        <div class="item21">{{ item.address1 }}</div>
+                        <div class="item22 desc-styl">{{ item.address2 }}</div>
+                    </div>
+                    <div class="item3">
+                        <div>Primary #: {{ item.mobile }}</div>
+                        <div>Secondary #: {{ item.phone }}</div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
 
-	<ng-container *ngIf="this.searchByFlag === 'Brand'">
-		<div class="header-row-vendor">
-			<div class="col">#</div>
-			<div class="col">NAME</div>
-		</div>
-		<div class="row2-vendor">
-			<ng-container *ngFor="let item of resultList; let idx = index">
-				<div class="list-item plain-row-color-nohover">
-					<div class="item1">{{ idx + 1 }}</div>
-					<div class="item1">{{ item.name }}</div>
-				</div>
-			</ng-container>
-		</div>
-	</ng-container>
+    <ng-container *ngIf="this.searchByFlag === 'Brand'">
+        <div class="header-row-vendor">
+            <div class="col">#</div>
+            <div class="col">NAME</div>
+        </div>
+        <div class="row2-vendor">
+            <ng-container *ngFor="let item of resultList; let idx = index">
+                <div class="list-item plain-row-color-nohover">
+                    <div class="item1">{{ idx + 1 }}</div>
+                    <div class="item1">{{ item.name }}</div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
 
-	<div class="row3">
-		<div class="row-cnt">
-			<span *ngIf="resultList">
-				<span *ngIf="resultList.length >= 50"> Matches: {{ resultList.length }} + </span>
-				<span *ngIf="resultList.length < 50"> Matches: {{ resultList.length }} </span>
-			</span>
-		</div>
-		<div>
-			<div>&nbsp;</div>
-		</div>
-	</div>
+    <div class="row3">
+        <div class="row-cnt">
+            <span *ngIf="resultList">
+                <span *ngIf="resultList.length >= 50">
+                    Matches: {{ resultList.length }} +
+                </span>
+                <span *ngIf="resultList.length < 50">
+                    Matches: {{ resultList.length }}
+                </span>
+            </span>
+        </div>
+        <div>
+            <div>&nbsp;</div>
+        </div>
+    </div>
 </div>

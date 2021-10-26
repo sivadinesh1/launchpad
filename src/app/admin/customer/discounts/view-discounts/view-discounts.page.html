@@ -1,110 +1,195 @@
 <ion-content>
-	<div class="content">
-		<app-messages></app-messages>
-		<div class="header">
-			<div>
-				<div>List of customer discounts</div>
-				<div style="font-size: 12px; color: #797979">Showing {{pageLength }} Records</div>
-			</div>
-			<div>&nbsp;</div>
-		</div>
+    <div class="content">
+        <app-messages></app-messages>
+        <div class="header">
+            <div>
+                <div>List of customer discounts</div>
+                <div style="font-size: 12px; color: #797979">
+                    Showing {{pageLength }} Records
+                </div>
+            </div>
+            <div>&nbsp;</div>
+        </div>
 
-		<div class="row1">
-			<div class="search_box">
-				<ion-searchbar
-					style="width: 300px"
-					autofocus
-					debounce="300"
-					placeholder="Search..."
-					#mySearchbar
-					show-cancel-button="focus"
-					(ionClear)="reset()"
-					(ionInput)="applyFilter($event.target.value)"
-				></ion-searchbar>
-			</div>
-			<div class="actions">
-				<img
-					matTooltip="Download"
-					matTooltipClass="tooltip"
-					src="/assets/images/svg/direct-download.svg"
-					style="cursor: pointer"
-					width="32px"
-					height="32px"
-					(click)="exportToExcel()"
-				/>
-			</div>
-		</div>
+        <div class="row1">
+            <div class="search_box">
+                <ion-searchbar
+                    style="width: 300px"
+                    autofocus
+                    debounce="300"
+                    placeholder="Search..."
+                    #mySearchbar
+                    show-cancel-button="focus"
+                    (ionClear)="reset()"
+                    (ionInput)="applyFilter($event)"
+                ></ion-searchbar>
+            </div>
+            <div class="actions">
+                <img
+                    matTooltip="Download"
+                    matTooltipClass="tooltip"
+                    src="/assets/images/svg/direct-download.svg"
+                    style="cursor: pointer"
+                    width="32px"
+                    height="32px"
+                    (click)="exportToExcel()"
+                />
+            </div>
+        </div>
 
-		<ng-container>
-			<div class="example-container mat-elevation-z8">
-				<div class="example-table-container" #epltable>
-					<table mat-table [dataSource]="dataSource" multiTemplateDataRows>
-						<ng-container matColumnDef="name">
-							<th mat-header-cell *matHeaderCellDef>Name</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.name}}</td>
-						</ng-container>
+        <ng-container>
+            <div class="example-container mat-elevation-z8">
+                <div class="example-table-container" #epltable>
+                    <table
+                        mat-table
+                        [dataSource]="dataSource"
+                        multiTemplateDataRows
+                    >
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef>Name</th>
+                            <td
+                                mat-cell
+                                *matCellDef="let element"
+                                class="m-card-title"
+                                data-label="Name"
+                            >
+                                {{element.name}}
+                            </td>
+                        </ng-container>
 
-						<ng-container matColumnDef="type">
-							<th mat-header-cell *matHeaderCellDef>Type</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.type}}</td>
-						</ng-container>
+                        <ng-container matColumnDef="type">
+                            <th mat-header-cell *matHeaderCellDef>Type</th>
+                            <td
+                                mat-cell
+                                *matCellDef="let element"
+                                class="m-card-title"
+                                data-label="Name"
+                            >
+                                {{element.type}}
+                            </td>
+                        </ng-container>
 
-						<ng-container matColumnDef="effdate">
-							<th mat-header-cell *matHeaderCellDef>Effective Date</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.startdate}}</td>
-						</ng-container>
+                        <ng-container matColumnDef="effdate">
+                            <th mat-header-cell *matHeaderCellDef>
+                                Effective Date
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let element"
+                                class="m-card-title"
+                                data-label="Name"
+                            >
+                                {{element.startdate}}
+                            </td>
+                        </ng-container>
 
-						<ng-container matColumnDef="gstzero">
-							<th mat-header-cell *matHeaderCellDef>GST (0%)</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.gstzero}}</td>
-						</ng-container>
-						<ng-container matColumnDef="gstfive">
-							<th mat-header-cell *matHeaderCellDef>GST (5%)</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.gstfive}}</td>
-						</ng-container>
-						<ng-container matColumnDef="gsttwelve">
-							<th mat-header-cell *matHeaderCellDef>GST (12%)</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.gsttwelve}}</td>
-						</ng-container>
-						<ng-container matColumnDef="gsteighteen">
-							<th mat-header-cell *matHeaderCellDef>GST (18%)</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.gsteighteen}}</td>
-						</ng-container>
-						<ng-container matColumnDef="gsttwentyeight">
-							<th mat-header-cell *matHeaderCellDef>GST (28%)</th>
-							<td mat-cell *matCellDef="let element" class="m-card-title" data-label="Name">{{element.gsttwentyeight}}</td>
-						</ng-container>
+                        <ng-container matColumnDef="gstzero">
+                            <th mat-header-cell *matHeaderCellDef>GST (0%)</th>
+                            <td
+                                mat-cell
+                                *matCellDef="let element"
+                                class="m-card-title"
+                                data-label="Name"
+                            >
+                                {{element.gstzero}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="gstfive">
+                            <th mat-header-cell *matHeaderCellDef>GST (5%)</th>
+                            <td
+                                mat-cell
+                                *matCellDef="let element"
+                                class="m-card-title"
+                                data-label="Name"
+                            >
+                                {{element.gstfive}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="gsttwelve">
+                            <th mat-header-cell *matHeaderCellDef>GST (12%)</th>
+                            <td
+                                mat-cell
+                                *matCellDef="let element"
+                                class="m-card-title"
+                                data-label="Name"
+                            >
+                                {{element.gsttwelve}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="gsteighteen">
+                            <th mat-header-cell *matHeaderCellDef>GST (18%)</th>
+                            <td
+                                mat-cell
+                                *matCellDef="let element"
+                                class="m-card-title"
+                                data-label="Name"
+                            >
+                                {{element.gsteighteen}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="gsttwentyeight">
+                            <th mat-header-cell *matHeaderCellDef>GST (28%)</th>
+                            <td
+                                mat-cell
+                                *matCellDef="let element"
+                                class="m-card-title"
+                                data-label="Name"
+                            >
+                                {{element.gsttwentyeight}}
+                            </td>
+                        </ng-container>
 
-						<ng-container matColumnDef="actions">
-							<th mat-header-cell *matHeaderCellDef>&nbsp;</th>
-							<td mat-cell *matCellDef="let element">
-								<button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{element: element}">
-									<mat-icon>more_vert</mat-icon>
-								</button>
-							</td>
-						</ng-container>
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef>&nbsp;</th>
+                            <td mat-cell *matCellDef="let element">
+                                <button
+                                    mat-icon-button
+                                    [matMenuTriggerFor]="menu"
+                                    [matMenuTriggerData]="{element: element}"
+                                >
+                                    <mat-icon>more_vert</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
 
-						<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                        <tr
+                            mat-header-row
+                            *matHeaderRowDef="displayedColumns; sticky: true"
+                        ></tr>
 
-						<tr class="example-element-row" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-					</table>
-					<div [hidden]="isTableHasData" class="center-message">No Data available.</div>
-				</div>
-				<mat-paginator [pageSizeOptions]="[50, 100]" showFirstLastButtons></mat-paginator>
-			</div>
-			<mat-menu #menu="matMenu">
-				<ng-template matMenuContent let-element="element">
-					<button mat-menu-item (click)="editdefault(element)">
-						<mat-icon>edit </mat-icon>
-						<span>Edit Default</span>
-					</button>
+                        <tr
+                            class="example-element-row"
+                            mat-row
+                            *matRowDef="let row; columns: displayedColumns;"
+                        ></tr>
+                    </table>
+                    <div [hidden]="isTableHasData" class="center-message">
+                        No Data available.
+                    </div>
+                </div>
+                <mat-paginator
+                    [pageSizeOptions]="[50, 100]"
+                    showFirstLastButtons
+                ></mat-paginator>
+            </div>
+            <mat-menu #menu="matMenu">
+                <ng-template matMenuContent let-element="element">
+                    <button mat-menu-item (click)="editdefault(element)">
+                        <mat-icon>edit </mat-icon>
+                        <span>Edit Default</span>
+                    </button>
 
-					<button mat-menu-item (click)="manageBrandDiscounts(element)">
-						<mat-icon [ngStyle]="{'color':'#bf0d3e'}">edit </mat-icon>
-						<span>Brand discounts</span>
-					</button>
-				</ng-template>
-			</mat-menu>
-		</ng-container>
-	</div>
+                    <button
+                        mat-menu-item
+                        (click)="manageBrandDiscounts(element)"
+                    >
+                        <mat-icon [ngStyle]="{'color':'#bf0d3e'}"
+                            >edit
+                        </mat-icon>
+                        <span>Brand discounts</span>
+                    </button>
+                </ng-template>
+            </mat-menu>
+        </ng-container>
+    </div>
 </ion-content>

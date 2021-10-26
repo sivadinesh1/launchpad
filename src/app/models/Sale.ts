@@ -57,6 +57,46 @@ export class Sale implements ISale {
     @Type(() => Number)
     customer_id: number;
 
+    @Type(() => Number)
+    total_quantity: number;
+    @Type(() => Number)
+    no_of_items: number;
+    @Type(() => Number)
+    after_tax_value: number;
+
+    @Type(() => Number)
+    cgs_t: number;
+
+    @Type(() => Number)
+    sgs_t: number;
+
+    @Type(() => Number)
+    igs_t: number;
+
+    @Type(() => Number)
+    total_value: number;
+
+    @Type(() => Number)
+    transport_charges = 0;
+
+    @Type(() => Number)
+    unloading_charges = 0;
+
+    @Type(() => Date)
+    createdAt: Date;
+    @Type(() => Date)
+    updatedAt: Date;
+    @Type(() => Number)
+    created_by: number;
+    @Type(() => Number)
+    updated_by: number;
+
+    @Exclude()
+    product_arr: any;
+
+    @Exclude()
+    customer_ctrl: any;
+
     invoice_no: string;
 
     invoice_date: string;
@@ -66,23 +106,7 @@ export class Sale implements ISale {
     sale_type: string;
     order_no: string;
     order_date: string;
-    @Type(() => Number)
-    total_quantity: number;
-    @Type(() => Number)
-    no_of_items: number;
-    @Type(() => Number)
-    after_tax_value: number;
-    @Type(() => Number)
-    cgs_t: number;
-    @Type(() => Number)
-    sgs_t: number;
-    @Type(() => Number)
-    igs_t: number;
-    @Type(() => Number)
-    total_value: number;
-    @Type(() => Number)
-    transport_charges: number;
-    unloading_charges: number;
+
     misc_charges: number;
     net_total: number;
     no_of_boxes: number;
@@ -100,21 +124,6 @@ export class Sale implements ISale {
     inv_gen_mode: string;
 
     enq_ref!: number;
-
-    @Type(() => Date)
-    createdAt: Date;
-    @Type(() => Date)
-    updatedAt: Date;
-    @Type(() => Number)
-    created_by: number;
-    @Type(() => Number)
-    updated_by: number;
-
-    @Exclude()
-    product_arr: any;
-
-    @Exclude()
-    customer_ctrl: any;
 
     constructor(
         id: number,

@@ -258,9 +258,9 @@ export class ViewCustomerPage implements OnInit {
         this.customerslist = null;
     }
 
-    applyFilter(filterValue: string) {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    applyFilter(filterValue: any) {
+        filterValue = filterValue.target.value.trim(); // Remove whitespace
+        filterValue = filterValue.target.value.toLowerCase(); // Datasource defaults to lowercase matches
         this.dataSource.filter = filterValue;
 
         if (this.dataSource.filteredData.length > 0) {

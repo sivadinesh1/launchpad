@@ -79,8 +79,8 @@ export class InventoryReportsPage implements OnInit {
             });
     }
 
-    applyFilter(filterValue: string) {
-        if (filterValue.trim().length > 0) {
+    applyFilter(filterValue: any) {
+        if (filterValue.target.valuetrim().length > 0) {
             //todo
             //		this.reloadInventoryReport(filterValue.trim().toLocaleLowerCase());
         } else {

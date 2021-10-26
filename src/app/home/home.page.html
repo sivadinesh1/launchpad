@@ -1,27 +1,29 @@
 <div>
-  <mat-toolbar class="example-toolbar mat-elevation-z2">
-    <app-header style="width: 100%;"
-    (onHBMenuClick)="onToolbarMenuToggle();"></app-header>
-  </mat-toolbar>
-  <mat-sidenav-container fullscreen id="sideNavContainer">
-    <mat-sidenav
-      #sideNav
-      mode="side"
-      [opened]="true"
-      id="sideNav"
-      [class.menu-open]="isMenuOpen"
-      [class.menu-close]="!isMenuOpen"
-    >
-      <app-left-menu></app-left-menu>
-    </mat-sidenav>
-    <mat-sidenav-content
-      class="test"
-      [ngStyle]="{ 'margin-left.px': contentMargin }"
-      *ngIf="isLoaded"
-    >
-      <ion-router-outlet></ion-router-outlet>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
+    <mat-toolbar class="example-toolbar mat-elevation-z2">
+        <app-header
+            style="width: 100%"
+            (hbMenuClick)="onToolbarMenuToggle();"
+        ></app-header>
+    </mat-toolbar>
+    <mat-sidenav-container fullscreen id="sideNavContainer">
+        <mat-sidenav
+            #sideNav
+            mode="side"
+            [opened]="true"
+            id="sideNav"
+            [class.menu-open]="isMenuOpen"
+            [class.menu-close]="!isMenuOpen"
+        >
+            <app-left-menu></app-left-menu>
+        </mat-sidenav>
+        <mat-sidenav-content
+            class="test"
+            [ngStyle]="{ 'margin-left.px': contentMargin }"
+            *ngIf="isLoaded"
+        >
+            <ion-router-outlet></ion-router-outlet>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
 </div>
 
 <!-- mode="side" [opened]="false" [disableClose]="true" -->

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { HomePage } from './home/home.page';
-import { SaleOrderPage } from './sales/sale-order/sale-order.page';
 
 const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -131,7 +130,7 @@ const routes: Routes = [
             },
 
             {
-                path: 'sales/:mode/:id/:saletype',
+                path: 'sales/:mode/:id/:saleType',
                 pathMatch: 'full',
 
                 loadChildren: () =>

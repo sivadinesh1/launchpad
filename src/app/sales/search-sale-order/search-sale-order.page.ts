@@ -4,7 +4,9 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
+    EventEmitter,
     OnInit,
+    Output,
     ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
@@ -26,6 +28,7 @@ import { EnquiryPrintComponent } from 'src/app/components/enquiry-print/enquiry-
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { SalesReturnDialogComponent } from 'src/app/components/sales/sales-return-dialog/sales-return-dialog.component';
+import { SearchCustomersComponent } from 'src/app/components/search-customers/search-customers.component';
 import { SearchInvoiceNoComponent } from 'src/app/components/search-invoice-no/search-invoice-no.component';
 
 import { Customer } from 'src/app/models/Customer';
@@ -43,6 +46,12 @@ import { CommonApiService } from '../../services/common-api.service';
     encapsulation: ViewEncapsulation.None,
 })
 export class SearchSaleOrderPage implements OnInit {
+    @ViewChild('menuTriggerN', { static: true }) menuTriggerN: any;
+    @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
+    @ViewChild('auto') matAutocomplete: MatAutocomplete;
+
+    @ViewChild(SearchCustomersComponent) child: SearchCustomersComponent;
+
     sales$: Observable<Sale[]>;
 
     draftSales$: Observable<Sale[]>;
@@ -72,8 +81,6 @@ export class SearchSaleOrderPage implements OnInit {
 
     filteredCustomer: Observable<any[]>;
     customer_lis: Customer[];
-
-    @ViewChild('menuTriggerN', { static: true }) menuTriggerN: any;
 
     user_data: any;
 
@@ -108,14 +115,10 @@ export class SearchSaleOrderPage implements OnInit {
     fruits: string[] = ['Lemon'];
     allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
 
-    @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
-    @ViewChild('auto') matAutocomplete: MatAutocomplete;
-
     searchByDays = 7;
     isCLoading = false;
     customer_data: any;
 
-    animal: string;
     name: string;
     clickedColumn: string;
 
@@ -132,7 +135,7 @@ export class SearchSaleOrderPage implements OnInit {
         private _authService: AuthenticationService
     ) {
         this.submitForm = this._fb.group({
-            customer_id: ['all'],
+            customer_id: 'all',
             customer_ctrl: new FormControl({
                 value: '',
                 disabled: false,
@@ -247,11 +250,11 @@ export class SearchSaleOrderPage implements OnInit {
         this.from_date.setTime(this.minDate.getTime() - dateOffset);
 
         this.submitForm.patchValue({
-            customer_id: ['all'],
+            customer_id: 'all',
             customer_ctrl: 'All Customers',
             from_date: this.from_date,
             to_date: new Date(),
-            invoice_no: [''],
+            invoice_no: '',
             search_type: 'all',
         });
 
@@ -326,7 +329,7 @@ export class SearchSaleOrderPage implements OnInit {
             status: this.submitForm.value.status,
             from_date: this.submitForm.value.from_date,
             to_date: this.submitForm.value.to_date,
-            sale_type: this.submitForm.value.sale_type,
+            invoice_type: 'GI',
             search_type: this.submitForm.value.search_type,
             invoice_no: this.submitForm.value.invoice_no,
             order: this.submitForm.value.order,
@@ -336,23 +339,8 @@ export class SearchSaleOrderPage implements OnInit {
 
         const value = await lastValueFrom(this.filteredSales$);
 
-        this.filteredValues = value.filter(
-            (data: any) =>
-                data.status === 'C' && data.invoice_type === 'gstInvoice'
-        );
+        this.filteredValues = value;
 
-        // to calculate the count on each status
-        this.draftSales$ = this.sales$.pipe(
-            map((arr: any) =>
-                arr.filter(
-                    (f) => f.status === 'D' && f.invoice_type === 'gstInvoice'
-                )
-            )
-        );
-
-        this.full_filled_sales$ = this.sales$.pipe(
-            map((arr: any) => arr.filter((f) => f.status === 'C'))
-        );
         this.calculateSumTotals();
         this.tabIndex = 1;
         this._cdr.markForCheck();
@@ -465,7 +453,7 @@ export class SearchSaleOrderPage implements OnInit {
                             //  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
                             this._commonApiService
                                 .deleteItemHistory(item.id)
-                                .subscribe((data: any) => {
+                                .subscribe((data2: any) => {
                                     this.openSnackBar(
                                         'Deleted Successfully',
                                         ''
@@ -503,24 +491,6 @@ export class SearchSaleOrderPage implements OnInit {
         await alert.present();
     }
 
-    async tabClick($event) {
-        const value = await lastValueFrom(this.filteredSales$);
-
-        if ($event.index === 0) {
-            this.filteredValues = value.filter(
-                (data: any) =>
-                    data.status === 'D' && data.invoice_type === 'gstInvoice'
-            );
-        } else if ($event.index === 1) {
-            this.filteredValues = value.filter(
-                (data: any) => data.status === 'C'
-            );
-        }
-
-        this.calculateSumTotals();
-        this._cdr.markForCheck();
-    }
-
     calculateSumTotals() {
         this.sumTotalValue = 0.0;
         this.sumNumItems = 0;
@@ -545,32 +515,14 @@ export class SearchSaleOrderPage implements OnInit {
         this._router.navigateByUrl(`/home/sales/edit/${item.id}/TI`);
     }
 
-    // async editCompletedSalesConfirm(item) {
-    // 	const alert = await this.alertController.create({
-    // 		header: 'Confirm!',
-    // 		message: 'Editing completed sales, Are you sure?',
-    // 		buttons: [
-    // 			{
-    // 				text: 'Cancel',
-    // 				role: 'cancel',
-    // 				cssClass: 'secondary',
-    // 				handler: (blah) => {
-    // 					console.log('Confirm Cancel: blah');
-    // 				},
-    // 			},
-    // 			{
-    // 				text: 'Go to sales screen',
-    // 				handler: () => {
-    // 					console.log('Confirm Okay');
-
-    // 					this._router.navigateByUrl(`/home/sales/edit/${item.id}/TI`);
-    // 				},
-    // 			},
-    // 		],
-    // 	});
-
-    // 	await alert.present();
-    // }
+    statusFilterChanged(item: any) {
+        this.submitForm.patchValue({
+            status: item.detail.value,
+            invoice_no: '',
+        });
+        this._cdr.markForCheck();
+        this.search();
+    }
 
     openDialog(row): void {
         const dialogConfig = new MatDialogConfig();
@@ -588,28 +540,6 @@ export class SearchSaleOrderPage implements OnInit {
 
         dialogRef.afterClosed().subscribe((result) => {
             console.log('The dialog was closed');
-        });
-    }
-
-    salesReturn(row): void {
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.disableClose = true;
-        dialogConfig.autoFocus = true;
-        dialogConfig.width = '60%';
-        dialogConfig.height = '100%';
-        dialogConfig.data = row;
-        dialogConfig.position = { top: '0', right: '0' };
-
-        const dialogRef = this._dialog.open(
-            SalesReturnDialogComponent,
-            dialogConfig
-        );
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result === 'success') {
-                // throw success alert
-                this.presentAlert('Return Recorded successfully!');
-            }
         });
     }
 
@@ -638,42 +568,52 @@ export class SearchSaleOrderPage implements OnInit {
     }
 
     async exportCompletedSalesToExcel() {
-        this.arr = [];
-        const fileName = 'Completed_Sale_Reports.xlsx';
+        const fileName = 'Sale_Order_Reports.xlsx';
 
-        this.arr = await lastValueFrom(this.full_filled_sales$);
-
-        const reportData = JSON.parse(JSON.stringify(this.arr));
+        const reportData = JSON.parse(JSON.stringify(this.filteredValues));
 
         reportData.forEach((e) => {
+            delete e.retail_customer_phone;
+            delete e.inv_gen_mode;
+            delete e.createdAt;
+            delete e.created_by;
+
             e['Customer Name'] = e.customer_name;
             delete e.customer_name;
 
             e['Invoice #'] = e.invoice_no;
             delete e.invoice_no;
 
-            e['Invoice Date'] = e.invoice_date;
+            e['Invoice Date'] = moment(e.invoice_date).format('DD-MM-YYYY');
             delete e.invoice_date;
 
-            e['Sale Type'] = e.invoice_type;
             delete e.invoice_type;
 
-            e['Total Qty'] = e.total_qty;
-            delete e.total_qty;
+            e['Total Qty'] = e.total_quantity;
+            delete e.total_quantity;
 
-            e['# of Items'] = e.no_of_items;
+            e['# Items'] = e.no_of_items;
             delete e.no_of_items;
 
             e['Taxable Value'] = e.after_tax_value;
             delete e.after_tax_value;
 
-            e.cgs_t = e.cgs_t;
+            e['Updated By'] = e.updated_by;
+            delete e.updated_by;
+
+            e['Print Count'] = e.print_count;
+            delete e.print_count;
+
+            e['Updated At'] = moment(e.updatedAt).format('DD-MM-YYYY HH:mm:ss');
+            delete e.updatedAt;
+
+            e.CGST = e.cgs_t;
             delete e.cgs_t;
 
-            e.sgs_t = e.sgs_t;
+            e.SGST = e.sgs_t;
             delete e.sgs_t;
 
-            e.igs_t = e.igs_t;
+            e.IGST = e.igs_t;
             delete e.igs_t;
 
             e.igs_t = e.igs_t;
@@ -685,8 +625,13 @@ export class SearchSaleOrderPage implements OnInit {
             e['Net Total'] = e.net_total;
             delete e.net_total;
 
-            e['Sale Date Time'] = e.sale_date_time;
+            e['Sale Date Time'] = moment(e.sale_date_time).format(
+                'DD-MM-YYYY HH:mm:ss'
+            );
             delete e.sale_date_time;
+
+            e.Status = e.status === 'C' ? 'Invoiced' : 'Draft';
+            delete e.status;
 
             delete e.id;
             delete e.center_id;
@@ -700,7 +645,7 @@ export class SearchSaleOrderPage implements OnInit {
 
             delete e.unloading_charges;
             delete e.misc_charges;
-            delete e.status;
+
             delete e.revision;
             delete e.tax_applicable;
             delete e.stock_issue_ref;
@@ -710,10 +655,41 @@ export class SearchSaleOrderPage implements OnInit {
             delete e.retail_customer_address;
             delete e.no_of_boxes;
         });
-        this.arr.splice(0, 1);
+
+        const wb1: xlsx.WorkBook = xlsx.utils.book_new();
 
         const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
-        const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+
+        ws1['!cols'] = [
+            { width: 16 },
+            { width: 16 },
+            { width: 32 },
+            { width: 14 },
+            { width: 8 },
+            { width: 8 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 19 },
+            { width: 12 },
+            { width: 16 },
+            { width: 19 },
+        ];
+
+        const wsrows = [
+            { hpt: 30 }, // row 1 sets to the height of 12 in points
+            { hpx: 30 }, // row 2 sets to the height of 16 in pixels
+        ];
+
+        ws1['!rows'] = wsrows; // ws - worksheet
+
+        const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+
+        ws1['!merges'] = merge;
+
         xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
 
         //then add ur Title txt
@@ -740,113 +716,24 @@ export class SearchSaleOrderPage implements OnInit {
         xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
             skipHeader: false,
             origin: 'A2',
-        });
-
-        xlsx.writeFile(wb1, fileName);
-    }
-
-    async exportDraftSalesToExcel() {
-        this.arr = [];
-        const fileName = 'Draft_Sale_Reports.xlsx';
-
-        this.arr = await lastValueFrom(this.draftSales$);
-
-        const reportData = JSON.parse(JSON.stringify(this.arr));
-
-        reportData.forEach((e) => {
-            e['Customer Name'] = e.customer_name;
-            delete e.customer_name;
-
-            e['Invoice #'] = e.invoice_no;
-            delete e.invoice_no;
-
-            e['Invoice Date'] = e.invoice_date;
-            delete e.invoice_date;
-
-            e['Sale Type'] = e.invoice_type;
-            delete e.invoice_type;
-
-            e['Total Qty'] = e.total_qty;
-            delete e.total_qty;
-
-            e['# of Items'] = e.no_of_items;
-            delete e.no_of_items;
-
-            e['Taxable Value'] = e.after_tax_value;
-            delete e.after_tax_value;
-
-            e.cgs_t = e.cgs_t;
-            delete e.cgs_t;
-
-            e.sgs_t = e.sgs_t;
-            delete e.sgs_t;
-
-            e.igs_t = e.igs_t;
-            delete e.igs_t;
-
-            e.igs_t = e.igs_t;
-            delete e.igs_t;
-
-            e['Total Value'] = e.total_value;
-            delete e.total_value;
-
-            e['Net Total'] = e.net_total;
-            delete e.net_total;
-
-            e['Sale Date Time'] = e.sale_date_time;
-            delete e.sale_date_time;
-
-            delete e.id;
-            delete e.center_id;
-            delete e.customer_id;
-            delete e.lr_no;
-            delete e.lr_date;
-            delete e.received_date;
-            delete e.order_no;
-            delete e.order_date;
-            delete e.transport_charges;
-
-            delete e.unloading_charges;
-            delete e.misc_charges;
-            delete e.status;
-            delete e.revision;
-            delete e.tax_applicable;
-            delete e.round_off;
-            delete e.retail_customer_name;
-            delete e.retail_customer_address;
-
-            delete e.no_of_boxes;
-        });
-        this.arr.splice(0, 1);
-
-        const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
-        const wb1: xlsx.WorkBook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
-
-        //then add ur Title txt
-        xlsx.utils.sheet_add_json(
-            wb1.Sheets.sheet1,
-            [
-                {
-                    header: 'Draft Sale Reports',
-                    from_date: `From: ${moment(
-                        this.submitForm.value.from_date
-                    ).format('DD/MM/YYYY')}`,
-                    to_date: `To: ${moment(
-                        this.submitForm.value.to_date
-                    ).format('DD/MM/YYYY')}`,
-                },
+            header: [
+                'Invoice #',
+                'Invoice Date',
+                'Customer Name',
+                'Status',
+                'Total Qty',
+                '# Items',
+                'CGST',
+                'SGST',
+                'IGST',
+                'Taxable Value',
+                'Total Value',
+                'Net Total',
+                'Sale Date Time',
+                'Print Count',
+                'Updated By',
+                'Updated At',
             ],
-            {
-                skipHeader: true,
-                origin: 'A1',
-            }
-        );
-
-        //start frm A2 here
-        xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
-            skipHeader: false,
-            origin: 'A2',
         });
 
         xlsx.writeFile(wb1, fileName);
@@ -858,15 +745,37 @@ export class SearchSaleOrderPage implements OnInit {
 
         const dialogRef = this._dialog1.open(SearchInvoiceNoComponent, {
             width: '250px',
-            data: { name: this.name, animal: this.animal },
+            data: { invoice_no: '' },
 
             position: { left: `${rect.left}px`, top: `${rect.bottom - 50}px` },
         });
 
         dialogRef.afterClosed().subscribe((result) => {
             console.log('The dialog was closed');
-            this.animal = result;
+
+            this.submitForm.patchValue({
+                invoice_no: result,
+            });
+            this.search();
         });
+    }
+
+    customerInfoPage(item) {
+        this.submitForm.patchValue({
+            customer_id: item.id,
+        });
+        this.search();
+    }
+
+    customerSearchReset() {
+        this.clearInput();
+    }
+
+    reset() {
+        this.customerSearchReset();
+        this.child.clearCustomerInput();
+        this.clear();
+        this.search();
     }
 
     isSelectedColumn(param) {
@@ -877,7 +786,11 @@ export class SearchSaleOrderPage implements OnInit {
         }
     }
 
-    customerInfoPage(item) {
-        console.log('object.......' + JSON.stringify(item));
+    isCompleted(status: string) {
+        if (status === 'C') {
+            return 'completed';
+        } else {
+            return 'draft';
+        }
     }
 }

@@ -1,208 +1,478 @@
 <!-- Receive Multiple Invoice Payments / Customer -->
 <!-- RECEIVABLES LEFT MENU -->
 <div>
-	<form (ngSubmit)="onSubmit()" [formGroup]="submitForm">
-		<div style="display: grid; grid-template-columns: 180px 1fr 30px; padding-bottom: 3px; border-bottom: 1px solid rgb(222, 222, 222)">
-			<div style="font-weight: 600">Payment Receivables From</div>
-			<div class="customers">
-				<mat-form-field class="mat-auto-width">
-					<mat-label>Customer</mat-label>
-					<input
-						matInput
-						[matAutocomplete]="auto"
-						formControlName="customer"
-						required
-						matTooltip="Type to filter the Customer list"
-						matTooltipPosition="after"
-						autocomplete="off"
-					/>
-					<button mat-button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
-						<mat-icon>close</mat-icon>
-					</button>
-					<mat-autocomplete #auto="matAutocomplete" panelWidth="auto" (optionSelected)="getPosts($event)">
-						<mat-option
-							*ngFor="let customer of filteredCustomer | async"
-							[value]="customer"
-							style="height: 70px; border-bottom: 1px solid lightsteelblue"
-						>
-							<!-- <span>{{ customer.name }} </span> -->
-							<div style="display: grid; grid-template-columns: 1fr">
-								<div>
-									<div style="font-size: 15px; padding: 2px; line-height: 1em">{{ customer.name }}</div>
-									<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address1 }}</div>
-									<div style="font-size: 14px; padding: 2px; line-height: 1em; color: grey">{{ customer.address2 }},{{ customer.district }}</div>
-								</div>
-							</div>
-						</mat-option>
-					</mat-autocomplete>
-				</mat-form-field>
-			</div>
-			<div>
-				<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="20px" height="20px" />
-			</div>
-		</div>
-		<div class="form" style="padding-top: 16px">
-			<div formArrayName="accountarr" class="list-block">
-				<div *ngFor="let product of accountarr.controls; let idx = index">
-					<div>
-						<ng-container [formGroupName]="idx">
-							<div class="item-details">
-								<div>
-									<mat-form-field class="example-full-width">
-										<mat-label>Amount Received</mat-label>
-										<input matInput type="number" (blur)="blurFn()" formControlName="receivedamount" autocomplete="off" />
-										<mat-error *ngIf="product.controls['receivedamount'].hasError('required')"> Required field </mat-error>
-										<mat-error *ngIf="product.controls['receivedamount'].hasError('max')"> Paid mount exceeds invoice amount </mat-error>
+    <form (ngSubmit)="onSubmit()" [formGroup]="submitForm">
+        <div
+            style="
+                display: grid;
+                grid-template-columns: 180px 1fr 30px;
+                padding-bottom: 3px;
+                border-bottom: 1px solid rgb(222, 222, 222);
+            "
+        >
+            <div style="font-weight: 600">Payment Receivables From</div>
+            <div class="customers">
+                <mat-form-field class="mat-auto-width">
+                    <mat-label>Customer</mat-label>
+                    <input
+                        matInput
+                        [matAutocomplete]="auto"
+                        formControlName="customer"
+                        required
+                        matTooltip="Type to filter the Customer list"
+                        matTooltipPosition="after"
+                        autocomplete="off"
+                    />
+                    <button
+                        mat-button
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        type="button"
+                        (click)="clearInput()"
+                    >
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-autocomplete
+                        #auto="matAutocomplete"
+                        panelWidth="auto"
+                        (optionSelected)="getPosts($event)"
+                    >
+                        <mat-option
+                            *ngFor="let customer of filteredCustomer | async"
+                            [value]="customer"
+                            style="
+                                height: 70px;
+                                border-bottom: 1px solid lightsteelblue;
+                            "
+                        >
+                            <!-- <span>{{ customer.name }} </span> -->
+                            <div
+                                style="
+                                    display: grid;
+                                    grid-template-columns: 1fr;
+                                "
+                            >
+                                <div>
+                                    <div
+                                        style="
+                                            font-size: 15px;
+                                            padding: 2px;
+                                            line-height: 1em;
+                                        "
+                                    >
+                                        {{ customer.name }}
+                                    </div>
+                                    <div
+                                        style="
+                                            font-size: 14px;
+                                            padding: 2px;
+                                            line-height: 1em;
+                                            color: grey;
+                                        "
+                                    >
+                                        {{ customer.address1 }}
+                                    </div>
+                                    <div
+                                        style="
+                                            font-size: 14px;
+                                            padding: 2px;
+                                            line-height: 1em;
+                                            color: grey;
+                                        "
+                                    >
+                                        {{ customer.address2 }},{{
+                                            customer.district
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+            <div>
+                <img
+                    class="cursor"
+                    src="/assets/images/svg/close.svg"
+                    (click)="close()"
+                    width="20px"
+                    height="20px"
+                />
+            </div>
+        </div>
+        <div class="form" style="padding-top: 16px">
+            <div formArrayName="accountarr" class="list-block">
+                <div
+                    *ngForOf="
+                        let product of accountarr.controls;
+                        let idx = index
+                    "
+                >
+                    <div>
+                        <ng-container [formGroupName]="idx">
+                            <div class="item-details">
+                                <div>
+                                    <mat-form-field class="example-full-width">
+                                        <mat-label>Amount Received</mat-label>
+                                        <input
+                                            matInput
+                                            type="number"
+                                            (blur)="blurFn()"
+                                            formControlName="receivedamount"
+                                            autocomplete="off"
+                                        />
 
-										<!-- <mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon> -->
-									</mat-form-field>
-								</div>
+                                        <!-- <mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon> -->
+                                    </mat-form-field>
+                                </div>
 
-								<div>
-									<ion-item class="input-item" lines="none">
-										<mat-form-field class="example-full-width">
-											<mat-label>Payment Date</mat-label>
-											<input
-												matInput
-												readonly
-												[max]="maxDate"
-												[matDatepicker]="paymentdate"
-												formControlName="receiveddate"
-												required
-												(focus)="paymentdate.open()"
-												autocomplete="off"
-											/>
-											<mat-datepicker-toggle matSuffix [for]="paymentdate"></mat-datepicker-toggle>
-											<mat-datepicker #paymentdate></mat-datepicker>
-											<mat-error *ngIf="product.controls['receiveddate'].hasError('required')"> Required field </mat-error>
-										</mat-form-field>
-									</ion-item>
-								</div>
+                                <div>
+                                    <ion-item class="input-item" lines="none">
+                                        <mat-form-field
+                                            class="example-full-width"
+                                        >
+                                            <mat-label>Payment Date</mat-label>
+                                            <input
+                                                matInput
+                                                readonly
+                                                [max]="maxDate"
+                                                [matDatepicker]="paymentdate"
+                                                formControlName="receiveddate"
+                                                required
+                                                (focus)="paymentdate.open()"
+                                                autocomplete="off"
+                                            />
+                                            <mat-datepicker-toggle
+                                                matSuffix
+                                                [for]="paymentdate"
+                                            ></mat-datepicker-toggle>
+                                            <mat-datepicker
+                                                #paymentdate
+                                            ></mat-datepicker>
+                                        </mat-form-field>
+                                    </ion-item>
+                                </div>
 
-								<div class="vendor">
-									<mat-form-field class="example-full-width">
-										<mat-label>Payment Mode</mat-label>
-										<mat-select formControlName="pymtmode">
-											<mat-option *ngFor="let item of pymtmodes$ | async" [value]="item.id">
-												{{ item.pymt_mode_name }}
-											</mat-option>
-										</mat-select>
-										<mat-error>This field is required</mat-error>
-									</mat-form-field>
-								</div>
+                                <div class="vendor">
+                                    <mat-form-field class="example-full-width">
+                                        <mat-label>Payment Mode</mat-label>
+                                        <mat-select formControlName="pymtmode">
+                                            <mat-option
+                                                *ngFor="
+                                                    let item of pymtmodes$
+                                                        | async
+                                                "
+                                                [value]="item.id"
+                                            >
+                                                {{ item.pymt_mode_name }}
+                                            </mat-option>
+                                        </mat-select>
+                                        <mat-error
+                                            >This field is required</mat-error
+                                        >
+                                    </mat-form-field>
+                                </div>
 
-								<div>
-									<mat-form-field style="width: 100%">
-										<mat-label>Bank</mat-label>
-										<mat-select (selectionChange)="handleChange($event)">
-											<mat-option value="0"> Select The Bank from List </mat-option>
-											<mat-option *ngFor="let item of bankList" [value]="item"> {{ item.bankname }} </mat-option>
-										</mat-select>
-									</mat-form-field>
-								</div>
+                                <div>
+                                    <mat-form-field style="width: 100%">
+                                        <mat-label>Bank</mat-label>
+                                        <mat-select
+                                            (selectionChange)="
+                                                handleChange($event)
+                                            "
+                                        >
+                                            <mat-option value="0">
+                                                Select The Bank from List
+                                            </mat-option>
+                                            <mat-option
+                                                *ngFor="let item of bankList"
+                                                [value]="item"
+                                            >
+                                                {{ item.bankname }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
 
-								<div style="display: grid; grid-column: 1 / 3">
-									<mat-form-field>
-										<mat-label>Bank Reference#</mat-label>
-										<input matInput autofocus="*ngIf=idx === 1" type="text" formControlName="bankref" autocomplete="off" />
-									</mat-form-field>
-								</div>
+                                <div style="display: grid; grid-column: 1 / 3">
+                                    <mat-form-field>
+                                        <mat-label>Bank Reference#</mat-label>
+                                        <input
+                                            matInput
+                                            autofocus="*ngIf=idx === 1"
+                                            type="text"
+                                            formControlName="bankref"
+                                            autocomplete="off"
+                                        />
+                                    </mat-form-field>
+                                </div>
 
-								<div style="display: grid; grid-column: 3 / 6">
-									<mat-form-field class="example-full-width">
-										<mat-label>Notes</mat-label>
-										<input matInput type="text" formControlName="pymtref" autocomplete="off" />
-									</mat-form-field>
-								</div>
-							</div>
-						</ng-container>
-					</div>
-				</div>
-			</div>
+                                <div style="display: grid; grid-column: 3 / 6">
+                                    <mat-form-field class="example-full-width">
+                                        <mat-label>Notes</mat-label>
+                                        <input
+                                            matInput
+                                            type="text"
+                                            formControlName="pymtref"
+                                            autocomplete="off"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
 
-			<div *ngIf="iscustomerselected" style="font-weight: 500; color: #b97676">UNPAID INVOICES ({{ customerUnpaidInvoices?.length }})</div>
-			<div style="display: grid; grid-template-columns: 140px 2fr 1fr 1fr 1fr; background-color: #f1f1f1; padding: 6px" *ngIf="iscustomerselected">
-				<div class="theader">Invoice Date</div>
-				<div class="theader">Invoice #</div>
-				<div class="theader m-curr-field">Invoice Amount</div>
+            <div
+                *ngIf="iscustomerselected"
+                style="font-weight: 500; color: #b97676"
+            >
+                UNPAID INVOICES ({{ customerUnpaidInvoices?.length }})
+            </div>
+            <div
+                style="
+                    display: grid;
+                    grid-template-columns: 140px 2fr 1fr 1fr 1fr;
+                    background-color: #f1f1f1;
+                    padding: 6px;
+                "
+                *ngIf="iscustomerselected"
+            >
+                <div class="theader">Invoice Date</div>
+                <div class="theader">Invoice #</div>
+                <div class="theader m-curr-field">Invoice Amount</div>
 
-				<div class="theader m-curr-field">Paid Amount</div>
-				<div class="theader m-curr-field">Balance Amount</div>
-			</div>
-			<div *ngIf="iscustomerselected">
-				<div *ngFor="let item of origCustomerUnpaidInvoices" style="display: grid; grid-template-columns: 140px 2fr 1fr 1fr 1fr">
-					<div style="padding: 4px 4px 4px 6px; font-size: 13px">{{ item.invoice_date }}</div>
-					<div style="padding: 4px; font-size: 13px">{{ item.invoice_no }}</div>
-					<div class="m-curr-field" style="padding: 4px; font-size: 13px">{{ item.invoice_amt | currency: 'INR' }}</div>
+                <div class="theader m-curr-field">Paid Amount</div>
+                <div class="theader m-curr-field">Balance Amount</div>
+            </div>
+            <div *ngIf="iscustomerselected">
+                <div
+                    *ngFor="let item of origCustomerUnpaidInvoices"
+                    style="
+                        display: grid;
+                        grid-template-columns: 140px 2fr 1fr 1fr 1fr;
+                    "
+                >
+                    <div style="padding: 4px 4px 4px 6px; font-size: 13px">
+                        {{ item.invoice_date }}
+                    </div>
+                    <div style="padding: 4px; font-size: 13px">
+                        {{ item.invoice_no }}
+                    </div>
+                    <div
+                        class="m-curr-field"
+                        style="padding: 4px; font-size: 13px"
+                    >
+                        {{ item.invoice_amt | currency: "INR" }}
+                    </div>
 
-					<div class="m-curr-field" style="padding: 4px; font-size: 13px">{{ item.paid_amount | currency: 'INR' }}</div>
-					<div class="m-curr-field" style="padding: 4px; font-size: 13px">{{ item.bal_amount | currency: 'INR' }}</div>
-				</div>
-			</div>
+                    <div
+                        class="m-curr-field"
+                        style="padding: 4px; font-size: 13px"
+                    >
+                        {{ item.paid_amount | currency: "INR" }}
+                    </div>
+                    <div
+                        class="m-curr-field"
+                        style="padding: 4px; font-size: 13px"
+                    >
+                        {{ item.bal_amount | currency: "INR" }}
+                    </div>
+                </div>
+            </div>
 
-			<div
-				style="display: grid; grid-template-columns: 2fr 4fr; margin-top: 16px; margin-bottom: 16px; padding: 16px; background-color: #fbfbfb"
-				*ngIf="iscustomerselected"
-			>
-				<div>
-					<div style="text-align: left; padding: 2px; color: #333333; font-size: 13px">
-						Credit Available: {{ this.customer?.credit_amt | currency: 'INR' }}
-					</div>
-				</div>
-				<div style="display: flex; justify-content: flex-end">
-					<div style="display: grid; grid-template-columns: 1fr 1fr">
-						<div style="text-align: right; padding: 2px; color: #333333; font-size: 13px">Invoice(s) Total</div>
-						<div style="text-align: right; padding: 2px; color: #333333; font-size: 13px">{{ this.invoiceamount }}</div>
+            <div
+                style="
+                    display: grid;
+                    grid-template-columns: 2fr 4fr;
+                    margin-top: 16px;
+                    margin-bottom: 16px;
+                    padding: 16px;
+                    background-color: #fbfbfb;
+                "
+                *ngIf="iscustomerselected"
+            >
+                <div>
+                    <div
+                        style="
+                            text-align: left;
+                            padding: 2px;
+                            color: #333333;
+                            font-size: 13px;
+                        "
+                    >
+                        Credit Available:
+                        {{ this.customer?.credit_amt | currency: "INR" }}
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr">
+                        <div
+                            style="
+                                text-align: right;
+                                padding: 2px;
+                                color: #333333;
+                                font-size: 13px;
+                            "
+                        >
+                            Invoice(s) Total
+                        </div>
+                        <div
+                            style="
+                                text-align: right;
+                                padding: 2px;
+                                color: #333333;
+                                font-size: 13px;
+                            "
+                        >
+                            {{ this.invoiceamount }}
+                        </div>
 
-						<div *ngIf="this.invoice?.paid_amount !== 0.0" style="text-align: right; padding: 2px; color: #333333; font-size: 13px">
-							Received Payments
-						</div>
-						<div *ngIf="this.invoice?.paid_amount !== 0.0" style="text-align: right; padding: 2px; color: red; font-size: 13px">
-							(-) {{ this.paidamount }}
-						</div>
+                        <div
+                            *ngIf="this.invoice?.paid_amount !== 0.0"
+                            style="
+                                text-align: right;
+                                padding: 2px;
+                                color: #333333;
+                                font-size: 13px;
+                            "
+                        >
+                            Received Payments
+                        </div>
+                        <div
+                            *ngIf="this.invoice?.paid_amount !== 0.0"
+                            style="
+                                text-align: right;
+                                padding: 2px;
+                                color: red;
+                                font-size: 13px;
+                            "
+                        >
+                            (-) {{ this.paidamount }}
+                        </div>
 
-						<div style="text-align: right; padding: 2px; color: #333333; font-size: 13px">Now Paying</div>
-						<div style="text-align: right; padding: 2px; color: red; font-size: 13px">(-) {{ this.summed }}</div>
+                        <div
+                            style="
+                                text-align: right;
+                                padding: 2px;
+                                color: #333333;
+                                font-size: 13px;
+                            "
+                        >
+                            Now Paying
+                        </div>
+                        <div
+                            style="
+                                text-align: right;
+                                padding: 2px;
+                                color: red;
+                                font-size: 13px;
+                            "
+                        >
+                            (-) {{ this.summed }}
+                        </div>
 
-						<div *ngIf="this.customer?.credit_amt !== 0.0" style="text-align: right; padding: 2px; color: #333333; font-size: 13px">Credits used</div>
-						<div *ngIf="this.customer?.credit_amt !== 0.0" style="text-align: right; padding: 2px; color: red; font-size: 13px">
-							(-) {{ this.customer?.credit_amt }}
-						</div>
+                        <div
+                            *ngIf="this.customer?.credit_amt !== 0.0"
+                            style="
+                                text-align: right;
+                                padding: 2px;
+                                color: #333333;
+                                font-size: 13px;
+                            "
+                        >
+                            Credits used
+                        </div>
+                        <div
+                            *ngIf="this.customer?.credit_amt !== 0.0"
+                            style="
+                                text-align: right;
+                                padding: 2px;
+                                color: red;
+                                font-size: 13px;
+                            "
+                        >
+                            (-) {{ this.customer?.credit_amt }}
+                        </div>
 
-						<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500">Balance Due</div>
-						<div style="text-align: right; padding: 2px; color: #000000; font-weight: 500; font-size: 13px">
-							{{ this.balancedue | currency: 'INR' }}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+                        <div
+                            style="
+                                text-align: right;
+                                padding: 2px;
+                                color: #000000;
+                                font-weight: 500;
+                            "
+                        >
+                            Balance Due
+                        </div>
+                        <div
+                            style="
+                                text-align: right;
+                                padding: 2px;
+                                color: #000000;
+                                font-weight: 500;
+                                font-size: 13px;
+                            "
+                        >
+                            {{ this.balancedue | currency: "INR" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<div style="text-align: center" class="error">{{ errmsg }}</div>
-		<div class="submit" *ngIf="iscustomerselected && !iswarning">
-			<button mat-raised-button color="primary" type="submit" name="action" class="cursor" [disabled]="!submitForm.valid">Add Receivables</button>
-		</div>
-		<div class="submit" *ngIf="iswarning">
-			<div
-				style="
-					font-size: 14px;
-					color: orangered;
-					font-style: italic;
-					text-align: center;
-					display: flex;
-					justify-content: flex-end !important;
-					align-items: center;
-					padding-top: 16px;
-				"
-			>
-				<b>Warning!: </b> Duplicate Bank reference (or) Current paid amount is same as last payment. please check again and proceed.</div
-			>&nbsp;&nbsp;
-			<button mat-stroked-button color="primary" type="button" (click)="cancel()" class="cursor" [disabled]="!submitForm.valid"
-				>Cancel & Recheck</button
-			>&nbsp;&nbsp;
-			<button mat-raised-button color="primary" type="button" (click)="finalSubmit()" class="cursor" [disabled]="!submitForm.valid"
-				>Continue to Add Receivables</button
-			>
-		</div>
-	</form>
+        <div style="text-align: center" class="error">{{ errmsg }}</div>
+        <div class="submit" *ngIf="iscustomerselected && !iswarning">
+            <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                name="action"
+                class="cursor"
+                [disabled]="!submitForm.valid"
+            >
+                Add Receivables
+            </button>
+        </div>
+        <div class="submit" *ngIf="iswarning">
+            <div
+                style="
+                    font-size: 14px;
+                    color: orangered;
+                    font-style: italic;
+                    text-align: center;
+                    display: flex;
+                    justify-content: flex-end !important;
+                    align-items: center;
+                    padding-top: 16px;
+                "
+            >
+                <b>Warning!: </b> Duplicate Bank reference (or) Current paid
+                amount is same as last payment. please check again and proceed.
+            </div>
+            &nbsp;&nbsp;
+            <button
+                mat-stroked-button
+                color="primary"
+                type="button"
+                (click)="cancel()"
+                class="cursor"
+                [disabled]="!submitForm.valid"
+            >
+                Cancel & Recheck</button
+            >&nbsp;&nbsp;
+            <button
+                mat-raised-button
+                color="primary"
+                type="button"
+                (click)="finalSubmit()"
+                class="cursor"
+                [disabled]="!submitForm.valid"
+            >
+                Continue to Add Receivables
+            </button>
+        </div>
+    </form>
 </div>

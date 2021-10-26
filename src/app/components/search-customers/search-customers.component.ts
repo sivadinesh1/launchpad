@@ -24,23 +24,24 @@ import { CommonApiService } from 'src/app/services/common-api.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchCustomersComponent implements OnInit {
-    customerdata: any;
+    @Output()
+    customerOutput = new EventEmitter<any>();
+
+    @Output()
+    customerSearchResetOutput = new EventEmitter<any>();
+
+    customer_data: any;
 
     submitForm: FormGroup;
 
-    customername = '';
-    customernameprint = '';
+    customer_name = '';
 
     isLoading = false;
     isCLoading = false;
     customer_lis: Customer[];
 
-    @Output()
-    customerOutput = new EventEmitter<any>();
-
     constructor(
         private _authService: AuthenticationService,
-        private _modalcontroller: ModalController,
         private _cdr: ChangeDetectorRef,
         private _router: Router,
         private _commonApiService: CommonApiService,
@@ -51,7 +52,7 @@ export class SearchCustomersComponent implements OnInit {
         this._cdr.markForCheck();
 
         this.submitForm = this._fb.group({
-            customerctrl: [null],
+            customer_ctrl: [null],
         });
     }
 
@@ -62,7 +63,7 @@ export class SearchCustomersComponent implements OnInit {
 
     // check hardcoded customer data and empty
     searchCustomers() {
-        this.submitForm.controls.customerctrl.valueChanges
+        this.submitForm.controls.customer_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isCLoading = true)),
@@ -96,9 +97,11 @@ export class SearchCustomersComponent implements OnInit {
 
     clearCustomerInput() {
         this.submitForm.patchValue({
-            customerctrl: null,
+            customer_ctrl: null,
         });
         this.customer_lis = null;
+
+        this.customerSearchResetOutput.emit();
 
         this._cdr.markForCheck();
     }
@@ -106,12 +109,12 @@ export class SearchCustomersComponent implements OnInit {
     setCustomerInfo(event, from) {
         if (event !== undefined) {
             if (from === 'tab') {
-                this.customerdata = event;
-                this.customerOutput.emit(this.customerdata);
+                this.customer_data = event;
+                this.customerOutput.emit(this.customer_data);
                 this._cdr.detectChanges();
             } else {
-                this.customerdata = event.option.value;
-                this.customerOutput.emit(this.customerdata);
+                this.customer_data = event.option.value;
+                this.customerOutput.emit(this.customer_data);
                 this._cdr.detectChanges();
             }
         }

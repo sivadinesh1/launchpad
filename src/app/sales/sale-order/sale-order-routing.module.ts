@@ -10,7 +10,7 @@ const routes: Routes = [
         path: '',
         component: SaleOrderPage,
         canDeactivate: [DirtyCheckGuard],
-        resolve: { rawsalesdata: SalesDataResolverService },
+        resolve: { rawSalesData: SalesDataResolverService },
     },
 ];
 

@@ -1,171 +1,241 @@
 <ion-content>
-	<div class="screen-header">
-		<div>&nbsp;</div>
+    <div class="screen-header">
+        <div>&nbsp;</div>
 
-		<div style="align-items: center">
-			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="16px" height="16px" />
-		</div>
-	</div>
+        <div style="align-items: center">
+            <img
+                class="cursor"
+                src="/assets/images/svg/close.svg"
+                (click)="close()"
+                width="16px"
+                height="16px"
+            />
+        </div>
+    </div>
 
-	<div class="action-row">
-		<div>
-			SALES ORDER -
-			<span style="font-size: 12px; color: grey">Revisions #{{ this.salemasterdata?.revision }}</span>
-		</div>
-		<div>
-			<!-- <span style="padding: 0px 6px" class="cursor">
-				<img src="/assets/images/svg/whatsapp.svg" style="cursor: pointer" width="24px" height="24px" (click)="openShareDialog()" />
-			</span>
-			<span style="padding: 0px 6px" class="cursor">
-				<mat-icon [ngStyle]="{ color: '#6d78d2' }" (click)="goPrintInvoice(this.salemasterdata)">print </mat-icon>
-			</span> -->
-			<span style="padding: 0px 6px"
-				><img
-					matTooltip="Download"
-					matTooltipClass="tooltip"
-					src="/assets/images/svg/direct-download.svg"
-					style="cursor: pointer"
-					width="24px"
-					height="24px"
-					(click)="exportToExcel()"
-			/></span>
-			<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-		</div>
-	</div>
+    <div class="action-row">
+        <div>
+            SALES ORDER -
+            <span style="font-size: 12px; color: grey"
+                >Revisions #{{ this.sale_master_data?.revision }}</span
+            >
+        </div>
+        <div>
+            <span
+                *ngIf="this.data.status === 'C'"
+                (click)="salesReturn()"
+                class="link_text"
+            >
+                SALES RETURN
+            </span>
 
-	<div class="customer-info">
-		<div>
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6"> Invoice # </div>
-				<div style="font-size: 14px; font-weight: 400">
-					{{ this.salemasterdata?.invoice_no }}
-				</div>
-			</div>
+            <span style="padding: 0px 6px"
+                ><img
+                    matTooltip="Download"
+                    matTooltipClass="tooltip"
+                    src="/assets/images/svg/direct-download.svg"
+                    style="cursor: pointer"
+                    width="24px"
+                    height="24px"
+                    (click)="exportToExcel()"
+            /></span>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </div>
+    </div>
 
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6"> Invoice Date </div>
-				<div style="font-size: 14px; font-weight: 400">
-					{{ this.salemasterdata?.invoice_date }}
-				</div>
-			</div>
+    <div class="customer-info">
+        <div>
+            <div style="padding: 5px">
+                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
+                    Invoice #
+                </div>
+                <div style="font-size: 14px; font-weight: 400">
+                    {{ this.sale_master_data?.invoice_no }}
+                </div>
+            </div>
 
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6"> Status </div>
-				<div style="font-size: 14px; font-weight: 400">
-					{{ this.salemasterdata?.status === 'C' ? 'Completed' : '' }}
-				</div>
-			</div>
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">GST</div>
-				<div style="font-size: 14px; font-weight: 400">
-					{{ this.customerdata?.gst }}
-				</div>
-			</div>
-		</div>
+            <div style="padding: 5px">
+                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
+                    Invoice Date
+                </div>
+                <div style="font-size: 14px; font-weight: 400">
+                    {{ this.sale_master_data?.invoice_date }}
+                </div>
+            </div>
 
-		<div style="padding: 5px">
-			<div style="font-size: 13px; font-weight: 400; opacity: 0.6"> Billing Address </div>
-			<div style="padding: 5px 0px">
-				<div style="font-size: 14px; font-weight: 400">
-					{{ this.customerdata?.name }}
-				</div>
-				<div style="font-size: 14px; font-weight: 400; padding: 1px 0x">
-					{{ this.customerdata?.address1 }}
-				</div>
-				<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">
-					{{ this.customerdata?.address2 }}
-				</div>
-				<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">
-					{{ this.customerdata?.district }}
-				</div>
-				<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">
-					{{ this.customerdata?.pin }}
-				</div>
-			</div>
-		</div>
+            <div style="padding: 5px">
+                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
+                    Status
+                </div>
+                <div style="font-size: 14px; font-weight: 400">
+                    {{
+                        this.sale_master_data?.status === "C" ? "Completed" : ""
+                    }}
+                </div>
+            </div>
+            <div style="padding: 5px">
+                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
+                    GST
+                </div>
+                <div style="font-size: 14px; font-weight: 400">
+                    {{ this.customer_data?.gst }}
+                </div>
+            </div>
+        </div>
 
-		<div style="padding: 5px">
-			<div style="font-size: 13px; font-weight: 400; opacity: 0.6"> Shipping Address </div>
-			<div style="padding: 5px 0px">
-				<div style="font-size: 14px; font-weight: 400">
-					{{ this.customerdata?.name }}
-				</div>
-				<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">
-					{{ this.customerdata?.csa_address1 }}
-				</div>
-				<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">
-					{{ this.customerdata?.csa_address2 }}
-				</div>
-				<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">
-					{{ this.customerdata?.district }}
-				</div>
-				<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">
-					{{ this.customerdata?.pin }}
-				</div>
-			</div>
-		</div>
-	</div>
+        <div style="padding: 5px">
+            <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
+                Billing Address
+            </div>
+            <div style="padding: 5px 0px">
+                <div style="font-size: 14px; font-weight: 400">
+                    {{ this.customer_data?.name }}
+                </div>
+                <div style="font-size: 14px; font-weight: 400; padding: 1px 0x">
+                    {{ this.customer_data?.address1 }}
+                </div>
+                <div
+                    style="font-size: 14px; font-weight: 400; padding: 1px 0px"
+                >
+                    {{ this.customer_data?.address2 }}
+                </div>
+                <div
+                    style="font-size: 14px; font-weight: 400; padding: 1px 0px"
+                >
+                    {{ this.customer_data?.district }}
+                </div>
+                <div
+                    style="font-size: 14px; font-weight: 400; padding: 1px 0px"
+                >
+                    {{ this.customer_data?.pin }}
+                </div>
+            </div>
+        </div>
 
-	<div #epltable>
-		<table style="width: 100%">
-			<thead>
-				<tr class="header">
-					<th style="text-align: left">SNo</th>
-					<th style="text-align: left">CODE</th>
-					<th style="text-align: left">DESCRIPTION</th>
-					<th style="text-align: right">QTY</th>
+        <div style="padding: 5px">
+            <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
+                Shipping Address
+            </div>
+            <div style="padding: 5px 0px">
+                <div style="font-size: 14px; font-weight: 400">
+                    {{ this.customer_data?.name }}
+                </div>
+                <div
+                    style="font-size: 14px; font-weight: 400; padding: 1px 0px"
+                >
+                    {{ this.customer_data?.csa_address1 }}
+                </div>
+                <div
+                    style="font-size: 14px; font-weight: 400; padding: 1px 0px"
+                >
+                    {{ this.customer_data?.csa_address2 }}
+                </div>
+                <div
+                    style="font-size: 14px; font-weight: 400; padding: 1px 0px"
+                >
+                    {{ this.customer_data?.district }}
+                </div>
+                <div
+                    style="font-size: 14px; font-weight: 400; padding: 1px 0px"
+                >
+                    {{ this.customer_data?.pin }}
+                </div>
+            </div>
+        </div>
+    </div>
 
-					<th style="text-align: right">MRP</th>
-					<th style="text-align: right">DIS%</th>
+    <div #epl_table>
+        <table style="width: 100%">
+            <thead>
+                <tr class="header">
+                    <th style="text-align: left">SNo</th>
+                    <th style="text-align: left">CODE</th>
+                    <th style="text-align: left">DESCRIPTION</th>
+                    <th style="text-align: right">QTY</th>
 
-					<th style="text-align: right">TAX</th>
+                    <th style="text-align: right">MRP</th>
+                    <th style="text-align: right">DIS%</th>
 
-					<th style="text-align: right">NET AMNT</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr *ngFor="let item of saledetailsdata ? saledetailsdata : []; let idx = index" class="list-item row-color">
-					<td style="text-align: left">{{ idx + 1 }}</td>
-					<td>{{ item.product_code }}</td>
-					<td>{{ item.description }}</td>
+                    <th style="text-align: right">TAX</th>
 
-					<td style="text-align: right">{{ item?.qty }}</td>
-					<td style="text-align: right">{{ (+item?.mrp).toFixed(2) }}</td>
-					<td style="text-align: right">{{ item?.disc_percent }}</td>
-					<td style="text-align: right">{{ item?.taxrate }}</td>
-					<td style="text-align: right">
-						{{ (+item?.total_value).toFixed(2) }}
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+                    <th style="text-align: right">NET AMT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                    *ngFor="
+                        let item of sale_details_data ? sale_details_data : [];
+                        let idx = index
+                    "
+                    class="list-item row-color"
+                >
+                    <td style="text-align: left">{{ idx + 1 }}</td>
+                    <td>{{ item.product.product_code }}</td>
+                    <td>{{ item.product.product_description }}</td>
 
-	<div style="display: grid; grid-template-columns: 1fr 200px 100px">
-		<div>&nbsp;</div>
-		<div style="text-align: right; font-size: 15px; font-weight: 500; padding: 2px 6px"> Sub Total </div>
-		<div style="text-align: right; font-size: 15px; padding: 2px 6px">
-			{{ (+salemasterdata?.total_value).toFixed(2) }}
-		</div>
-		<div>&nbsp;</div>
-		<div style="text-align: right; font-size: 14px; padding: 2px 6px"> Transport Chrgs </div>
-		<div style="text-align: right; font-size: 14px; padding: 2px 6px">
-			{{ (+salemasterdata?.transport_charges).toFixed(2) }}
-		</div>
-		<div>&nbsp;</div>
-		<div style="text-align: right; font-size: 14px; padding: 2px 6px"> Unloading Chrgs </div>
-		<div style="text-align: right; font-size: 14px; padding: 2px 6px">
-			{{ (+salemasterdata?.unloading_charges).toFixed(2) }}
-		</div>
-		<div>&nbsp;</div>
-		<div style="text-align: right; font-size: 14px; padding: 2px 6px"> Misc Chrgs </div>
-		<div style="text-align: right; font-size: 14px; padding: 2px 6px">
-			{{ (+salemasterdata?.misc_charges).toFixed(2) }}
-		</div>
-		<div>&nbsp;</div>
-		<div style="text-align: right; font-size: 15px; padding: 2px 6px; font-weight: 500"> Net Total </div>
-		<div style="text-align: right; font-size: 15px; padding: 2px 6px">
-			{{ (+salemasterdata?.net_total).toFixed(2) }}
-		</div>
-	</div>
+                    <td style="text-align: right">{{ item?.quantity }}</td>
+                    <td style="text-align: right">
+                        {{ (+item?.mrp).toFixed(2) }}
+                    </td>
+                    <td style="text-align: right">{{ item?.disc_percent }}</td>
+                    <td style="text-align: right">{{ item?.tax_rate }}</td>
+                    <td style="text-align: right">
+                        {{ (+item?.total_value).toFixed(2) }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 200px 100px">
+        <div>&nbsp;</div>
+        <div
+            style="
+                text-align: right;
+                font-size: 15px;
+                font-weight: 500;
+                padding: 2px 6px;
+            "
+        >
+            Sub Total
+        </div>
+        <div style="text-align: right; font-size: 15px; padding: 2px 6px">
+            {{ (+sale_master_data?.total_value).toFixed(2) }}
+        </div>
+        <div>&nbsp;</div>
+        <div style="text-align: right; font-size: 14px; padding: 2px 6px">
+            Transport Exp
+        </div>
+        <div style="text-align: right; font-size: 14px; padding: 2px 6px">
+            {{ (+sale_master_data?.transport_charges).toFixed(2) }}
+        </div>
+        <div>&nbsp;</div>
+        <div style="text-align: right; font-size: 14px; padding: 2px 6px">
+            Unload Exp
+        </div>
+        <div style="text-align: right; font-size: 14px; padding: 2px 6px">
+            {{ (+sale_master_data?.unloading_charges).toFixed(2) }}
+        </div>
+        <div>&nbsp;</div>
+        <div style="text-align: right; font-size: 14px; padding: 2px 6px">
+            Misc Exp
+        </div>
+        <div style="text-align: right; font-size: 14px; padding: 2px 6px">
+            {{ (+sale_master_data?.misc_charges).toFixed(2) }}
+        </div>
+        <div>&nbsp;</div>
+        <div
+            style="
+                text-align: right;
+                font-size: 15px;
+                padding: 2px 6px;
+                font-weight: 500;
+            "
+        >
+            Net Total
+        </div>
+        <div style="text-align: right; font-size: 15px; padding: 2px 6px">
+            {{ (+sale_master_data?.net_total).toFixed(2) }}
+        </div>
+    </div>
 </ion-content>

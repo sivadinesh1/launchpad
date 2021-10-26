@@ -1,83 +1,96 @@
 <form *ngIf="submitForm" [formGroup]="submitForm" style="display: inline-block">
-  <mat-form-field
-    class="example-full-width"
-    floatLabel="never"
-    style="padding-right: 10px; font-size: 16px"
-  >
-    <mat-label style="font-size: 14px; color: #808080"
-      >Search in Customer</mat-label
+    <mat-form-field
+        class="example-full-width"
+        floatLabel="never"
+        style="padding-right: 10px; font-size: 16px"
     >
-    <input
-      matInput
-      [matAutocomplete]="auto"
-      formControlName="customerctrl"
-      #typehead1
-      panelWidth="auto"
-      #clist
-      autofocus
-      matTooltipPosition="after"
-      tabindex="1"
-    />
-
-    <button
-      mat-button
-      matSuffix
-      mat-icon-button
-      type="button"
-      tabindex="-1"
-      (click)="clearCustomerInput()"
-    >
-      <mat-icon>close</mat-icon>
-    </button>
-    <mat-autocomplete
-      #auto="matAutocomplete"
-      autoActiveFirstOption
-      panelWidth="auto"
-      [displayWith]="displayFn"
-      (optionSelected)="setCustomerInfo($event, 'click')"
-    >
-      <mat-option *ngIf="isCLoading" class="is-loading" style="width: 400px">
-        <div style="display: flex; align-items: center">
-          <mat-spinner diameter="20"></mat-spinner>
-          <span>&nbsp;&nbsp;Start typing...</span>
-        </div>
-      </mat-option>
-
-      <ng-container *ngIf="!isCLoading">
-        <mat-option
-          *ngFor="let customer of customer_lis"
-          [value]="customer"
-          style="height: 70px; border-bottom: 1px solid lightsteelblue"
+        <mat-label style="font-size: 14px; color: #808080"
+            >Search in Customer</mat-label
         >
-          <div style="display: grid; grid-template-columns: 1fr">
-            <div>
-              <div style="font-size: 16px; padding: 2px; line-height: 1em">
-                {{ customer.name }}
-              </div>
-              <div
-                style="
-                  font-size: 14px;
-                  padding: 2px;
-                  line-height: 1em;
-                  opacity: 0.7;
-                "
-              >
-                {{ customer.address1 }}
-              </div>
-              <div
-                style="
-                  font-size: 14px;
-                  padding: 2px;
-                  line-height: 1em;
-                  opacity: 0.7;
-                "
-              >
-                {{ customer.address2 }},{{ customer.district }}
-              </div>
-            </div>
-          </div>
-        </mat-option>
-      </ng-container>
-    </mat-autocomplete>
-  </mat-form-field>
+        <input
+            matInput
+            [matAutocomplete]="auto"
+            formControlName="customer_ctrl"
+            #typehead1
+            panelWidth="auto"
+            #clist
+            autofocus
+            matTooltipPosition="after"
+            tabindex="1"
+        />
+
+        <button
+            mat-button
+            matSuffix
+            mat-icon-button
+            type="button"
+            tabindex="-1"
+            (click)="clearCustomerInput()"
+        >
+            <mat-icon>close</mat-icon>
+        </button>
+        <mat-autocomplete
+            #auto="matAutocomplete"
+            autoActiveFirstOption
+            panelWidth="auto"
+            [displayWith]="displayFn"
+            (optionSelected)="setCustomerInfo($event, 'click')"
+        >
+            <mat-option
+                *ngIf="isCLoading"
+                class="is-loading"
+                style="width: 400px"
+            >
+                <div style="display: flex; align-items: center">
+                    <mat-spinner diameter="20"></mat-spinner>
+                    <span>&nbsp;&nbsp;Start typing...</span>
+                </div>
+            </mat-option>
+
+            <ng-container *ngIf="!isCLoading">
+                <mat-option
+                    *ngFor="let customer of customer_lis"
+                    [value]="customer"
+                    style="
+                        height: 70px;
+                        border-bottom: 1px solid lightsteelblue;
+                    "
+                >
+                    <div style="display: grid; grid-template-columns: 1fr">
+                        <div>
+                            <div
+                                style="
+                                    font-size: 16px;
+                                    padding: 2px;
+                                    line-height: 1em;
+                                "
+                            >
+                                {{ customer.name }}
+                            </div>
+                            <div
+                                style="
+                                    font-size: 14px;
+                                    padding: 2px;
+                                    line-height: 1em;
+                                    opacity: 0.7;
+                                "
+                            >
+                                {{ customer.address1 }}
+                            </div>
+                            <div
+                                style="
+                                    font-size: 14px;
+                                    padding: 2px;
+                                    line-height: 1em;
+                                    opacity: 0.7;
+                                "
+                            >
+                                {{ customer.address2 }},{{ customer.district }}
+                            </div>
+                        </div>
+                    </div>
+                </mat-option>
+            </ng-container>
+        </mat-autocomplete>
+    </mat-form-field>
 </form>

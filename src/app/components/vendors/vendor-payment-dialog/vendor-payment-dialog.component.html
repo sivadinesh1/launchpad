@@ -20,7 +20,12 @@
         </div>
 
         <div formArrayName="accountarr" class="list-block">
-            <div *ngFor="let product of accountarr.controls; let idx = index">
+            <div
+                *ngForOf="
+                    let product of this.submitForm.get('accountarr');
+                    let idx = index
+                "
+            >
                 <div>
                     <ng-container [formGroupName]="idx">
                         <div class="item-details">
@@ -34,7 +39,7 @@
                                     />
                                     <mat-error
                                         *ngIf="
-                                            product.controls[
+                                            product['controls'][
                                                 'receivedamount'
                                             ].hasError('required')
                                         "
@@ -43,7 +48,7 @@
                                     </mat-error>
                                     <mat-error
                                         *ngIf="
-                                            product.controls[
+                                            product['controls'][
                                                 'receivedamount'
                                             ].hasError('max')
                                         "

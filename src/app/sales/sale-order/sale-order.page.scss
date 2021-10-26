@@ -225,6 +225,7 @@
     padding: 0.5rem 80px 0.5rem 1rem;
     background-color: #f7f9fd;
     border-top: 1px solid #e6e6e6;
+    z-index: 2;
 }
 
 .enq-bottom {
@@ -303,4 +304,8 @@
     button.alert-button:nth-child(2) {
         color: green;
     }
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-underline {
+    height: 0 !important;
 }
