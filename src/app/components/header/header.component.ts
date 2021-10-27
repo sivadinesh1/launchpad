@@ -57,7 +57,7 @@ export class HeaderComponent implements OnInit {
 
     constructor(
         private _authService: AuthenticationService,
-        private _modalcontroller: ModalController,
+        private _modalController: ModalController,
         private _cdr: ChangeDetectorRef,
         private _router: Router,
         private _commonApiService: CommonApiService,
@@ -152,8 +152,7 @@ export class HeaderComponent implements OnInit {
     }
 
     async showInventoryReportsDialog(product_code, product_id) {
-        debugger;
-        const modal = await this._modalcontroller.create({
+        const modal = await this._modalController.create({
             component: InventoryReportsDialogComponent,
             componentProps: {
                 center_id: this.user_data.center_id,

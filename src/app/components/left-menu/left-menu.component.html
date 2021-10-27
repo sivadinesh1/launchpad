@@ -18,7 +18,7 @@
                 <a
                     class="header-menu-item"
                     (click)="routeTo(page.name, page.link)"
-                    [ngClass]="{ selectedmenu: clickedItem === page?.name }"
+                    [ngClass]="{ selectedMenu: clickedItem === page?.name }"
                 >
                     <img
                         src="{{ page?.icon }}"
@@ -148,7 +148,7 @@
                                 class="header-menu-item"
                                 (click)="routeTo(child.name, child.link)"
                                 [ngClass]="{
-                                    selectedmenu: clickedItem === child?.name
+                                    selectedMenu: clickedItem === child?.name
                                 }"
                             >
                                 <span
@@ -169,7 +169,7 @@
                                 class="header-menu-item"
                                 (click)="routeTo(child.name, child.link)"
                                 [ngClass]="{
-                                    selectedmenu: clickedItem === child?.name
+                                    selectedMenu: clickedItem === child?.name
                                 }"
                             >
                                 <span

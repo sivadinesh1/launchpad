@@ -1,0 +1,1099 @@
+<ion-content
+    style="width: 100%; height: 100%"
+    [scrollEvents]="true"
+    (ionScroll)="logScrolling($event)"
+>
+    <form [formGroup]="submitForm">
+        <div class="vendor">
+            <div style="display: grid">
+                <div class="screen-header">
+                    <span style="font-size: 18px; color: #4e53b7"
+                        >{{bread_menu}}</span
+                    >
+                </div>
+                <div>
+                    <mat-form-field style="width: 380px">
+                        <mat-label>Select or Add Vendor</mat-label>
+                        <input
+                            matInput
+                            [matAutocomplete]="auto"
+                            formControlName="vendor_ctrl"
+                            [readOnly]="vendor_selected"
+                            #typeHead1
+                            required
+                            #vList
+                            matTooltipPosition="after"
+                            tabindex="1"
+                            [attr.disabled]="vendor_selected?'true':null"
+                        />
+                        <button
+                            mat-button
+                            matSuffix
+                            mat-icon-button
+                            tabindex="-1"
+                            type="button"
+                            (click)="clearInput()"
+                        >
+                            <mat-icon tabindex="-1">close</mat-icon>
+                        </button>
+                        <mat-autocomplete
+                            #auto="matAutocomplete"
+                            autoActiveFirstOption
+                            [displayWith]="displayFn"
+                            (optionSelected)="setVendorInfo($event, 'click')"
+                        >
+                            <mat-option *ngIf="isVLoading" class="is-loading"
+                                ><mat-spinner diameter="20"></mat-spinner
+                            ></mat-option>
+                            <ng-container *ngIf="!isVLoading">
+                                <mat-option
+                                    *ngFor="let vendor of vendor_lis"
+                                    [value]="vendor"
+                                    style="
+                                        height: 70px;
+                                        border-bottom: 1px solid lightsteelblue;
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            display: grid;
+                                            grid-template-columns: 1fr;
+                                        "
+                                    >
+                                        <div>
+                                            <div
+                                                style="
+                                                    font-size: 15px;
+                                                    padding: 2px;
+                                                    line-height: 1em;
+                                                "
+                                            >
+                                                {{ vendor.vendor_name }}
+                                            </div>
+                                            <div
+                                                style="
+                                                    font-size: 14px;
+                                                    padding: 2px;
+                                                    line-height: 1em;
+                                                    color: grey;
+                                                "
+                                            >
+                                                {{ vendor.address1 }}
+                                            </div>
+                                            <div
+                                                style="
+                                                    font-size: 14px;
+                                                    padding: 2px;
+                                                    line-height: 1em;
+                                                    color: grey;
+                                                "
+                                            >
+                                                {{ vendor.district }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </mat-option>
+                            </ng-container>
+                        </mat-autocomplete>
+                        <mat-error
+                            *ngIf="submitForm.controls['vendor_ctrl'].hasError('required')"
+                        >
+                            Please enter a value
+                        </mat-error>
+                        <mat-error
+                            *ngIf="submitForm.controls['vendor_ctrl'].hasError('incorrect')"
+                        >
+                            <span style="color: darkorange"
+                                >Vendor Not Found:</span
+                            >
+                            <span
+                                style="
+                                    font-style: italic;
+                                    color: #310ac0;
+                                    cursor: pointer;
+                                "
+                                (click)="addVendor()"
+                                >+ Add Vendor</span
+                            >
+                        </mat-error>
+                        <mat-hint
+                            *ngIf="vendor_selected"
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                            "
+                        >
+                            <span
+                                (click)="openDialog($event)"
+                                style="
+                                    font-size: 12px;
+                                    color: #310ac0;
+                                    cursor: pointer;
+                                "
+                                >View Vendor Details</span
+                            >
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div>
+                <div
+                    style="
+                        display: grid;
+                        grid-template-columns: 1fr 1fr 1fr;
+                        top: 12px;
+                        position: relative;
+                        gap: 10px;
+                    "
+                >
+                    <div>
+                        <mat-form-field
+                            class="mat-input-wrapper"
+                            *ngIf="vendor_selected"
+                        >
+                            <mat-label>Invoice #</mat-label>
+                            <input
+                                matInput
+                                type="text"
+                                tabindex="7"
+                                #invNo
+                                formControlName="invoice_no"
+                                required
+                                appSelectOnFocus
+                                autocomplete="off"
+                            />
+
+                            <mat-error
+                                *ngIf="(submitForm.get('invoice_no').hasError('required') || submitForm.get('invoice_no').hasError('patternInvalid'))  && submitForm.get('invoice_no').touched"
+                            >
+                                Invalid (or) Missing entry
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <mat-form-field
+                            class="mat-input-wrapper"
+                            *ngIf="vendor_selected"
+                        >
+                            <mat-label>Invoice date</mat-label>
+                            <input
+                                matInput
+                                formControlName="invoice_date"
+                                [matDatepicker]="picker1"
+                                (focus)="picker1.open()"
+                                [max]="maxDate"
+                                (dateChange)="invoice_dateSelected($event)"
+                                required
+                                tabindex="8"
+                                autocomplete="off"
+                            />
+                            <mat-datepicker-toggle
+                                tabindex="-1"
+                                matSuffix
+                                [for]="picker1"
+                            ></mat-datepicker-toggle>
+                            <mat-datepicker
+                                tabindex="-1"
+                                #picker1
+                            ></mat-datepicker>
+
+                            <mat-error
+                                *ngIf="(submitForm.get('invoice_date').hasError('required') || submitForm.get('invoice_date').hasError('patternInvalid'))  && submitForm.get('invoice_date').touched"
+                            >
+                                Invalid (or) Missing entry
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <mat-form-field
+                            class="mat-input-wrapper"
+                            *ngIf="vendor_selected"
+                        >
+                            <mat-label>Received Date</mat-label>
+                            <input
+                                matInput
+                                readonly
+                                required
+                                tabindex="9"
+                                [matDatepicker]="picker_received"
+                                formControlName="received_date"
+                                (focus)="picker_received.open()"
+                                [max]="maxDate"
+                                autocomplete="off"
+                            />
+                            <mat-datepicker-toggle
+                                tabindex="-1"
+                                matSuffix
+                                [for]="picker_received"
+                            ></mat-datepicker-toggle>
+                            <mat-datepicker
+                                tabindex="-1"
+                                #picker_received
+                            ></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ng-container *ngIf="!vendor_selected">
+            <div style="display: grid; place-items: center; padding: 2rem 2rem">
+                <div style="color: #333333"><h4>Vendor not selected</h4></div>
+                <div style="color: #666666">
+                    Select vendor & start adding items to purchase cart
+                </div>
+                <div>
+                    <img
+                        src="/assets/images/svg/to-do-list.svg"
+                        width="200px"
+                    />
+                </div>
+            </div>
+        </ng-container>
+
+        <mat-tab-group
+            mat-align-tabs="start"
+            animationDuration="0ms"
+            style="width: 96%; margin: 0 auto"
+        >
+            <mat-tab label="Add Items" *ngIf="vendor_selected">
+                <div class="purchase-wrap" [hidden]="!vendor_selected">
+                    <div class="wrap">
+                        <div class="acton-btns">
+                            <img
+                                class="cursor"
+                                src="/assets/images/svg/trash.svg"
+                                width="16px"
+                                height="16px"
+                                *ngIf="showDelIcon"
+                                (click)="presentDeleteConfirm()"
+                            />
+                            <span
+                                class="sub-menu cursor"
+                                style="color: blue"
+                                *ngIf="showDelIcon"
+                                (click)="presentDeleteConfirm()"
+                                >Delete</span
+                            >
+                        </div>
+
+                        <div class="acton-btns">
+                            <img
+                                class="cursor"
+                                src="/assets/images/svg/edit.svg"
+                                width="16px"
+                                height="16px"
+                                *ngIf="singleRowSelected"
+                                (click)="editTax()"
+                            /><span
+                                class="sub-menu cursor"
+                                style="color: blue"
+                                *ngIf="singleRowSelected"
+                                (click)="editTax()"
+                                >Tax</span
+                            >
+                        </div>
+                        <div class="acton-btns">
+                            <img
+                                class="cursor"
+                                src="/assets/images/svg/edit.svg"
+                                width="16px"
+                                height="16px"
+                                *ngIf="singleRowSelected"
+                                (click)="editMrp()"
+                            />
+                            <span
+                                class="sub-menu cursor"
+                                style="color: blue"
+                                *ngIf="singleRowSelected"
+                                (click)="editMrp()"
+                                >Mrp</span
+                            >
+                        </div>
+                    </div>
+
+                    <div class="left">
+                        <div class="row1">
+                            <div class="item1 headstyl-left txt-center-align">
+                                #
+                            </div>
+                            <div class="item1 headstyl-left txt-center-align">
+                                &nbsp;
+                            </div>
+                            <div class="item2 headstyl-left">Item Code</div>
+                            <div class="item2 headstyl-left">
+                                Item Description
+                            </div>
+                            <div class="item2 headstyl-right">HSN Code</div>
+                            <div class="item3 headstyl-right">Qty</div>
+                            <div class="item3 headstyl-right">MRP</div>
+                            <div class="item3 headstyl-right">
+                                Purchase Price
+                            </div>
+                            <div class="item4 headstyl-right">Tax %</div>
+                            <div class="item4 headstyl-right">Net Value</div>
+                        </div>
+                        <div class="row2">
+                            <ng-container
+                                *ngIf="listArr.length === 0 && vendor_selected"
+                            >
+                                <div
+                                    style="
+                                        display: grid;
+                                        place-items: center;
+                                        padding: 2rem 2rem;
+                                    "
+                                >
+                                    <div style="color: #333333">
+                                        <h4>Purchase cart</h4>
+                                    </div>
+                                    <div style="color: #666666">
+                                        There are no items in your Purchase cart
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <!-- 
+					<cdk-virtual-scroll-viewport itemSize="48" class="example-viewport">
+						<div *cdkVirtualFor="let item of listArr" class="example-item">
+							{{item?.product_code}}
+						</div>
+					</cdk-virtual-scroll-viewport> -->
+
+                            <div *ngIf="vendor_selected;">
+                                <div
+                                    *ngFor="let item of listArr ? listArr : []; 
+							let idx = index; trackBy:identify"
+                                    class="list-item"
+                                >
+                                    <div>{{idx + 1}}</div>
+                                    <div class="txt-align">
+                                        <mat-checkbox
+                                            #myCheckbox
+                                            (click)="checkedRow(idx)"
+                                        ></mat-checkbox>
+                                    </div>
+                                    <div
+                                        class="item2"
+                                        style="
+                                            color: rgb(2, 2, 193);
+                                            cursor: pointer;
+                                        "
+                                        (click)="showInventoryReportsDialog(item.product_code, item.product_id)"
+                                    >
+                                        {{item.product_code}}
+                                    </div>
+
+                                    <div class="item2">
+                                        {{item.product_desc}}
+                                    </div>
+                                    <div style="text-align: right">
+                                        {{item.hsn_code}}
+                                    </div>
+
+                                    <div
+                                        style="text-align: right"
+                                        class="num-format-cell-style"
+                                    >
+                                        <mat-form-field
+                                            style="
+                                                margin-bottom: -1.25em;
+                                                width: 80px;
+                                                text-align: right;
+                                            "
+                                        >
+                                            <input
+                                                matInput
+                                                value="{{item.qty}}"
+                                                (keyup)="handleQtyChange($event, idx)"
+                                                required
+                                                numeric
+                                                maxlength="7"
+                                                min="0"
+                                                max="999999"
+                                                appSelectOnFocus
+                                                autocomplete="off"
+                                            />
+                                            <mat-hint
+                                                *ngIf="item.quantity_error!== '' "
+                                                style="
+                                                    color: red;
+                                                    font-size: 12px;
+                                                    margin-top: -4px;
+                                                "
+                                                >{{item.quantity_error}}</mat-hint
+                                            >
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div
+                                        class="
+                                            item4
+                                            txt-right-align
+                                            num-format-cell-style
+                                        "
+                                    >
+                                        {{item.mrp}}
+                                    </div>
+
+                                    <div
+                                        style="text-align: right"
+                                        class="num-format-cell-style"
+                                    >
+                                        <mat-form-field
+                                            style="
+                                                margin-bottom: -1.25em;
+                                                width: 80px;
+                                                text-align: right;
+                                            "
+                                        >
+                                            <input
+                                                matInput
+                                                value="{{item.purchase_price}}"
+                                                (keyup)="handlePPChange($event, idx)"
+                                                required
+                                                maxlength="7"
+                                                min="0"
+                                                max="999999"
+                                                type="number"
+                                                appSelectOnFocus
+                                                autocomplete="off"
+                                            />
+                                            <mat-hint
+                                                *ngIf="item.pp_error!== '' "
+                                                style="
+                                                    color: red;
+                                                    font-size: 12px;
+                                                    margin-top: -4px;
+                                                "
+                                                >{{item.pp_error}}</mat-hint
+                                            >
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div
+                                        class="
+                                            item4
+                                            txt-right-align
+                                            num-format-cell-style
+                                        "
+                                    >
+                                        {{item.tax}}
+                                    </div>
+
+                                    <div
+                                        class="
+                                            item4
+                                            txt-right-align
+                                            num-format-cell-style
+                                        "
+                                    >
+                                        {{item.total_value}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="main-add">
+                        <div class="left">
+                            <div>
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>Select Item Code</mat-label>
+                                    <input
+                                        matInput
+                                        [matAutocomplete]="auto1"
+                                        [readonly]="!vendor_selected"
+                                        formControlName="product_ctrl"
+                                        #typeHead
+                                        #plist
+                                        matTooltipPosition="after"
+                                        tabindex="3"
+                                        autocomplete="off"
+                                    />
+                                    <mat-hint
+                                        *ngIf="selected_description"
+                                        matTooltip="Add product"
+                                        >{{selected_description}} ::
+                                        MRP:{{selected_mrp}}</mat-hint
+                                    >
+
+                                    <button
+                                        mat-button
+                                        matSuffix
+                                        mat-icon-button
+                                        tabindex="-1"
+                                        aria-label="Clear"
+                                        type="button"
+                                        (click)="clearProdInput()"
+                                    >
+                                        <mat-icon tabindex="-1">close</mat-icon>
+                                    </button>
+
+                                    <mat-autocomplete
+                                        #auto1="matAutocomplete"
+                                        panelWidth="auto"
+                                        autoActiveFirstOption
+                                        [displayWith]="displayProdFn"
+                                        (optionSelected)="setItemDesc($event, 'click')"
+                                    >
+                                        <mat-option
+                                            *ngIf="isLoading"
+                                            class="is-loading"
+                                            ><mat-spinner
+                                                diameter="20"
+                                            ></mat-spinner
+                                        ></mat-option>
+                                        <ng-container *ngIf="!isLoading">
+                                            <mat-option
+                                                *ngFor="let product of product_lis"
+                                                [value]="product"
+                                                style="
+                                                    padding-top: 15px;
+                                                    height: 3.3em !important;
+                                                    padding-bottom: 15px;
+                                                    border-bottom: 1px solid
+                                                        lightsteelblue;
+                                                "
+                                            >
+                                                <div
+                                                    style="
+                                                        display: grid;
+                                                        grid-template-columns: 1fr 80px;
+                                                    "
+                                                >
+                                                    <div>
+                                                        <div
+                                                            style="
+                                                                font-size: 15px;
+                                                                padding: 2px;
+                                                                line-height: 1em;
+                                                            "
+                                                        >
+                                                            {{
+                                                            product.product_code
+                                                            }} &nbsp;&nbsp;
+                                                            <span
+                                                                style="
+                                                                    color: blue;
+                                                                "
+                                                                >Latest MRP: {{
+                                                                product.mrp |
+                                                                currency:
+                                                                "INR"}}</span
+                                                            >
+                                                        </div>
+                                                        <div
+                                                            style="
+                                                                font-size: 14px;
+                                                                padding: 2px;
+                                                                line-height: 1em;
+                                                                color: grey;
+                                                            "
+                                                        >
+                                                            {{
+                                                            product.product_description
+                                                            }}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div
+                                                            style="
+                                                                font-size: 15px;
+                                                                padding: 2px;
+                                                                line-height: 1em;
+                                                                text-align: right;
+                                                                color: grey;
+                                                            "
+                                                        >
+                                                            {{
+                                                            product.product_name
+                                                            }}
+                                                        </div>
+                                                        <div
+                                                            style="
+                                                                font-size: 14px;
+                                                                padding: 2px;
+                                                                line-height: 1em;
+                                                                text-align: right;
+                                                                color: blue;
+                                                            "
+                                                        >
+                                                            <span>
+                                                                <img
+                                                                    src="/assets/images/svg/sales.svg"
+                                                                    width="18px"
+                                                                    height="18px"
+                                                            /></span>
+                                                            <span>
+                                                                &nbsp;{{
+                                                                product.available_stock
+                                                                }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </mat-option>
+                                        </ng-container>
+                                    </mat-autocomplete>
+
+                                    <mat-error
+                                        *ngIf="submitForm.controls['product_ctrl'].hasError('incorrect')"
+                                    >
+                                        Invalid product code
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>P. Price</mat-label>
+                                    <input
+                                        matInput
+                                        type="number"
+                                        min="1"
+                                        max="100000"
+                                        tabindex="4"
+                                        formControlName="temp_purchase_price"
+                                        required
+                                        appSelectOnFocus
+                                        autocomplete="off"
+                                    />
+
+                                    <mat-error
+                                        *ngIf="submitForm.controls['temp_purchase_price'].hasError('required')"
+                                    >
+                                        Required field
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>MRP</mat-label>
+                                    <input
+                                        matInput
+                                        type="number"
+                                        min="1"
+                                        max="100000"
+                                        tabindex="5"
+                                        formControlName="temp_mrp"
+                                        required
+                                        appSelectOnFocus
+                                        autocomplete="off"
+                                    />
+
+                                    <mat-error
+                                        *ngIf="submitForm.controls['temp_mrp'].hasError('required')"
+                                    >
+                                        Required field
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>Qty</mat-label>
+                                    <input
+                                        matInput
+                                        type="number"
+                                        min="1"
+                                        max="9999"
+                                        tabindex="6"
+                                        formControlName="temp_quantity"
+                                        required
+                                        #qty
+                                        (keydown.enter)="add()"
+                                        appSelectOnFocus
+                                        autocomplete="off"
+                                    />
+                                    <mat-hint
+                                        matTooltip="Total Value"
+                                        *ngIf="selected_description"
+                                    >
+                                        <span
+                                            style="font-size: 11px; color: grey"
+                                            >TOTAL:
+                                        </span>
+                                        {{(this.submitForm.value.temp_mrp *
+                                        this.submitForm.value.temp_quantity) |
+                                        currency: "INR"}}
+                                    </mat-hint>
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <button
+                                    mat-stroked-button
+                                    color="primary"
+                                    tabindex="6"
+                                    #newRow
+                                    [disabled]="!vendor_selected"
+                                    type="button"
+                                    (click)="add()"
+                                >
+                                    + New Row
+                                </button>
+                            </div>
+                        </div>
+                        <div class="right">
+                            <div
+                                style="
+                                    display: grid;
+                                    grid-template-columns: 1fr 1fr;
+                                "
+                            >
+                                <div
+                                    style="
+                                        color: #666666;
+                                        text-align: right;
+                                        font-size: 14px;
+                                    "
+                                >
+                                    # Items
+                                </div>
+                                <div
+                                    style="
+                                        color: #666666;
+                                        text-align: right;
+                                        font-size: 14px;
+                                    "
+                                >
+                                    {{listArr.length}}
+                                </div>
+
+                                <div
+                                    *ngIf="i_gst"
+                                    style="
+                                        color: #666666;
+                                        text-align: right;
+                                        font-size: 14px;
+                                    "
+                                >
+                                    IGST
+                                </div>
+                                <div
+                                    style="
+                                        color: #666666;
+                                        text-align: right;
+                                        font-size: 14px;
+                                    "
+                                    *ngIf="i_gst"
+                                >
+                                    {{igs_tTotal}}
+                                </div>
+
+                                <div
+                                    *ngIf="!i_gst"
+                                    style="
+                                        color: #666666;
+                                        text-align: right;
+                                        font-size: 14px;
+                                    "
+                                >
+                                    CGST
+                                </div>
+                                <div
+                                    style="
+                                        color: #666666;
+                                        text-align: right;
+                                        font-size: 14px;
+                                    "
+                                    *ngIf="!i_gst"
+                                >
+                                    {{cgs_tTotal}}
+                                </div>
+
+                                <div
+                                    *ngIf="!i_gst"
+                                    style="
+                                        color: #666666;
+                                        text-align: right;
+                                        font-size: 14px;
+                                    "
+                                >
+                                    SGST
+                                </div>
+                                <div
+                                    style="
+                                        color: #666666;
+                                        text-align: right;
+                                        font-size: 14px;
+                                    "
+                                    *ngIf="!i_gst"
+                                >
+                                    {{sgs_tTotal}}
+                                </div>
+                            </div>
+                            <div>
+                                <div
+                                    style="
+                                        color: #666666;
+                                        text-align: right;
+                                        font-size: 14px;
+                                    "
+                                >
+                                    Total
+                                </div>
+                                <div
+                                    style="text-align: right; font-size: 22px"
+                                    class="
+                                        align-self-center
+                                        left-pad20
+                                        fweight500
+                                    "
+                                >
+                                    {{this.total | number:'1.2-2'}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="purchase-wrap1"></div>
+                </div>
+            </mat-tab>
+            <mat-tab label="Additional Cost" *ngIf="vendor_selected">
+                <div
+                    style="
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-gap: 50px;
+                        padding: 2rem 1rem;
+                    "
+                >
+                    <div
+                        style="
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            border: 1px solid grey;
+                            padding: 1rem;
+                            border-radius: 5px;
+                        "
+                    >
+                        <div
+                            style="
+                                display: grid;
+                                grid-column: 1/-1;
+                                padding-bottom: 10px;
+                                font-weight: 600;
+                            "
+                        >
+                            SHIPPING COST
+                        </div>
+                        <div>
+                            <mat-form-field style="width: 125px">
+                                <mat-label>Order #</mat-label>
+                                <input
+                                    matInput
+                                    #order_no
+                                    type="text"
+                                    formControlName="order_no"
+                                    appSelectOnFocus
+                                    autocomplete="off"
+                                />
+
+                                <mat-error
+                                    *ngIf="(submitForm.get('order_no').hasError('required') || submitForm.get('order_no').hasError('patternInvalid'))  && submitForm.get('order_no').touched"
+                                >
+                                    Invalid (or) Missing entry
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field style="width: 125px">
+                                <mat-label>Order date</mat-label>
+                                <input
+                                    matInput
+                                    readonly
+                                    [matDatepicker]="picker_od"
+                                    formControlName="order_date"
+                                    (focus)="picker_od.open()"
+                                    [max]="max_order_date"
+                                    autocomplete="off"
+                                />
+                                <mat-datepicker-toggle
+                                    tabindex="-1"
+                                    matSuffix
+                                    [for]="picker_od"
+                                ></mat-datepicker-toggle>
+                                <mat-datepicker
+                                    tabindex="-1"
+                                    #picker_od
+                                ></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field style="width: 125px">
+                                <mat-label>Lr #</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    tabindex="11"
+                                    formControlName="lr_no"
+                                    appSelectOnFocus
+                                    autocomplete="off"
+                                />
+
+                                <mat-error
+                                    *ngIf="(submitForm.get('lr_no').hasError('required') || submitForm.get('lr_no').hasError('patternInvalid'))  && submitForm.get('lr_no').touched"
+                                >
+                                    Invalid (or) Missing entry
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field style="width: 125px">
+                                <mat-label>Lr date</mat-label>
+                                <input
+                                    matInput
+                                    readonly
+                                    [matDatepicker]="picker_lr"
+                                    (focus)="picker_lr.open()"
+                                    formControlName="lr_date"
+                                    [max]="maxDate"
+                                    autocomplete="off"
+                                />
+                                <mat-datepicker-toggle
+                                    tabindex="-1"
+                                    matSuffix
+                                    [for]="picker_lr"
+                                ></mat-datepicker-toggle>
+                                <mat-datepicker
+                                    tabindex="-1"
+                                    #picker_lr
+                                ></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div
+                        style="
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            border: 1px solid grey;
+                            padding: 1rem;
+                            border-radius: 5px;
+                        "
+                    >
+                        <div
+                            style="
+                                display: grid;
+                                grid-column: 1/-1;
+                                padding-bottom: 10px;
+                                font-weight: 600;
+                            "
+                        >
+                            OTHER COST(S)
+                        </div>
+                        <div>
+                            <mat-form-field style="width: 125px">
+                                <mat-label># of Boxes</mat-label>
+                                <input
+                                    matInput
+                                    type="number"
+                                    formControlName="no_of_boxes"
+                                    appSelectOnFocus
+                                    autocomplete="off"
+                                    autocomplete="off"
+                                />
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field style="width: 125px">
+                                <mat-label>Transportation Cost</mat-label>
+                                <input
+                                    matInput
+                                    type="number"
+                                    formControlName="transport_charges"
+                                    appSelectOnFocus
+                                    autocomplete="off"
+                                />
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field style="width: 125px">
+                                <mat-label>Unloading Cost</mat-label>
+                                <input
+                                    matInput
+                                    type="number"
+                                    formControlName="unloading_charges"
+                                    appSelectOnFocus
+                                />
+                            </mat-form-field>
+                        </div>
+
+                        <div>
+                            <mat-form-field style="width: 125px">
+                                <mat-label>TDS</mat-label>
+                                <input
+                                    matInput
+                                    type="number"
+                                    formControlName="misc_charges"
+                                    appSelectOnFocus
+                                    autocomplete="off"
+                                />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </form>
+    <ng-container>
+        <div style="width: 100%">
+            <div class="footer" *ngIf="vendor_selected">
+                <div>
+                    <div style="font-size: 12px; color: #797979">Net Total</div>
+                    <div style="font-size: 22px">
+                        {{getNetTotal("rounding")}}
+                    </div>
+                </div>
+                <div class="submit">
+                    <button
+                        appPreventDoubleClick
+                        class="cursor"
+                        (click)="presentCancelConfirm()"
+                        [throttleTime]="500"
+                        mat-stroked-button
+                        color="primary"
+                        type="button"
+                        [disabled]="clicked"
+                    >
+                        Cancel</button
+                    >&nbsp;
+                    <!-- <button
+					*ngIf="(submitForm.get('status').value !== 'C' ) "
+					style="border-radius: 0px"
+					appPreventDoubleClick
+					class="cursor"
+					(throttledClick)="onSave('draft')"
+					type="button"
+					[throttleTime]="500"
+					mat-stroked-button
+					type="button"
+					color="primary"
+					[disabled]="clicked"
+				>
+					Save as Draft
+				</button> -->
+                    &nbsp;
+                    <button
+                        style="border-radius: 0px"
+                        appPreventDoubleClick
+                        class="cursor"
+                        (throttledClick)="onSaveAndSubmit('add')"
+                        type="button"
+                        [throttleTime]="500"
+                        mat-raised-button
+                        type="button"
+                        color="primary"
+                        [disabled]="clicked"
+                    >
+                        <span *ngIf="bread_menu === 'New Purchase'"
+                            >Add to stock</span
+                        >
+                        <span *ngIf="bread_menu !== 'New Purchase'"
+                            >Update to stock</span
+                        >
+                    </button>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+    <ngx-spinner size="medium"></ngx-spinner>
+</ion-content>

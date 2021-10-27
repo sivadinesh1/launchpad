@@ -5,17 +5,19 @@ import { PurchasePage } from './purchase.page';
 import { PurchaseDataResolverService } from '../services/purchase-data-resolver.service';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: PurchasePage,
-    resolve: { rawpurchasedata: PurchaseDataResolverService }
-  },
-
-
+    {
+        path: '',
+        component: PurchasePage,
+        resolve: { rawpurchasedata: PurchaseDataResolverService },
+    },
+    //   {
+    //     path: 'purchase-order',
+    //     loadChildren: () => import('./purchase-order/purchase-order.module').then( m => m.PurchaseOrderPageModule)
+    //   },
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule],
 })
-export class PurchasePageRoutingModule { }
+export class PurchasePageRoutingModule {}

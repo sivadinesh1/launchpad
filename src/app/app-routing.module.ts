@@ -51,6 +51,13 @@ const routes: Routes = [
                         (m) => m.PurchasePageModule
                     ),
             },
+            {
+                path: 'purchase-order/:edit/:purchase-id',
+                loadChildren: () =>
+                    import(
+                        './purchase/purchase-order/purchase-order.module'
+                    ).then((m) => m.PurchaseOrderPageModule),
+            },
             // {
             //   path: 'search-sales',
             //   loadChildren: () =>

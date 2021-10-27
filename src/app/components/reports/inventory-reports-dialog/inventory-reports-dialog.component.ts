@@ -49,7 +49,6 @@ export class InventoryReportsDialogComponent implements OnInit {
                 product_id: this.product_id,
             })
             .subscribe((data: any) => {
-                debugger;
                 // DnD - code to add a "key/Value" in every object of array
                 this.resultList = data.body;
                 this._cdr.markForCheck();

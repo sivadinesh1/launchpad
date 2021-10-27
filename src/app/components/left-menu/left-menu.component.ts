@@ -30,7 +30,7 @@ export class LeftMenuComponent {
     public linkText = false;
     clickedItem: any;
 
-    clickedMenudata$: Observable<any>;
+    clickedMenu_data$: Observable<any>;
     user_data$: Observable<User>;
     user_data: any;
     panelOpenState = false;
@@ -189,9 +189,9 @@ export class LeftMenuComponent {
         private _route: ActivatedRoute,
         private _cdr: ChangeDetectorRef
     ) {
-        this.clickedMenudata$ = this._authService.currentMenu;
+        this.clickedMenu_data$ = this._authService.currentMenu;
 
-        this.clickedMenudata$
+        this.clickedMenu_data$
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
                 this.clickedItem = data;
@@ -298,7 +298,7 @@ export class LeftMenuComponent {
 
     goPurchaseAddScreen($event) {
         $event.stopPropagation();
-        this._router.navigateByUrl(`/home/purchase/edit/0`);
+        this._router.navigateByUrl(`/home/purchase-order/edit/0`);
     }
 
     toggleSubMenu(param) {
