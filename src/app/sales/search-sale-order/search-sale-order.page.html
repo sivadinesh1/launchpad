@@ -51,7 +51,11 @@
             </ion-segment>
         </div>
 
-        <div class="filter_date_range" [matMenuTriggerFor]="admin">
+        <div
+            class="filter_date_range"
+            *ngIf="!isCustomDateFilter"
+            [matMenuTriggerFor]="admin"
+        >
             <div>
                 <div>
                     {{this.from_date | date:'MMM dd'}} - {{this.to_date |
@@ -69,6 +73,51 @@
                     height="14px"
                 />
             </div>
+        </div>
+
+        <ng-container *ngIf="isCustomDateFilter">
+            <div class="filter_date_range">
+                <div>
+                    <mat-form-field style="margin-bottom: -1.25em">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input
+                                matStartDate
+                                matInput
+                                readonly
+                                placeholder="Start date"
+                                [ngModel]="this.from_date"
+                                (dateChange)="opsFromDateEvent($event)"
+                            />
+                            <input
+                                matEndDate
+                                matInput
+                                readonly
+                                placeholder="End date"
+                                [ngModel]="this.to_date"
+                                (dateChange)="opsToDateEvent($event)"
+                            />
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="picker"
+                        ></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+            </div>
+        </ng-container>
+        <div
+            style="padding: 0px 0px 0px 10px"
+            *ngIf="isCustomDateFilter"
+            (click)="customDateFilter()"
+        >
+            <img
+                class="cursor"
+                src="/assets/images/svg/close.svg"
+                width="20px"
+                height="20px"
+            />
         </div>
     </div>
 
@@ -229,6 +278,13 @@ DnD - sample vertical menu
             (click)="dateFilter(14)"
         >
             <span>Last 14 days</span>
+        </div>
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="customDateFilter()"
+        >
+            <span>Custom</span>
         </div>
     </mat-menu>
 

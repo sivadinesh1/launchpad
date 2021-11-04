@@ -10,6 +10,10 @@ const routes: Routes = [
         component: PurchasePage,
         resolve: { rawpurchasedata: PurchaseDataResolverService },
     },
+  {
+    path: 'search-purchase-order',
+    loadChildren: () => import('./search-purchase-order/search-purchase-order.module').then( m => m.SearchPurchaseOrderPageModule)
+  },
     //   {
     //     path: 'purchase-order',
     //     loadChildren: () => import('./purchase-order/purchase-order.module').then( m => m.PurchaseOrderPageModule)

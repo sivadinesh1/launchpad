@@ -6,6 +6,7 @@ import {
     ElementRef,
     ViewChildren,
     QueryList,
+    AfterViewInit,
 } from '@angular/core';
 import {
     ModalController,
@@ -56,34 +57,52 @@ import { InventoryReportsDialogComponent } from '../components/reports/inventory
     styleUrls: ['./purchase.page.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PurchasePage implements OnInit {
-    breadmenu = 'New Purchase';
-    vendorname = '';
-    vendorstate = '';
+export class PurchasePage implements OnInit, AfterViewInit {
+    // TAB navigation for product list
+    @ViewChild('typeHead', { read: MatAutocompleteTrigger })
+    autoTrigger: MatAutocompleteTrigger;
+
+    @ViewChild('plist', { static: true }) plist: any;
+    @ViewChild('vList', { static: true }) v_list: any;
+
+    @ViewChild('invNo', { static: false }) inputEl: ElementRef;
+    @ViewChild('order_no', { static: false }) order_noEl: ElementRef;
+    @ViewChildren('myCheckbox') myCheckboxes: QueryList<any>;
+
+    @ViewChild('Qty', { static: true }) quantity: any;
+
+    // TAB navigation for vendor list
+    @ViewChild('typeHead1', { read: MatAutocompleteTrigger })
+    autoTrigger1: MatAutocompleteTrigger;
+
+    @ViewChild(IonContent, { static: false }) content: IonContent;
+
+    bread_menu = 'New Purchase';
+    vendor_name = '';
+    vendor_state = '';
 
     listArr = [];
 
     total = '0.00';
-    items = Array.from({ length: 100000 }).map((_, i) => `Item #${i}`);
+    // items = Array.from({ length: 100000 }).map((_, i) => `Item #${i}`);
     // test1: any;
     vendor_state_code: any;
     // center_state_code: any
     i_gst: any;
-    vendordata: any;
+    vendor_data: any;
     submitForm: FormGroup;
 
-    vendorselected: any;
+    vendor_selected: any;
 
     no_of_boxes: any;
 
-    selNoOfBoxes: any;
-    igst: any;
-    cgst: any;
-    sgst: any;
+    igs_t: any;
+    cgs_t: any;
+    sgs_t: any;
 
-    igstTotal = '0.00';
-    cgstTotal = '0.00';
-    sgstTotal = '0.00';
+    igs_t_Total = '0.00';
+    cgs_t_Total = '0.00';
+    sgs_t_Total = '0.00';
 
     tax_percentage: any;
     after_tax_value: any;
@@ -94,16 +113,16 @@ export class PurchasePage implements OnInit {
 
     showDelIcon = false;
     singleRowSelected = false;
-    purchaseid: any;
+    // purchase_id: any;
     rawPurchaseData: any;
 
     maxDate = new Date();
-    maxOrderDate = new Date();
+    max_order_date = new Date();
 
     isVLoading = false;
     isLoading = false;
 
-    isvendorselected = false;
+    // is_vendor_selected = false;
     vendor_lis: Vendor[];
     product_lis: IProduct[];
     lineItemData: any;
@@ -116,27 +135,7 @@ export class PurchasePage implements OnInit {
     selected_mrp = '';
     orig_mrp = 0;
 
-    ready = 0; // flag check - center_id (localstorage) & customerid (param)
-
-    @ViewChild('invno', { static: false }) inputEl: ElementRef;
-    @ViewChild('orderno', { static: false }) orderNoEl: ElementRef;
-    @ViewChildren('myCheckbox') private myCheckboxes: QueryList<any>;
-
-    // TAB navigation for product list
-    @ViewChild('typehead', { read: MatAutocompleteTrigger })
-    autoTrigger: MatAutocompleteTrigger;
-
-    @ViewChild('plist', { static: true }) plist: any;
-    @ViewChild('vlist', { static: true }) vlist: any;
-    @ViewChild('newrow', { static: true }) newrow: any;
-
-    @ViewChild('qty', { static: true }) qty: any;
-
-    // TAB navigation for vendor list
-    @ViewChild('typehead1', { read: MatAutocompleteTrigger })
-    autoTrigger1: MatAutocompleteTrigger;
-
-    @ViewChild(IonContent, { static: false }) content: IonContent;
+    ready = 0; // flag check - center_id (local_storage) & customer_id (param)
 
     draftConfirm = [
         {
@@ -166,8 +165,8 @@ export class PurchasePage implements OnInit {
     ];
 
     constructor(
-        private _modalcontroller: ModalController,
-        private _pickerctrl: PickerController,
+        private _modalController: ModalController,
+
         public dialog: MatDialog,
         public alertController: AlertController,
         private _route: ActivatedRoute,
@@ -180,8 +179,6 @@ export class PurchasePage implements OnInit {
         private spinner: NgxSpinnerService,
         private _cdr: ChangeDetectorRef
     ) {
-        // this.init();
-
         this.user_data$ = this._authService.currentUser;
         this.user_data$
             .pipe(filter((data) => data !== null))
@@ -192,12 +189,12 @@ export class PurchasePage implements OnInit {
                 this.ready = 1;
 
                 // data change
-                this._route.data.subscribe((data) => {
+                this._route.data.subscribe((data1) => {
                     this.clicked = false;
                     this.init();
                     this._authService.setCurrentMenu('PURCHASE');
                     this.listArr = [];
-                    this.rawPurchaseData = data.rawpurchasedata;
+                    this.rawPurchaseData = data1.raw_purchase_data;
                 });
 
                 // param change
@@ -222,9 +219,7 @@ export class PurchasePage implements OnInit {
 
     ngOnInit() {}
     initialize() {
-        // this.init();
-
-        this.vendorselected = false;
+        this.vendor_selected = false;
 
         // navigating from list purchase page
         this.buildRawPurchaseData();
@@ -236,18 +231,18 @@ export class PurchasePage implements OnInit {
             this.rawPurchaseData[0].id !== 0
         ) {
             this.spinner.show();
-            this.breadmenu = 'Edit Purchase #' + this.rawPurchaseData[0].id;
+            this.bread_menu = 'Edit Purchase #' + this.rawPurchaseData[0].id;
 
             this.submitForm.patchValue({
-                purchaseid: this.rawPurchaseData[0].id,
-                invoiceno: this.rawPurchaseData[0].invoice_no,
-                invoicedate: new Date(
+                purchase_id: this.rawPurchaseData[0].id,
+                invoice_no: this.rawPurchaseData[0].invoice_no,
+                invoice_date: new Date(
                     new NullToQuotePipe()
                         .transform(this.rawPurchaseData[0].invoice_date)
                         .replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
                 ),
 
-                orderdate:
+                order_date:
                     this.rawPurchaseData[0].order_date === ''
                         ? ''
                         : new Date(
@@ -259,9 +254,9 @@ export class PurchasePage implements OnInit {
                                   )
                           ),
 
-                lrno: this.rawPurchaseData[0].lr_no,
+                lr_no: this.rawPurchaseData[0].lr_no,
 
-                lrdate:
+                lr_date:
                     this.rawPurchaseData[0].lr_date === ''
                         ? ''
                         : new Date(
@@ -272,10 +267,10 @@ export class PurchasePage implements OnInit {
                                       '$2/$1/$3'
                                   )
                           ),
-                orderno: this.rawPurchaseData[0].order_no,
-                noofboxes: this.rawPurchaseData[0].no_of_boxes,
+                order_no: this.rawPurchaseData[0].order_no,
+                no_of_boxes: this.rawPurchaseData[0].no_of_boxes,
 
-                orderrcvddt:
+                received_date:
                     this.rawPurchaseData[0].received_date === ''
                         ? ''
                         : new Date(
@@ -289,13 +284,13 @@ export class PurchasePage implements OnInit {
                                   )
                           ),
 
-                noofitems: this.rawPurchaseData[0].no_of_items,
-                totalqty: this.rawPurchaseData[0].total_qty,
+                no_of_items: this.rawPurchaseData[0].no_of_items,
+                total_quantity: this.rawPurchaseData[0].total_quantity,
                 value: this.rawPurchaseData[0].total_value,
-                totalvalue: this.rawPurchaseData[0].total_value,
-                igst: this.rawPurchaseData[0].igst,
-                cgst: this.rawPurchaseData[0].cgst,
-                sgst: this.rawPurchaseData[0].sgst,
+                total_value: this.rawPurchaseData[0].total_value,
+                igs_t: this.rawPurchaseData[0].igs_t,
+                cgs_t: this.rawPurchaseData[0].cgs_t,
+                sgs_t: this.rawPurchaseData[0].sgs_t,
                 transport_charges: this.rawPurchaseData[0].transport_charges,
                 unloading_charges: this.rawPurchaseData[0].unloading_charges,
                 misc_charges: this.rawPurchaseData[0].misc_charges,
@@ -310,16 +305,16 @@ export class PurchasePage implements OnInit {
             this._commonApiService
                 .getVendorDetails(this.rawPurchaseData[0].vendor_id)
                 .subscribe((vendData: any) => {
-                    this.vendordata = vendData[0];
+                    this.vendor_data = vendData[0];
                     this.vendor_state_code = vendData[0].code;
 
                     this.submitForm.patchValue({
-                        vendorctrl: vendData[0],
+                        vendor_ctrl: vendData[0],
                     });
 
-                    this.vendorname = vendData[0].name;
-                    this.vendorstate = vendData[0].state;
-                    this.vendorselected = true;
+                    this.vendor_name = vendData[0].name;
+                    this.vendor_state = vendData[0].state;
+                    this.vendor_selected = true;
                     this.setTaxLabel();
                     this.setTaxSegment(vendData[0].taxrate);
 
@@ -344,23 +339,23 @@ export class PurchasePage implements OnInit {
     init() {
         this.submitForm = this._fb.group({
             center_id: [null],
-            purchaseid: new FormControl('', Validators.required),
+            purchase_id: new FormControl('', Validators.required),
             vendor: new FormControl(null, Validators.required),
-            invoiceno: new FormControl(null, Validators.required),
-            invoicedate: new FormControl(null, Validators.required),
-            orderno: new FormControl(''),
-            orderdate: new FormControl(''),
-            lrno: new FormControl(''),
-            lrdate: new FormControl(''),
-            noofboxes: new FormControl(0),
-            orderrcvddt: new FormControl(''),
-            noofitems: new FormControl(0),
-            totalqty: new FormControl(0),
+            invoice_no: new FormControl(null, Validators.required),
+            invoice_date: new FormControl(null, Validators.required),
+            order_no: new FormControl(''),
+            order_date: new FormControl(''),
+            lr_no: new FormControl(''),
+            lr_date: new FormControl(''),
+            no_of_boxes: new FormControl(0),
+            received_date: new FormControl(''),
+            no_of_items: new FormControl(0),
+            total_quantity: new FormControl(0),
             value: new FormControl(0),
-            totalvalue: new FormControl(0),
-            igst: new FormControl(0),
-            cgst: new FormControl(0),
-            sgst: new FormControl(0),
+            total_value: new FormControl(0),
+            igs_t: new FormControl(0),
+            cgs_t: new FormControl(0),
+            sgs_t: new FormControl(0),
             transport_charges: new FormControl(0),
             unloading_charges: new FormControl(0),
             misc_charges: new FormControl(0),
@@ -368,12 +363,12 @@ export class PurchasePage implements OnInit {
             after_tax_value: new FormControl(0),
             status: new FormControl('D'),
 
-            vendorctrl: [null, [Validators.required, RequireMatch]],
-            productctrl: [null, [RequireMatch]],
-            tempdesc: [''],
-            temppurchaseprice: [''],
-            tempmrp: [''],
-            tempqty: [
+            vendor_ctrl: [null, [Validators.required, RequireMatch]],
+            product_ctrl: [null, [RequireMatch]],
+            temp_desc: [''],
+            temp_purchase_price: [''],
+            temp_mrp: [''],
+            temp_quantity: [
                 '1',
                 [
                     Validators.required,
@@ -383,7 +378,7 @@ export class PurchasePage implements OnInit {
                 ],
             ],
 
-            productarr: new FormControl(null, Validators.required),
+            product_arr: new FormControl(null, Validators.required),
             roundoff: [0],
             revision: new FormControl(0),
         });
@@ -393,6 +388,7 @@ export class PurchasePage implements OnInit {
     }
 
     ngAfterViewInit() {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.autoTrigger &&
             this.autoTrigger.panelClosingActions.subscribe((x) => {
                 if (
@@ -400,7 +396,7 @@ export class PurchasePage implements OnInit {
                     this.autoTrigger.activeOption.value !== undefined
                 ) {
                     this.submitForm.patchValue({
-                        productctrl: this.autoTrigger.activeOption.value,
+                        product_ctrl: this.autoTrigger.activeOption.value,
                     });
                     this.setItemDesc(
                         this.autoTrigger.activeOption.value,
@@ -409,6 +405,7 @@ export class PurchasePage implements OnInit {
                 }
             });
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.autoTrigger1 &&
             this.autoTrigger1.panelClosingActions.subscribe((x) => {
                 if (
@@ -416,7 +413,7 @@ export class PurchasePage implements OnInit {
                     this.autoTrigger1.activeOption.value !== undefined
                 ) {
                     this.submitForm.patchValue({
-                        vendorctrl: this.autoTrigger1.activeOption.value,
+                        vendor_ctrl: this.autoTrigger1.activeOption.value,
                     });
                     this.setVendorInfo(
                         this.autoTrigger1.activeOption.value,
@@ -426,11 +423,13 @@ export class PurchasePage implements OnInit {
             });
 
         setTimeout(() => {
-            this.vlist && this.vlist.nativeElement.focus();
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            this.v_list && this.v_list.nativeElement.focus();
             if (
                 this.rawPurchaseData[0] !== undefined &&
                 this.rawPurchaseData[0].id !== 0
             ) {
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                 this.plist && this.plist.nativeElement.focus();
             }
             this._cdr.detectChanges();
@@ -439,17 +438,17 @@ export class PurchasePage implements OnInit {
 
     clearInput() {
         this.submitForm.patchValue({
-            vendorctrl: null,
+            vendor_ctrl: null,
         });
 
-        this.vendorselected = false;
+        this.vendor_selected = false;
 
         this._cdr.markForCheck();
     }
 
     searchVendors() {
         let search = '';
-        this.submitForm.controls.vendorctrl.valueChanges
+        this.submitForm.controls.vendor_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isVLoading = true)),
@@ -476,16 +475,16 @@ export class PurchasePage implements OnInit {
     }
 
     searchProducts() {
-        let invdt = '';
-        if (this.submitForm.value.invoicedate === null) {
-            invdt = moment().format('DD-MM-YYYY');
+        let invDt = '';
+        if (this.submitForm.value.invoice_date === null) {
+            invDt = moment().format('DD-MM-YYYY');
         } else {
-            invdt = moment(this.submitForm.value.invoicedate).format(
+            invDt = moment(this.submitForm.value.invoice_date).format(
                 'DD-MM-YYYY'
             );
         }
 
-        this.submitForm.controls.productctrl.valueChanges
+        this.submitForm.controls.product_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isLoading = true)),
@@ -521,12 +520,12 @@ export class PurchasePage implements OnInit {
             this.lineItemData = event.option.value;
         }
 
-        const isduplicate = onlyProductCodeArr.includes(
+        const is_duplicate = onlyProductCodeArr.includes(
             this.lineItemData.product_code
         );
         let proceed = false;
 
-        if (isduplicate) {
+        if (is_duplicate) {
             const index = onlyProductCodeArr.indexOf(
                 this.lineItemData.product_code
             );
@@ -568,10 +567,10 @@ export class PurchasePage implements OnInit {
         if (from === 'tab') {
             this.orig_mrp = event.mrp;
             this.submitForm.patchValue({
-                tempdesc: event.description,
-                tempqty: event.qty === 0 ? 1 : event.qty,
-                tempmrp: event.mrp,
-                temppurchaseprice:
+                temp_desc: event.description,
+                temp_quantity: event.quantity === 0 ? 1 : event.quantity,
+                temp_mrp: event.mrp,
+                temp_purchase_price:
                     event.purchase_price === 'null'
                         ? '0'
                         : event.purchase_price === '0.00'
@@ -584,11 +583,13 @@ export class PurchasePage implements OnInit {
         } else {
             this.orig_mrp = event.option.value.mrp;
             this.submitForm.patchValue({
-                tempdesc: event.option.value.description,
-                tempqty:
-                    event.option.value.qty === 0 ? 1 : event.option.value.qty,
-                tempmrp: event.option.value.mrp,
-                temppurchaseprice:
+                temp_desc: event.option.value.description,
+                temp_quantity:
+                    event.option.value.qty === 0
+                        ? 1
+                        : event.option.value.quantity,
+                temp_mrp: event.option.value.mrp,
+                temp_purchase_price:
                     event.option.value.purchase_price === 'null'
                         ? '0'
                         : event.option.value.purchase_price === '0.00'
@@ -600,24 +601,25 @@ export class PurchasePage implements OnInit {
             this.selected_mrp = event.option.value.mrp;
 
             setTimeout(() => {
-                this.qty && this.qty.nativeElement.focus();
-                // this.qty && this.qty.nativeElement.select();
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                this.quantity && this.quantity.nativeElement.focus();
+                // this.quantity && this.quantity.nativeElement.select();
             }, 10);
         }
     }
 
     processItems(temp, type) {
-        this.setTaxSegment(temp.taxrate);
+        this.setTaxSegment(temp.tax);
 
         let pid = '';
         if (this.rawPurchaseData[0] !== undefined) {
             pid = new NullToQuotePipe().transform(this.rawPurchaseData[0].id);
         }
 
-        let oldval = 0;
+        let old_val = 0;
 
         if (new NullToQuotePipe().transform(temp.id) !== '') {
-            oldval = temp.qty;
+            old_val = temp.qty;
         }
 
         // from product tbl
@@ -629,33 +631,33 @@ export class PurchasePage implements OnInit {
             product_code: temp.product_code,
             product_desc: temp.description,
             qty: temp.qty,
-            packetsize: temp.packetsize,
+            packet_size: temp.packet_size,
             unit_price: temp.purchase_price,
             purchase_price: temp.purchase_price,
             mrp: temp.mrp,
             mrp_change_flag: temp.mrp_change_flag,
-            taxrate: temp.taxrate,
+            tax: temp.tax,
 
             tax_value: (
                 temp.purchase_price *
                 temp.qty *
-                (temp.taxrate / 100)
+                (temp.tax / 100)
             ).toFixed(2),
 
             after_tax_value: temp.purchase_price * temp.qty,
             total_value: (
                 temp.purchase_price * temp.qty +
-                (temp.purchase_price * temp.qty * temp.taxrate) / 100
+                (temp.purchase_price * temp.qty * temp.tax) / 100
             ).toFixed(2),
 
-            igst: this.igst,
-            cgst: this.cgst,
-            sgst: this.sgst,
-            old_val: oldval,
+            igs_t: this.igs_t,
+            cgs_t: this.cgs_t,
+            sgs_t: this.sgs_t,
+            old_val,
             stock_id: temp.stock_id,
             quantity_error: '',
-            pperror: '',
-            hsncode: temp.hsncode,
+            pp_error: '',
+            hsn_code: temp.hsn_code,
         });
 
         const tempArr = this.listArr.map((arrItem) =>
@@ -686,7 +688,7 @@ export class PurchasePage implements OnInit {
 
         this.sumTotalTax();
 
-        if (type === 'loadingnow') {
+        if (type === 'loading_now') {
             const v1 = 240 + this.listArr.length * 70 + 70;
 
             this.ScrollToPoint(0, v1);
@@ -708,10 +710,10 @@ export class PurchasePage implements OnInit {
 
     clearProdInput() {
         this.submitForm.patchValue({
-            productctrl: null,
-            tempmrp: 0,
-            tempdesc: null,
-            tempqty: 1,
+            product_ctrl: null,
+            temp_mrp: 0,
+            temp_desc: null,
+            temp_qty: 1,
         });
         this.product_lis = null;
         this.selected_description = '';
@@ -724,19 +726,20 @@ export class PurchasePage implements OnInit {
             this.addVendor();
         }
         if (event !== undefined) {
-            this.vendorselected = true;
+            this.vendor_selected = true;
             if (from === 'tab') {
-                this.vendordata = event;
-                this.vendor_state_code = this.vendordata.code;
+                this.vendor_data = event;
+                this.vendor_state_code = this.vendor_data.code;
                 this.setTaxLabel();
 
                 this._cdr.detectChanges();
                 this._cdr.markForCheck();
             } else {
-                this.vendordata = event.option.value;
-                this.vendor_state_code = this.vendordata.code;
+                this.vendor_data = event.option.value;
+                this.vendor_state_code = this.vendor_data.code;
                 this.setTaxLabel();
 
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                 this.plist && this.plist.nativeElement.focus();
                 this._cdr.detectChanges();
                 this._cdr.markForCheck();
@@ -746,7 +749,7 @@ export class PurchasePage implements OnInit {
 
     sumTotalTax() {
         if (this.i_gst) {
-            this.igstTotal = this.listArr
+            this.igs_t_Total = this.listArr
                 .map(
                     (item) =>
                         (item.purchase_price *
@@ -761,17 +764,17 @@ export class PurchasePage implements OnInit {
                 .toFixed(2);
 
             this.submitForm.patchValue({
-                igst: this.igstTotal,
-                cgst: 0,
-                sgst: 0,
+                igs_t: this.igs_t_Total,
+                cgs_t: 0,
+                sgs_t: 0,
             });
         } else {
-            this.cgstTotal = this.listArr
+            this.cgs_t_Total = this.listArr
                 .map(
                     (item) =>
                         item.purchase_price *
                         item.qty *
-                        (parseFloat(this.cgst) / 100)
+                        (parseFloat(this.cgs_t) / 100)
                 )
                 .reduce(
                     (accumulator, currentValue) => accumulator + currentValue,
@@ -779,12 +782,12 @@ export class PurchasePage implements OnInit {
                 )
                 .toFixed(2);
 
-            this.sgstTotal = this.listArr
+            this.sgs_t_Total = this.listArr
                 .map(
                     (item) =>
                         (item.purchase_price *
                             item.qty *
-                            parseFloat(this.sgst)) /
+                            parseFloat(this.sgs_t)) /
                         100
                 )
                 .reduce(
@@ -794,9 +797,9 @@ export class PurchasePage implements OnInit {
                 .toFixed(2);
 
             this.submitForm.patchValue({
-                cgst: this.cgstTotal,
-                sgst: this.sgstTotal,
-                igst: 0,
+                cgs_t: this.cgs_t_Total,
+                sgs_t: this.sgs_t_Total,
+                igs_t: 0,
             });
         }
     }
@@ -804,7 +807,7 @@ export class PurchasePage implements OnInit {
     deleteProduct(idx) {
         const test = this.listArr[idx];
 
-        if (this.listArr[idx].pur_det_id != '') {
+        if (this.listArr[idx].pur_det_id !== '') {
             this.deletedRowArr.push(this.listArr[idx]);
         }
 
@@ -829,14 +832,14 @@ export class PurchasePage implements OnInit {
     setTaxSegment(taxrate: number) {
         if (this.vendor_state_code !== this.user_data.code) {
             this.i_gst = true;
-            this.igst = taxrate;
-            this.cgst = 0;
-            this.sgst = 0;
+            this.igs_t = taxrate;
+            this.cgs_t = 0;
+            this.sgs_t = 0;
         } else {
             this.i_gst = false;
-            this.igst = 0;
-            this.cgst = taxrate / 2;
-            this.sgst = taxrate / 2;
+            this.igs_t = 0;
+            this.cgs_t = taxrate / 2;
+            this.sgs_t = taxrate / 2;
         }
     }
 
@@ -854,43 +857,43 @@ export class PurchasePage implements OnInit {
     }
 
     // final c completed - status
-    onSavenSubmit(action) {
+    onSaveAndSubmit(action) {
         this.onSubmit(action);
     }
 
     validateForms() {
-        if (this.submitForm.value.invoiceno == null) {
+        if (this.submitForm.value.invoice_no === null) {
             this.inputEl.nativeElement.focus();
             this.presentAlert('Enter Invoice number!');
             return false;
         }
 
-        if (this.submitForm.value.invoicedate == null) {
+        if (this.submitForm.value.invoice_date === null) {
             this.presentAlert('Enter Invoice Date!');
             return false;
         }
 
         if (
-            this.submitForm.value.orderrcvddt == '' ||
-            this.submitForm.value.orderrcvddt == null
+            this.submitForm.value.received_date === '' ||
+            this.submitForm.value.received_date === null
         ) {
             this.presentAlert('Enter Received Date!');
             return false;
         }
 
         if (
-            this.submitForm.value.invoicedate !== null &&
-            this.submitForm.value.orderdate !== ''
+            this.submitForm.value.invoice_date !== null &&
+            this.submitForm.value.order_date !== ''
         ) {
-            if (this.submitForm.value.orderno === '') {
-                this.orderNoEl.nativeElement.focus();
+            if (this.submitForm.value.order_no === '') {
+                this.order_noEl.nativeElement.focus();
                 this.presentAlert('Order Date without Order # not allowed');
                 return false;
             }
 
             if (
-                this.submitForm.value.orderdate >
-                this.submitForm.value.invoicedate
+                this.submitForm.value.order_date >
+                this.submitForm.value.invoice_date
             ) {
                 this.presentAlert(
                     'Order date should be less than Invoice date'
@@ -900,15 +903,16 @@ export class PurchasePage implements OnInit {
         }
 
         if (
-            this.submitForm.value.invoicedate !== null &&
-            this.submitForm.value.lrdate !== ''
+            this.submitForm.value.invoice_date !== null &&
+            this.submitForm.value.lr_date !== ''
         ) {
-            if (this.submitForm.value.lrno === '') {
+            if (this.submitForm.value.lr_no === '') {
                 this.presentAlert('Lr Date without Lr # not allowed');
                 return false;
             }
             if (
-                this.submitForm.value.lrdate < this.submitForm.value.invoicedate
+                this.submitForm.value.lr_date <
+                this.submitForm.value.invoice_date
             ) {
                 this.presentAlert('Lr date should be after Invoice date');
                 return false;
@@ -918,7 +922,7 @@ export class PurchasePage implements OnInit {
         return true;
     }
 
-    checkerrors() {
+    check_errors() {
         return this.listArr.some((e) => {
             if (e.quantity_error !== '') {
                 return true;
@@ -926,27 +930,27 @@ export class PurchasePage implements OnInit {
         });
     }
 
-    chcekpperrors() {
+    check_pp_errors() {
         return this.listArr.some((e) => {
-            if (e.pperror !== '') {
+            if (e.pp_error !== '') {
                 return true;
             }
         });
     }
 
     onSubmit(action) {
-        if (this.listArr.length == 0) {
+        if (this.listArr.length === 0) {
             return this.presentAlert('No products added to save!');
         }
 
         if (this.listArr.length > 0) {
-            console.log('check ' + this.checkerrors());
+            console.log('check ' + this.check_errors());
 
-            if (this.checkerrors()) {
+            if (this.check_errors()) {
                 return this.presentAlert('Fix errors in products quantity !');
             }
 
-            if (this.chcekpperrors()) {
+            if (this.check_pp_errors()) {
                 return this.presentAlert('Fix errors in purchase price !');
             }
 
@@ -958,22 +962,22 @@ export class PurchasePage implements OnInit {
                 }
 
                 this.submitForm.patchValue({
-                    productarr: this.listArr,
+                    product_arr: this.listArr,
                 });
 
                 this.submitForm.patchValue({
-                    noofitems: this.listArr.length,
+                    no_of_items: this.listArr.length,
                 });
 
                 this.submitForm.patchValue({
-                    vendorctrl: this.vendordata,
+                    vendor_ctrl: this.vendor_data,
                 });
 
-                const tot_qty_check_Arr = this.listArr.map((arrItem) =>
+                const totQtyCheckArr = this.listArr.map((arrItem) =>
                     parseFloat(arrItem.qty)
                 );
 
-                const tmpTotQty = tot_qty_check_Arr
+                const tmpTotQty = totQtyCheckArr
                     .reduce(
                         (accumulator, currentValue) =>
                             accumulator + currentValue,
@@ -982,11 +986,11 @@ export class PurchasePage implements OnInit {
                     .toFixed(2);
 
                 this.submitForm.patchValue({
-                    totalqty: tmpTotQty,
+                    total_quantity: tmpTotQty,
                 });
 
                 this.submitForm.patchValue({
-                    totalvalue: this.total,
+                    total_value: this.total,
                 });
 
                 // let tmpNetTot = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges) +
@@ -1046,7 +1050,7 @@ export class PurchasePage implements OnInit {
                 filter((val) => !!val),
                 tap((val) => {
                     this.listArr[idx].qty = val;
-                    this.qtyChange(idx);
+                    this.quantityChange(idx);
                 })
             )
             .subscribe();
@@ -1069,7 +1073,7 @@ export class PurchasePage implements OnInit {
             .subscribe();
     }
 
-    qtyChange(idx) {
+    quantityChange(idx) {
         this.listArr[idx].total_value = (
             this.listArr[idx].purchase_price * this.listArr[idx].qty +
             (this.listArr[idx].purchase_price *
@@ -1122,7 +1126,7 @@ export class PurchasePage implements OnInit {
         });
 
         this.submitForm.patchValue({
-            totalvalue: this.total,
+            total_value: this.total,
         });
 
         this.sumTotalTax();
@@ -1173,35 +1177,35 @@ export class PurchasePage implements OnInit {
                     if (navto === 'back') {
                         this.submitForm.reset();
                         this.init();
-                        this.vendordata = null;
+                        this.vendor_data = null;
                         this.submitForm.patchValue({
-                            productarr: [],
+                            product_arr: [],
                         });
-                        this.vendorname = '';
-                        this.vendorselected = false;
+                        this.vendor_name = '';
+                        this.vendor_selected = false;
 
                         this.listArr = [];
 
                         this.total = '0.00';
-                        this.igstTotal = '0.00';
-                        this.cgstTotal = '0.00';
-                        this.sgstTotal = '0.00';
+                        this.igs_t_Total = '0.00';
+                        this.cgs_t_Total = '0.00';
+                        this.sgs_t_Total = '0.00';
                     }
                     this._cdr.markForCheck();
                     if (action === 'add') {
                         this.listArr = [];
 
-                        // add to the submitform purchaseid
+                        // add to the submitForm purchase_id
                         // reset listArr,
-                        // call raspurchaseid
+                        // call raw_purchase_id
                         // set mode to edit
                         this.submitForm.patchValue({
-                            purchaseid: data.body.id,
+                            purchase_id: data.body.id,
                         });
                         this._commonApiService
                             .purchaseMasterData(data.body.id)
-                            .subscribe((data) => {
-                                this.rawPurchaseData = data;
+                            .subscribe((data1) => {
+                                this.rawPurchaseData = data1;
                                 this._cdr.markForCheck();
                                 this.buildRawPurchaseData();
                             });
@@ -1293,9 +1297,9 @@ export class PurchasePage implements OnInit {
     async editTax() {
         // this.presentTaxValueChangeConfirm();
 
-        const modalTax = await this._modalcontroller.create({
+        const modalTax = await this._modalController.create({
             component: ChangeTaxComponent,
-            componentProps: { pArry: this.listArr, rArry: this.removeRowArr },
+            componentProps: { pArry: this.listArr, rArray: this.removeRowArr },
             cssClass: 'tax-edit-modal',
         });
 
@@ -1310,7 +1314,7 @@ export class PurchasePage implements OnInit {
                     this.listArr[idx].checkbox = false;
                     myCheckboxes[idx].checked = false;
 
-                    this.qtyChange(idx);
+                    this.quantityChange(idx);
                     this._cdr.markForCheck();
                 });
 
@@ -1326,9 +1330,9 @@ export class PurchasePage implements OnInit {
     }
 
     async editMrp() {
-        const modalTax = await this._modalcontroller.create({
+        const modalTax = await this._modalController.create({
             component: ChangeMrpComponent,
-            componentProps: { pArry: this.listArr, rArry: this.removeRowArr },
+            componentProps: { pArry: this.listArr, rArray: this.removeRowArr },
             cssClass: 'tax-edit-modal',
         });
 
@@ -1346,7 +1350,7 @@ export class PurchasePage implements OnInit {
                     myCheckboxes[idx].checked = false;
                     this.listArr[idx].mrp_change_flag = 'Y';
 
-                    this.qtyChange(idx);
+                    this.quantityChange(idx);
 
                     this.delIconStatus();
                     this.checkIsSingleRow();
@@ -1391,7 +1395,7 @@ export class PurchasePage implements OnInit {
     }
 
     invoiceDateSelected($event) {
-        this.maxOrderDate = $event.target.value;
+        this.max_order_date = $event.target.value;
     }
 
     logScrolling(event) {
@@ -1426,7 +1430,7 @@ export class PurchasePage implements OnInit {
         dialogConfig.autoFocus = true;
         dialogConfig.width = '400px';
         dialogConfig.height = '100%';
-        dialogConfig.data = this.vendordata;
+        dialogConfig.data = this.vendor_data;
         dialogConfig.position = { top: '0', right: '0' };
 
         const dialogRef = this._dialog.open(
@@ -1465,15 +1469,15 @@ export class PurchasePage implements OnInit {
                     this._commonApiService
                         .getVendorDetails(data.body.id)
                         .subscribe((vendData: any) => {
-                            this.vendordata = vendData[0];
+                            this.vendor_data = vendData[0];
 
-                            this.vendorname = vendData[0].name;
-                            this.vendorselected = true;
+                            this.vendor_name = vendData[0].name;
+                            this.vendor_selected = true;
 
                             this.setVendorInfo(vendData[0], 'tab');
 
                             this.submitForm.patchValue({
-                                vendorctrl: vendData[0],
+                                vendor_ctrl: vendData[0],
                             });
 
                             this.isVLoading = false;
@@ -1482,7 +1486,7 @@ export class PurchasePage implements OnInit {
                             this._cdr.markForCheck();
                         });
                 } else {
-                    this.vendorselected = false;
+                    this.vendor_selected = false;
                     this.autoTrigger1.closePanel();
 
                     this._cdr.markForCheck();
@@ -1493,134 +1497,101 @@ export class PurchasePage implements OnInit {
     }
 
     async add() {
-        let invdt = '';
-        if (this.submitForm.value.invoicedate === null) {
-            invdt = moment().format('DD-MM-YYYY');
+        let invDt = '';
+        if (this.submitForm.value.invoice_date === null) {
+            invDt = moment().format('DD-MM-YYYY');
         } else {
-            invdt = moment(this.submitForm.value.invoicedate).format(
+            invDt = moment(this.submitForm.value.invoice_date).format(
                 'DD-MM-YYYY'
             );
         }
 
         if (
-            this.submitForm.value.tempdesc === '' ||
-            this.submitForm.value.tempdesc === null
+            this.submitForm.value.temp_desc === '' ||
+            this.submitForm.value.temp_desc === null
         ) {
-            this.submitForm.controls.tempdesc.setErrors({ required: true });
-            this.submitForm.controls.tempdesc.markAsTouched();
+            this.submitForm.controls.temp_desc.setErrors({ required: true });
+            this.submitForm.controls.temp_desc.markAsTouched();
 
             return false;
         }
 
         if (
-            this.submitForm.value.temppurchaseprice === '' ||
-            this.submitForm.value.temppurchaseprice === '0' ||
-            this.submitForm.value.temppurchaseprice === null
+            this.submitForm.value.temp_purchase_price === '' ||
+            this.submitForm.value.temp_purchase_price === '0' ||
+            this.submitForm.value.temp_purchase_price === null
         ) {
-            this.submitForm.controls.temppurchaseprice.setErrors({
+            this.submitForm.controls.temp_purchase_price.setErrors({
                 required: true,
             });
-            this.submitForm.controls.temppurchaseprice.markAsTouched();
+            this.submitForm.controls.temp_purchase_price.markAsTouched();
 
             return false;
         }
 
         if (
-            this.submitForm.value.tempqty === '' ||
-            this.submitForm.value.tempqty === null
+            this.submitForm.value.temp_qty === '' ||
+            this.submitForm.value.temp_qty === null
         ) {
-            this.submitForm.controls.tempqty.setErrors({ required: true });
-            this.submitForm.controls.tempqty.markAsTouched();
+            this.submitForm.controls.temp_qty.setErrors({ required: true });
+            this.submitForm.controls.temp_qty.markAsTouched();
 
             return false;
         }
 
         if (
-            this.submitForm.value.tempmrp === '' ||
-            this.submitForm.value.tempmrp === null ||
-            this.submitForm.value.tempmrp === 0
+            this.submitForm.value.temp_mrp === '' ||
+            this.submitForm.value.temp_mrp === null ||
+            this.submitForm.value.temp_mrp === 0
         ) {
-            this.submitForm.controls.tempmrp.setErrors({ required: true });
-            this.submitForm.controls.tempmrp.markAsTouched();
+            this.submitForm.controls.temp_mrp.setErrors({ required: true });
+            this.submitForm.controls.temp_mrp.markAsTouched();
 
             return false;
         }
 
         if (
-            this.submitForm.value.customerctrl === '' ||
-            this.submitForm.value.vendorctrl === null
+            this.submitForm.value.customer_ctrl === '' ||
+            this.submitForm.value.vendor_ctrl === null
         ) {
-            this.submitForm.controls.vendorctrl.setErrors({ required: true });
-            this.submitForm.controls.vendorctrl.markAsTouched();
+            this.submitForm.controls.vendor_ctrl.setErrors({ required: true });
+            this.submitForm.controls.vendor_ctrl.markAsTouched();
 
             return false;
         }
 
         // this line over writes default qty vs entered qty
-        this.lineItemData.qty = this.submitForm.value.tempqty;
+        this.lineItemData.qty = this.submitForm.value.temp_qty;
         this.lineItemData.purchase_price =
-            this.submitForm.value.temppurchaseprice;
-        this.lineItemData.mrp = this.submitForm.value.tempmrp;
+            this.submitForm.value.temp_purchase_price;
+        this.lineItemData.mrp = this.submitForm.value.temp_mrp;
 
-        if (this.orig_mrp !== this.submitForm.value.tempmrp) {
+        if (this.orig_mrp !== this.submitForm.value.temp_mrp) {
             this.lineItemData.mrp_change_flag = 'Y';
         } else {
             this.lineItemData.mrp_change_flag = 'N';
         }
 
-        // let onlyProductCodeArr = this.listArr.map((element) => {
-        // 	return element.product_code;
-        // });
-
-        // let isduplicate = onlyProductCodeArr.includes(this.lineItemData.product_code);
-        // let proceed = false;
-
-        // if (isduplicate) {
-        // 	const alert = await this.alertController.create({
-        // 		header: 'Confirm!',
-        // 		message: 'The Item already added. Do you want to add again?',
-        // 		buttons: [
-        // 			{
-        // 				text: 'Cancel',
-        // 				role: 'cancel',
-        // 				cssClass: 'secondary',
-        // 				handler: (blah) => {
-        // 					console.log('Confirm Cancel: blah');
-        // 				},
-        // 			},
-        // 			{
-        // 				text: 'Continue to Add',
-        // 				handler: () => {
-        // 					console.log('Confirm Okay');
-        // 					proceed = true;
-        // 					this.itemAdd(this.lineItemData);
-        // 				},
-        // 			},
-        // 		],
-        // 	});
-
-        // 	await alert.present();
-        // } else {
         this.itemAdd(this.lineItemData);
-        // }
     }
 
     itemAdd(lineItemData) {
-        this.processItems(this.lineItemData, 'loadingnow');
+        this.processItems(this.lineItemData, 'loading_now');
 
         this.submitForm.patchValue({
-            productctrl: '',
-            tempdesc: '',
-            tempmrp: 0,
-            temppurchaseprice: '',
-            tempqty: 1,
+            product_ctrl: '',
+            temp_desc: '',
+            temp_mrp: 0,
+            temp_purchase_price: '',
+            temp_qty: 1,
         });
 
-        this.submitForm.controls.tempdesc.setErrors(null);
-        this.submitForm.controls.tempqty.setErrors(null);
-        this.submitForm.controls.tempmrp.setErrors(null);
-        this.submitForm.controls.temppurchaseprice.setErrors(null);
-        this.submitForm.controls.productctrl.setErrors(null);
+        this.submitForm.controls.temp_desc.setErrors(null);
+        this.submitForm.controls.temp_qty.setErrors(null);
+        this.submitForm.controls.temp_mrp.setErrors(null);
+        this.submitForm.controls.temp_purchase_price.setErrors(null);
+        this.submitForm.controls.product_ctrl.setErrors(null);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.plist && this.plist.nativeElement.focus();
 
         this.selected_description = '';
@@ -1662,17 +1633,17 @@ export class PurchasePage implements OnInit {
     roundingFn(value, param) {
         if (param === 'rounding') {
             return Math.round(+value.toFixed(2));
-        } else if (param === 'withoutrounding') {
+        } else if (param === 'without-rounding') {
             return +value.toFixed(2);
         }
     }
 
     handleQtyChange($event, idx) {
-        const qtyval = $event.target.value;
+        const qty_val = $event.target.value;
 
-        if (qtyval > 0) {
+        if (qty_val > 0) {
             this.listArr[idx].qty = $event.target.value;
-            this.qtyChange(idx);
+            this.quantityChange(idx);
             this.listArr[idx].quantity_error = '';
             this._cdr.detectChanges();
         } else {
@@ -1686,11 +1657,11 @@ export class PurchasePage implements OnInit {
 
         if (val > 0) {
             this.listArr[idx].purchase_price = $event.target.value;
-            this.qtyChange(idx);
-            this.listArr[idx].pperror = '';
+            this.quantityChange(idx);
+            this.listArr[idx].pp_error = '';
             this._cdr.detectChanges();
         } else {
-            this.listArr[idx].pperror = 'error';
+            this.listArr[idx].pp_error = 'error';
             this._cdr.detectChanges();
         }
     }
@@ -1706,7 +1677,7 @@ export class PurchasePage implements OnInit {
     }
 
     async showInventoryReportsDialog(product_code, product_id) {
-        const modal = await this._modalcontroller.create({
+        const modal = await this._modalController.create({
             component: InventoryReportsDialogComponent,
             componentProps: {
                 center_id: this.user_data.center_id,

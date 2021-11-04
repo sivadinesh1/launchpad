@@ -91,7 +91,7 @@ export class LeftMenuComponent {
         },
         {
             name: 'Purchase',
-            link: '/home/search-purchase',
+            link: '/home/search-purchase-order',
             icon: '/assets/images/svg/purchase.svg',
         },
 

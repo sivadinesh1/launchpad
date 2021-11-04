@@ -37,19 +37,33 @@ const routes: Routes = [
                     ),
             },
 
+            // {
+            //     path: 'search-purchase',
+            //     loadChildren: () =>
+            //         import(
+            //             './purchase/search-purchase/search-purchase.module'
+            //         ).then((m) => m.SearchPurchasePageModule),
+            // },
             {
-                path: 'search-purchase',
+                path: 'search-purchase-order',
                 loadChildren: () =>
                     import(
-                        './purchase/search-purchase/search-purchase.module'
-                    ).then((m) => m.SearchPurchasePageModule),
+                        './purchase/search-purchase-order/search-purchase-order.module'
+                    ).then((m) => m.SearchPurchaseOrderPageModule),
             },
+            // {
+            //     path: 'purchase/:edit/:purchaseid',
+            //     loadChildren: () =>
+            //         import('./purchase/purchase.module').then(
+            //             (m) => m.PurchasePageModule
+            //         ),
+            // },
             {
-                path: 'purchase/:edit/:purchaseid',
+                path: 'purchase/:edit/:purchase-id',
                 loadChildren: () =>
-                    import('./purchase/purchase.module').then(
-                        (m) => m.PurchasePageModule
-                    ),
+                    import(
+                        './purchase/purchase-order/purchase-order.module'
+                    ).then((m) => m.PurchaseOrderPageModule),
             },
             {
                 path: 'purchase-order/:edit/:purchase-id',

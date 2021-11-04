@@ -7,6 +7,7 @@ import {
     ViewChildren,
     QueryList,
     HostListener,
+    AfterViewInit,
 } from '@angular/core';
 import {
     ModalController,
@@ -57,14 +58,14 @@ import { InventoryReportsDialogComponent } from '../../components/reports/invent
     styleUrls: ['./purchase-order.page.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PurchaseOrderPage implements OnInit {
+export class PurchaseOrderPage implements OnInit, AfterViewInit {
     @ViewChild(IonContent, { static: false }) content: IonContent;
     @ViewChild('typeHead', { read: MatAutocompleteTrigger })
     autoTrigger: MatAutocompleteTrigger;
     @ViewChild('plist', { static: true }) plist: any;
     @ViewChild('vList', { static: true }) v_list: any;
     @ViewChild('newRow', { static: true }) new_row: any;
-    @ViewChild('qty', { static: true }) qty: any;
+    @ViewChild('Qty', { static: true }) quantity: any;
     @ViewChild('invNo', { static: false }) inputEl: ElementRef;
     @ViewChild('typeHead1', { read: MatAutocompleteTrigger })
     autoTrigger1: MatAutocompleteTrigger;
@@ -78,7 +79,6 @@ export class PurchaseOrderPage implements OnInit {
     listArr = [];
 
     total = '0.00';
-    items = Array.from({ length: 100000 }).map((_, i) => `Item #${i}`);
 
     vendor_state_code: any;
 
@@ -127,7 +127,7 @@ export class PurchaseOrderPage implements OnInit {
     selected_mrp = '';
     orig_mrp = 0;
 
-    ready = 0; // flag check - center_id (localstorage) & customerid (param)
+    ready = 0;
 
     draftConfirm = [
         {
@@ -311,21 +311,39 @@ export class PurchaseOrderPage implements OnInit {
 
             this._cdr.markForCheck();
 
+            // this._commonApiService.getVendorDetails(this.userdata.center_id, this.rawPurchaseData[0].vendor_id).subscribe((vendData: any) => {
+            // 	this.vendordata = vendData[0];
+            // 	this.vendor_state_code = vendData[0].code;
+
+            // 	this.submitForm.patchValue({
+            // 		vendorctrl: vendData[0],
+            // 	});
+
+            // 	this.vendorname = vendData[0].name;
+            // 	this.vendorstate = vendData[0].state;
+            // 	this.vendorselected = true;
+            // 	this.setTaxLabel();
+            // 	this.setTaxSegment(vendData[0].taxrate);
+
+            // 	this._cdr.markForCheck();
+            // });
+
             this._commonApiService
                 .getVendorDetails(this.raw_purchase_data[0].vendor_id)
-                .subscribe((vendData: any) => {
-                    this.vendor_data = vendData[0];
-                    this.vendor_state_code = vendData[0].code;
+                .subscribe((data: any) => {
+                    this.vendor_data = data[0];
+                    console.log('vendor data :: ' + this.vendor_data);
+                    this.vendor_state_code = data[0].code;
 
                     this.submitForm.patchValue({
-                        vendor_ctrl: vendData[0],
+                        vendor_ctrl: data[0],
                     });
 
-                    this.vendor_name = vendData[0].name;
-                    this.vendor_state = vendData[0].state;
+                    this.vendor_name = data[0].name;
+                    this.vendor_state = data[0].state;
                     this.vendor_selected = true;
                     this.setTaxLabel();
-                    this.setTaxSegment(vendData[0].tax);
+                    this.setTaxSegment(data[0].tax);
 
                     this._cdr.markForCheck();
                 });
@@ -397,6 +415,7 @@ export class PurchaseOrderPage implements OnInit {
     }
 
     ngAfterViewInit() {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.autoTrigger &&
             this.autoTrigger.panelClosingActions.subscribe((x) => {
                 if (
@@ -413,12 +432,15 @@ export class PurchaseOrderPage implements OnInit {
                 }
             });
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.autoTrigger1 &&
             this.autoTrigger1.panelClosingActions.subscribe((x) => {
+                debugger;
                 if (
                     this.autoTrigger1.activeOption &&
                     this.autoTrigger1.activeOption.value !== undefined
                 ) {
+                    debugger;
                     this.submitForm.patchValue({
                         vendor_ctrl: this.autoTrigger1.activeOption.value,
                     });
@@ -430,11 +452,13 @@ export class PurchaseOrderPage implements OnInit {
             });
 
         setTimeout(() => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             this.v_list && this.v_list.nativeElement.focus();
             if (
                 this.raw_purchase_data[0] !== undefined &&
                 this.raw_purchase_data[0].id !== 0
             ) {
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                 this.plist && this.plist.nativeElement.focus();
             }
             this._cdr.detectChanges();
@@ -458,7 +482,6 @@ export class PurchaseOrderPage implements OnInit {
                 debounceTime(300),
                 tap(() => (this.isVLoading = true)),
                 switchMap((id: any) => {
-                    console.log(id);
                     search = id;
                     if (id != null && id.length >= 2) {
                         return this._commonApiService.getVendorInfo({
@@ -573,7 +596,7 @@ export class PurchaseOrderPage implements OnInit {
             this.orig_mrp = event.mrp;
             this.submitForm.patchValue({
                 temp_desc: event.description,
-                temp_qty: event.qty === 0 ? 1 : event.qty,
+                temp_quantity: event.quantity === 0 ? 1 : event.quantity,
                 temp_mrp: event.mrp,
                 temp_purchase_price:
                     event.purchase_price === 'null'
@@ -590,7 +613,9 @@ export class PurchaseOrderPage implements OnInit {
             this.submitForm.patchValue({
                 temp_desc: event.option.value.description,
                 temp_qty:
-                    event.option.value.qty === 0 ? 1 : event.option.value.qty,
+                    event.option.value.quantity === 0
+                        ? 1
+                        : event.option.value.quantity,
                 temp_mrp: event.option.value.mrp,
                 temp_purchase_price:
                     event.option.value.purchase_price === 'null'
@@ -604,8 +629,9 @@ export class PurchaseOrderPage implements OnInit {
             this.selected_mrp = event.option.value.mrp;
 
             setTimeout(() => {
-                this.qty && this.qty.nativeElement.focus();
-                // this.qty && this.qty.nativeElement.select();
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                this.quantity && this.quantity.nativeElement.focus();
+                // this.quantity && this.quantity.nativeElement.select();
             }, 10);
         }
     }
@@ -621,35 +647,50 @@ export class PurchaseOrderPage implements OnInit {
         let old_val = 0;
 
         if (new NullToQuotePipe().transform(temp.id) !== '') {
-            old_val = temp.qty;
+            old_val = temp.quantity;
         }
 
         // from product tbl
         this.listArr.push({
             purchase_id: pid,
-            pur_det_id: new NullToQuotePipe().transform(temp.id),
+            pur_det_id: new NullToQuotePipe().transform(
+                temp.purchase_detail_id
+            ),
             checkbox: false,
-            product_id: temp.product_id,
-            product_code: temp.product_code,
-            product_desc: temp.description,
-            qty: temp.qty,
-            packet_size: temp.packet_size,
+
+            product_id: temp.product !== undefined ? temp.product.id : temp.id,
+
+            product_code:
+                temp.product !== undefined
+                    ? temp.product.product_code
+                    : temp.product_code,
+            product_description:
+                temp.product !== undefined
+                    ? temp.product.product_description
+                    : temp.product_description,
+            packet_size:
+                temp.product !== undefined
+                    ? temp.product.packet_size
+                    : temp.packet_size,
+            tax: temp.tax,
+
+            quantity: temp.quantity,
+
             unit_price: temp.purchase_price,
             purchase_price: temp.purchase_price,
             mrp: temp.mrp,
             mrp_change_flag: temp.mrp_change_flag,
-            tax: temp.tax,
 
             tax_value: (
                 temp.purchase_price *
-                temp.qty *
+                temp.quantity *
                 (temp.tax / 100)
             ).toFixed(2),
 
-            after_tax_value: temp.purchase_price * temp.qty,
+            after_tax_value: temp.purchase_price * temp.quantity,
             total_value: (
-                temp.purchase_price * temp.qty +
-                (temp.purchase_price * temp.qty * temp.tax) / 100
+                temp.purchase_price * temp.quantity +
+                (temp.purchase_price * temp.quantity * temp.tax) / 100
             ).toFixed(2),
 
             igs_t: this.igs_t,
@@ -738,9 +779,11 @@ export class PurchaseOrderPage implements OnInit {
                 this._cdr.markForCheck();
             } else {
                 this.vendor_data = event.option.value;
-                this.vendor_state_code = this.vendor_data.code;
+                debugger;
+                this.vendor_state_code = this.vendor_data.state.code;
                 this.setTaxLabel();
 
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                 this.plist && this.plist.nativeElement.focus();
                 this._cdr.detectChanges();
                 this._cdr.markForCheck();
@@ -754,7 +797,7 @@ export class PurchaseOrderPage implements OnInit {
                 .map(
                     (item) =>
                         (item.purchase_price *
-                            item.qty *
+                            item.quantity *
                             parseFloat(item.tax)) /
                         100
                 )
@@ -774,7 +817,7 @@ export class PurchaseOrderPage implements OnInit {
                 .map(
                     (item) =>
                         item.purchase_price *
-                        item.qty *
+                        item.quantity *
                         (parseFloat(this.cgs_t) / 100)
                 )
                 .reduce(
@@ -787,7 +830,7 @@ export class PurchaseOrderPage implements OnInit {
                 .map(
                     (item) =>
                         (item.purchase_price *
-                            item.qty *
+                            item.quantity *
                             parseFloat(this.sgs_t)) /
                         100
                 )
@@ -845,6 +888,7 @@ export class PurchaseOrderPage implements OnInit {
     }
 
     setTaxLabel() {
+        debugger;
         if (this.vendor_state_code !== this.user_data.code) {
             this.i_gst = true;
         } else {
@@ -863,7 +907,7 @@ export class PurchaseOrderPage implements OnInit {
     }
 
     validateForms() {
-        if (this.submitForm.value.invoice_no == null) {
+        if (this.submitForm.value.invoice_no === null) {
             this.inputEl.nativeElement.focus();
             this.presentAlert('Enter Invoice number!');
             return false;
@@ -875,8 +919,8 @@ export class PurchaseOrderPage implements OnInit {
         }
 
         if (
-            this.submitForm.value.received_date == '' ||
-            this.submitForm.value.received_date == null
+            this.submitForm.value.received_date === '' ||
+            this.submitForm.value.received_date === null
         ) {
             this.presentAlert('Enter Received Date!');
             return false;
@@ -975,7 +1019,7 @@ export class PurchaseOrderPage implements OnInit {
                 });
 
                 const totalQuantityCheckArray = this.listArr.map((arrItem) =>
-                    parseFloat(arrItem.qty)
+                    parseFloat(arrItem.quantity)
                 );
 
                 const tmpTotQty = totalQuantityCheckArray
@@ -1050,7 +1094,7 @@ export class PurchaseOrderPage implements OnInit {
             .pipe(
                 filter((val) => !!val),
                 tap((val) => {
-                    this.listArr[idx].qty = val;
+                    this.listArr[idx].quantity = val;
                     this.qtyChange(idx);
                 })
             )
@@ -1076,14 +1120,14 @@ export class PurchaseOrderPage implements OnInit {
 
     qtyChange(idx) {
         this.listArr[idx].total_value = (
-            this.listArr[idx].purchase_price * this.listArr[idx].qty +
+            this.listArr[idx].purchase_price * this.listArr[idx].quantity +
             (this.listArr[idx].purchase_price *
-                this.listArr[idx].qty *
+                this.listArr[idx].quantity *
                 this.listArr[idx].tax) /
                 100
         ).toFixed(2);
         this.listArr[idx].after_tax_value = (
-            this.listArr[idx].qty * this.listArr[idx].purchase_price
+            this.listArr[idx].quantity * this.listArr[idx].purchase_price
         ).toFixed(2);
         this.listArr[idx].tax_value = (
             this.listArr[idx].after_tax_value *
@@ -1103,7 +1147,7 @@ export class PurchaseOrderPage implements OnInit {
         );
 
         const tempArrCostPrice = this.listArr.map(
-            (arr) => parseFloat(arr.purchase_price) * parseFloat(arr.qty)
+            (arr) => parseFloat(arr.purchase_price) * parseFloat(arr.quantity)
         );
 
         // this.total = "" + tempArr;
@@ -1169,64 +1213,78 @@ export class PurchaseOrderPage implements OnInit {
 
         this._commonApiService
             .savePurchaseOrder(this.submitForm.value)
-            .subscribe((data: any) => {
-                this.spinner.hide();
-                this.clicked = false;
-                //	console.log('savePurchaseOrder ' + JSON.stringify(data));
-
-                if (data.body.result === 'success') {
-                    if (navto === 'back') {
-                        this.submitForm.reset();
-                        this.init();
-                        this.vendor_data = null;
-                        this.submitForm.patchValue({
-                            product_arr: [],
-                        });
-                        this.vendor_name = '';
-                        this.vendor_selected = false;
-
-                        this.listArr = [];
-
-                        this.total = '0.00';
-                        this.igs_tTotal = '0.00';
-                        this.cgs_tTotal = '0.00';
-                        this.sgs_tTotal = '0.00';
-                    }
-                    this._cdr.markForCheck();
-                    if (action === 'add') {
-                        this.listArr = [];
-
-                        // add to the submitform purchase_id
-                        // reset listArr,
-                        // call raspurchase_id
-                        // set mode to edit
-                        this.submitForm.patchValue({
-                            purchase_id: data.body.id,
-                        });
-                        this._commonApiService
-                            .purchaseMasterData(data.body.id)
-                            .subscribe((data) => {
-                                this.raw_purchase_data = data;
-                                this._cdr.markForCheck();
-                                this.buildRawPurchaseData();
+            .subscribe(
+                (data: any) => {
+                    this.spinner.hide();
+                    this.clicked = false;
+                    //	console.log('savePurchaseOrder ' + JSON.stringify(data));
+                    debugger;
+                    if (data.body.status === 'success') {
+                        if (navto === 'back') {
+                            this.submitForm.reset();
+                            this.init();
+                            this.vendor_data = null;
+                            this.submitForm.patchValue({
+                                product_arr: [],
                             });
+                            this.vendor_name = '';
+                            this.vendor_selected = false;
 
-                        this.openSnackBar('Items Added!', '');
+                            this.listArr = [];
+
+                            this.total = '0.00';
+                            this.igs_tTotal = '0.00';
+                            this.cgs_tTotal = '0.00';
+                            this.sgs_tTotal = '0.00';
+                        }
+                        this._cdr.markForCheck();
+                        if (action === 'add') {
+                            this.listArr = [];
+
+                            // add to the submitForm purchase_id
+                            // reset listArr,
+                            // call raw_purchase_id
+                            // set mode to edit
+                            this.submitForm.patchValue({
+                                purchase_id: data.body.id,
+                            });
+                            this._commonApiService
+                                .purchaseMasterData(data.body.id)
+                                .subscribe((data1) => {
+                                    this.raw_purchase_data = data1;
+                                    this._cdr.markForCheck();
+                                    this.buildRawPurchaseData();
+                                });
+
+                            this.openSnackBar('Items Added!', '');
+                        } else {
+                            this.openSnackBar('Saved to Draft!', '');
+                        }
+
+                        if (navto === 'back') {
+                            this.purchaseDashboard();
+                        }
                     } else {
-                        this.openSnackBar('Saved to Draft!', '');
+                        this.presentAlert(
+                            'Error: Something went wrong Contact Admin!'
+                        );
                     }
 
-                    if (navto === 'back') {
-                        this.purchaseDashboard();
-                    }
-                } else {
+                    this._cdr.markForCheck();
+                },
+                (error) => {
+                    this.spinner.hide();
+                    this.clicked = false;
+                    this.clearInput();
+                    this.init();
+                    this.listArr = [];
+
+                    this._cdr.markForCheck();
                     this.presentAlert(
-                        'Error: Something went wrong Contact Admin!'
+                        'Error: Something went wrong Contact Admin!!!'
                     );
                 }
-
-                this._cdr.markForCheck();
-            });
+            );
     }
 
     checkedRow(idx: number) {
@@ -1274,7 +1332,7 @@ export class PurchaseOrderPage implements OnInit {
                 center_id: this.user_data.center_id,
                 id: elem.pur_det_id,
                 purchase_id: elem.purchase_id,
-                qty: elem.qty,
+                quantity: elem.quantity,
                 product_id: elem.product_id,
                 stock_id: elem.stock_id,
                 mrp: elem.mrp,
@@ -1451,6 +1509,7 @@ export class PurchaseOrderPage implements OnInit {
     }
 
     addVendor() {
+        debugger;
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
@@ -1475,18 +1534,18 @@ export class PurchaseOrderPage implements OnInit {
                 if (data !== 'close') {
                     this._commonApiService
                         .getVendorDetails(data.body.id)
-                        .subscribe((vendData: any) => {
-                            this.vendor_data = vendData[0];
+                        .subscribe((data1: any) => {
+                            this.vendor_data = data1[0];
 
-                            this.vendor_name = vendData[0].name;
+                            this.vendor_name = data1[0].name;
                             this.vendor_selected = true;
 
-                            this.setVendorInfo(vendData[0], 'tab');
+                            this.setVendorInfo(data1[0], 'tab');
 
                             this.submitForm.patchValue({
-                                vendor_ctrl: vendData[0],
+                                vendor_ctrl: data1[0],
                             });
-
+                            debugger;
                             this.isVLoading = false;
                             this.autoTrigger1.closePanel();
 
@@ -1567,8 +1626,8 @@ export class PurchaseOrderPage implements OnInit {
             return false;
         }
 
-        // this line over writes default qty vs entered qty
-        this.lineItemData.qty = this.submitForm.value.temp_qty;
+        // this line over writes default quantity vs entered quantity
+        this.lineItemData.quantity = this.submitForm.value.temp_quantity;
         this.lineItemData.purchase_price =
             this.submitForm.value.temp_purchase_price;
         this.lineItemData.mrp = this.submitForm.value.temp_mrp;
@@ -1632,6 +1691,7 @@ export class PurchaseOrderPage implements OnInit {
         this.submitForm.controls.temp_mrp.setErrors(null);
         this.submitForm.controls.temp_purchase_price.setErrors(null);
         this.submitForm.controls.product_ctrl.setErrors(null);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.plist && this.plist.nativeElement.focus();
 
         this.selected_description = '';
@@ -1682,7 +1742,7 @@ export class PurchaseOrderPage implements OnInit {
         const qty_val = $event.target.value;
 
         if (qty_val > 0) {
-            this.listArr[idx].qty = $event.target.value;
+            this.listArr[idx].quantity = $event.target.value;
             this.qtyChange(idx);
             this.listArr[idx].quantity_error = '';
             this._cdr.detectChanges();

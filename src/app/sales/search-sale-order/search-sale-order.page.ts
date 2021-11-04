@@ -122,6 +122,14 @@ export class SearchSaleOrderPage implements OnInit {
     name: string;
     clickedColumn: string;
 
+    isCustomDateFilter = false;
+
+    filter_from_date: any;
+    filter_to_date: any;
+
+    dateFrom: any = new Date();
+    dateTo: any = new Date();
+
     constructor(
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService,
@@ -310,6 +318,10 @@ export class SearchSaleOrderPage implements OnInit {
         this._cdr.detectChanges();
 
         this.search();
+    }
+
+    customDateFilter() {
+        this.isCustomDateFilter = !this.isCustomDateFilter;
     }
 
     async search() {
@@ -565,6 +577,28 @@ export class SearchSaleOrderPage implements OnInit {
     }
     goSalesReturns() {
         this._router.navigateByUrl(`/home/search-return-sales`);
+    }
+
+    opsFromDateEvent(event) {
+        this.submitForm.patchValue({
+            from_date: moment(event.target.value).format('YYYY-MM-DD'),
+        });
+        this.reloadSearch();
+    }
+
+    opsToDateEvent(event) {
+        this.submitForm.patchValue({
+            to_date: moment(event.target.value).format('YYYY-MM-DD'),
+        });
+
+        this.reloadSearch();
+    }
+
+    reloadSearch() {
+        // patch it up with from & to date, via patch value
+        console.log(this.submitForm.value);
+
+        this.search();
     }
 
     async exportCompletedSalesToExcel() {

@@ -136,6 +136,7 @@
                     </mat-form-field>
                 </div>
             </div>
+            {{this.submitForm.value | json}}
             <div>
                 <div
                     style="
@@ -384,7 +385,7 @@
                                     </div>
 
                                     <div class="item2">
-                                        {{item.product_desc}}
+                                        {{item.product_description}}
                                     </div>
                                     <div style="text-align: right">
                                         {{item.hsn_code}}
@@ -403,7 +404,7 @@
                                         >
                                             <input
                                                 matInput
-                                                value="{{item.qty}}"
+                                                value="{{item.quantity}}"
                                                 (keyup)="handleQtyChange($event, idx)"
                                                 required
                                                 numeric
@@ -698,7 +699,7 @@
                                         tabindex="6"
                                         formControlName="temp_quantity"
                                         required
-                                        #qty
+                                        #Qty
                                         (keydown.enter)="add()"
                                         appSelectOnFocus
                                         autocomplete="off"
