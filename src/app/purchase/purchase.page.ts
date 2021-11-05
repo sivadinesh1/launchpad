@@ -1409,7 +1409,7 @@ export class PurchasePage implements OnInit, AfterViewInit {
     }
 
     purchaseDashboard() {
-        this._router.navigateByUrl('/home/search-purchase');
+        this._router.navigateByUrl('/home/search-purchase-order');
     }
 
     // ScrollToBottom() {

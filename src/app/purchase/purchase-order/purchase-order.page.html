@@ -3,7 +3,7 @@
     [scrollEvents]="true"
     (ionScroll)="logScrolling($event)"
 >
-    <form [formGroup]="submitForm">
+    <form [formGroup]="submitForm" *ngIf="submitForm">
         <div class="vendor">
             <div style="display: grid">
                 <div class="screen-header">
@@ -18,7 +18,6 @@
                             matInput
                             [matAutocomplete]="auto"
                             formControlName="vendor_ctrl"
-                            [readOnly]="vendor_selected"
                             #typeHead1
                             required
                             #vList

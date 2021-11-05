@@ -316,7 +316,7 @@
         <div *ngFor="let item of filteredValues  " class="listItem">
             <div class="item">{{item.invoice_no}}</div>
             <div class="item">{{item.lr_no}}</div>
-            <div class="item">{{item.received_date}}</div>
+            <div class="item">{{item.received_date | date:'d-M-yyyy'}}</div>
             <div class="item">{{item.vendor_name}}</div>
             <div class="item txt-right-align">{{item.no_of_items}}</div>
             <div class="item txt-right-align">

@@ -16,6 +16,7 @@ import {
 } from '@ionic/angular';
 
 import { CommonApiService } from '../../services/common-api.service';
+import { Vendor } from '../../models/Vendor';
 import {
     FormGroup,
     FormControl,
@@ -43,7 +44,7 @@ import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 import { IonContent } from '@ionic/angular';
 import { VendorViewDialogComponent } from '../../components/vendors/vendor-view-dialog/vendor-view-dialog.component';
-import { Vendor } from '../../models/Vendor';
+// import { Vendor } from '../../models/Vendor';
 import * as moment from 'moment';
 import { VendorAddDialogComponent } from '../../components/vendors/vendor-add-dialog/vendor-add-dialog.component';
 
@@ -134,15 +135,12 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             text: 'Cancel',
             role: 'cancel',
             cssClass: 'secondary',
-            handler: (blah) => {
-                console.log('Confirm Cancel: blah');
-            },
+            handler: (blah) => {},
         },
         {
             text: 'Save & Exit to Purchase Orders List',
             cssClass: 'secondary',
             handler: () => {
-                console.log('Confirm Cancel: blah');
                 this.mainSubmit('add', 'back');
             },
         },
@@ -150,7 +148,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             text: 'Save & Continue',
             cssClass: 'primary',
             handler: () => {
-                console.log('Confirm Okay');
                 this.mainSubmit('add', 'stay');
             },
         },
@@ -171,8 +168,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         private spinner: NgxSpinnerService,
         private _cdr: ChangeDetectorRef
     ) {
-        // this.init();
-
         this.user_data$ = this._authService.currentUser;
         this.user_data$
             .pipe(filter((data) => data !== null))
@@ -225,8 +220,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
 
     initialize() {
         this.vendor_selected = false;
-
-        // navigating from list purchase page
+        // from purchase order list page
         this.buildRawPurchaseData();
     }
 
@@ -246,9 +240,9 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                         .transform(this.raw_purchase_data[0].invoice_date)
                         .replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
                 ),
-
                 order_date:
-                    this.raw_purchase_data[0].order_date === ''
+                    this.raw_purchase_data[0].order_date === '' ||
+                    this.raw_purchase_data[0].order_date === null
                         ? ''
                         : new Date(
                               new NullToQuotePipe()
@@ -313,18 +307,17 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                 .getVendorDetails(this.raw_purchase_data[0].vendor_id)
                 .subscribe((data: any) => {
                     this.vendor_data = data[0];
-                    console.log('vendor data :: ' + this.vendor_data);
-                    this.vendor_state_code = data[0].code;
+
+                    this.vendor_state_code = data[0].state.code;
 
                     this.submitForm.patchValue({
                         vendor_ctrl: data[0],
                     });
 
-                    this.vendor_name = data[0].name;
+                    this.vendor_name = data[0].vendor_name;
                     this.vendor_state = data[0].state;
                     this.vendor_selected = true;
                     this.setTaxLabel();
-                    this.setTaxSegment(data[0].tax);
 
                     this._cdr.markForCheck();
                 });
@@ -416,12 +409,10 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.autoTrigger1 &&
             this.autoTrigger1.panelClosingActions.subscribe((x) => {
-                debugger;
                 if (
                     this.autoTrigger1.activeOption &&
                     this.autoTrigger1.activeOption.value !== undefined
                 ) {
-                    debugger;
                     this.submitForm.patchValue({
                         vendor_ctrl: this.autoTrigger1.activeOption.value,
                     });
@@ -477,6 +468,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
 
             .subscribe((data: any) => {
                 this.isVLoading = false;
+
                 this.vendor_lis = data.body;
 
                 this._cdr.markForCheck();
@@ -550,14 +542,12 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                         role: 'cancel',
                         cssClass: 'secondary',
                         handler: (blah) => {
-                            console.log('Confirm Cancel: blah');
                             this.clearProdInput();
                         },
                     },
                     {
                         text: 'Continue to Add',
                         handler: () => {
-                            console.log('Confirm Okay');
                             proceed = true;
                             this.addLineItemData(event, from);
                         },
@@ -573,7 +563,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
     }
 
     addLineItemData(event, from) {
-        debugger;
         if (from === 'tab') {
             this.orig_mrp = event.mrp;
             this.submitForm.patchValue({
@@ -726,7 +715,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
     }
 
     displayFn(obj: any): string | undefined {
-        return obj && obj.name ? obj.name : undefined;
+        return obj && obj.vendor_name ? obj.vendor_name : undefined;
     }
 
     displayProdFn(obj: any): string | undefined {
@@ -761,7 +750,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                 this._cdr.markForCheck();
             } else {
                 this.vendor_data = event.option.value;
-                debugger;
+
                 this.vendor_state_code = this.vendor_data.state.code;
                 this.setTaxLabel();
 
@@ -870,7 +859,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
     }
 
     setTaxLabel() {
-        debugger;
         if (this.vendor_state_code !== this.user_data.code) {
             this.i_gst = true;
         } else {
@@ -910,7 +898,8 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
 
         if (
             this.submitForm.value.invoice_date !== null &&
-            this.submitForm.value.order_date !== ''
+            this.submitForm.value.order_date !== '' &&
+            this.submitForm.value.order_date !== null
         ) {
             if (this.submitForm.value.order_no === '') {
                 this.order_noEl.nativeElement.focus();
@@ -923,7 +912,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                 this.submitForm.value.invoice_date
             ) {
                 this.presentAlert(
-                    'Order date should be less than Invoice date'
+                    'Order date cannot be less than Invoice date'
                 );
                 return false;
             }
@@ -971,8 +960,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         }
 
         if (this.listArr.length > 0) {
-            console.log('check ' + this.checkErrors());
-
             if (this.checkErrors()) {
                 return this.presentAlert('Fix errors in products quantity !');
             }
@@ -995,7 +982,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                 this.submitForm.patchValue({
                     no_of_items: this.listArr.length,
                 });
-                debugger;
+
                 this.submitForm.patchValue({
                     vendor_ctrl: this.vendor_data,
                 });
@@ -1191,8 +1178,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                 (data: any) => {
                     this.spinner.hide();
                     this.clicked = false;
-                    //	console.log('savePurchaseOrder ' + JSON.stringify(data));
-                    debugger;
+
                     if (data.body.status === 'success') {
                         if (navto === 'back') {
                             this.submitForm.reset();
@@ -1210,8 +1196,11 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                             this.igs_tTotal = '0.00';
                             this.cgs_tTotal = '0.00';
                             this.sgs_tTotal = '0.00';
+
+                            this.purchaseDashboard();
+                            this._cdr.markForCheck();
                         }
-                        this._cdr.markForCheck();
+
                         if (action === 'add') {
                             this.listArr = [];
 
@@ -1233,10 +1222,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                             this.openSnackBar('Items Added!', '');
                         } else {
                             this.openSnackBar('Saved to Draft!', '');
-                        }
-
-                        if (navto === 'back') {
-                            this.purchaseDashboard();
                         }
                     } else {
                         this.presentAlert(
@@ -1340,8 +1325,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         });
 
         modalTax.onDidDismiss().then((result) => {
-            console.log('The result:', result);
-
             if (result.data !== undefined) {
                 const myCheckboxes = this.myCheckboxes.toArray();
 
@@ -1378,8 +1361,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         // when pop up close with new mrp value, set those value to the line item.
         // will always be single row mrp edit
         modalTax.onDidDismiss().then((result) => {
-            console.log('The result:', result);
-
             if (result.data !== undefined) {
                 const myCheckboxes = this.myCheckboxes.toArray();
 
@@ -1416,14 +1397,11 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                     text: 'Cancel',
                     role: 'cancel',
                     cssClass: 'secondary',
-                    handler: (blah) => {
-                        console.log('Confirm Cancel: blah');
-                    },
+                    handler: (blah) => {},
                 },
                 {
                     text: 'Okay',
                     handler: () => {
-                        console.log('Confirm Okay');
                         this.onRemoveRows();
                     },
                 },
@@ -1448,7 +1426,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
     }
 
     purchaseDashboard() {
-        this._router.navigateByUrl('/home/search-purchase');
+        this._router.navigateByUrl('/home/search-purchase-order');
     }
 
     ScrollToTop() {
@@ -1473,13 +1451,10 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             dialogConfig
         );
 
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log('The dialog was closed');
-        });
+        dialogRef.afterClosed().subscribe((result) => {});
     }
 
     addVendor() {
-        debugger;
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
@@ -1507,7 +1482,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                         .subscribe((data1: any) => {
                             this.vendor_data = data1[0];
 
-                            this.vendor_name = data1[0].name;
+                            this.vendor_name = data1[0].vendor_name;
                             this.vendor_selected = true;
 
                             this.setVendorInfo(data1[0], 'tab');
@@ -1515,7 +1490,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                             this.submitForm.patchValue({
                                 vendor_ctrl: data1[0],
                             });
-                            debugger;
+
                             this.isVLoading = false;
                             this.autoTrigger1.closePanel();
 
@@ -1647,14 +1622,11 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                     text: 'Cancel',
                     role: 'cancel',
                     cssClass: 'secondary',
-                    handler: (blah) => {
-                        console.log('Confirm Cancel: blah');
-                    },
+                    handler: (blah) => {},
                 },
                 {
                     text: 'Okay',
                     handler: () => {
-                        console.log('Confirm Okay');
                         // this.cancel();
                         //main submit
                         this.clicked = true; // disable all buttons after submission
