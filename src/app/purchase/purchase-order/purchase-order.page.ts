@@ -224,8 +224,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
     ngOnInit() {}
 
     initialize() {
-        // this.init();
-
         this.vendor_selected = false;
 
         // navigating from list purchase page
@@ -310,23 +308,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             });
 
             this._cdr.markForCheck();
-
-            // this._commonApiService.getVendorDetails(this.userdata.center_id, this.rawPurchaseData[0].vendor_id).subscribe((vendData: any) => {
-            // 	this.vendordata = vendData[0];
-            // 	this.vendor_state_code = vendData[0].code;
-
-            // 	this.submitForm.patchValue({
-            // 		vendorctrl: vendData[0],
-            // 	});
-
-            // 	this.vendorname = vendData[0].name;
-            // 	this.vendorstate = vendData[0].state;
-            // 	this.vendorselected = true;
-            // 	this.setTaxLabel();
-            // 	this.setTaxSegment(vendData[0].taxrate);
-
-            // 	this._cdr.markForCheck();
-            // });
 
             this._commonApiService
                 .getVendorDetails(this.raw_purchase_data[0].vendor_id)
@@ -592,6 +573,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
     }
 
     addLineItemData(event, from) {
+        debugger;
         if (from === 'tab') {
             this.orig_mrp = event.mrp;
             this.submitForm.patchValue({
@@ -611,9 +593,9 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         } else {
             this.orig_mrp = event.option.value.mrp;
             this.submitForm.patchValue({
-                temp_desc: event.option.value.description,
-                temp_qty:
-                    event.option.value.quantity === 0
+                temp_desc: event.option.value.product_description,
+                temp_quantity:
+                    event.option.value.quantity === undefined
                         ? 1
                         : event.option.value.quantity,
                 temp_mrp: event.option.value.mrp,
@@ -625,7 +607,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                         : event.option.value.purchase_price,
             });
             this.lineItemData = event.option.value;
-            this.selected_description = event.option.value.description;
+            this.selected_description = event.option.value.product_description;
             this.selected_mrp = event.option.value.mrp;
 
             setTimeout(() => {
@@ -756,7 +738,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             product_ctrl: null,
             temp_mrp: 0,
             temp_desc: null,
-            temp_qty: 1,
+            temp_quantity: 1,
         });
         this.product_lis = null;
         this.selected_description = '';
@@ -1013,7 +995,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                 this.submitForm.patchValue({
                     no_of_items: this.listArr.length,
                 });
-
+                debugger;
                 this.submitForm.patchValue({
                     vendor_ctrl: this.vendor_data,
                 });
@@ -1037,14 +1019,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                 this.submitForm.patchValue({
                     total_value: this.total,
                 });
-
-                // let tmpNetTot = parseFloat(this.total) + parseFloat(this.submitForm.value.transport_charges) +
-                //   parseFloat(this.submitForm.value.unloading_charges) +
-                //   parseFloat(this.submitForm.value.misc_charges);
-
-                // this.submitForm.patchValue({
-                //   net_total: tmpNetTot
-                // })
 
                 this.submitForm.patchValue({
                     net_total: this.getNetTotal('rounding'),
@@ -1477,10 +1451,6 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         this._router.navigateByUrl('/home/search-purchase');
     }
 
-    // ScrollToBottom() {
-    //   this.content.scrollToBottom(1500);
-    // }
-
     ScrollToTop() {
         this.content.scrollToTop(1500);
     }
@@ -1596,11 +1566,13 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         }
 
         if (
-            this.submitForm.value.temp_qty === '' ||
-            this.submitForm.value.temp_qty === null
+            this.submitForm.value.temp_quantity === '' ||
+            this.submitForm.value.temp_quantity === null
         ) {
-            this.submitForm.controls.temp_qty.setErrors({ required: true });
-            this.submitForm.controls.temp_qty.markAsTouched();
+            this.submitForm.controls.temp_quantity.setErrors({
+                required: true,
+            });
+            this.submitForm.controls.temp_quantity.markAsTouched();
 
             return false;
         }
@@ -1638,41 +1610,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             this.lineItemData.mrp_change_flag = 'N';
         }
 
-        // let onlyProductCodeArr = this.listArr.map((element) => {
-        // 	return element.product_code;
-        // });
-
-        // let is_duplicate = onlyProductCodeArr.includes(this.lineItemData.product_code);
-        // let proceed = false;
-
-        // if (is_duplicate) {
-        // 	const alert = await this.alertController.create({
-        // 		header: 'Confirm!',
-        // 		message: 'The Item already added. Do you want to add again?',
-        // 		buttons: [
-        // 			{
-        // 				text: 'Cancel',
-        // 				role: 'cancel',
-        // 				cssClass: 'secondary',
-        // 				handler: (blah) => {
-        // 					console.log('Confirm Cancel: blah');
-        // 				},
-        // 			},
-        // 			{
-        // 				text: 'Continue to Add',
-        // 				handler: () => {
-        // 					console.log('Confirm Okay');
-        // 					proceed = true;
-        // 					this.itemAdd(this.lineItemData);
-        // 				},
-        // 			},
-        // 		],
-        // 	});
-
-        // 	await alert.present();
-        // } else {
         this.itemAdd(this.lineItemData);
-        // }
     }
 
     itemAdd(lineItemData) {
@@ -1683,11 +1621,11 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             temp_desc: '',
             temp_mrp: 0,
             temp_purchase_price: '',
-            temp_qty: 1,
+            temp_quantity: 1,
         });
 
         this.submitForm.controls.temp_desc.setErrors(null);
-        this.submitForm.controls.temp_qty.setErrors(null);
+        this.submitForm.controls.temp_quantity.setErrors(null);
         this.submitForm.controls.temp_mrp.setErrors(null);
         this.submitForm.controls.temp_purchase_price.setErrors(null);
         this.submitForm.controls.product_ctrl.setErrors(null);
