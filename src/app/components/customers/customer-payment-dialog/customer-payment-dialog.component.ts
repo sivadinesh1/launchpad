@@ -41,7 +41,7 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
 
     maxDate = new Date();
 
-    pymtmodes$: Observable<any>;
+    paymentModes$: Observable<any>;
     user_data: any;
 
     user_data$: Observable<User>;
@@ -50,10 +50,10 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
     invoice: any;
     summed = 0;
 
-    errmsg: any;
-    balancedue: any;
+    errorMsg: any;
+    balance_due: any;
     bankList: any;
-    iswarning = false;
+    is_warning = false;
 
     constructor(
         private _fb: FormBuilder,
@@ -62,21 +62,21 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
         private dialogRef: MatDialogRef<CustomerPaymentDialogComponent>,
         private _authService: AuthenticationService,
         @Inject(MAT_DIALOG_DATA) data: any,
-        private _modalcontroller: ModalController,
+
         private _router: Router,
         private _route: ActivatedRoute,
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService
     ) {
-        this.customer = data.customerdata;
-        this.invoice = data.invoicedata;
+        this.customer = data.customer_data;
+        this.invoice = data.invoice_data;
 
         this.user_data$ = this._authService.currentUser;
 
         this.user_data$
-            .pipe(filter((data) => data !== null))
-            .subscribe((data: any) => {
-                this.user_data = data;
+            .pipe(filter((data1) => data1 !== null))
+            .subscribe((data2: any) => {
+                this.user_data = data2;
                 this.init();
                 this._cdr.markForCheck();
             });
@@ -89,7 +89,7 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
     }
 
     async init() {
-        this.pymtmodes$ = this._commonApiService.getAllActivePymtModes('A');
+        this.paymentModes$ = this._commonApiService.getAllActivePymtModes('A');
     }
 
     ngOnInit() {
@@ -97,17 +97,17 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
         this.submitForm = this._fb.group({
             customer: [this.customer, Validators.required],
             center_id: [this.user_data.center_id, Validators.required],
-            accountarr: this._fb.array([]),
+            account_arr: this._fb.array([]),
             bank_id: '',
             bank_name: '',
-            createdby: this.user_data.userid,
+            created_by: this.user_data.user_id,
         });
 
         // adds first record
         this.addAccount();
 
-        // subscribes to values chages of "accountarr"
-        this.submitForm.get('accountarr').valueChanges.subscribe((values) => {
+        // subscribes to values changes of "account_arr"
+        this.submitForm.get('account_arr').valueChanges.subscribe((values) => {
             this.checkTotalSum();
             this._cdr.detectChanges();
         });
@@ -129,7 +129,7 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
         return this._fb.group({
             checkbox: [false],
             sale_ref_id: [this.invoice.sale_id, [Validators.required]],
-            receivedamount: [
+            received_amount: [
                 '',
                 [
                     Validators.required,
@@ -144,19 +144,19 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
         });
     }
 
-    get accountarr(): FormGroup {
-        return this.submitForm.get('accountarr') as FormGroup;
+    get account_arr(): FormGroup {
+        return this.submitForm.get('account_arr') as FormGroup;
     }
 
     addAccount() {
-        const control = this.submitForm.controls.accountarr as FormArray;
+        const control = this.submitForm.controls.account_arr as FormArray;
         control.push(this.initAccount());
 
         this._cdr.markForCheck();
     }
 
     ngAfterViewInit() {
-        this.getBalanceDue();
+        this.getbalance_due();
     }
 
     reloadBankDetails() {
@@ -170,21 +170,23 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
     // method to calculate total payed now and balance due
     checkTotalSum() {
         this.summed = 0;
-        const ctrl = <FormArray>this.submitForm.controls.accountarr;
+
+        const ctrl = this.submitForm.get('account_arr') as FormArray;
+
         // iterate each object in the form array
         ctrl.controls.forEach((x) => {
             // get the itemmt value and need to parse the input to number
 
             const parsed = parseFloat(
-                x.get('receivedamount').value === '' ||
-                    x.get('receivedamount').value === null
+                x.get('received_amount').value === '' ||
+                    x.get('received_amount').value === null
                     ? 0
-                    : x.get('receivedamount').value
+                    : x.get('received_amount').value
             );
             // add to total
 
             this.summed += parsed;
-            this.getBalanceDue();
+            this.getbalance_due();
 
             // current set of paymnets + already paid amount > actual invocie amount then error
             if (
@@ -197,19 +199,19 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
                         this.invoice.invoice_amt,
                     'INR'
                 );
-                this.errmsg = `Total payment exceeds invoice amount ` + val;
+                this.errorMsg = `Total payment exceeds invoice amount ` + val;
                 this._cdr.detectChanges();
                 return false;
             } else {
-                this.errmsg = ``;
+                this.errorMsg = ``;
                 this._cdr.detectChanges();
             }
         });
         return true;
     }
 
-    getBalanceDue() {
-        this.balancedue =
+    getbalance_due() {
+        this.balance_due =
             this.invoice.invoice_amt - (this.invoice.paid_amount + this.summed);
     }
 
@@ -217,7 +219,7 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
         if (this.checkTotalSum()) {
             const form = {
                 center_id: this.user_data.center_id,
-                bankref: this.submitForm.value.accountarr[0].bankref,
+                bankref: this.submitForm.value.account_arr[0].bankref,
                 customerid: this.submitForm.value.customer.id,
             };
 
@@ -226,15 +228,15 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
                 .subscribe((data: any) => {
                     if (data.body.result[0].count > 0) {
                         // warning
-                        this.iswarning = true;
+                        this.is_warning = true;
                         this._cdr.markForCheck();
                     } else if (data.body.result1.length === 1) {
                         // check if the last paid amount is the same is current paid amount and if yes throw a warning.
                         if (
                             data.body.result1[0].payment_now_amt ===
-                            this.submitForm.value.accountarr[0].receivedamount
+                            this.submitForm.value.account_arr[0].received_amount
                         ) {
-                            this.iswarning = true;
+                            this.is_warning = true;
                             this._cdr.markForCheck();
                         } else {
                             this.finalSubmit();
@@ -265,7 +267,7 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
     }
 
     cancel() {
-        this.iswarning = false;
+        this.is_warning = false;
     }
 
     close() {

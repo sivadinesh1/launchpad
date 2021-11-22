@@ -2,7 +2,7 @@
     <div class="content">
         <div class="header">
             <div>
-                <div>Active Customers ({{pageLength }})</div>
+                <div>Customers Profile</div>
             </div>
             <div>
                 <div class="btn-grad-no-margin add-btn" (click)="add()">
@@ -12,7 +12,7 @@
             </div>
         </div>
 
-        <div class="row1">
+        <div class="head">
             <div class="search_box" style="padding-left: 16px">
                 <ion-searchbar
                     style="width: 300px"
@@ -22,25 +22,101 @@
                     #mySearchbar
                     show-cancel-button="focus"
                     (ionClear)="reset()"
-                    (ionInput)="applyFilter($event)"
+                    (ionChange)="openDialog($event)"
                 ></ion-searchbar>
             </div>
-            <div class="actions">
-                <img
-                    #tooltip="matTooltip"
-                    matTooltip="Download Customer Information"
-                    matTooltipClass="tooltip"
-                    (mousedown)="tooltip.hide()"
-                    [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
-                    src="/assets/images/svg/direct-download.svg"
-                    width="32px"
-                    height="32px"
+
+            <div class="full-download" style="align-self: center">
+                <button
+                    style="border-radius: 0px"
+                    appPreventDoubleClick
+                    class="cursor"
+                    type="button"
+                    [throttleTime]="500"
+                    mat-flat-button
+                    type="button"
+                    color="primary"
+                    tabindex="-1"
                     (click)="exportCustomerDataToExcel()"
-                />
+                >
+                    Download
+                </button>
             </div>
-            <div>&nbsp;</div>
         </div>
 
+        <ng-container>
+            <div class="table-header">
+                <div class="col-headers">#</div>
+                <div class="col-headers">Name</div>
+                <div class="col-headers">Address</div>
+                <div class="col-headers">&nbsp;</div>
+                <div class="col-headers">&nbsp;</div>
+            </div>
+
+            <div
+                *ngFor="let item of resultArray; let idx = index"
+                class="listItem"
+            >
+                <div>{{idx + 1}}</div>
+                <div class="item">
+                    <div>{{item.name}}</div>
+                    <div>{{item.last_paid_date}}</div>
+                </div>
+
+                <div class="item">
+                    <div>{{item.address1}}</div>
+                    <div>{{item.address2}}</div>
+                    <div>{{item.district}}</div>
+                </div>
+                <div
+                    class="item"
+                    style="color: blue; cursor: pointer"
+                    (click)="goCustomerFinancial(item)"
+                >
+                    Accounts
+                </div>
+
+                <div class="item">
+                    <button
+                        mat-button
+                        [matMenuTriggerFor]="menu"
+                        [matMenuTriggerData]="{element: item}"
+                        style="color: blue; font-size: 18px; font-weight: 400"
+                    >
+                        More
+                        <img
+                            src="/assets/images/svg/down-arrow.svg"
+                            width="12px"
+                            height="12px"
+                            alt=""
+                        />
+                    </button>
+                </div>
+            </div>
+
+            <mat-menu #menu="matMenu">
+                <ng-template matMenuContent let-element="element">
+                    <button mat-menu-item (click)="edit(element)">
+                        <span> Primary Contact Info</span>
+                    </button>
+                    <button
+                        mat-menu-item
+                        (click)="editShippingAddress(element)"
+                    >
+                        <span> Shipping Address(s)</span>
+                    </button>
+
+                    <button
+                        mat-menu-item
+                        (click)="manageBrandDiscounts(element)"
+                    >
+                        <span> Discounts Settings</span>
+                    </button>
+                </ng-template>
+            </mat-menu>
+        </ng-container>
+
+        <!-- 
         <ng-container>
             <div class="example-container mat-elevation-z8">
                 <mat-paginator
@@ -73,12 +149,7 @@
                                 <div style="padding: 3px; font-weight: 400">
                                     {{element.name}}
                                 </div>
-                                <!-- <div style="padding: 3px">
-									CR:
-									<span style="color: #ef4249"> {{element.credit_amt | nullzero | currency: "INR"}}</span>
-									/ DR:
-									<span style="color: #ef4249"> {{element.balance_amt | nullzero | currency: "INR"}}</span>
-								</div> -->
+                              
                                 <div style="padding: 3px; color: red">
                                     Last Payment Received:&nbsp;
                                     {{element.last_paid_date | nulldash }}
@@ -127,7 +198,7 @@
                             >
                                 <div
                                     style="text-align: left; cursor: pointer"
-                                    (click)="goCustomerFinancials(element)"
+                                    (click)="goCustomerFinancial(element)"
                                 >
                                     <div>
                                         <span
@@ -204,9 +275,9 @@
                     </button>
                 </ng-template>
             </mat-menu>
-        </ng-container>
+        </ng-container> -->
 
-        <ng-container *ngIf="!isloaded">
+        <ng-container *ngIf="!is_loaded">
             <ion-item *ngFor="let fake of _helperUtilsService.generateFake(20)">
                 <div
                     style="

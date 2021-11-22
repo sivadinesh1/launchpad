@@ -33,7 +33,7 @@ import { CommonApiService } from 'src/app/services/common-api.service';
 export class SaleReturnReceiveComponent implements OnInit {
     salemasterdata: any;
     salereturndetailsdata: any;
-    customerdata: any;
+    customer_data: any;
     centerdata: any;
 
     data: any;

@@ -40,21 +40,16 @@ import { InventoryReportsDialogComponent } from 'src/app/components/reports/inve
     encapsulation: ViewEncapsulation.None,
 })
 export class ViewProductsPage implements OnInit {
-    productinfo: any;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     center_id: any;
 
-    pcount: any;
     pageLength: any;
     isTableHasData = false;
 
     user_data$: Observable<User>;
     user_data: any;
-
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-
-    @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
     displayedColumns: string[] = [
         'productcode',
@@ -79,7 +74,7 @@ export class ViewProductsPage implements OnInit {
         private _dialog: MatDialog,
         private _router: Router,
         private _authService: AuthenticationService,
-        private _modalcontroller: ModalController
+        private _modalController: ModalController
     ) {
         this.user_data$ = this._authService.currentUser;
         this.user_data$
@@ -115,14 +110,19 @@ export class ViewProductsPage implements OnInit {
 
     ionViewDidEnter() {}
 
-    openDialog(product_search_text: any): void {
+    openDialog(filterValue: any): void {
+        const search_text =
+            filterValue.target === undefined
+                ? filterValue
+                : filterValue.target.value;
+
         this._commonApiService
             .getProductInfo({
                 center_id: this.center_id,
-                product_search_text,
+                product_search_text: search_text.trim(),
             })
             .subscribe((data: any) => {
-                this.temp_product_search_text = product_search_text;
+                this.temp_product_search_text = search_text.trim();
 
                 this.resultArray = data.body;
 
@@ -135,12 +135,12 @@ export class ViewProductsPage implements OnInit {
                     this.isTableHasData = true;
                 }
 
-                if (product_search_text.length === 0) {
+                if (search_text.trim().length === 0) {
                     this.reset();
                     this.isTableHasData = false;
                 }
 
-                this._cdr.markForCheck();
+                this._cdr.detectChanges();
             });
     }
 
@@ -214,12 +214,13 @@ export class ViewProductsPage implements OnInit {
                 tap(() => {
                     // do nothing
                     this.openDialog(this.temp_product_search_text);
-                    this._cdr.markForCheck();
+                    this.openSnackBar('Product edited successfully', '');
+                    //this._cdr.markForChec();
                 })
             )
             .subscribe((data: any) => {
                 if (data === 'success') {
-                    this.openSnackBar('Product edited successfully', '');
+                    // this.openDialog(this.temp_product_search_text);
                 }
             });
     }
@@ -255,18 +256,151 @@ export class ViewProductsPage implements OnInit {
             });
     }
 
+    async showInventoryReportsDialog(element) {
+        const modal = await this._modalController.create({
+            component: InventoryReportsDialogComponent,
+            componentProps: {
+                center_id: this.center_id,
+                product_code: element.product_code,
+                product_id: element.product_id,
+            },
+            cssClass: 'select-modal',
+        });
+
+        modal.onDidDismiss().then((result) => {
+            this._cdr.markForCheck();
+        });
+
+        await modal.present();
+    }
+
+    async exportCompletedSalesToExcel() {
+        const fileName = `Full_Stock_List_${moment().format(
+            'DD-MM-YYYY'
+        )}.xlsx`;
+
+        this._commonApiService
+            .fetchFullProductInventoryReports({ mrp_split: this.mrp_flag })
+            .subscribe((report_data: any) => {
+                const reportData = JSON.parse(JSON.stringify(report_data.body));
+
+                reportData.forEach((e) => {
+                    e['Brand Name'] = e.brand_name;
+                    delete e.brand_name;
+
+                    e.Code = e.product_code;
+                    delete e.product_code;
+
+                    e.Description = e.product_description;
+                    delete e.product_description;
+
+                    e.MRP = e.mrp;
+                    delete e.mrp;
+
+                    e['Avl. Stock'] = e.available_stock;
+                    delete e.available_stock;
+
+                    e.UOM = e.uom;
+                    delete e.uom;
+
+                    e['Pack Size'] = e.packet_size;
+                    delete e.packet_size;
+
+                    e['Last Pur. Price'] = e.purchase_price;
+                    delete e.purchase_price;
+
+                    e['HSN Code'] = e.hsn_code;
+                    delete e.hsn_code;
+
+                    e.Tax = e.tax_rate;
+                    delete e.tax_rate;
+
+                    e['Rack Info'] = e.rack_info;
+                    delete e.rack_info;
+                });
+
+                const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+
+                const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
+
+                ws1['!cols'] = [
+                    { width: 16 },
+                    { width: 16 },
+                    { width: 32 },
+                    { width: 14 },
+                    { width: 8 },
+                    { width: 8 },
+                    { width: 13 },
+                    { width: 13 },
+                    { width: 13 },
+                    { width: 13 },
+                    { width: 13 },
+                    { width: 13 },
+                    { width: 19 },
+                ];
+
+                const wsrows = [
+                    { hpt: 30 }, // row 1 sets to the height of 12 in points
+                    { hpx: 30 }, // row 2 sets to the height of 16 in pixels
+                ];
+
+                ws1['!rows'] = wsrows; // ws - worksheet
+
+                const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+
+                ws1['!merges'] = merge;
+
+                xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+                //then add ur Title txt
+                xlsx.utils.sheet_add_json(
+                    wb1.Sheets.sheet1,
+                    [
+                        {
+                            header: 'Full Item Summary Reports',
+                            from_date: `As on: ${moment().format(
+                                'DD/MM/YYYY'
+                            )}`,
+                        },
+                    ],
+                    {
+                        skipHeader: true,
+                        origin: 'A1',
+                    }
+                );
+
+                //start frm A2 here
+                xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+                    skipHeader: false,
+                    origin: 'A2',
+                    header: [
+                        'Brand Name',
+                        'Code',
+                        'Description',
+                        'MRP',
+                        'Avl. Stock',
+                        'UOM',
+                        'Pack Size',
+                        'Last Pur. Price',
+                        'HSN Code',
+                        'Tax',
+                        'Rack Info',
+                    ],
+                });
+
+                xlsx.writeFile(wb1, fileName);
+            });
+    }
+
     async exportCompletedPurchaseToExcel() {
         const fileName = `Full_Stock_List_${moment().format(
             'DD-MM-YYYY'
         )}.xlsx`;
 
         this._commonApiService
-            .fetchFullProductInventoryReports({
-                center_id: this.center_id,
-                mrp_split: this.mrp_flag,
-            })
-            .subscribe((reportdata: any) => {
-                const reportData = JSON.parse(JSON.stringify(reportdata.body));
+            .fetchFullProductInventoryReports({ mrp_split: this.mrp_flag })
+            .subscribe((report_data: any) => {
+                const reportData = JSON.parse(JSON.stringify(report_data.body));
 
                 const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
                 const wb1: xlsx.WorkBook = xlsx.utils.book_new();
@@ -296,23 +430,5 @@ export class ViewProductsPage implements OnInit {
 
                 xlsx.writeFile(wb1, fileName);
             });
-    }
-
-    async showInventoryReportsDialog(element) {
-        const modal = await this._modalcontroller.create({
-            component: InventoryReportsDialogComponent,
-            componentProps: {
-                center_id: this.center_id,
-                product_code: element.product_code,
-                product_id: element.product_id,
-            },
-            cssClass: 'select-modal',
-        });
-
-        modal.onDidDismiss().then((result) => {
-            this._cdr.markForCheck();
-        });
-
-        await modal.present();
     }
 }

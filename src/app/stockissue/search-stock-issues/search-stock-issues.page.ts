@@ -16,11 +16,18 @@ import {
     FormBuilder,
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable, lastValueFrom, of } from 'rxjs';
+import { Observable, lastValueFrom, of, empty } from 'rxjs';
 import { Sale } from '../../models/Sale';
 import { Customer } from 'src/app/models/Customer';
 import { AlertController } from '@ionic/angular';
-import { filter, map, startWith } from 'rxjs/operators';
+import {
+    debounceTime,
+    filter,
+    map,
+    startWith,
+    switchMap,
+    tap,
+} from 'rxjs/operators';
 import { User } from 'src/app/models/User';
 import {
     MatDialog,
@@ -34,6 +41,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { EnquiryPrintComponent } from 'src/app/components/enquiry-print/enquiry-print.component';
 import * as xlsx from 'xlsx';
 import { ConvertToSaleDialogComponent } from 'src/app/components/convert-to-sale-dialog/convert-to-sale-dialog.component';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { SearchCustomersComponent } from 'src/app/components/search-customers/search-customers.component';
+import { SearchInvoiceNoComponent } from 'src/app/components/search-invoice-no/search-invoice-no.component';
 
 @Component({
     selector: 'app-search-stock-issues',
@@ -42,6 +52,12 @@ import { ConvertToSaleDialogComponent } from 'src/app/components/convert-to-sale
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchStockIssuesPage implements OnInit {
+    @ViewChild('menuTriggerN', { static: true }) menuTriggerN: any;
+    @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
+    @ViewChild('auto') matAutocomplete: MatAutocomplete;
+
+    @ViewChild(SearchCustomersComponent) child: SearchCustomersComponent;
+
     sales$: Observable<Sale[]>;
 
     stockIssueSales$: Observable<Sale[]>;
@@ -66,13 +82,8 @@ export class SearchStockIssuesPage implements OnInit {
     minDate = new Date();
     dobMaxDate = new Date();
 
-    fromdate = new Date();
-    todate = new Date();
-
     filteredCustomer: Observable<any[]>;
     customer_lis: Customer[];
-
-    @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
     user_data: any;
 
@@ -81,7 +92,7 @@ export class SearchStockIssuesPage implements OnInit {
     statusList = [
         { id: 'all', value: 'All' },
         { id: 'D', value: 'Draft' },
-        { id: 'C', value: 'Fullfilled' },
+        { id: 'C', value: 'Fulfilled' },
     ];
 
     orderList = [
@@ -89,9 +100,9 @@ export class SearchStockIssuesPage implements OnInit {
         { id: 'asc', value: 'Old Orders First' },
     ];
 
-    searchType = [
+    search_type = [
         { name: 'All', id: 'all', checked: true },
-        { name: 'Invoice Only', id: 'invonly', checked: false },
+        { name: 'Invoice Only', id: 'inv_only', checked: false },
     ];
 
     sumTotalValue = 0.0;
@@ -106,6 +117,24 @@ export class SearchStockIssuesPage implements OnInit {
 
     color = 'accent';
 
+    from_date = new Date();
+    to_date = new Date();
+
+    searchByDays = 7;
+    isCLoading = false;
+    customer_data: any;
+
+    name: string;
+    clickedColumn: string;
+
+    isCustomDateFilter = false;
+
+    filter_from_date: any;
+    filter_to_date: any;
+
+    dateFrom: any = new Date();
+    dateTo: any = new Date();
+
     // new FormControl({value: '', disabled: true});
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -115,22 +144,23 @@ export class SearchStockIssuesPage implements OnInit {
         private _route: ActivatedRoute,
         public alertController: AlertController,
         public _dialog: MatDialog,
+        public _dialog1: MatDialog,
         private _snackBar: MatSnackBar,
         private _authService: AuthenticationService
     ) {
         this.submitForm = this._fb.group({
-            customerid: ['all'],
-            customerctrl: new FormControl({
+            customer_id: ['all'],
+            customer_ctrl: new FormControl({
                 value: 'All Customers',
                 disabled: false,
             }),
-            //customerctrl: [{ value: 'All Customers', disabled: false }],
-            todate: [this.todate, Validators.required],
-            fromdate: [this.fromdate, Validators.required],
+
+            to_date: [this.to_date, Validators.required],
+            from_date: [this.from_date, Validators.required],
             status: new FormControl('all'),
-            saletype: new FormControl('SI'),
-            invoiceno: [''],
-            searchtype: ['all'],
+            invoice_type: new FormControl('SI'),
+            invoice_no: [''],
+            search_type: ['all'],
             order: ['desc'],
         });
 
@@ -146,7 +176,7 @@ export class SearchStockIssuesPage implements OnInit {
             });
 
         const dateOffset = 24 * 60 * 60 * 1000 * 90;
-        this.fromdate.setTime(this.minDate.getTime() - dateOffset);
+        this.from_date.setTime(this.minDate.getTime() - dateOffset);
 
         this._route.params.subscribe((params) => {
             if (this.user_data !== undefined) {
@@ -171,58 +201,145 @@ export class SearchStockIssuesPage implements OnInit {
             });
     }
 
-    filtercustomer(value: any) {
-        if (typeof value == 'object') {
-            return this.customer_lis.filter((customer) =>
-                customer.name.toLowerCase().match(value.name.toLowerCase())
-            );
-        } else if (typeof value == 'string') {
-            return this.customer_lis.filter((customer) =>
-                customer.name.toLowerCase().match(value.toLowerCase())
-            );
-        }
-    }
-
     async init() {
-        this._commonApiService
-            .getAllActiveCustomers()
-            .subscribe((data: any) => {
-                this.customer_lis = data;
-
-                this.filteredCustomer =
-                    this.submitForm.controls.customerctrl.valueChanges.pipe(
-                        startWith(''),
-                        map((customer) =>
-                            customer
-                                ? this.filtercustomer(customer)
-                                : this.customer_lis.slice()
-                        )
-                    );
-            });
+        this.searchCustomers();
 
         this.search();
         this._cdr.markForCheck();
     }
 
+    searchCustomers() {
+        this.submitForm.controls.customer_ctrl.valueChanges
+            .pipe(
+                debounceTime(300),
+                tap(() => (this.isCLoading = true)),
+                switchMap((id: any) => {
+                    if (
+                        id != null &&
+                        id.length !== undefined &&
+                        id.length >= 2
+                    ) {
+                        return this._commonApiService.getCustomerInfo({
+                            center_id: this.user_data.center_id,
+                            search_text: id,
+                        });
+                    } else {
+                        return empty();
+                    }
+                })
+            )
+
+            .subscribe((data: any) => {
+                this.isCLoading = false;
+                this.customer_lis = data.body;
+
+                this._cdr.markForCheck();
+            });
+    }
+
     ngOnInit() {}
-    // this.form.get('controlname').disable();
-    // this.variable.disable()
-    radioClickHandle() {
-        if (this.submitForm.value.searchtype === 'invonly') {
-            this.submitForm.get('customerctrl').disable();
+
+    sortInvoiceDate() {
+        this.clickedColumn = 'Date';
+        if (this.orderDefaultFlag === 'desc') {
+            this.submitForm.patchValue({
+                order: 'asc',
+            });
+            this.orderDefaultFlag = 'asc';
         } else {
-            this.submitForm.value.invoiceno = '';
-            this.submitForm.get('customerctrl').enable();
-            this.submitForm.controls.invoiceno.setErrors(null);
-            this.submitForm.controls.invoiceno.markAsTouched();
+            this.submitForm.patchValue({
+                order: 'desc',
+            });
+            this.orderDefaultFlag = 'desc';
+        }
+        this.search();
+    }
+
+    sortInvoice_no() {
+        this.clickedColumn = 'Invoice';
+        if (this.orderDefaultFlag === 'desc') {
+            this.submitForm.patchValue({
+                order: 'asc',
+            });
+            this.orderDefaultFlag = 'asc';
+        } else {
+            this.submitForm.patchValue({
+                order: 'desc',
+            });
+            this.orderDefaultFlag = 'desc';
+        }
+        this.search();
+    }
+
+    isSelectedColumn(param) {
+        if (this.clickedColumn === param) {
+            return 'sorted_column';
+        } else {
+            return 'none';
         }
     }
-    // this.yourFormName.controls.formFieldName.enable();
+
+    isCompleted(status: string) {
+        if (status === 'C') {
+            return 'completed';
+        } else {
+            return 'draft';
+        }
+    }
+
+    radioClickHandle() {
+        if (this.submitForm.value.search_type === 'inv_only') {
+            this.submitForm.get('customer_ctrl').disable();
+        } else {
+            this.submitForm.value.invoice_no = '';
+            this.submitForm.get('customer_ctrl').enable();
+            this.submitForm.controls.invoice_no.setErrors(null);
+            this.submitForm.controls.invoice_no.markAsTouched();
+        }
+    }
+
+    customerInfoPage(item) {
+        this.submitForm.patchValue({
+            customer_id: item.id,
+        });
+        this.search();
+    }
+
+    opsFromDateEvent(event) {
+        this.submitForm.patchValue({
+            from_date: moment(event.target.value).format('YYYY-MM-DD'),
+        });
+        this.reloadSearch();
+    }
+
+    opsToDateEvent(event) {
+        this.submitForm.patchValue({
+            to_date: moment(event.target.value).format('YYYY-MM-DD'),
+        });
+
+        this.reloadSearch();
+    }
+
+    reloadSearch() {
+        // patch it up with from & to date, via patch value
+        console.log(this.submitForm.value);
+
+        this.search();
+    }
+
+    statusFilterChanged(item: any) {
+        this.submitForm.patchValue({
+            status: item.detail.value,
+            invoice_no: '',
+        });
+        this._cdr.markForCheck();
+        this.search();
+    }
 
     clearInput() {
         this.submitForm.patchValue({
-            customerid: 'all',
-            customerctrl: '',
+            customer_id: 'all',
+            customer_ctrl: '',
         });
         this._cdr.markForCheck();
         this.search();
@@ -230,8 +347,8 @@ export class SearchStockIssuesPage implements OnInit {
 
     getPosts(event) {
         this.submitForm.patchValue({
-            customerid: event.option.value.id,
-            customerctrl: event.option.value.name,
+            customer_id: event.option.value.id,
+            customer_ctrl: event.option.value.name,
         });
 
         this.tabIndex = 0;
@@ -242,24 +359,24 @@ export class SearchStockIssuesPage implements OnInit {
 
     async search() {
         if (
-            this.submitForm.value.searchtype !== 'all' &&
-            this.submitForm.value.invoiceno.trim().length === 0
+            this.submitForm.value.search_type !== 'all' &&
+            this.submitForm.value.invoice_no.trim().length === 0
         ) {
             console.log('invoice number is mandatory');
-            this.submitForm.controls.invoiceno.setErrors({ required: true });
-            this.submitForm.controls.invoiceno.markAsTouched();
+            this.submitForm.controls.invoice_no.setErrors({ required: true });
+            this.submitForm.controls.invoice_no.markAsTouched();
             return false;
         }
 
         this.sales$ = this._commonApiService.searchSales({
             center_id: this.user_data.center_id,
-            customerid: this.submitForm.value.customerid,
+            customer_id: this.submitForm.value.customer_id,
             status: this.submitForm.value.status,
-            fromdate: this.submitForm.value.fromdate,
-            todate: this.submitForm.value.todate,
-            saletype: this.submitForm.value.saletype,
-            searchtype: this.submitForm.value.searchtype,
-            invoiceno: this.submitForm.value.invoiceno,
+            from_date: this.submitForm.value.from_date,
+            to_date: this.submitForm.value.to_date,
+            invoice_type: this.submitForm.value.invoice_type,
+            search_type: this.submitForm.value.search_type,
+            invoice_no: this.submitForm.value.invoice_no,
             order: this.submitForm.value.order,
         });
 
@@ -270,14 +387,14 @@ export class SearchStockIssuesPage implements OnInit {
         this.stockIssueSales$ = this.sales$.pipe(
             map((arr: any) =>
                 arr.filter(
-                    (f) => f.status === 'D' && f.sale_type === 'stockIssue'
+                    (f) => f.status === 'D' && f.invoice_type === 'stockIssue'
                 )
             )
         );
 
         this.filteredValues = value.filter(
             (data: any) =>
-                data.status === 'D' && data.sale_type === 'stockIssue'
+                data.status === 'D' && data.invoice_type === 'stockIssue'
         );
 
         this.calculateSumTotals();
@@ -326,21 +443,21 @@ export class SearchStockIssuesPage implements OnInit {
     }
 
     toDateSelected($event) {
-        this.todate = $event.target.value;
+        this.to_date = $event.target.value;
         this.tabIndex = 0;
         this.search();
         this._cdr.markForCheck();
     }
 
     fromDateSelected($event) {
-        this.fromdate = $event.target.value;
+        this.from_date = $event.target.value;
         this.tabIndex = 0;
         this.search();
         this._cdr.markForCheck();
     }
 
-    // two types of delete, (i) Sale Details lineitem, (ii) Sale Master both
-    // are different scenarios, just recording it. Only 'DRAFT(D)' or 'STOCKISSUE(D)' STATUS ARE DELETED
+    // two types of delete, (i) Sale Details line item, (ii) Sale Master both
+    // are different scenarios, just recording it. Only 'DRAFT(D)' or 'STOCK ISSUE(D)' STATUS ARE DELETED
     // first delete sale details(update audit) then delete sale master
     delete(item) {
         this._commonApiService
@@ -353,7 +470,7 @@ export class SearchStockIssuesPage implements OnInit {
                             //  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
                             this._commonApiService
                                 .deleteItemHistory(item.id)
-                                .subscribe((data: any) => {
+                                .subscribe((data2: any) => {
                                     this.openSnackBar(
                                         'Deleted Successfully',
                                         ''
@@ -368,7 +485,7 @@ export class SearchStockIssuesPage implements OnInit {
     async presentAlertConfirm(item) {
         const alert = await this.alertController.create({
             header: 'Confirm!',
-            message: 'Permantently removes sale. Are you sure to Delete?',
+            message: 'Permanently removes sale. Are you sure to Delete?',
             buttons: [
                 {
                     text: 'Cancel',
@@ -396,7 +513,7 @@ export class SearchStockIssuesPage implements OnInit {
 
         this.filteredValues = value.filter(
             (data: any) =>
-                data.status === 'D' && data.sale_type === 'stockIssue'
+                data.status === 'D' && data.invoice_type === 'stockIssue'
         );
 
         this.calculateSumTotals();
@@ -421,6 +538,27 @@ export class SearchStockIssuesPage implements OnInit {
                 (accumulator, currentValue) => accumulator + currentValue,
                 0
             );
+    }
+
+    openDialog1(): void {
+        const rect = this.menuTriggerN.nativeElement.getBoundingClientRect();
+        console.log('zzz' + rect.left);
+
+        const dialogRef = this._dialog1.open(SearchInvoiceNoComponent, {
+            width: '250px',
+            data: { invoice_no: '' },
+
+            position: { left: `${rect.left}px`, top: `${rect.bottom - 50}px` },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log('The dialog was closed');
+
+            this.submitForm.patchValue({
+                invoice_no: result,
+            });
+            this.search();
+        });
     }
 
     openDialog(row): void {
@@ -461,115 +599,6 @@ export class SearchStockIssuesPage implements OnInit {
             duration: 2000,
             panelClass: ['mat-toolbar', 'mat-primary'],
         });
-    }
-
-    async exportStockIssueSalesToExcel() {
-        this.arr = [];
-        const fileName = 'Stock_Issue_Sale_Reports.xlsx';
-
-        this.arr = await lastValueFrom(this.stockIssueSales$);
-
-        const reportData = JSON.parse(JSON.stringify(this.arr));
-
-        reportData.forEach((e) => {
-            e['Customer Name'] = e.customer_name;
-            delete e.customer_name;
-
-            e['Invoice #'] = e.invoice_no;
-            delete e.invoice_no;
-
-            e['Invoice Date'] = e.invoice_date;
-            delete e.invoice_date;
-
-            e['Sale Type'] = e.sale_type;
-            delete e.sale_type;
-
-            e['Total Qty'] = e.total_qty;
-            delete e.total_qty;
-
-            e['# of Items'] = e.no_of_items;
-            delete e.no_of_items;
-
-            e['Taxable Value'] = e.after_tax_value;
-            delete e.after_tax_value;
-
-            e.CGST = e.cgst;
-            delete e.cgst;
-
-            e.SGST = e.sgst;
-            delete e.sgst;
-
-            e.IGST = e.igst;
-            delete e.igst;
-
-            e.IGST = e.igst;
-            delete e.igst;
-
-            e['Total Value'] = e.total_value;
-            delete e.total_value;
-
-            e['Net Total'] = e.net_total;
-            delete e.net_total;
-
-            e['Sale Date Time'] = e.sale_datetime;
-            delete e.sale_datetime;
-
-            delete e.id;
-            delete e.center_id;
-            delete e.customer_id;
-            delete e.lr_no;
-            delete e.lr_date;
-            delete e.received_date;
-            delete e.order_no;
-            delete e.order_date;
-            delete e.transport_charges;
-
-            delete e.unloading_charges;
-            delete e.misc_charges;
-            delete e.status;
-            delete e.revision;
-            delete e.tax_applicable;
-            delete e.roundoff;
-            delete e.retail_customer_name;
-            delete e.retail_customer_address;
-            delete e.no_of_boxes;
-
-            delete e.stock_issue_date_ref;
-            delete e.stock_issue_ref;
-        });
-        this.arr.splice(0, 1);
-
-        const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
-        const wb1: xlsx.WorkBook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
-
-        //then add ur Title txt
-        xlsx.utils.sheet_add_json(
-            wb1.Sheets.sheet1,
-            [
-                {
-                    header: 'Stock Issue Sale Reports',
-                    fromdate: `From: ${moment(
-                        this.submitForm.value.fromdate
-                    ).format('DD/MM/YYYY')}`,
-                    todate: `To: ${moment(this.submitForm.value.todate).format(
-                        'DD/MM/YYYY'
-                    )}`,
-                },
-            ],
-            {
-                skipHeader: true,
-                origin: 'A1',
-            }
-        );
-
-        //start frm A2 here
-        xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
-            skipHeader: false,
-            origin: 'A2',
-        });
-
-        xlsx.writeFile(wb1, fileName);
     }
 
     async presentConvertSaleConfirm(item) {
@@ -613,26 +642,24 @@ export class SearchStockIssuesPage implements OnInit {
                 net_total: item.net_total,
             })
             .subscribe((data: any) => {
-                console.log('object');
-
                 if (data.body.result === 'success') {
                     this.convertToInvoiceSuccess(
-                        data.body.invoiceNo,
+                        data.body.invoice_no,
                         moment().format('DD-MM-YYYY')
                     );
                 }
             });
     }
 
-    convertToInvoiceSuccess(invoice_id, invoice_date) {
+    convertToInvoiceSuccess(invoice_no, invoice_date) {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
         dialogConfig.width = '400px';
 
         dialogConfig.data = {
-            invoiceid: invoice_id,
-            invoicedate: invoice_date,
+            invoice_no,
+            invoice_date,
         };
 
         const dialogRef = this._dialog.open(
@@ -642,7 +669,229 @@ export class SearchStockIssuesPage implements OnInit {
 
         dialogRef.afterClosed().subscribe((data) => {
             console.log('The dialog was closed');
-            this._router.navigateByUrl('/home/search-sales');
+            this.init();
+            //this._router.navigateByUrl('/home/search-stock-issues');
         });
+    }
+
+    customDateFilter() {
+        this.isCustomDateFilter = !this.isCustomDateFilter;
+    }
+
+    clear() {
+        const dateOffset = 24 * 60 * 60 * 1000 * 7;
+        this.from_date.setTime(this.minDate.getTime() - dateOffset);
+
+        this.submitForm.patchValue({
+            customer_id: 'all',
+            customer_ctrl: 'All Customers',
+            from_date: this.from_date,
+            to_date: new Date(),
+            invoice_no: '',
+            search_type: 'all',
+        });
+
+        this.submitForm.value.invoice_no = '';
+        this.submitForm.get('customer_ctrl').enable();
+        this.submitForm.controls.invoice_no.setErrors(null);
+        this.submitForm.controls.invoice_no.markAsTouched();
+
+        this._cdr.markForCheck();
+    }
+
+    customerSearchReset() {
+        this.clearInput();
+    }
+
+    reset() {
+        this.customerSearchReset();
+        this.child.clearCustomerInput();
+        this.clear();
+        this.search();
+    }
+
+    async exportCompletedSalesToExcel() {
+        const fileName = 'Sale_Order_Reports.xlsx';
+
+        const reportData = JSON.parse(JSON.stringify(this.filteredValues));
+
+        reportData.forEach((e) => {
+            delete e.retail_customer_phone;
+            delete e.inv_gen_mode;
+            delete e.createdAt;
+            delete e.created_by;
+
+            e['Customer Name'] = e.customer_name;
+            delete e.customer_name;
+
+            e['Invoice #'] = e.invoice_no;
+            delete e.invoice_no;
+
+            e['Invoice Date'] = moment(e.invoice_date).format('DD-MM-YYYY');
+            delete e.invoice_date;
+
+            delete e.invoice_type;
+
+            e['Total Qty'] = e.total_quantity;
+            delete e.total_quantity;
+
+            e['# Items'] = e.no_of_items;
+            delete e.no_of_items;
+
+            e['Taxable Value'] = e.after_tax_value;
+            delete e.after_tax_value;
+
+            e['Updated By'] = e.updated_by;
+            delete e.updated_by;
+
+            e['Print Count'] = e.print_count;
+            delete e.print_count;
+
+            e['Updated At'] = moment(e.updatedAt).format('DD-MM-YYYY HH:mm:ss');
+            delete e.updatedAt;
+
+            e.CGST = e.cgs_t;
+            delete e.cgs_t;
+
+            e.SGST = e.sgs_t;
+            delete e.sgs_t;
+
+            e.IGST = e.igs_t;
+            delete e.igs_t;
+
+            e.igs_t = e.igs_t;
+            delete e.igs_t;
+
+            e['Total Value'] = e.total_value;
+            delete e.total_value;
+
+            e['Net Total'] = e.net_total;
+            delete e.net_total;
+
+            e['Sale Date Time'] = moment(e.sale_date_time).format(
+                'DD-MM-YYYY HH:mm:ss'
+            );
+            delete e.sale_date_time;
+
+            e.Status = e.status === 'C' ? 'Invoiced' : 'Draft';
+            delete e.status;
+
+            delete e.id;
+            delete e.center_id;
+            delete e.customer_id;
+            delete e.lr_no;
+            delete e.lr_date;
+            delete e.received_date;
+            delete e.order_no;
+            delete e.order_date;
+            delete e.transport_charges;
+
+            delete e.unloading_charges;
+            delete e.misc_charges;
+
+            delete e.revision;
+            delete e.tax_applicable;
+            delete e.stock_issue_ref;
+            delete e.stock_issue_date_ref;
+            delete e.round_off;
+            delete e.retail_customer_name;
+            delete e.retail_customer_address;
+            delete e.no_of_boxes;
+        });
+
+        const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+
+        const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
+
+        ws1['!cols'] = [
+            { width: 16 },
+            { width: 16 },
+            { width: 32 },
+            { width: 14 },
+            { width: 8 },
+            { width: 8 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 19 },
+            { width: 12 },
+            { width: 16 },
+            { width: 19 },
+        ];
+
+        const wsrows = [
+            { hpt: 30 }, // row 1 sets to the height of 12 in points
+            { hpx: 30 }, // row 2 sets to the height of 16 in pixels
+        ];
+
+        ws1['!rows'] = wsrows; // ws - worksheet
+
+        const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+
+        ws1['!merges'] = merge;
+
+        xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+        //then add ur Title txt
+        xlsx.utils.sheet_add_json(
+            wb1.Sheets.sheet1,
+            [
+                {
+                    header: 'Completed Sale Reports',
+                    from_date: `From: ${moment(
+                        this.submitForm.value.from_date
+                    ).format('DD/MM/YYYY')}`,
+                    to_date: `To: ${moment(
+                        this.submitForm.value.to_date
+                    ).format('DD/MM/YYYY')}`,
+                },
+            ],
+            {
+                skipHeader: true,
+                origin: 'A1',
+            }
+        );
+
+        //start frm A2 here
+        xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+            skipHeader: false,
+            origin: 'A2',
+            header: [
+                'Invoice #',
+                'Invoice Date',
+                'Customer Name',
+                'Status',
+                'Total Qty',
+                '# Items',
+                'CGST',
+                'SGST',
+                'IGST',
+                'Taxable Value',
+                'Total Value',
+                'Net Total',
+                'Sale Date Time',
+                'Print Count',
+                'Updated By',
+                'Updated At',
+            ],
+        });
+
+        xlsx.writeFile(wb1, fileName);
+    }
+
+    dateFilter(value: number) {
+        this.searchByDays = value;
+        const dateOffset = 24 * 60 * 60 * 1000 * this.searchByDays;
+        this.from_date = new Date(this.minDate.getTime() - dateOffset);
+        this.submitForm.patchValue({
+            from_date: this.from_date,
+        });
+
+        this._cdr.detectChanges();
+
+        this.search();
     }
 }

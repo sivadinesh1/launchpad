@@ -14,7 +14,7 @@ export class ErrorService implements OnInit, OnDestroy {
     errorObj: any;
 
     center_id: any;
-    userid: any;
+    user_id: any;
 
     private unsubscribe$ = new SubSink();
 
@@ -27,14 +27,14 @@ export class ErrorService implements OnInit, OnDestroy {
     ngOnInit() {
         const currentUser = this._authService.currentUserValue;
         this.center_id = currentUser.center_id;
-        this.userid = currentUser.userid;
+        this.user_id = currentUser.user_id;
     }
 
     logErrortoService(params, err) {
         this.errorObj = new ErrorObject(
             myGlobals.appid,
             this.center_id,
-            this.userid,
+            this.user_id,
             params,
             err,
             this._authService.device

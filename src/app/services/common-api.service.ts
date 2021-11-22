@@ -590,9 +590,9 @@ export class CommonApiService {
         );
     }
 
-    deleteItemHistory(saleid) {
+    deleteItemHistory(sale_id) {
         return this.httpClient.get(
-            `${this.restApiUrl}/v1/api/stock/delete-item-history/${saleid}`
+            `${this.restApiUrl}/v1/api/stock/delete-item-history/${sale_id}`
         );
     }
 

@@ -4,18 +4,21 @@ import { Routes, RouterModule } from '@angular/router';
 import { DashboardPage } from './dashboard.page';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: DashboardPage
-  },
-  {
-    path: 'admin-dashboard/:userid',
-    loadChildren: () => import('./admin-dashboard/admin-dashboard.module').then(m => m.AdminDashboardPageModule)
-  }
+    {
+        path: '',
+        component: DashboardPage,
+    },
+    {
+        path: 'admin-dashboard/:user_id',
+        loadChildren: () =>
+            import('./admin-dashboard/admin-dashboard.module').then(
+                (m) => m.AdminDashboardPageModule
+            ),
+    },
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule],
 })
-export class DashboardPageRoutingModule { }
+export class DashboardPageRoutingModule {}

@@ -28,7 +28,7 @@ import {
 export class AdminDashboardPage implements OnInit {
     user_data$: Observable<User>;
     user_data: any;
-    userid: any;
+    user_id: any;
     enquirySummary: any;
     salesSummary: any;
     purchaseSummary: any;
@@ -93,7 +93,7 @@ export class AdminDashboardPage implements OnInit {
     }
 
     ngOnInit() {
-        this.userid = this._route.snapshot.params.userid;
+        this.user_id = this._route.snapshot.params.user_id;
     }
 
     customEnquiry() {
@@ -225,9 +225,9 @@ export class AdminDashboardPage implements OnInit {
         this._cdr.markForCheck();
     }
 
-    goCustomerFinancials(customer_id) {
+    goCustomerFinancial(customer_id) {
         this._router.navigate([
-            `/home/financials-customer/${this.user_data.center_id}/${customer_id}`,
+            `/home/financial-customer/${this.user_data.center_id}/${customer_id}`,
         ]);
     }
 

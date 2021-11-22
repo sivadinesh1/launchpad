@@ -27,6 +27,7 @@ import { BrandAddDialogComponent } from 'src/app/components/brands/brand-add-dia
 import * as xlsx from 'xlsx';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 import { DeleteBrandDialogComponent } from '../../../components/delete-brand-dialog/delete-brand-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-view-brands',
@@ -35,6 +36,14 @@ import { DeleteBrandDialogComponent } from '../../../components/delete-brand-dia
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewBrandsPage implements OnInit {
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+    @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
+
+    displayedColumns: string[] = ['name', 'edit', 'delete'];
+    dataSource = new MatTableDataSource<Brand>();
+
     center_id: any;
     resultList: any;
 
@@ -43,17 +52,7 @@ export class ViewBrandsPage implements OnInit {
 
     user_data$: Observable<User>;
 
-    ready = 0; // flag check - center_id (localstorage) & customerid (param)
-
-    @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
-
-    displayedColumns: string[] = ['name', 'edit', 'delete'];
-    dataSource = new MatTableDataSource<Brand>();
-
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-
-    @ViewChild('epltable', { static: false }) epltable: ElementRef;
+    ready = 0; // flag check - center_id (local storage) & customer id (param)
 
     resultArray: any = [];
 
@@ -62,6 +61,7 @@ export class ViewBrandsPage implements OnInit {
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService,
         private _dialog: MatDialog,
+        private _snackBar: MatSnackBar,
         private _route: ActivatedRoute,
         private _router: Router
     ) {
@@ -138,17 +138,7 @@ export class ViewBrandsPage implements OnInit {
             )
             .subscribe((data: any) => {
                 if (data === 'success') {
-                    const dialogConfigSuccess = new MatDialogConfig();
-                    dialogConfigSuccess.disableClose = false;
-                    dialogConfigSuccess.autoFocus = true;
-                    dialogConfigSuccess.width = '25%';
-                    dialogConfigSuccess.height = '25%';
-                    dialogConfigSuccess.data = 'Brand deleted successfully';
-
-                    const dialogRef = this._dialog.open(
-                        SuccessMessageDialogComponent,
-                        dialogConfigSuccess
-                    );
+                    this.openSnackBar('Brand deleted successfully', '');
 
                     this.reloadBrands();
                 }
@@ -179,17 +169,7 @@ export class ViewBrandsPage implements OnInit {
             )
             .subscribe((data: any) => {
                 if (data === 'success') {
-                    const dialogConfigSuccess = new MatDialogConfig();
-                    dialogConfigSuccess.disableClose = false;
-                    dialogConfigSuccess.autoFocus = true;
-                    dialogConfigSuccess.width = '25%';
-                    dialogConfigSuccess.height = '25%';
-                    dialogConfigSuccess.data = 'Brand updated successfully';
-
-                    const dialogRef = this._dialog.open(
-                        SuccessMessageDialogComponent,
-                        dialogConfigSuccess
-                    );
+                    this.openSnackBar('Brand updated successfully', '');
                 }
             });
     }
@@ -218,17 +198,7 @@ export class ViewBrandsPage implements OnInit {
             )
             .subscribe((data: any) => {
                 if (data === 'success') {
-                    const dialogConfigSuccess = new MatDialogConfig();
-                    dialogConfigSuccess.disableClose = false;
-                    dialogConfigSuccess.autoFocus = true;
-                    dialogConfigSuccess.width = '25%';
-                    dialogConfigSuccess.height = '25%';
-                    dialogConfigSuccess.data = 'New Brand added successfully';
-
-                    const dialogRef = this._dialog.open(
-                        SuccessMessageDialogComponent,
-                        dialogConfigSuccess
-                    );
+                    this.openSnackBar('Brand added successfully', '');
                 }
             });
     }
@@ -247,14 +217,21 @@ export class ViewBrandsPage implements OnInit {
 
     reset() {}
 
+    openSnackBar(message: string, action: string) {
+        this._snackBar.open(message, action, {
+            duration: 2000,
+            panelClass: ['mat-toolbar', 'mat-primary'],
+        });
+    }
+
     exportToExcel() {
-        const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
-            this.epltable.nativeElement
-        );
-        ws['!cols'] = [];
-        ws['!cols'][1] = { hidden: true };
-        const wb: xlsx.WorkBook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-        xlsx.writeFile(wb, 'epltable.xlsx');
+        // const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
+        //     this.epltable.nativeElement
+        // );
+        // ws['!cols'] = [];
+        // ws['!cols'][1] = { hidden: true };
+        // const wb: xlsx.WorkBook = xlsx.utils.book_new();
+        // xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+        // xlsx.writeFile(wb, 'epltable.xlsx');
     }
 }

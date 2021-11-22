@@ -81,7 +81,7 @@
                 <mat-label>Product's Brand</mat-label>
                 <mat-select formControlName="brand_id" required>
                     <mat-option *ngFor="let item of brands" [value]="item.id">
-                        {{ item.name }}
+                        {{ item.brand_name }}
                     </mat-option>
                 </mat-select>
                 <mat-error>This field is required</mat-error>

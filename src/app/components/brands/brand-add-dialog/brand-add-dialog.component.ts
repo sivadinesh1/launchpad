@@ -17,6 +17,7 @@ import { User } from 'src/app/models/User';
 import { plainToClass } from 'class-transformer';
 import { Product } from 'src/app/models/Product';
 import { Brand } from 'src/app/models/Brand';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-brand-add-dialog',
@@ -27,7 +28,7 @@ import { Brand } from 'src/app/models/Brand';
 export class BrandAddDialogComponent implements OnInit {
     center_id: any;
     submitForm: any;
-    errmsg: any;
+    errorMsg: any;
 
     user_data$: Observable<User>;
     user_data: any;
@@ -38,6 +39,7 @@ export class BrandAddDialogComponent implements OnInit {
         private _formBuilder: FormBuilder,
         private dialogRef: MatDialogRef<BrandAddDialogComponent>,
         private _route: ActivatedRoute,
+        private _snackBar: MatSnackBar,
         private _authService: AuthenticationService,
         private _commonApiService: CommonApiService
     ) {
@@ -82,7 +84,7 @@ export class BrandAddDialogComponent implements OnInit {
     }
 
     onSubmit() {
-        this.errmsg = '';
+        this.errorMsg = '';
         if (!this.submitForm.valid) {
             return false;
         }
@@ -93,7 +95,7 @@ export class BrandAddDialogComponent implements OnInit {
                 .subscribe((data: any) => {
                     if (data.result.length > 0) {
                         if (data.result[0].id > 0) {
-                            this.errmsg = 'Brand already exists!';
+                            this.errorMsg = 'Brand already exists!';
                         }
                     } else {
                         const brand = plainToClass(
@@ -103,8 +105,8 @@ export class BrandAddDialogComponent implements OnInit {
 
                         this._commonApiService
                             .addBrand(brand)
-                            .subscribe((data: any) => {
-                                if (data.status === 200) {
+                            .subscribe((data1: any) => {
+                                if (data1.status === 200) {
                                     this.dialogRef.close('success');
                                 }
                             });

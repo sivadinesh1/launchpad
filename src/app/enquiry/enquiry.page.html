@@ -14,14 +14,14 @@
                     <input
                         matInput
                         [matAutocomplete]="auto"
-                        formControlName="customerctrl"
-                        [readOnly]="iscustomerselected"
-                        #typehead1
+                        formControlName="customer_ctrl"
+                        [readOnly]="is_customer_selected"
+                        #typeHead1
                         required
-                        #clist
+                        #cList
                         tabindex="1"
                         matTooltipPosition="after"
-                        [attr.disabled]="iscustomerselected?'true':null"
+                        [attr.disabled]="is_customer_selected?'true':null"
                     />
 
                     <button
@@ -99,12 +99,12 @@
                         </ng-container>
                     </mat-autocomplete>
                     <mat-error
-                        *ngIf="submitForm.controls['customerctrl'].hasError('required')"
+                        *ngIf="submitForm.controls['customer_ctrl'].hasError('required')"
                     >
                         Please enter a value
                     </mat-error>
                     <mat-error
-                        *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')"
+                        *ngIf="submitForm.controls['customer_ctrl'].hasError('incorrect')"
                     >
                         <span style="color: darkorange"
                             >Customer Not Found:</span
@@ -119,10 +119,10 @@
                             >+ Add Customer</span
                         >
                     </mat-error>
-                    <!-- <mat-hint *ngIf="!iscustomerselected">
+                    <!-- <mat-hint *ngIf="!is_customer_selected">
 						<span (click)="addCustomer()" style="font-size: 12px; color: #310ac0; cursor: pointer">+ New Customer</span>
 					</mat-hint> -->
-                    <mat-hint *ngIf="iscustomerselected">
+                    <mat-hint *ngIf="is_customer_selected">
                         <span
                             (click)="openDialog($event)"
                             style="
@@ -137,7 +137,7 @@
             </div>
 
             <div>
-                <div *ngIf="iscustomerselected">
+                <div *ngIf="is_customer_selected">
                     <mat-form-field style="width: 400px">
                         <mat-label>Remarks (Optional)</mat-label>
                         <input
@@ -150,7 +150,7 @@
                 </div>
             </div>
         </div>
-        <ng-container *ngIf="!iscustomerselected">
+        <ng-container *ngIf="!is_customer_selected">
             <div style="display: grid; place-items: center; padding: 2rem 2rem">
                 <div style="color: #333333"><h4>Customer Not Selected</h4></div>
                 <div style="color: #666666">
@@ -164,7 +164,7 @@
                 </div>
             </div>
         </ng-container>
-        <div class="enq-wrap" [hidden]="!iscustomerselected">
+        <div class="enq-wrap" [hidden]="!is_customer_selected">
             <div class="row">
                 <div class="row1">
                     <div>&nbsp;</div>
@@ -207,13 +207,13 @@
                     </ng-container>
 
                     <div
-                        formArrayName="productarr"
+                        formArrayName="product_arr"
                         class="list-block"
                         *ngIf="getLength() !== 0"
                     >
                         <div
                             class="list-item"
-                            *ngForOF="let product of productarr.controls; let idx = index"
+                            *ngForOf="let product of product_arr.controls; let idx = index"
                         >
                             <ng-container [formGroupName]="idx">
                                 <div>{{idx + 1}}</div>
@@ -247,11 +247,11 @@
                                             placeholder="Item description"
                                             autocomplete="off"
                                         />
-                                        <mat-error
+                                        <!-- <mat-error
                                             *ngIf="product.controls.notes.hasError('required')"
                                         >
                                             Item description required
-                                        </mat-error>
+                                        </mat-error> -->
                                     </mat-form-field>
                                 </div>
 
@@ -267,11 +267,11 @@
                                             required
                                             autocomplete="off"
                                         />
-                                        <mat-error
+                                        <!-- <mat-error
                                             *ngIf="product.controls.quantity.hasError('required')"
                                         >
                                             Quantity required
-                                        </mat-error>
+                                        </mat-error> -->
                                     </mat-form-field>
                                 </div>
                             </ng-container>
@@ -286,8 +286,8 @@
                             <input
                                 matInput
                                 [matAutocomplete]="auto1"
-                                formControlName="productctrl"
-                                #typehead
+                                formControlName="product_ctrl"
+                                #typeHead
                                 #plist
                                 matTooltipPosition="after"
                                 tabindex="2"
@@ -404,7 +404,7 @@
                             </mat-autocomplete>
 
                             <mat-error
-                                *ngIf="submitForm.controls['productctrl'].hasError('incorrect')"
+                                *ngIf="submitForm.controls['product_ctrl'].hasError('incorrect')"
                             >
                                 Invalid product code
                             </mat-error>
@@ -415,7 +415,7 @@
                             <input
                                 matInput
                                 type="text"
-                                formControlName="tempdesc"
+                                formControlName="temp_desc"
                                 required
                                 tabindex="-1"
                                 autocomplete="off"
@@ -424,7 +424,7 @@
                                 >Item description</mat-placeholder
                             >
                             <mat-error
-                                *ngIf="submitForm.controls['tempdesc'].hasError('required')"
+                                *ngIf="submitForm.controls['temp_desc'].hasError('required')"
                             >
                                 Please enter a value
                             </mat-error>
@@ -439,7 +439,7 @@
                                 type="number"
                                 min="1"
                                 max="1000"
-                                formControlName="tempqty"
+                                formControlName="temp_qty"
                                 required
                                 tabindex="3"
                                 #qty
@@ -488,7 +488,7 @@
         </div>
 
         <ng-container>
-            <div class="footer" *ngIf="iscustomerselected">
+            <div class="footer" *ngIf="is_customer_selected">
                 <div>
                     <!-- <mat-form-field style="width: 320px">
 						<mat-label>Remarks (Optional)</mat-label>
@@ -496,7 +496,7 @@
 					</mat-form-field> -->
                 </div>
                 <div class="submit">
-                    <!-- <span class="itms-lbl">Showing {{productarr.controls.length || 0}} Items</span>&nbsp; -->
+                    <!-- <span class="itms-lbl">Showing {{product_arr.controls.length || 0}} Items</span>&nbsp; -->
                     <button
                         appPreventDoubleClick
                         class="cursor"

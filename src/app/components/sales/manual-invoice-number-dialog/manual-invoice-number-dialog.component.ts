@@ -33,7 +33,7 @@ import { firstValueFrom } from 'rxjs';
 export class ManualInvoiceNumberDialogComponent implements OnInit {
     salemasterdata: any;
     saledetailsdata: any;
-    customerdata: any;
+    customer_data: any;
 
     responsemsg: any;
 

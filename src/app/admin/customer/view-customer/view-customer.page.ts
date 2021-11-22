@@ -38,7 +38,9 @@ import { HelperUtilsService } from 'src/app/services/helper-utils.service';
     styleUrls: ['./view-customer.page.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ViewCustomerPage implements OnInit {
+export class ViewCustomerPage {
+    @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
+
     center_id: any;
     customer$: Observable<Customer[]>;
     user_data$: Observable<User>;
@@ -52,22 +54,16 @@ export class ViewCustomerPage implements OnInit {
     responseMsg: string;
     pageLength: any;
 
-    resultsize = 0;
-    customerslist: any;
     customersOriglist: any;
 
-    isloaded = false;
+    is_loaded = true;
     isactive = true;
 
-    @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
-
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-
     displayedColumns: string[] = ['name', 'address1', 'credit', 'actions'];
-    dataSource = new MatTableDataSource<Customer>();
 
     errorMessage: string;
+
+    resultArray = [];
 
     constructor(
         private _authService: AuthenticationService,
@@ -87,7 +83,7 @@ export class ViewCustomerPage implements OnInit {
             .subscribe((data: any) => {
                 this.center_id = data.center_id;
                 this.ready = 1;
-                this.reloadCustomers();
+
                 this._cdr.markForCheck();
             });
 
@@ -97,9 +93,9 @@ export class ViewCustomerPage implements OnInit {
     }
 
     init() {
-        if (this.ready === 1) {
-            this.reloadCustomers();
-        }
+        // if (this.ready === 1) {
+        //     this.reloadCustomers();
+        // }
     }
 
     //   of([1,2,3]).subscribe({
@@ -108,30 +104,19 @@ export class ViewCustomerPage implements OnInit {
     //     complete: () => console.info('complete')
     // })
 
-    reloadCustomers() {
-        this.isloaded = false;
-        this._commonApiService.getAllActiveCustomers().subscribe({
-            next: (data: any) => {
-                this.arr = data;
-                this.isloaded = true;
-                // DnD - code to add a "key/Value" in every object of array
-                this.dataSource.data = data.map((el) => {
-                    const o = Object.assign({}, el);
-                    o.isExpanded = false;
-                    return o;
-                });
-
-                this.dataSource.sort = this.sort;
-                this.pageLength = data.length;
-            },
-            error: (e) => console.error(e),
-            complete: () => console.info('complete'),
-        });
-    }
-
-    ngOnInit() {
-        this.dataSource.paginator = this.paginator;
-    }
+    // reloadCustomers() {
+    //     this.is_loaded = false;
+    //     this._commonApiService.getAllActiveCustomers().subscribe({
+    //         next: (data: any) => {
+    //             this.arr = data;
+    //             this.is_loaded = true;
+    //             this.resultArray = data;
+    //             this.pageLength = data.length;
+    //         },
+    //         error: (e) => console.error(e),
+    //         complete: () => {},
+    //     });
+    // }
 
     add() {
         const dialogConfig = new MatDialogConfig();
@@ -152,7 +137,7 @@ export class ViewCustomerPage implements OnInit {
             .pipe(
                 filter((val) => !!val),
                 tap(() => {
-                    this.reloadCustomers();
+                    // this.reloadCustomers();
                     this._cdr.markForCheck();
                 })
             )
@@ -186,7 +171,7 @@ export class ViewCustomerPage implements OnInit {
             .pipe(
                 filter((val) => !!val),
                 tap(() => {
-                    this.reloadCustomers();
+                    // this.reloadCustomers();
                     this._cdr.markForCheck();
                 })
             )
@@ -199,7 +184,7 @@ export class ViewCustomerPage implements OnInit {
                     dialogConfigSuccess.height = '25%';
                     dialogConfigSuccess.data = 'Customer updated successfully';
 
-                    const dialogRef = this._dialog.open(
+                    this._dialog.open(
                         SuccessMessageDialogComponent,
                         dialogConfigSuccess
                     );
@@ -225,7 +210,7 @@ export class ViewCustomerPage implements OnInit {
             .pipe(
                 filter((val) => !!val),
                 tap(() => {
-                    this.reloadCustomers();
+                    // this.reloadCustomers();
                     this._cdr.markForCheck();
                 })
             )
@@ -238,7 +223,7 @@ export class ViewCustomerPage implements OnInit {
                     dialogConfigSuccess.height = '25%';
                     dialogConfigSuccess.data = 'Customer updated successfully';
 
-                    const dialogRef = this._dialog.open(
+                    this._dialog.open(
                         SuccessMessageDialogComponent,
                         dialogConfigSuccess
                     );
@@ -246,28 +231,14 @@ export class ViewCustomerPage implements OnInit {
             });
     }
 
-    goCustomerFinancials(item) {
+    goCustomerFinancial(item) {
         this._router.navigate([
-            `/home/financials-customer/${this.center_id}/${item.id}`,
+            `/home/financial-customer/${this.center_id}/${item.id}`,
         ]);
     }
 
     reset() {
         this.searchbar.value = '';
-        this.resultsize = 0;
-        this.customerslist = null;
-    }
-
-    applyFilter(filterValue: any) {
-        filterValue = filterValue.target.value.trim(); // Remove whitespace
-        filterValue = filterValue.target.value.toLowerCase(); // Datasource defaults to lowercase matches
-        this.dataSource.filter = filterValue;
-
-        if (this.dataSource.filteredData.length > 0) {
-            this.isTableHasData = true;
-        } else {
-            this.isTableHasData = false;
-        }
     }
 
     async exportCustomerDataToExcel() {
@@ -333,12 +304,12 @@ export class ViewCustomerPage implements OnInit {
                     .pipe(
                         filter((val) => !!val),
                         tap(() => {
-                            this.reloadCustomers();
+                            // this.reloadCustomers();
                             this._cdr.markForCheck();
                         })
                     )
-                    .subscribe((data: any) => {
-                        if (data.body === 1) {
+                    .subscribe((data1: any) => {
+                        if (data1.body === 1) {
                             const dialogConfigSuccess = new MatDialogConfig();
                             dialogConfigSuccess.disableClose = false;
                             dialogConfigSuccess.autoFocus = true;
@@ -347,7 +318,7 @@ export class ViewCustomerPage implements OnInit {
                             dialogConfigSuccess.data =
                                 'Discount updated successfully';
 
-                            const dialogRef = this._dialog.open(
+                            this._dialog.open(
                                 SuccessMessageDialogComponent,
                                 dialogConfigSuccess
                             );
@@ -377,25 +348,58 @@ export class ViewCustomerPage implements OnInit {
                     .pipe(
                         filter((val) => !!val),
                         tap(() => {
-                            this.reloadCustomers();
+                            // this.reloadCustomers();
                             this._cdr.markForCheck();
                         })
                     )
-                    .subscribe((data: any) => {
-                        if (data === 'success') {
+                    .subscribe((data2: any) => {
+                        if (data2 === 'success') {
                             const dialogConfigSuccess = new MatDialogConfig();
                             dialogConfigSuccess.disableClose = false;
                             dialogConfigSuccess.autoFocus = true;
                             dialogConfigSuccess.width = '25%';
                             dialogConfigSuccess.height = '25%';
-                            dialogConfigSuccess.data = 'Discounts successfull';
+                            dialogConfigSuccess.data = 'Discounts successfully';
 
-                            const dialogRef = this._dialog.open(
+                            this._dialog.open(
                                 SuccessMessageDialogComponent,
                                 dialogConfigSuccess
                             );
                         }
                     });
+            });
+    }
+
+    openDialog(filterValue: any): void {
+        const search_text =
+            filterValue.target === undefined
+                ? filterValue
+                : filterValue.target.value;
+
+        this._commonApiService
+            .getCustomerInfo({
+                center_id: this.center_id,
+                search_text: search_text.trim(),
+            })
+            .subscribe((data: any) => {
+                this.is_loaded = true;
+                this.resultArray = data;
+
+                this.resultArray = data.body;
+                this.pageLength = data.body.length;
+
+                if (data.body.length === 0) {
+                    this.isTableHasData = false;
+                } else {
+                    this.isTableHasData = true;
+                }
+
+                if (search_text.trim().length === 0) {
+                    this.reset();
+                    this.isTableHasData = false;
+                }
+
+                this._cdr.detectChanges();
             });
     }
 }

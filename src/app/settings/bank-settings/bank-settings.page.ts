@@ -55,7 +55,7 @@ export class BankSettingsPage implements OnInit {
             branchdetails: [],
             ifsccode: [],
             isdefault: [false],
-            createdby: [],
+            created_by: [],
             updatedby: [],
         });
 
@@ -66,8 +66,8 @@ export class BankSettingsPage implements OnInit {
                 this.user_data = data;
                 this.submitForm.patchValue({
                     center_id: this.user_data.center_id,
-                    createdby: this.user_data.userid,
-                    updatedby: this.user_data.userid,
+                    created_by: this.user_data.user_id,
+                    updatedby: this.user_data.user_id,
                 });
                 this.ready = 1;
                 this.reloadBankDetails();
@@ -98,8 +98,8 @@ export class BankSettingsPage implements OnInit {
             branchdetails: event.value.branch,
             ifsccode: event.value.ifsccode,
             center_id: this.user_data.center_id,
-            createdby: this.user_data.userid,
-            updatedby: this.user_data.userid,
+            created_by: this.user_data.user_id,
+            updatedby: this.user_data.user_id,
             isdefault: event.value.isdefault === 'Y' ? true : false,
         });
     }
@@ -109,7 +109,7 @@ export class BankSettingsPage implements OnInit {
         this.submitForm.reset();
         this.submitForm.patchValue({
             center_id: this.user_data.center_id,
-            createdby: this.user_data.userid,
+            created_by: this.user_data.user_id,
         });
 
         this._cdr.markForCheck();
@@ -175,8 +175,8 @@ export class BankSettingsPage implements OnInit {
         this.submitForm.reset();
         this.submitForm.patchValue({
             center_id: this.user_data.center_id,
-            createdby: this.user_data.userid,
-            updatedby: this.user_data.userid,
+            created_by: this.user_data.user_id,
+            updatedby: this.user_data.user_id,
         });
         this.isAddBank = false;
         this.isEditBank = false;

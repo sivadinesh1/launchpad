@@ -5,6 +5,7 @@ import {
     ViewChild,
     ChangeDetectorRef,
     Inject,
+    AfterViewInit,
 } from '@angular/core';
 import {
     FormGroup,
@@ -36,7 +37,15 @@ import { empty } from 'rxjs';
     styleUrls: ['./add-more-enquiry.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddMoreEnquiryComponent implements OnInit {
+export class AddMoreEnquiryComponent implements OnInit, AfterViewInit {
+    @ViewChild('myForm', { static: true }) myForm: NgForm;
+
+    // TAB navigation for product list
+    @ViewChild('typeHead', { read: MatAutocompleteTrigger })
+    autoTrigger: MatAutocompleteTrigger;
+
+    @ViewChild('plist', { static: true }) plist: any;
+
     submitForm: FormGroup;
 
     customerAdded = false;
@@ -45,26 +54,18 @@ export class AddMoreEnquiryComponent implements OnInit {
     removeRowArr = [];
     showDelIcon = false;
     center_id: any;
-    userid: any;
+    user_id: any;
 
     data: any;
     isLoading = false;
     product_lis: IProduct[];
-
-    @ViewChild('myForm', { static: true }) myForm: NgForm;
-
-    // TAB navigation for product list
-    @ViewChild('typehead', { read: MatAutocompleteTrigger })
-    autoTrigger: MatAutocompleteTrigger;
-
-    @ViewChild('plist', { static: true }) plist: any;
 
     constructor(
         private _fb: FormBuilder,
         public dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) data: any,
         private dialogRef: MatDialogRef<AddMoreEnquiryComponent>,
-        private _modalcontroller: ModalController,
+
         private _router: Router,
         private _route: ActivatedRoute,
         private _cdr: ChangeDetectorRef,
@@ -75,12 +76,12 @@ export class AddMoreEnquiryComponent implements OnInit {
             enquiry_id: [data.enquiry_id, Validators.required],
             customer: [data.customer_id, Validators.required],
             center_id: [data.center_id, Validators.required],
-            productctrl: [null, [RequireMatch]],
+            product_ctrl: [null, [RequireMatch]],
             remarks: [''],
 
-            tempdesc: [''],
+            temp_desc: [''],
 
-            tempqty: [
+            temp_qty: [
                 '1',
                 [
                     Validators.required,
@@ -90,7 +91,7 @@ export class AddMoreEnquiryComponent implements OnInit {
                 ],
             ],
 
-            productarr: this._fb.array([]),
+            product_arr: this._fb.array([]),
         });
         //console.log('object' + data);
     }
@@ -114,12 +115,12 @@ export class AddMoreEnquiryComponent implements OnInit {
         this._cdr.markForCheck();
     }
 
-    get productarr(): FormGroup {
-        return this.submitForm.get('productarr') as FormGroup;
+    get product_arr(): FormGroup {
+        return this.submitForm.get('product_arr') as FormGroup;
     }
 
     addProduct() {
-        const control = <FormArray>this.submitForm.controls.productarr;
+        const control = this.submitForm.get('product_arr') as FormArray;
         control.push(this.initProduct());
         this._cdr.markForCheck();
     }
@@ -145,26 +146,26 @@ export class AddMoreEnquiryComponent implements OnInit {
         this.submitForm.patchValue({
             product_code: null,
 
-            tempdesc: null,
-            tempqty: 1,
+            temp_desc: null,
+            temp_qty: 1,
         });
         this.product_lis = null;
         this._cdr.markForCheck();
     }
 
     getLength() {
-        const control = <FormArray>this.submitForm.controls.productarr;
+        const control = this.submitForm.get('product_arr') as FormArray;
         return control.length;
     }
 
     setItemDesc(event, from) {
         if (from === 'tab') {
             this.submitForm.patchValue({
-                tempdesc: event.description,
+                temp_desc: event.description,
             });
         } else {
             this.submitForm.patchValue({
-                tempdesc: event.option.value.description,
+                temp_desc: event.option.value.description,
             });
         }
 
@@ -185,17 +186,13 @@ export class AddMoreEnquiryComponent implements OnInit {
     }
 
     onRemoveProduct(idx) {
-        console.log('object ' + this.removeRowArr);
-        (<FormArray>this.submitForm.get('productarr')).removeAt(idx);
+        const formArray = this.submitForm.get('product_arr') as FormArray;
+        formArray.removeAt(idx);
     }
 
     checkedRow(idx: number) {
-        //	const faControl = (<FormArray>this.submitForm.controls.productarr).at(idx);
-
-        const formArray = this.submitForm.get('productarr') as FormArray;
+        const formArray = this.submitForm.get('product_arr') as FormArray;
         const faControl = formArray.controls[idx] as FormControl;
-
-        //faControl.controls.checkbox;
 
         if (!faControl.value.checkbox) {
             this.removeRowArr.push(idx);
@@ -220,11 +217,11 @@ export class AddMoreEnquiryComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe((data) => {
-            if (data != undefined && data.length > 0 && data != 0) {
-                // const faControl = (<FormArray>this.submitForm.controls.productarr).at(idx);
+            if (data !== undefined && data.length > 0 && data !== 0) {
+                // const faControl = (<FormArray>this.submitForm.controls.product_arr).at(idx);
                 // faControl.controls.quantity.setValue(data);
                 const formArray = this.submitForm.get(
-                    'productarr'
+                    'product_arr'
                 ) as FormArray;
                 const faControl = formArray.controls[idx] as FormControl;
             }
@@ -241,7 +238,7 @@ export class AddMoreEnquiryComponent implements OnInit {
         this.autoTrigger.panelClosingActions.subscribe((x) => {
             if (this.autoTrigger.activeOption) {
                 this.submitForm.patchValue({
-                    productctrl: this.autoTrigger.activeOption.value,
+                    product_ctrl: this.autoTrigger.activeOption.value,
                 });
                 this.setItemDesc(this.autoTrigger.activeOption.value, 'tab');
             }
@@ -250,7 +247,7 @@ export class AddMoreEnquiryComponent implements OnInit {
 
     searchProducts() {
         let search = '';
-        this.submitForm.controls.productctrl.valueChanges
+        this.submitForm.controls.product_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isLoading = true)),
@@ -260,7 +257,7 @@ export class AddMoreEnquiryComponent implements OnInit {
                     if (id != null && id.length >= 0) {
                         return this._commonApiService.getProductInfo({
                             center_id: this.submitForm.value.center_id,
-                            search_texting: id,
+                            search_text: id,
                         });
                     } else {
                         return empty();
@@ -277,39 +274,39 @@ export class AddMoreEnquiryComponent implements OnInit {
 
     add() {
         if (
-            this.submitForm.value.tempdesc === '' ||
-            this.submitForm.value.tempdesc === null
+            this.submitForm.value.temp_desc === '' ||
+            this.submitForm.value.temp_desc === null
         ) {
-            this.submitForm.controls.tempdesc.setErrors({ required: true });
-            this.submitForm.controls.tempdesc.markAsTouched();
+            this.submitForm.controls.temp_desc.setErrors({ required: true });
+            this.submitForm.controls.temp_desc.markAsTouched();
 
             return false;
         }
 
         if (
-            this.submitForm.value.tempqty === '' ||
-            this.submitForm.value.tempqty === null
+            this.submitForm.value.temp_qty === '' ||
+            this.submitForm.value.temp_qty === null
         ) {
-            this.submitForm.controls.tempqty.setErrors({ required: true });
-            this.submitForm.controls.tempqty.markAsTouched();
+            this.submitForm.controls.temp_qty.setErrors({ required: true });
+            this.submitForm.controls.temp_qty.markAsTouched();
 
             return false;
         }
 
-        const control = <FormArray>this.submitForm.controls.productarr;
+        const control = this.submitForm.get('product_arr') as FormArray;
 
         control.push(
             this._fb.group({
                 checkbox: [false],
                 product_code: [
-                    this.submitForm.value.productctrl === null
+                    this.submitForm.value.product_ctrl === null
                         ? ''
-                        : this.submitForm.value.productctrl.product_code,
+                        : this.submitForm.value.product_ctrl.product_code,
                 ],
 
-                notes: [this.submitForm.value.tempdesc, Validators.required],
+                notes: [this.submitForm.value.temp_desc, Validators.required],
                 quantity: [
-                    this.submitForm.value.tempqty,
+                    this.submitForm.value.temp_qty,
                     [
                         Validators.required,
                         Validators.max(1000),
@@ -321,14 +318,14 @@ export class AddMoreEnquiryComponent implements OnInit {
         );
 
         this.submitForm.patchValue({
-            productctrl: '',
-            tempdesc: '',
-            tempqty: 1,
+            product_ctrl: '',
+            temp_desc: '',
+            temp_qty: 1,
         });
 
-        this.submitForm.controls.tempdesc.setErrors(null);
-        this.submitForm.controls.tempqty.setErrors(null);
-        this.submitForm.controls.productctrl.setErrors(null);
+        this.submitForm.controls.temp_desc.setErrors(null);
+        this.submitForm.controls.temp_qty.setErrors(null);
+        this.submitForm.controls.product_ctrl.setErrors(null);
         this.plist.nativeElement.focus();
 
         this._cdr.markForCheck();

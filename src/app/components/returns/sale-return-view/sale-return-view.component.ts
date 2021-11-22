@@ -33,7 +33,7 @@ import { SaleReturnReceiveComponent } from '../sale-return-receive/sale-return-r
 export class SaleReturnViewComponent implements OnInit {
     salemasterdata: any;
     salereturndetailsdata: any;
-    customerdata: any;
+    customer_data: any;
     centerdata: any;
 
     data: any;

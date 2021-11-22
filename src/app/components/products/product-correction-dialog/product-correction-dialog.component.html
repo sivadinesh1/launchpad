@@ -1,5 +1,5 @@
 <div class="screenheader">
-    <div>Product Corrections</div>
+    <div>Corrections</div>
     <div>
         <img
             class="cursor"
@@ -21,30 +21,54 @@
         </div>
     </div>
     <div>
-        <div style="font-size: 18px; padding: 1rem 0rem 0rem">
-            List of Products in Stock
-        </div>
-
         <div class="listHeader">
             <div>MRP</div>
             <div>Avl. Stock</div>
+            <div>Status</div>
             <div>&nbsp;</div>
             <div>&nbsp;</div>
         </div>
         <div *ngFor="let item of stock_list_array" class="listItem">
             <div style="text-align: left">{{ item.mrp }}</div>
             <div style="text-align: left">{{ item.available_stock }}</div>
-            <div
-                *ngIf="this.stock_list_array?.length > 1"
-                style="color: red; cursor: pointer; text-align: center"
-                (click)="delete(item)"
-            >
-                {{ "Delete" }}
+            <div style="text-align: left">
+                {{ item.is_active === "A" ? "Active" : "In Active" }}
             </div>
 
-            <div *ngIf="this.stock_list_array?.length === 1">&nbsp;</div>
-            <div (click)="correct(item)" style="color: blue; cursor: pointer">
+            <!-- <div *ngIf="this.stock_list_array?.length === 1">&nbsp;</div> -->
+            <div
+                *ngIf="item.is_active === 'A'"
+                (click)="correct(item)"
+                style="color: blue; cursor: pointer; text-align: left"
+            >
                 Adjust Stock
+            </div>
+            <div
+                *ngIf="item.is_active === 'N'"
+                (click)="correct(item)"
+                style="
+                    color: rgb(183, 183, 183);
+                    cursor: pointer;
+                    text-align: left;
+                "
+            >
+                Not Applicable
+            </div>
+
+            <div
+                *ngIf="item.is_active === 'A'"
+                style="color: red; cursor: pointer; text-align: right"
+                (click)="deactivate(item)"
+            >
+                {{ "Deactivate" }}
+            </div>
+
+            <div
+                *ngIf="item.is_active === 'N'"
+                style="color: red; cursor: pointer; text-align: right"
+                (click)="activate(item)"
+            >
+                {{ "Activate" }}
             </div>
         </div>
     </div>

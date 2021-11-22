@@ -20,7 +20,7 @@ export interface IProduct {
     location?: string;
     max_discount?: number;
     alternate_code?: string;
-    tax_rate?: number;
+    tax?: number;
     minimum_quantity?: number;
     item_discount?: number;
     reorder_quantity?: number;
@@ -67,7 +67,7 @@ export class Product implements IProduct {
     max_discount: number;
     alternate_code: string;
     @Type(() => Number)
-    tax_rate: number;
+    tax: number;
     @Type(() => Number)
     minimum_quantity: number;
     @Type(() => Number)
@@ -108,7 +108,7 @@ export class Product implements IProduct {
         location: string,
         max_discount: number,
         alternate_code: string,
-        tax_rate: number,
+        tax: number,
         minimum_quantity: number,
         item_discount: number,
         reorder_quantity: number,
@@ -138,7 +138,7 @@ export class Product implements IProduct {
         this.location = location;
         this.max_discount = max_discount;
         this.alternate_code = alternate_code;
-        this.tax_rate = tax_rate;
+        this.tax = tax;
         this.minimum_quantity = minimum_quantity;
         this.item_discount = item_discount;
         this.reorder_quantity = reorder_quantity;

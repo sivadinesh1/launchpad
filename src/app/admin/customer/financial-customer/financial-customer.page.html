@@ -7,7 +7,7 @@
             >
                 All Customers
             </span>
-            / <span style="color: #797979">{{customerdata?.name}}</span> /
+            / <span style="color: #797979">{{customer_data?.name}}</span> /
             <span style="color: #797979">Accounts</span>
         </div>
     </div>
@@ -31,7 +31,7 @@
                     Total Credit Available
                 </div>
                 <div style="font-size: 16px; color: darkblue">
-                    {{ this.customerdata.credit_amt | currency: "INR"}}
+                    {{ this.customer_data?.credit_amt | currency: "INR"}}
                 </div>
             </div>
 

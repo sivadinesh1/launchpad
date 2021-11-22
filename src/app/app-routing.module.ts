@@ -254,11 +254,11 @@ const routes: Routes = [
                     ).then((m) => m.LedgerCustomerPageModule),
             },
             {
-                path: 'financials-customer',
+                path: 'financial-customer/:center_id/:customer_id',
                 loadChildren: () =>
                     import(
-                        './admin/customer/financials-customer/financials-customer.module'
-                    ).then((m) => m.FinancialsCustomerPageModule),
+                        './admin/customer/financial-customer/financial-customer.module'
+                    ).then((m) => m.FinancialCustomerPageModule),
             },
             {
                 path: 'financials-vendor/:center_id/:vendor_id',
@@ -355,13 +355,13 @@ const routes: Routes = [
                 './admin/customer/ledger-customer/ledger-customer.module'
             ).then((m) => m.LedgerCustomerPageModule),
     },
-    {
-        path: 'financials-customer',
-        loadChildren: () =>
-            import(
-                './admin/customer/financials-customer/financials-customer.module'
-            ).then((m) => m.FinancialsCustomerPageModule),
-    },
+    // {
+    //     path: 'financial-customer',
+    //     loadChildren: () =>
+    //         import(
+    //             './admin/customer/financial-customer/financial-customer.module'
+    //         ).then((m) => m.FinancialCustomerPageModule),
+    // },
 
     {
         path: 'general-settings',

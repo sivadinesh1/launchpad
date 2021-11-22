@@ -96,7 +96,15 @@ export class ProductCorrectionDialogComponent implements OnInit {
             });
     }
 
-    delete(item) {
+    deactivate(item) {
+        this._commonApiService
+            .deleteProductFromStock(item.product_id, item.mrp)
+            .subscribe((data: any) => {
+                this.dialogRef.close('success');
+            });
+    }
+
+    activate(item) {
         this._commonApiService
             .deleteProductFromStock(item.product_id, item.mrp)
             .subscribe((data: any) => {

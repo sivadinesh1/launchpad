@@ -46,7 +46,7 @@ export class AccountsReceivablesComponent implements OnInit {
 
     maxDate = new Date();
 
-    pymtmodes$: Observable<any>;
+    paymentModes$: Observable<any>;
     user_data: any;
 
     user_data$: Observable<User>;
@@ -55,8 +55,8 @@ export class AccountsReceivablesComponent implements OnInit {
     invoice: any;
     summed = 0;
 
-    errmsg: any;
-    balancedue: any;
+    errorMsg: any;
+    balance_due: any;
 
     filteredCustomer: Observable<any[]>;
     customer_lis: Customer[];
@@ -75,7 +75,7 @@ export class AccountsReceivablesComponent implements OnInit {
     advanceCreditUsed = 0;
 
     bankList: any;
-    iswarning = false;
+    is_warning = false;
 
     constructor(
         private _fb: FormBuilder,
@@ -130,7 +130,7 @@ export class AccountsReceivablesComponent implements OnInit {
             });
 
         // fetch all payment mode list
-        this.pymtmodes$ = this._commonApiService.getAllActivePymtModes('A');
+        this.paymentModes$ = this._commonApiService.getAllActivePymtModes('A');
 
         this.reloadBankDetails();
     }
@@ -153,15 +153,15 @@ export class AccountsReceivablesComponent implements OnInit {
         this.submitForm = this._fb.group({
             customer: ['', Validators.required],
             center_id: [this.user_data.center_id, Validators.required],
-            accountarr: this._fb.array([]),
+            account_arr: this._fb.array([]),
             invoicesplit: [],
-            balancedue: [],
+            balance_due: [],
             appliedamount: [],
             creditsused: 'NO',
             creditusedamount: 0,
             bank_id: '',
             bank_name: '',
-            createdby: this.user_data.userid,
+            created_by: this.user_data.user_id,
         });
 
         this.dialogRef.keydownEvents().subscribe((event) => {
@@ -208,7 +208,7 @@ export class AccountsReceivablesComponent implements OnInit {
         return this._fb.group({
             checkbox: [false],
 
-            receivedamount: ['', [Validators.required, Validators.min(1)]],
+            received_amount: ['', [Validators.required, Validators.min(1)]],
             appliedamount: [''],
             receiveddate: ['', Validators.required],
             pymtmode: ['', Validators.required],
@@ -217,13 +217,13 @@ export class AccountsReceivablesComponent implements OnInit {
         });
     }
 
-    get accountarr(): FormGroup {
-        return this.submitForm.get('accountarr') as FormGroup;
+    get account_arr(): FormGroup {
+        return this.submitForm.get('account_arr') as FormGroup;
     }
 
     // adds one line item for payment
     addAccount() {
-        const control = <FormArray>this.submitForm.controls.accountarr;
+        const control = <FormArray>this.submitForm.controls.account_arr;
         control.push(this.initAccount());
 
         this.getBalanceDue();
@@ -244,7 +244,7 @@ export class AccountsReceivablesComponent implements OnInit {
             JSON.stringify(this.customerUnpaidInvoices)
         );
 
-        const ctrl = <FormArray>this.submitForm.controls.accountarr;
+        const ctrl = <FormArray>this.submitForm.controls.account_arr;
 
         let init = 0;
 
@@ -253,10 +253,10 @@ export class AccountsReceivablesComponent implements OnInit {
             // get the itemmt value and need to parse the input to number
 
             const parsed = parseFloat(
-                x.get('receivedamount').value === '' ||
-                    x.get('receivedamount').value === null
+                x.get('received_amount').value === '' ||
+                    x.get('received_amount').value === null
                     ? 0
-                    : x.get('receivedamount').value
+                    : x.get('received_amount').value
             );
             // add to total
 
@@ -313,17 +313,17 @@ export class AccountsReceivablesComponent implements OnInit {
     }
 
     getBalanceDue() {
-        this.balancedue = (
+        this.balance_due = (
             +this.invoiceamount -
             (+this.paidamount + this.customer.credit_amt + this.summed)
         ).toFixed(2);
 
-        if (+this.balancedue < 0) {
-            this.errmsg =
+        if (+this.balance_due < 0) {
+            this.errorMsg =
                 'Amount paid is more than invoice outstanding. Excess amount will be moved to customer credit.';
             this._cdr.markForCheck();
         } else {
-            this.errmsg = '';
+            this.errorMsg = '';
             this._cdr.markForCheck();
         }
     }
@@ -332,7 +332,7 @@ export class AccountsReceivablesComponent implements OnInit {
         if (this.checkTotalSum()) {
             const form = {
                 center_id: this.user_data.center_id,
-                bankref: this.submitForm.value.accountarr[0].bankref,
+                bankref: this.submitForm.value.account_arr[0].bankref,
                 customerid: this.customer.id,
             };
 
@@ -341,15 +341,15 @@ export class AccountsReceivablesComponent implements OnInit {
                 .subscribe((data: any) => {
                     if (data.body.result[0].count > 0) {
                         // warning
-                        this.iswarning = true;
+                        this.is_warning = true;
                         this._cdr.markForCheck();
                     } else if (data.body.result1.length === 1) {
                         // check if the last paid amount is the same is current paid amount and if yes throw a warning.
                         if (
                             data.body.result1[0].payment_now_amt ===
-                            this.submitForm.value.accountarr[0].receivedamount
+                            this.submitForm.value.account_arr[0].received_amount
                         ) {
-                            this.iswarning = true;
+                            this.is_warning = true;
                             this._cdr.markForCheck();
                         } else {
                             this.finalSubmit();
@@ -362,7 +362,7 @@ export class AccountsReceivablesComponent implements OnInit {
     }
 
     cancel() {
-        this.iswarning = false;
+        this.is_warning = false;
     }
 
     finalSubmit() {
@@ -370,7 +370,7 @@ export class AccountsReceivablesComponent implements OnInit {
             this.submitForm.patchValue({
                 invoicesplit: this.invoicesplitArr,
                 customer: this.customer,
-                balancedue: this.balancedue,
+                balance_due: this.balance_due,
             });
 
             if (this.customer.credit_amt > 0) {
@@ -403,7 +403,7 @@ export class AccountsReceivablesComponent implements OnInit {
     }
 
     getPosts(event) {
-        const control = <FormArray>this.submitForm.controls.accountarr;
+        const control = <FormArray>this.submitForm.controls.account_arr;
         control.removeAt(0);
 
         this.submitForm.patchValue({

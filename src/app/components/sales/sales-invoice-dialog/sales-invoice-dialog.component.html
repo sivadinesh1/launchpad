@@ -59,7 +59,7 @@
                     Invoice Date
                 </div>
                 <div style="font-size: 14px; font-weight: 400">
-                    {{ this.sale_master_data?.invoice_date }}
+                    {{ this.sale_master_data?.invoice_date | date: "d-M-yyyy" }}
                 </div>
             </div>
 

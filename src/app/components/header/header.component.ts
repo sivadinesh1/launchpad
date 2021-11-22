@@ -40,7 +40,7 @@ export class HeaderComponent implements OnInit {
     public today = Date.now();
     filled = false;
 
-    customerdata: any;
+    customer_data: any;
 
     submitForm: FormGroup;
 
@@ -97,7 +97,7 @@ export class HeaderComponent implements OnInit {
                     if (id != null && id.length >= 1) {
                         return this._commonApiService.getProductInfo({
                             center_id: this.user_data.center_id,
-                            search_text: id,
+                            product_search_text: id,
                         });
                     } else {
                         return EMPTY;
@@ -180,7 +180,7 @@ export class HeaderComponent implements OnInit {
     customerInfoPage(item) {
         console.log('object.......' + JSON.stringify(item));
 
-        this._router.navigate([`/home/financials-customer`], {
+        this._router.navigate([`/home/financial-customer`], {
             state: { center_id: item.center_id, customer_id: item.id },
         });
     }

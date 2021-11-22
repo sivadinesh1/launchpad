@@ -39,7 +39,7 @@ export class VendorPaymentDialogComponent implements OnInit {
 
     maxDate = new Date();
 
-    pymtmodes$: Observable<any>;
+    paymentModes$: Observable<any>;
     user_data: any;
 
     user_data$: Observable<User>;
@@ -48,10 +48,10 @@ export class VendorPaymentDialogComponent implements OnInit {
     invoice: any;
     summed = 0;
 
-    errmsg: any;
-    balancedue: any;
+    errorMsg: any;
+    balance_due: any;
     bankList: any;
-    iswarning = false;
+    is_warning = false;
 
     constructor(
         private _fb: FormBuilder,
@@ -67,7 +67,7 @@ export class VendorPaymentDialogComponent implements OnInit {
         private _commonApiService: CommonApiService
     ) {
         this.vendor = data.vendordata;
-        this.invoice = data.invoicedata;
+        this.invoice = data.invoice_data;
 
         this.user_data$ = this._authService.currentUser;
 
@@ -87,7 +87,7 @@ export class VendorPaymentDialogComponent implements OnInit {
     }
 
     async init() {
-        this.pymtmodes$ = this._commonApiService.getAllActivePymtModes('A');
+        this.paymentModes$ = this._commonApiService.getAllActivePymtModes('A');
     }
 
     ngOnInit() {
@@ -95,17 +95,17 @@ export class VendorPaymentDialogComponent implements OnInit {
         this.submitForm = this._fb.group({
             vendor: [this.vendor, Validators.required],
             center_id: [this.user_data.center_id, Validators.required],
-            accountarr: this._fb.array([]),
+            account_arr: this._fb.array([]),
             bank_id: '',
             bank_name: '',
-            createdby: this.user_data.userid,
+            created_by: this.user_data.user_id,
         });
 
         // adds first record
         this.addAccount();
 
-        // subscribes to values chages of "accountarr"
-        this.submitForm.get('accountarr').valueChanges.subscribe((values) => {
+        // subscribes to values chages of "account_arr"
+        this.submitForm.get('account_arr').valueChanges.subscribe((values) => {
             this.checkTotalSum();
             this._cdr.detectChanges();
         });
@@ -118,7 +118,7 @@ export class VendorPaymentDialogComponent implements OnInit {
         return this._fb.group({
             checkbox: [false],
             purchase_ref_id: [this.invoice.purchase_id, [Validators.required]],
-            receivedamount: [
+            received_amount: [
                 '',
                 [
                     Validators.required,
@@ -133,12 +133,12 @@ export class VendorPaymentDialogComponent implements OnInit {
         });
     }
 
-    get accountarr(): FormGroup {
-        return this.submitForm.get('accountarr') as FormGroup;
+    get account_arr(): FormGroup {
+        return this.submitForm.get('account_arr') as FormGroup;
     }
 
     addAccount() {
-        const control = this.submitForm.controls.accountarr as FormArray;
+        const control = this.submitForm.controls.account_arr as FormArray;
         control.push(this.initAccount());
 
         this._cdr.markForCheck();
@@ -151,16 +151,16 @@ export class VendorPaymentDialogComponent implements OnInit {
     // method to calculate total payed now and balance due
     checkTotalSum() {
         this.summed = 0;
-        const ctrl = this.submitForm.controls.accountarr as FormArray;
+        const ctrl = this.submitForm.controls.account_arr as FormArray;
         // iterate each object in the form array
         ctrl.controls.forEach((x) => {
             // get the itemmt value and need to parse the input to number
 
             const parsed = parseFloat(
-                x.get('receivedamount').value === '' ||
-                    x.get('receivedamount').value === null
+                x.get('received_amount').value === '' ||
+                    x.get('received_amount').value === null
                     ? 0
-                    : x.get('receivedamount').value
+                    : x.get('received_amount').value
             );
             // add to total
 
@@ -178,11 +178,11 @@ export class VendorPaymentDialogComponent implements OnInit {
                         this.invoice.invoice_amt,
                     'INR'
                 );
-                this.errmsg = `Total payment exceeds invoice amount ` + val;
+                this.errorMsg = `Total payment exceeds invoice amount ` + val;
                 this._cdr.detectChanges();
                 return false;
             } else {
-                this.errmsg = ``;
+                this.errorMsg = ``;
                 this._cdr.detectChanges();
             }
         });
@@ -198,7 +198,7 @@ export class VendorPaymentDialogComponent implements OnInit {
     }
 
     getBalanceDue() {
-        this.balancedue =
+        this.balance_due =
             this.invoice.invoice_amt - (this.invoice.paid_amount + this.summed);
     }
 
@@ -206,7 +206,7 @@ export class VendorPaymentDialogComponent implements OnInit {
         if (this.checkTotalSum()) {
             const form = {
                 center_id: this.user_data.center_id,
-                bankref: this.submitForm.value.accountarr[0].bankref,
+                bankref: this.submitForm.value.account_arr[0].bankref,
                 vendorid: this.submitForm.value.vendor.id,
             };
             this._commonApiService
@@ -214,15 +214,15 @@ export class VendorPaymentDialogComponent implements OnInit {
                 .subscribe((data: any) => {
                     if (data.body.result[0].count > 0) {
                         // warning
-                        this.iswarning = true;
+                        this.is_warning = true;
                         this._cdr.markForCheck();
                     } else if (data.body.result1.length === 1) {
                         // check if the last paid amount is the same is current paid amount and if yes throw a warning.
                         if (
                             data.body.result1[0].payment_now_amt ===
-                            this.submitForm.value.accountarr[0].receivedamount
+                            this.submitForm.value.account_arr[0].received_amount
                         ) {
-                            this.iswarning = true;
+                            this.is_warning = true;
                             this._cdr.markForCheck();
                         } else {
                             this.finalSubmit();
@@ -255,7 +255,7 @@ export class VendorPaymentDialogComponent implements OnInit {
     }
 
     cancel() {
-        this.iswarning = false;
+        this.is_warning = false;
     }
 
     handleChange(event) {

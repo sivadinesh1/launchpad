@@ -30,7 +30,7 @@ import * as xlsx from 'xlsx';
 export class PurchaseEntryDialogComponent implements OnInit {
     purchasemasterdata: any;
     purchasedetailsdata: any;
-    customerdata: any;
+    customer_data: any;
     centerdata: any;
 
     data: any;
@@ -69,7 +69,7 @@ export class PurchaseEntryDialogComponent implements OnInit {
         this._commonApiService
             .getVendorDetails(this.data.vendor_id)
             .subscribe((data: any) => {
-                this.customerdata = data[0];
+                this.customer_data = data[0];
 
                 this._cdr.markForCheck();
             });

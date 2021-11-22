@@ -560,9 +560,9 @@ export class AccountsPaymentsPage implements OnInit {
         this._router.navigate([`/home/view-customers`]);
     }
 
-    goCustomerFinancials(customer_id) {
+    goCustomerFinancial(customer_id) {
         this._router.navigate([
-            `/home/financials-customer/${this.user_data.center_id}/${customer_id}`,
+            `/home/financial-customer/${this.user_data.center_id}/${customer_id}`,
         ]);
     }
 
@@ -596,14 +596,14 @@ export class AccountsPaymentsPage implements OnInit {
 
         this._commonApiService
             .getCustomerDetails(element.customer_id)
-            .subscribe((customerdata) => {
+            .subscribe((customer_data) => {
                 const dialogConfig = new MatDialogConfig();
                 dialogConfig.disableClose = true;
                 dialogConfig.autoFocus = true;
                 dialogConfig.width = '80%';
                 dialogConfig.height = '80%';
                 dialogConfig.data = {
-                    customerdata: customerdata[0],
+                    customer_data: customer_data[0],
                     invoicedata: element,
                 };
 

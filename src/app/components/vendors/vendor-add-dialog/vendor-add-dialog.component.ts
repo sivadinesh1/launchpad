@@ -35,10 +35,10 @@ export class VendorAddDialogComponent implements OnInit {
     resultList: any;
     submitForm: any;
 
-    statesdata: any;
+    states_data: any;
     isLinear = true;
 
-    vexists: any;
+    vExists: any;
 
     user_data$: Observable<User>;
     user_data: any;
@@ -54,7 +54,7 @@ export class VendorAddDialogComponent implements OnInit {
     ) {
         this.submitForm = this._formBuilder.group({
             center_id: [''],
-            name: ['', Validators.required],
+            vendor_name: ['', Validators.required],
             address1: [''],
             address2: [''],
             address3: [''],
@@ -107,7 +107,7 @@ export class VendorAddDialogComponent implements OnInit {
             });
 
         this._commonApiService.getStates().subscribe((data: any) => {
-            this.statesdata = data;
+            this.states_data = data;
         });
     }
 
@@ -130,10 +130,10 @@ export class VendorAddDialogComponent implements OnInit {
                 .subscribe((data: any) => {
                     if (data.result.length > 0) {
                         if (data.result[0].id > 0) {
-                            this.vexists = true;
+                            this.vExists = true;
                         }
                     } else {
-                        this.vexists = false;
+                        this.vExists = false;
                     }
 
                     this._cdr.markForCheck();
@@ -146,14 +146,14 @@ export class VendorAddDialogComponent implements OnInit {
             return false;
         }
 
-        if (this.vexists) {
+        if (this.vExists) {
             return false;
         }
 
         this._commonApiService
             .addVendor(this.submitForm.value)
             .subscribe((data: any) => {
-                if (data.body.affectedRows === 1) {
+                if (data.body.id > 0) {
                     this.dialogRef.close('success');
                 }
             });

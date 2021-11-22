@@ -1,367 +1,221 @@
 <ion-content>
-    <div class="search-wrap">
-        <form [formGroup]="submitForm">
-            <div class="form-wrap">
-                <div
-                    class="btn-grad"
-                    (click)="goPurchaseAddScreen()"
-                    style="cursor: pointer"
-                >
-                    <mat-icon class="add-icon">add</mat-icon>
-                    <span class="add-icon-label">Add Purchase</span>
-                </div>
-                <div class="vendors">
-                    <mat-form-field class="width">
-                        <mat-label>Search</mat-label>
-                        <input
-                            matInput
-                            [matAutocomplete]="auto"
-                            formControlName="vendor_ctrl"
-                            required
-                            matTooltip="Type to filter the Vendor list"
-                            matTooltipPosition="after"
-                        />
-                        <button
-                            mat-button
-                            matSuffix
-                            mat-icon-button
-                            aria-label="Clear"
-                            type="button"
-                            (click)="clearInput()"
-                        >
-                            <mat-icon>close</mat-icon>
-                        </button>
-                        <mat-autocomplete
-                            #auto="matAutocomplete"
-                            panelWidth="auto"
-                            (optionSelected)="getPosts($event)"
-                        >
-                            <mat-option
-                                *ngFor="let vendor of filteredVendor | async"
-                                [value]="vendor"
-                                style="
-                                    height: 70px;
-                                    border-bottom: 1px solid lightsteelblue;
-                                "
-                            >
-                                <div
-                                    style="
-                                        display: grid;
-                                        grid-template-columns: 1fr;
-                                    "
-                                >
-                                    <div>
-                                        <div
-                                            style="
-                                                font-size: 15px;
-                                                padding: 2px;
-                                                line-height: 1em;
-                                            "
-                                        >
-                                            {{ vendor.vendor_name }}
-                                        </div>
-                                        <div
-                                            style="
-                                                font-size: 14px;
-                                                padding: 2px;
-                                                line-height: 1em;
-                                                color: grey;
-                                            "
-                                        >
-                                            {{ vendor.address1 }}
-                                        </div>
-                                        <div
-                                            style="
-                                                font-size: 14px;
-                                                padding: 2px;
-                                                line-height: 1em;
-                                                color: grey;
-                                            "
-                                        >
-                                            {{ vendor.address3 }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </div>
+    <div class="search-sale-header" style="padding: 1rem">
+        All Purchase Orders
+    </div>
+    <div class="search-bar">
+        <div>
+            <img
+                src="/assets/images/svg/refresh.svg"
+                width="22px"
+                height="22px"
+                style="cursor: pointer"
+                matTooltip="Reset Search Filter"
+                matTooltipClass="tooltip"
+                (click)="reset()"
+            />
+        </div>
+        <div
+            [matMenuTriggerFor]="menuN"
+            #menuTriggerN
+            style="flex: 0 0 70px; padding: 0 16px"
+        >
+            <img
+                src="/assets/images/svg/filter-results-button.svg"
+                width="22px"
+                height="22px"
+                style="cursor: pointer"
+                matTooltip="Advance Filter"
+                matTooltipClass="tooltip"
+            />
+        </div>
 
-                <div>
-                    <mat-form-field
-                        class="mat-input-wrapper"
-                        style="padding-top: 20px"
-                    >
-                        <mat-label>From</mat-label>
-                        <input
-                            matInput
-                            readonly
-                            [max]="maxDate"
-                            [matDatepicker]="from_date"
-                            formControlName="from_date"
-                            (focus)="from_date.open()"
-                            (dateChange)="from_dateSelected($event)"
-                        />
-                        <mat-datepicker-toggle
-                            matSuffix
-                            [for]="from_date"
-                        ></mat-datepicker-toggle>
-                        <mat-datepicker #from_date></mat-datepicker>
-                        <mat-hint>Default 10 days</mat-hint>
-                    </mat-form-field>
-                </div>
-                <div>
-                    <mat-form-field
-                        class="mat-input-wrapper"
-                        style="padding-top: 20px"
-                    >
-                        <mat-label>To</mat-label>
-                        <input
-                            matInput
-                            readonly
-                            [matDatepicker]="to_date"
-                            [max]="maxDate"
-                            formControlName="to_date"
-                            (focus)="to_date.open()"
-                            required
-                            (dateChange)="to_dateSelected($event)"
-                        />
-                        <mat-datepicker-toggle
-                            matSuffix
-                            [for]="to_date"
-                        ></mat-datepicker-toggle>
-                        <mat-datepicker #to_date></mat-datepicker>
-                    </mat-form-field>
-                </div>
-
-                <div class="search-btn" style="padding-top: 20px">
-                    <button
-                        mat-stroked-button
-                        [disabled]="!submitForm.valid"
-                        color="primary"
-                        style="font-size: 1rem"
-                        (click)="search()"
-                    >
-                        Search
-                    </button>
-                </div>
-            </div>
-        </form>
+        <!-- <app-search-customers
+            (customerOutput)="customerInfoPage($event)"
+            (customerSearchResetOutput)="customerSearchReset()"
+        ></app-search-customers> -->
 
         <div
-            style="
-                width: 94%;
-                margin: 0 auto;
-                padding: 32px 0px 100px 0px;
-                position: relative;
-                display: grid;
-            "
-            [@.disabled]="true"
+            class="filter_date_range"
+            *ngIf="!isCustomDateFilter"
+            [matMenuTriggerFor]="admin"
         >
             <div>
-                <mat-tab-group
-                    color="primary"
-                    [(selectedIndex)]="tabIndex"
-                    (selectedTabChange)="tabClick($event)"
-                >
-                    <!-- DnD  -->
-                    <!-- <mat-tab label="Draft ({{(draftPurchase$| async)?.length }})">
-						<ng-template [ngTemplateOutlet]="draftMsgRef"></ng-template>
-						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-					</mat-tab> -->
+                <div>
+                    {{this.from_date | date:'MMM dd'}} - {{this.to_date |
+                    date:'dd, yyyy'}}
+                </div>
 
-                    <mat-tab
-                        label="Purchase Orders  ({{(fullfilledPurchase$| async)?.length }})"
-                    >
-                        <ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-                        <ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-                    </mat-tab>
-                </mat-tab-group>
+                <div style="font-weight: 600">
+                    Last {{this.searchByDays}} days
+                </div>
             </div>
+            <div style="position: relative; top: 4px">
+                <img
+                    src="/assets/images/svg/down-arrow.svg"
+                    width="14px"
+                    height="14px"
+                />
+            </div>
+        </div>
 
-            <div
-                style="
-                    position: absolute;
-                    justify-self: flex-end;
-                    top: 32px;
-                    z-index: 1;
-                "
-            >
-                <form [formGroup]="submitForm">
-                    <mat-form-field class="readonly-wrapper">
-                        <mat-label>Show</mat-label>
-                        <mat-select
-                            formControlName="order"
-                            (selectionChange)="search()"
-                            value="{orderDefaultFlag}"
-                            [disableControl]="this.submitForm.value.searchtype !== 'all'"
-                        >
-                            <mat-option
-                                *ngFor="let item of orderList"
-                                [value]="item.id"
-                            >
-                                {{item.value}}
-                            </mat-option>
-                        </mat-select>
+        <ng-container *ngIf="isCustomDateFilter">
+            <div class="filter_date_range">
+                <div>
+                    <mat-form-field style="margin-bottom: -1.25em">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input
+                                matStartDate
+                                matInput
+                                readonly
+                                placeholder="Start date"
+                                [ngModel]="this.from_date"
+                                (dateChange)="opsFromDateEvent($event)"
+                            />
+                            <input
+                                matEndDate
+                                matInput
+                                readonly
+                                placeholder="End date"
+                                [ngModel]="this.to_date"
+                                (dateChange)="opsToDateEvent($event)"
+                            />
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="picker"
+                        ></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
                     </mat-form-field>
-                </form>
+                </div>
             </div>
+        </ng-container>
+        <div
+            style="padding: 0px 0px 0px 10px"
+            *ngIf="isCustomDateFilter"
+            (click)="customDateFilter()"
+        >
+            <img
+                class="cursor"
+                src="/assets/images/svg/close.svg"
+                width="20px"
+                height="20px"
+            />
         </div>
     </div>
 
-    <ng-template #draftMsgRef>
-        <div class="header header-style">
-            <div>INVOICE #</div>
-            <div>LR #</div>
-            <div>RECEIVED DATE</div>
-            <div>VENDOR NAME</div>
-            <div class="txt-right-align"># ITEMS</div>
-            <div class="txt-right-align">TOTAL VALUE</div>
-            <div class="txt-center-align">STATUS</div>
-            <div>&nbsp;</div>
-            <div class="txt-center-align">REVISION</div>
-            <div class="txt-center-align">
-                <img
-                    matTooltip="Download"
-                    matTooltipClass="tooltip"
-                    src="/assets/images/svg/direct-download.svg"
-                    style="cursor: pointer"
-                    width="32px"
-                    height="32px"
-                    (click)="exportDraftPurchaseToExcel()"
-                />
-            </div>
-        </div>
-        <div class="headerRow">
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
-            <div
-                class="txt-right-align"
-                style="font-size: 14px; font-weight: 500"
-            >
-                &nbsp;
-            </div>
-            <div
-                class="txt-right-align"
-                style="font-size: 14px; font-weight: 500"
-            >
-                {{this.sumNumItems}}
-            </div>
-            <div
-                class="txt-right-align"
-                style="font-size: 14px; font-weight: 500"
-            >
-                {{this.sumTotalValue.toLocaleString('en-IN')}
-            </div>
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
-        </div>
-    </ng-template>
+    <div class="header header-style">
+        <div class="column-item">#</div>
 
-    <ng-template #MsgRef>
-        <div class="header header-style">
-            <div>INVOICE #</div>
-            <div>LR #</div>
-            <div>RECEIVED DATE</div>
-            <div>VENDOR NAME</div>
-            <div class="txt-right-align"># ITEMS</div>
-            <div class="txt-right-align">TOTAL VALUE</div>
-            <!-- <div class="txt-center-align">STATUS</div> -->
+        <div
+            class="column-item"
+            [ngClass]="isSelectedColumn('Date')"
+            (click)="sortInvoiceDate()"
+        >
+            <span> R. Date </span>
 
-            <div class="txt-center-align">REVISION</div>
-            <div class="txt-center-align">
-                <img
-                    matTooltip="Download"
-                    matTooltipClass="tooltip"
-                    src="/assets/images/svg/direct-download.svg"
-                    style="cursor: pointer"
-                    width="32px"
-                    height="32px"
-                    (click)="exportCompletedPurchaseToExcel()"
-                />
-            </div>
-            <div>&nbsp;</div>
+            <app-descending *ngIf="this.orderDefaultFlag === 'desc'">
+            </app-descending>
+            <app-ascending *ngIf="this.orderDefaultFlag === 'asc'">
+            </app-ascending>
         </div>
-        <div class="headerRow">
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
-            <div
-                class="txt-right-align"
-                style="font-size: 14px; font-weight: 500"
-            >
-                &nbsp;
-            </div>
-            <div
-                class="txt-right-align"
-                style="font-size: 14px; font-weight: 500"
-            >
-                {{this.sumNumItems}}
-            </div>
-            <div
-                class="txt-right-align"
-                style="font-size: 14px; font-weight: 500"
-            >
-                {{this.sumTotalValue | currency: "INR"}}
-            </div>
-            <!-- <div>&nbsp;</div> -->
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
-        </div>
-    </ng-template>
 
-    <ng-template #MsgRef1>
-        <div *ngFor="let item of filteredValues  " class="listItem">
-            <div class="item">{{item.invoice_no}}</div>
-            <div class="item">{{item.lr_no}}</div>
-            <div class="item">{{item.received_date | date:'d-M-yyyy'}}</div>
-            <div class="item">{{item.vendor_name}}</div>
-            <div class="item txt-right-align">{{item.no_of_items}}</div>
-            <div class="item txt-right-align">
-                {{item.net_total.toLocaleString('en-IN')}}
-            </div>
-            <!-- <div class="item txt-center-align">{{item.status === 'D' ? 'Draft' : 'Completed'}}</div> -->
-            <div class="item cursor txt-center-align">
-                <mat-icon
-                    #tooltip="matTooltip"
-                    matTooltip="Edit/Modify Purchase Details"
-                    matTooltipClass="tooltip"
-                    (mousedown)="tooltip.hide()"
-                    [ngStyle]="{'color':'blue'}"
-                    (click)="goPurchaseEditScreen(item)"
-                    >edit
-                </mat-icon>
-            </div>
-            <div class="item cursor" style="text-align: center">
-                <mat-icon
-                    #tooltip="matTooltip"
-                    matTooltip="View Purchase Details"
-                    matTooltipClass="tooltip"
-                    (mousedown)="tooltip.hide()"
-                    [ngStyle]="{'color':'#6d78d2'}"
-                    (click)="openDialog(item)"
-                    >remove_red_eye
-                </mat-icon>
-            </div>
-            <div
-                class="item cursor txt-center-align"
-                *ngIf="item.status === 'D'"
-            >
-                <mat-icon
-                    #tooltip="matTooltip"
-                    matTooltip="Delete Purchase Details"
-                    matTooltipClass="tooltip"
-                    (mousedown)="tooltip.hide()"
-                    [ngStyle]="{'color':'#ff8484'}"
-                    (click)="presentAlertConfirm(item)"
-                    >delete
-                </mat-icon>
-            </div>
-            <div class="txt-center-align">
-                <span *ngIf="item.status === 'C'">{{item.revision}}</span>
-            </div>
+        <div class="column-item">Vendor Name</div>
+        <div class="column-item">PO #</div>
+
+        <div class="column-item">LR #</div>
+
+        <div class="column-item txt-right-align">Items</div>
+        <div class="column-item txt-right-align">Net Total</div>
+        <div class="column-item txt-right-align">Edit</div>
+
+        <div>
+            <img
+                matTooltip="Download"
+                matTooltipClass="tooltip"
+                src="/assets/images/svg/direct-download.svg"
+                style="cursor: pointer"
+                width="32px"
+                height="32px"
+                (click)="exportDraftPurchaseToExcel()"
+            />
         </div>
-    </ng-template>
+
+        <div>Revision</div>
+    </div>
+    <div *ngIf="filteredValues?.length === 0" class="no-records-found">
+        No records found
+    </div>
+    <div *ngFor="let item of filteredValues; let idx = index" class="listItem">
+        <div>{{idx + 1}}</div>
+
+        <div class="item">{{item.received_date | date:'d-M-yyyy' }}</div>
+
+        <div class="item">{{item.vendor_name}}</div>
+
+        <div class="item" (click)="openDialog(item)">{{item.invoice_no}}</div>
+
+        <div class="item" style="text-align: right">{{item.lr_no}}</div>
+
+        <div class="item" style="text-align: right">{{item.no_of_items}}</div>
+
+        <div class="item" style="text-align: right">
+            {{item.net_total.toLocaleString('en-IN')}}
+        </div>
+
+        <div class="item" style="text-align: center">
+            <mat-icon
+                #tooltip="matTooltip"
+                matTooltip="Edit/Modify Sale Details"
+                matTooltipClass="tooltip"
+                (mousedown)="tooltip.hide()"
+                [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
+                (click)="goPurchaseEditScreen(item)"
+                >edit
+            </mat-icon>
+        </div>
+
+        <div class="item cursor" style="text-align: center">
+            <mat-icon
+                #tooltip="matTooltip"
+                matTooltip="View Purchase Details"
+                matTooltipClass="tooltip"
+                (mousedown)="tooltip.hide()"
+                [ngStyle]="{'color':'#6d78d2'}"
+                (click)="openDialog(item)"
+                >remove_red_eye
+            </mat-icon>
+        </div>
+
+        <div class="txt-center-align">
+            <span *ngIf="item.status === 'C'">{{item.revision}}</span>
+        </div>
+    </div>
+
+    <mat-menu #admin="matMenu" [overlapTrigger]="false" class="myMenu">
+        <div mat-menu-item class="mat-menu-line-height" (click)="dateFilter(7)">
+            <span>Last 7 days</span>
+        </div>
+
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="dateFilter(14)"
+        >
+            <span>Last 14 days</span>
+        </div>
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="customDateFilter()"
+        >
+            <span>Custom</span>
+        </div>
+    </mat-menu>
+
+    <mat-menu #menuN="matMenu">
+        <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
+            Search By Invoice #
+        </div>
+    </mat-menu>
 </ion-content>

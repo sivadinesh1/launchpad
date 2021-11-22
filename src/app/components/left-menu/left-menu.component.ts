@@ -118,7 +118,7 @@ export class LeftMenuComponent {
             ],
         },
         {
-            name: 'Products & Stock',
+            name: 'Stocks',
             link: '/home/view-products',
             icon: '/assets/images/svg/product.svg',
         },

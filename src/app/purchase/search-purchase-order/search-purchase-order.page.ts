@@ -3,6 +3,8 @@ import {
     OnInit,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
+    ElementRef,
+    ViewChild,
 } from '@angular/core';
 import { CommonApiService } from '../../services/common-api.service';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -25,6 +27,9 @@ import { PurchaseEntryDialogComponent } from '../../components/purchase/purchase
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import * as xlsx from 'xlsx';
 import * as moment from 'moment';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { SearchCustomersComponent } from 'src/app/components/search-customers/search-customers.component';
+import { SearchInvoiceNoComponent } from 'src/app/components/search-invoice-no/search-invoice-no.component';
 
 @Component({
     selector: 'app-search-purchase-order',
@@ -33,6 +38,12 @@ import * as moment from 'moment';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchPurchaseOrderPage implements OnInit {
+    @ViewChild('menuTriggerN', { static: true }) menuTriggerN: any;
+    @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
+    @ViewChild('auto') matAutocomplete: MatAutocomplete;
+
+    @ViewChild(SearchCustomersComponent) child: SearchCustomersComponent;
+
     purchases$: Observable<Purchase[]>;
     vendor$: Observable<Vendor[]>;
 
@@ -48,6 +59,9 @@ export class SearchPurchaseOrderPage implements OnInit {
     maxDate = new Date();
     minDate = new Date();
     dobMaxDate = new Date();
+
+    searchByDays = 7;
+    isCustomDateFilter = false;
 
     orderDefaultFlag = 'desc';
     orderList = [
@@ -82,6 +96,7 @@ export class SearchPurchaseOrderPage implements OnInit {
 
     filteredVendor: Observable<any[]>;
     vendor_lis: Vendor[];
+    clickedColumn: string;
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -91,6 +106,7 @@ export class SearchPurchaseOrderPage implements OnInit {
         private _route: ActivatedRoute,
         public alertController: AlertController,
         private _dialog: MatDialog,
+        public _dialog1: MatDialog,
         private _authService: AuthenticationService
     ) {
         const dateOffset = 24 * 60 * 60 * 1000 * 10;
@@ -188,6 +204,27 @@ export class SearchPurchaseOrderPage implements OnInit {
             vendor_id: 'all',
             vendor_ctrl: '',
         });
+        this._cdr.markForCheck();
+    }
+
+    clear() {
+        const dateOffset = 24 * 60 * 60 * 1000 * 7;
+        this.from_date.setTime(this.minDate.getTime() - dateOffset);
+
+        this.submitForm.patchValue({
+            customer_id: 'all',
+            customer_ctrl: 'All Customers',
+            from_date: this.from_date,
+            to_date: new Date(),
+            invoice_no: '',
+            search_type: 'all',
+        });
+
+        this.submitForm.value.invoice_no = '';
+        this.submitForm.get('customer_ctrl').enable();
+        this.submitForm.controls.invoice_no.setErrors(null);
+        this.submitForm.controls.invoice_no.markAsTouched();
+
         this._cdr.markForCheck();
     }
 
@@ -350,6 +387,61 @@ export class SearchPurchaseOrderPage implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             console.log('The dialog was closed');
         });
+    }
+
+    reloadSearch() {
+        // patch it up with from & to date, via patch value
+        console.log(this.submitForm.value);
+
+        this.search();
+    }
+
+    statusFilterChanged(item: any) {
+        this.submitForm.patchValue({
+            status: item.detail.value,
+            invoice_no: '',
+        });
+        this._cdr.markForCheck();
+        this.search();
+    }
+
+    reset() {
+        // this.customerSearchReset();
+        // this.child.clearCustomerInput();
+        this.clear();
+        this.search();
+    }
+
+    opsFromDateEvent(event) {
+        this.submitForm.patchValue({
+            from_date: moment(event.target.value).format('YYYY-MM-DD'),
+        });
+        this.reloadSearch();
+    }
+
+    opsToDateEvent(event) {
+        this.submitForm.patchValue({
+            to_date: moment(event.target.value).format('YYYY-MM-DD'),
+        });
+
+        this.reloadSearch();
+    }
+
+    dateFilter(value: number) {
+        this.searchByDays = value;
+        const dateOffset = 24 * 60 * 60 * 1000 * this.searchByDays;
+        this.from_date = new Date(this.minDate.getTime() - dateOffset);
+        this.submitForm.patchValue({
+            from_date: this.from_date,
+        });
+
+        this._cdr.detectChanges();
+
+        this.search();
+    }
+
+    customDateFilter() {
+        this.isCustomDateFilter = !this.isCustomDateFilter;
     }
 
     async exportDraftPurchaseToExcel() {
@@ -552,5 +644,74 @@ export class SearchPurchaseOrderPage implements OnInit {
         });
 
         xlsx.writeFile(wb1, fileName);
+    }
+
+    isSelectedColumn(param) {
+        if (this.clickedColumn === param) {
+            return 'sorted_column';
+        } else {
+            return 'none';
+        }
+    }
+
+    isCompleted(status: string) {
+        if (status === 'C') {
+            return 'completed';
+        } else {
+            return 'draft';
+        }
+    }
+
+    openDialog1(): void {
+        const rect = this.menuTriggerN.nativeElement.getBoundingClientRect();
+        console.log('zzz' + rect.left);
+
+        const dialogRef = this._dialog1.open(SearchInvoiceNoComponent, {
+            width: '250px',
+            data: { invoice_no: '' },
+
+            position: { left: `${rect.left}px`, top: `${rect.bottom - 50}px` },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log('The dialog was closed');
+
+            this.submitForm.patchValue({
+                invoice_no: result,
+            });
+            this.search();
+        });
+    }
+
+    sortInvoiceDate() {
+        this.clickedColumn = 'Date';
+        if (this.orderDefaultFlag === 'desc') {
+            this.submitForm.patchValue({
+                order: 'asc',
+            });
+            this.orderDefaultFlag = 'asc';
+        } else {
+            this.submitForm.patchValue({
+                order: 'desc',
+            });
+            this.orderDefaultFlag = 'desc';
+        }
+        this.search();
+    }
+
+    sortInvoice_no() {
+        this.clickedColumn = 'Invoice';
+        if (this.orderDefaultFlag === 'desc') {
+            this.submitForm.patchValue({
+                order: 'asc',
+            });
+            this.orderDefaultFlag = 'asc';
+        } else {
+            this.submitForm.patchValue({
+                order: 'desc',
+            });
+            this.orderDefaultFlag = 'desc';
+        }
+        this.search();
     }
 }

@@ -258,7 +258,8 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                 lr_no: this.raw_purchase_data[0].lr_no,
 
                 lr_date:
-                    this.raw_purchase_data[0].lr_date === ''
+                    this.raw_purchase_data[0].lr_date === '' ||
+                    this.raw_purchase_data[0].lr_date === null
                         ? ''
                         : new Date(
                               new NullToQuotePipe()
@@ -426,12 +427,12 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         setTimeout(() => {
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             this.v_list && this.v_list.nativeElement.focus();
-            if (
-                this.raw_purchase_data[0] !== undefined &&
-                this.raw_purchase_data[0].id !== 0
-            ) {
-                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                this.plist && this.plist.nativeElement.focus();
+
+            if (this.raw_purchase_data[0] !== undefined) {
+                if (this.raw_purchase_data[0].id !== 0) {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                    this.plist && this.plist.nativeElement.focus();
+                }
             }
             this._cdr.detectChanges();
         }, 100);
@@ -624,12 +625,13 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         // from product tbl
         this.listArr.push({
             purchase_id: pid,
-            pur_det_id: new NullToQuotePipe().transform(
-                temp.purchase_detail_id
-            ),
+            pur_det_id: new NullToQuotePipe().transform(temp.id),
             checkbox: false,
 
-            product_id: temp.product !== undefined ? temp.product.id : temp.id,
+            product_id:
+                temp.product !== undefined
+                    ? temp.product.product_id
+                    : temp.product_id,
 
             product_code:
                 temp.product !== undefined
@@ -1289,7 +1291,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         this._commonApiService
             .deletePurchaseDetails({
                 center_id: this.user_data.center_id,
-                id: elem.pur_det_id,
+                pur_det_id: elem.pur_det_id,
                 purchase_id: elem.purchase_id,
                 quantity: elem.quantity,
                 product_id: elem.product_id,

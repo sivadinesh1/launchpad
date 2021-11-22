@@ -44,6 +44,9 @@ export class VendorEditDialogComponent implements OnInit {
     isLinear = true;
 
     vendor: Vendor;
+    vExists = false;
+
+    current_vendor_name: any;
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -61,6 +64,7 @@ export class VendorEditDialogComponent implements OnInit {
         this.center_id = currentUser.center_id;
 
         this.vendor = vendor;
+        this.current_vendor_name = vendor.vendor_name;
 
         this.submitForm = this._formBuilder.group({
             id: [this.vendor.id],
@@ -95,7 +99,6 @@ export class VendorEditDialogComponent implements OnInit {
             mobile2: [
                 this.vendor.mobile2,
                 Validators.compose([
-                    Validators.required,
                     PhoneValidator.invalidCountryPhone(country),
                 ]),
             ],
@@ -103,7 +106,6 @@ export class VendorEditDialogComponent implements OnInit {
             whatsapp: [
                 this.vendor.whatsapp,
                 Validators.compose([
-                    Validators.required,
                     PhoneValidator.invalidCountryPhone(country),
                 ]),
             ],
@@ -130,6 +132,25 @@ export class VendorEditDialogComponent implements OnInit {
     }
 
     onSubmit() {
+        if (this.current_vendor_name !== this.submitForm.value.vendor_name) {
+            this._commonApiService
+                .isVendorExists(this.submitForm.value.vendor_name)
+                .subscribe((data: any) => {
+                    if (data.result > 0) {
+                        this.vExists = true;
+                        this.openSnackBar('Duplicate Vendor Name', '');
+                    } else {
+                        this.vExists = false;
+                        this.onSubmitAdd();
+                    }
+                });
+        } else {
+            this.onSubmitAdd();
+        }
+        this._cdr.markForCheck();
+    }
+
+    onSubmitAdd() {
         const vendor = plainToClass(Vendor, this.submitForm.value);
 
         const updateVendor$ = this._commonApiService.updateVendor(vendor);

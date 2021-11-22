@@ -1,6 +1,6 @@
 {
     "name": "launchpad",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "author": "Ionic Framework",
     "homepage": "https://ionicframework.com/",
     "scripts": {
@@ -10,7 +10,8 @@
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",
-        "hmr": "ng serve --open --configuration hmr"
+        "hmr": "ng serve --open --configuration hmr",
+        "post-build": "node ./build/post-build.js"
     },
     "private": true,
     "dependencies": {

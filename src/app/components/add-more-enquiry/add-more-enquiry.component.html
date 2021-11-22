@@ -21,7 +21,7 @@
                             <input
                                 matInput
                                 [matAutocomplete]="auto1"
-                                formControlName="productctrl"
+                                formControlName="product_ctrl"
                                 #typehead
                                 #plist
                                 matTooltipPosition="after"
@@ -122,9 +122,9 @@
 
                             <mat-error
                                 *ngIf="
-                                    submitForm.controls['productctrl'].hasError(
-                                        'incorrect'
-                                    )
+                                    submitForm.controls[
+                                        'product_ctrl'
+                                    ].hasError('incorrect')
                                 "
                             >
                                 Invalid product code
@@ -136,7 +136,7 @@
                             <input
                                 matInput
                                 type="text"
-                                formControlName="tempdesc"
+                                formControlName="temp_desc"
                                 required
                                 tabindex="2"
                             />
@@ -223,15 +223,15 @@
                     >
                 </div>
                 <div class="itms-lbl">
-                    {{ productarr.controls.length || 0 }} Items
+                    {{ product_arr.controls.length || 0 }} Items
                 </div>
             </div>
 
-            <div formArrayName="productarr" class="list-block">
+            <div formArrayName="product_arr" class="list-block">
                 <div
                     class="item-details"
-                    *ngForOF="
-                        let product of productarr.controls;
+                    *ngForOf="
+                        let product of product_arr.controls;
                         let idx = index
                     "
                 >

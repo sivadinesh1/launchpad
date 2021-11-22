@@ -664,10 +664,10 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                 temp.product !== undefined
                     ? temp.product.product_code
                     : temp.product_code,
-            product_desc:
+            product_description:
                 temp.product !== undefined
                     ? temp.product.product_description
-                    : temp.product_desc,
+                    : temp.product_description,
             packet_size:
                 temp.product !== undefined
                     ? temp.product.packet_size

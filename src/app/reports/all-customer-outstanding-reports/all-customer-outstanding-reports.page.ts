@@ -141,9 +141,9 @@ export class AllCustomerOutstandingReportsPage implements OnInit {
         xlsx.writeFile(wb1, fileName);
     }
 
-    goCustomerFinancials(customer_id) {
+    goCustomerFinancial(customer_id) {
         this._router.navigate([
-            `/home/financials-customer/${this.user_data.center_id}/${customer_id}`,
+            `/home/financial-customer/${this.user_data.center_id}/${customer_id}`,
         ]);
     }
 }

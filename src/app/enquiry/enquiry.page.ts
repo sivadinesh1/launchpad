@@ -51,11 +51,29 @@ import { CustomerAddDialogComponent } from '../components/customers/customer-add
     styleUrls: ['./enquiry.page.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EnquiryPage {
+export class EnquiryPage implements AfterViewInit {
+    // TAB navigation for product list
+    @ViewChild('typeHead', { read: MatAutocompleteTrigger })
+    autoTrigger: MatAutocompleteTrigger;
+
+    @ViewChild('cList', { static: true }) c_list: any;
+
+    @ViewChild('plist', { static: true }) plist: any;
+    @ViewChild('qty', { static: true }) qty: any;
+
+    // TAB navigation for customer list
+    @ViewChild('typeHead1', { read: MatAutocompleteTrigger })
+    autoTrigger1: MatAutocompleteTrigger;
+
+    @ViewChild(IonContent, { static: false }) content: IonContent;
+
+    @ViewChild('myForm', { static: true }) myForm: NgForm;
+    filteredCustomers: Observable<any[]>;
+
     submitForm: FormGroup;
 
     //customerAdded = false;
-    customerdata: any;
+    customer_data: any;
 
     removeRowArr = [];
     showDelIcon = false;
@@ -67,7 +85,7 @@ export class EnquiryPage {
 
     isLoading = false;
     isCLoading = false;
-    customername: any;
+    customer_name: any;
     address1: any;
     address2: any;
     district: any;
@@ -75,36 +93,17 @@ export class EnquiryPage {
     phone: any;
     whatsapp: any;
 
-    iscustomerselected = false;
+    is_customer_selected = false;
     clicked = false;
-    @ViewChild('clist', { static: true }) clist: any;
-
-    @ViewChild('myForm', { static: true }) myForm: NgForm;
-    filteredCustomers: Observable<any[]>;
-
-    // TAB navigation for product list
-    @ViewChild('typehead', { read: MatAutocompleteTrigger })
-    autoTrigger: MatAutocompleteTrigger;
-
-    @ViewChild('plist', { static: true }) plist: any;
-    @ViewChild('qty', { static: true }) qty: any;
-
-    // TAB navigation for customer list
-    @ViewChild('typehead1', { read: MatAutocompleteTrigger })
-    autoTrigger1: MatAutocompleteTrigger;
-
-    @ViewChild(IonContent, { static: false }) content: IonContent;
 
     customer_lis: Customer[];
     product_lis: IProduct[];
-
-    selectedCustomerName: any;
 
     constructor(
         private _fb: FormBuilder,
         public dialog: MatDialog,
         public alertController: AlertController,
-        private _modalcontroller: ModalController,
+
         private _router: Router,
         private _route: ActivatedRoute,
         private _cdr: ChangeDetectorRef,
@@ -112,7 +111,7 @@ export class EnquiryPage {
         private _dialog: MatDialog,
         private _authService: AuthenticationService
     ) {
-        this.basicinit();
+        this.basicInit();
         this.user_data$ = this._authService.currentUser;
         this.user_data$
             .pipe(filter((data) => data !== null))
@@ -131,7 +130,7 @@ export class EnquiryPage {
         this._route.params.subscribe((params) => {
             this.clicked = false;
             if (this.user_data !== undefined) {
-                this.basicinit();
+                this.basicInit();
                 this.init();
                 this.submitForm.patchValue({
                     center_id: this.user_data.center_id,
@@ -141,20 +140,20 @@ export class EnquiryPage {
         });
     }
 
-    basicinit() {
+    basicInit() {
         this.submitForm = this._fb.group({
-            customerctrl: [null, [Validators.required, RequireMatch]],
+            customer_ctrl: [null, [Validators.required, RequireMatch]],
 
-            productctrl: [null, [RequireMatch]],
+            product_ctrl: [null, [RequireMatch]],
 
             center_id: [null, Validators.required],
             remarks: [''],
 
-            productarr: this._fb.array([]),
+            product_arr: this._fb.array([]),
 
-            tempdesc: [''],
+            temp_desc: [''],
 
-            tempqty: [
+            temp_qty: [
                 '1',
                 [
                     Validators.required,
@@ -166,8 +165,8 @@ export class EnquiryPage {
         });
     }
 
-    get productarr(): FormGroup {
-        return this.submitForm.get('productarr') as FormGroup;
+    get product_arr(): FormGroup {
+        return this.submitForm.get('product_arr') as FormGroup;
     }
 
     init() {
@@ -180,7 +179,7 @@ export class EnquiryPage {
 
     searchCustomers() {
         let search = '';
-        this.submitForm.controls.customerctrl.valueChanges
+        this.submitForm.controls.customer_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isCLoading = true)),
@@ -220,13 +219,14 @@ export class EnquiryPage {
         if (from === 'click' && event.option.value === 'new') {
             this.addCustomer();
         }
-        this.iscustomerselected = true;
+        this.is_customer_selected = true;
         this._cdr.detectChanges();
 
         if (from === 'tab') {
-            this.customerdata = event;
+            this.customer_data = event;
         } else {
-            this.customerdata = event.option.value;
+            this.customer_data = event.option.value;
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             this.plist && this.plist.nativeElement.focus();
         }
 
@@ -258,16 +258,16 @@ export class EnquiryPage {
                 if (data !== 'close') {
                     this._commonApiService
                         .getCustomerDetails(data.body.id)
-                        .subscribe((custData: any) => {
-                            this.customerdata = custData[0];
+                        .subscribe((customerData: any) => {
+                            this.customer_data = customerData[0];
 
-                            this.customername = custData[0].name;
-                            this.iscustomerselected = true;
+                            this.customer_name = customerData[0].name;
+                            this.is_customer_selected = true;
 
-                            this.setCustomerInfo(custData[0], 'tab');
+                            this.setCustomerInfo(customerData[0], 'tab');
 
                             this.submitForm.patchValue({
-                                customerctrl: custData[0],
+                                customer_ctrl: customerData[0],
                             });
 
                             this.isCLoading = false;
@@ -276,7 +276,7 @@ export class EnquiryPage {
                             this._cdr.markForCheck();
                         });
                 } else {
-                    this.iscustomerselected = false;
+                    this.is_customer_selected = false;
                     this.autoTrigger1.closePanel();
 
                     this._cdr.markForCheck();
@@ -287,13 +287,13 @@ export class EnquiryPage {
     }
 
     getLength() {
-        const control = this.submitForm.controls.productarr as FormArray;
+        const control = this.submitForm.controls.product_arr as FormArray;
         return control.length;
     }
 
     searchProducts() {
         let search = '';
-        this.submitForm.controls.productctrl.valueChanges
+        this.submitForm.controls.product_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isLoading = true)),
@@ -303,7 +303,7 @@ export class EnquiryPage {
                     if (id != null && id.length >= 2) {
                         return this._commonApiService.getProductInfo({
                             center_id: this.user_data.center_id,
-                            search_texting: id,
+                            search_text: id,
                         });
                     } else {
                         return empty();
@@ -339,6 +339,7 @@ export class EnquiryPage {
         this.searchCustomers();
         this.searchProducts();
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.autoTrigger &&
             this.autoTrigger.panelClosingActions.subscribe((x) => {
                 if (
@@ -346,7 +347,7 @@ export class EnquiryPage {
                     this.autoTrigger.activeOption.value !== undefined
                 ) {
                     this.submitForm.patchValue({
-                        productctrl: this.autoTrigger.activeOption.value,
+                        product_ctrl: this.autoTrigger.activeOption.value,
                     });
                     this.setItemDesc(
                         this.autoTrigger.activeOption.value,
@@ -355,6 +356,7 @@ export class EnquiryPage {
                 }
             });
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.autoTrigger1 &&
             this.autoTrigger1.panelClosingActions.subscribe((x) => {
                 if (
@@ -362,7 +364,7 @@ export class EnquiryPage {
                     this.autoTrigger1.activeOption.value !== undefined
                 ) {
                     this.submitForm.patchValue({
-                        customerctrl: this.autoTrigger1.activeOption.value,
+                        customer_ctrl: this.autoTrigger1.activeOption.value,
                     });
                     this.setCustomerInfo(
                         this.autoTrigger1.activeOption.value,
@@ -372,7 +374,8 @@ export class EnquiryPage {
             });
 
         setTimeout(() => {
-            this.clist && this.clist.nativeElement.focus();
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            this.c_list && this.c_list.nativeElement.focus();
             this._cdr.detectChanges();
         });
     }
@@ -383,7 +386,7 @@ export class EnquiryPage {
         dialogConfig.autoFocus = true;
         dialogConfig.width = '600px';
         dialogConfig.height = '100%';
-        dialogConfig.data = this.customerdata;
+        dialogConfig.data = this.customer_data;
         dialogConfig.position = { top: '0', right: '0' };
 
         const dialogRef = this._dialog.open(
@@ -398,26 +401,26 @@ export class EnquiryPage {
 
     add() {
         if (
-            this.submitForm.value.tempdesc === '' ||
-            this.submitForm.value.tempdesc === null
+            this.submitForm.value.temp_desc === '' ||
+            this.submitForm.value.temp_desc === null
         ) {
-            this.submitForm.controls.tempdesc.setErrors({ required: true });
-            this.submitForm.controls.tempdesc.markAsTouched();
+            this.submitForm.controls.temp_desc.setErrors({ required: true });
+            this.submitForm.controls.temp_desc.markAsTouched();
 
             return false;
         }
 
         if (
-            this.submitForm.value.tempqty === '' ||
-            this.submitForm.value.tempqty === null
+            this.submitForm.value.temp_qty === '' ||
+            this.submitForm.value.temp_qty === null
         ) {
-            this.submitForm.controls.tempqty.setErrors({ required: true });
-            this.submitForm.controls.tempqty.markAsTouched();
+            this.submitForm.controls.temp_qty.setErrors({ required: true });
+            this.submitForm.controls.temp_qty.markAsTouched();
 
             return false;
         }
 
-        const control = this.submitForm.controls.productarr as FormArray;
+        const control = this.submitForm.controls.product_arr as FormArray;
 
         // DnD insert adds new row in starting of the array {idx : 0}
         // control.insert(0, this._fb.group({
@@ -426,14 +429,14 @@ export class EnquiryPage {
             this._fb.group({
                 checkbox: [false],
                 product_code: [
-                    this.submitForm.value.productctrl === null
+                    this.submitForm.value.product_ctrl === null
                         ? ''
-                        : this.submitForm.value.productctrl.product_code,
+                        : this.submitForm.value.product_ctrl.product_code,
                 ],
 
-                notes: [this.submitForm.value.tempdesc, Validators.required],
+                notes: [this.submitForm.value.temp_desc, Validators.required],
                 quantity: [
-                    this.submitForm.value.tempqty,
+                    this.submitForm.value.temp_qty,
                     [
                         Validators.required,
                         Validators.max(1000),
@@ -445,14 +448,15 @@ export class EnquiryPage {
         );
 
         this.submitForm.patchValue({
-            productctrl: '',
-            tempdesc: '',
-            tempqty: 1,
+            product_ctrl: '',
+            temp_desc: '',
+            temp_qty: 1,
         });
 
-        this.submitForm.controls.tempdesc.setErrors(null);
-        this.submitForm.controls.tempqty.setErrors(null);
-        this.submitForm.controls.productctrl.setErrors(null);
+        this.submitForm.controls.temp_desc.setErrors(null);
+        this.submitForm.controls.temp_qty.setErrors(null);
+        this.submitForm.controls.product_ctrl.setErrors(null);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.plist && this.plist.nativeElement.focus();
 
         const v1 = 240 + control.length * 70 + 70;
@@ -462,7 +466,7 @@ export class EnquiryPage {
         this._cdr.markForCheck();
     }
 
-    filtercustomer(value: any) {
+    filterCustomer(value: any) {
         if (typeof value == 'object') {
             return this.customer_lis.filter((customer) =>
                 customer.name.toLowerCase().match(value.name.toLowerCase())
@@ -476,9 +480,9 @@ export class EnquiryPage {
 
     clearInput() {
         this.submitForm.patchValue({
-            customerctrl: null,
+            customer_ctrl: null,
         });
-        this.iscustomerselected = false;
+        this.is_customer_selected = false;
         this.customer_lis = null;
         this.address1 = null;
         this.address2 = null;
@@ -486,16 +490,16 @@ export class EnquiryPage {
         this.gst = null;
         this.phone = null;
         this.whatsapp = null;
-        this.iscustomerselected = false;
+        this.is_customer_selected = false;
         this._cdr.markForCheck();
     }
 
     clearProdInput() {
         this.submitForm.patchValue({
-            productctrl: null,
+            product_ctrl: null,
 
-            tempdesc: null,
-            tempqty: 1,
+            temp_desc: null,
+            temp_qty: 1,
         });
         this.product_lis = null;
         this._cdr.markForCheck();
@@ -517,16 +521,18 @@ export class EnquiryPage {
 
     onRemoveProduct(idx) {
         console.log('object ' + this.removeRowArr);
-        (<FormArray>this.submitForm.get('productarr')).removeAt(idx);
+
+        const formArray = this.submitForm.get('product_arr') as FormArray;
+        formArray.removeAt(idx);
     }
 
     checkedRow(idx: number, $event) {
-        // const faControl = (<FormArray>this.submitForm.controls.productarr).at(
+        // const faControl = (<FormArray>this.submitForm.controls.product_arr).at(
         //   idx
         // );
         // faControl.controls.checkbox;
 
-        const formArray = this.submitForm.get('productarr') as FormArray;
+        const formArray = this.submitForm.get('product_arr') as FormArray;
         const faControl = formArray.controls[idx] as FormControl;
 
         if (faControl.value.checkbox) {
@@ -558,7 +564,7 @@ export class EnquiryPage {
     }
 
     onSubmit() {
-        if (this.getLength() == 0) {
+        if (this.getLength() === 0) {
             return this.presentAlert('No products added to save!');
         }
 
@@ -578,9 +584,10 @@ export class EnquiryPage {
                     this.clearInput();
                     this.clearProdInput();
 
-                    const control = <FormArray>(
-                        this.submitForm.controls.productarr
-                    );
+                    const control = this.submitForm.get(
+                        'product_arr'
+                    ) as FormArray;
+
                     control.clear();
 
                     this.submitForm.reset();
@@ -604,7 +611,7 @@ export class EnquiryPage {
         this.clearInput();
         this.clearProdInput();
 
-        const control = <FormArray>this.submitForm.controls.productarr;
+        const control = this.submitForm.get('product_arr') as FormArray;
         control.clear();
 
         this.submitForm.reset();
@@ -657,12 +664,13 @@ export class EnquiryPage {
     setItemDesc(event, from) {
         if (from === 'tab') {
             this.submitForm.patchValue({
-                tempdesc: event.description,
+                temp_desc: event.description,
             });
         } else {
             this.submitForm.patchValue({
-                tempdesc: event.option.value.description,
+                temp_desc: event.option.value.description,
             });
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             this.qty && this.qty.nativeElement.focus();
         }
 

@@ -1,6 +1,6 @@
 export class ResponseObj {
     message: string;
     role: string;
-    userid: number;
+    user_id: number;
     obj: any;
 }

@@ -1,41 +1,52 @@
 <ion-content>
-	<div class="content">
-		<div class="header" style="background-color: aliceblue; position: sticky; top: 0px">
-			<div style="padding: 12px 8px; font-weight: 500"
-				>{{outstandingBalanceList?.length}} Clients to Pay:
-				<span style="color: blue; border-bottom: 2px solid"> {{this.balance | currency: "INR"}} </span>
-			</div>
-			<div style="align-self: center">Balance Amount </div>
-			<div style="align-self: center">
-				<span> Last Paid On </span>
-				<span style="vertical-align: middle">
-					<img
-						matTooltip="Download"
-						matTooltipClass="tooltip"
-						src="/assets/images/svg/direct-download.svg"
-						style="cursor: pointer"
-						width="32px"
-						height="32px"
-						(click)="downloadReport()"
-					/>
-				</span>
-			</div>
-		</div>
+    <div class="content">
+        <div
+            class="header"
+            style="background-color: aliceblue; position: sticky; top: 0px"
+        >
+            <div style="padding: 12px 8px; font-weight: 500">
+                {{outstandingBalanceList?.length}} Clients to Pay:
+                <span style="color: blue; border-bottom: 2px solid">
+                    {{this.balance | currency: "INR"}}
+                </span>
+            </div>
+            <div style="align-self: center">Balance Amount</div>
+            <div style="align-self: center">
+                <span> Last Paid On </span>
+                <span style="vertical-align: middle">
+                    <img
+                        matTooltip="Download"
+                        matTooltipClass="tooltip"
+                        src="/assets/images/svg/direct-download.svg"
+                        style="cursor: pointer"
+                        width="32px"
+                        height="32px"
+                        (click)="downloadReport()"
+                    />
+                </span>
+            </div>
+        </div>
 
-		<div
-			*ngFor="let item of outstandingBalanceList ? outstandingBalanceList : []; let idx = index"
-			class="list-item row-color"
-			style="color: blue; cursor: pointer; padding: 6px"
-			(click)="goCustomerFinancials(item?.id)"
-		>
-			<div style="text-align: left; color: #000; padding: 2px">
-				<div style="padding: 2px">{{ item?.name }}</div>
-				<div style="color: grey; font-size: 12px; padding: 2px">{{ item?.address1 }}</div>
-				<div style="color: grey; font-size: 12px; padding: 2px">{{ item?.address2 }}</div>
-				<div style="color: grey; font-size: 12px; padding: 2px">{{ item?.district }}</div>
-			</div>
-			<div>{{ item?.balance_amt | currency: "INR"}}</div>
-			<div>{{item?.last_paid_date | date:'mediumDate'}}</div>
-		</div>
-	</div>
+        <div
+            *ngFor="let item of outstandingBalanceList ? outstandingBalanceList : []; let idx = index"
+            class="list-item row-color"
+            style="color: blue; cursor: pointer; padding: 6px"
+            (click)="goCustomerFinancial(item?.id)"
+        >
+            <div style="text-align: left; color: #000; padding: 2px">
+                <div style="padding: 2px">{{ item?.name }}</div>
+                <div style="color: grey; font-size: 12px; padding: 2px">
+                    {{ item?.address1 }}
+                </div>
+                <div style="color: grey; font-size: 12px; padding: 2px">
+                    {{ item?.address2 }}
+                </div>
+                <div style="color: grey; font-size: 12px; padding: 2px">
+                    {{ item?.district }}
+                </div>
+            </div>
+            <div>{{ item?.balance_amt | currency: "INR"}}</div>
+            <div>{{item?.last_paid_date | date:'mediumDate'}}</div>
+        </div>
+    </div>
 </ion-content>

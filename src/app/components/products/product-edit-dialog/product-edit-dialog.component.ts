@@ -105,7 +105,7 @@ export class ProductEditDialogComponent implements OnInit {
                 this.product.hsn_code,
                 [patternValidator(HSN_CODE_REGEX)],
             ],
-            tax_rate: [this.product.tax_rate.toString(), Validators.required],
+            tax_rate: [this.product.tax.toString(), Validators.required],
             minimum_quantity: [
                 this.product.minimum_quantity === null
                     ? 0

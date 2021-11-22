@@ -25,7 +25,7 @@ import { CommonApiService } from 'src/app/services/common-api.service';
 export class SalesReturnDialogComponent implements OnInit {
     salemasterdata: any;
     saledetailsdata: any;
-    customerdata: any;
+    customer_data: any;
     saleReturnTypeList = ['Others', 'Damaged'];
     selReturnType = 'Others';
 

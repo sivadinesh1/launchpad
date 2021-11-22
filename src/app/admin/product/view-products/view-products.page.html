@@ -1,33 +1,37 @@
 <ion-content>
     <div class="content">
-        <div style="display: flex; justify-content: space-between">
+        <div
+            style="
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                padding: 16px 0;
+            "
+        >
             <div
                 style="
-                    padding: 1rem 0rem 0rem 2rem;
-                    font-size: 1.2rem;
-                    font-weight: 400;
-                    display: grid;
-                    justify-items: flex-start;
+                    font-size: 1.5rem;
+                    letter-spacing: 1px;
+                    font-weight: 500;
+                    align-self: center;
                 "
             >
-                <div>Products & Stock Management</div>
-
-                <div>
-                    <div class="btn-grad add-btn" (click)="add()">
-                        <mat-icon class="add-icon">add</mat-icon>
-                        <span style="padding-left: 10px; font-size: 20px"
-                            >Add Product</span
-                        >
-                    </div>
-                </div>
+                Products & Stock Management
             </div>
 
+            <div class="btn-grad add-btn" (click)="add()">
+                <mat-icon class="add-icon">add</mat-icon>
+                <span style="padding-left: 10px">Add Product</span>
+            </div>
+        </div>
+
+        <div class="head" style="padding: 1rem 0">
             <div>
                 <ion-searchbar
                     style="width: 400px"
                     autofocus
                     debounce="400"
-                    placeholder="Search by part number / description"
+                    placeholder="Search stocks..."
                     #mySearchbar
                     class="search"
                     show-cancel-button="focus"
@@ -35,47 +39,37 @@
                     (ionChange)="openDialog($event)"
                 ></ion-searchbar>
             </div>
-        </div>
-
-        <div class="head">
-            <div>&nbsp;</div>
-            <div class="full-download">
-                <img
-                    matTooltip="Download"
-                    matTooltipClass="tooltip"
-                    src="/assets/images/svg/direct-download.svg"
-                    style="cursor: pointer; position: relative; top: 12px"
-                    width="32px"
-                    height="32px"
-                    (click)="exportCompletedPurchaseToExcel()"
-                />
-                <span style="font-size: 16px; font-weight: 400; color: #818181">
-                    Download Full Stock
-                </span>
-                <div style="text-align: right">
-                    <mat-checkbox (change)="checked($event)">
-                        <span style="font-size: 14px; color: #939393"
-                            >MRP Split</span
-                        >
-                    </mat-checkbox>
-                </div>
-                <div
-                    style="
-                        font-size: 10px;
-                        text-align: right;
-                        font-style: italic;
-                        color: rgb(220, 107, 8);
-                    "
+            <div class="full-download" style="align-self: center">
+                <button
+                    style="border-radius: 0px"
+                    appPreventDoubleClick
+                    class="cursor"
+                    type="button"
+                    [throttleTime]="500"
+                    mat-flat-button
+                    type="button"
+                    color="primary"
+                    tabindex="-1"
                 >
-                    May take few seconds
-                </div>
+                    Download
+                </button>
+                <button
+                    mat-flat-button
+                    color="primary"
+                    tabindex="-1"
+                    #ddTrigger="matMenuTrigger"
+                    [matMenuTriggerFor]="beforeMenu"
+                    style="border-radius: 0px; border-left: 1px solid grey"
+                >
+                    <mat-icon style="color: white">arrow_drop_down</mat-icon>
+                </button>
             </div>
         </div>
         <div></div>
-        <br /><br />
-        <ng-container *ngIf="isTableHasData">
-            <div style="width: 90%; display: grid; margin: 0 auto">
-                <div class="row1">
+
+        <ng-container>
+            <div style="width: 100%; display: grid; margin: 0 auto">
+                <div class="row1" *ngIf="isTableHasData">
                     <div class="row-cnt">
                         &nbsp;&nbsp;
                         <span
@@ -93,7 +87,7 @@
                     </div>
                 </div>
 
-                <div class="header lp-table-header">
+                <div class="header">
                     <div class="column-item">#</div>
                     <div class="column-item">Code</div>
                     <div class="column-item">Description</div>
@@ -111,7 +105,7 @@
                     <div>{{idx + 1}}</div>
                     <div class="item">{{item.product_code}}</div>
                     <div class="item">{{item.product_description}}</div>
-                    <div class="item">{{item.name}}</div>
+                    <div class="item">{{item.brand_name}}</div>
                     <div class="item">{{item.rack_info}}</div>
                     <div class="item">{{item.available_stock}}</div>
                     <div class="item">{{item.mrp}}</div>
@@ -153,4 +147,27 @@
             <span> Stock Audit</span>
         </button>
     </ng-template>
+</mat-menu>
+
+<mat-menu #beforeMenu="matMenu" [overlapTrigger]="false" xPosition="before">
+    <mat-option>
+        <button
+            mat-button
+            type="button"
+            tabindex="-1"
+            (click)="exportCompletedSalesToExcel()"
+        >
+            Stock Summary
+        </button>
+    </mat-option>
+    <mat-option>
+        <button
+            mat-button
+            type="button"
+            tabindex="-1"
+            (change)="checked($event)"
+        >
+            MRP Split
+        </button>
+    </mat-option>
 </mat-menu>

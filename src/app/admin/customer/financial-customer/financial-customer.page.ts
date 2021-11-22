@@ -29,12 +29,12 @@ import {
 import { ShowStatementComponent } from 'src/app/components/reports/show-statement/show-statement.component';
 
 @Component({
-    selector: 'app-financials-customer',
-    templateUrl: './financials-customer.page.html',
-    styleUrls: ['./financials-customer.page.scss'],
+    selector: 'app-financial-customer',
+    templateUrl: './financial-customer.page.html',
+    styleUrls: ['./financial-customer.page.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FinancialsCustomerPage implements OnInit {
+export class FinancialCustomerPage implements OnInit {
     center_id: any;
     customer_id: any;
 
@@ -52,7 +52,7 @@ export class FinancialsCustomerPage implements OnInit {
     customerslist: any;
     customersOriglist: any;
 
-    customerdata: any;
+    customer_data: any;
     totalOutstandingBalance = 0;
 
     customer_credit_amount = 0;
@@ -201,9 +201,9 @@ export class FinancialsCustomerPage implements OnInit {
         });
 
         this._route.data.subscribe((data) => {
-            this.customerdata = data.customerdata[0];
-            this.customer_id = this.customerdata.id;
-            this.customer_credit_amount = this.customerdata?.credit_amt;
+            this.customer_data = data.customer_data[0];
+            this.customer_id = this.customer_data?.id;
+            this.customer_credit_amount = this.customer_data?.credit_amt;
         });
 
         this._route.params.subscribe((params) => {
@@ -447,7 +447,7 @@ export class FinancialsCustomerPage implements OnInit {
         dialogConfig.width = '80%';
         dialogConfig.height = '80%';
         dialogConfig.data = {
-            customerdata: this.customerdata,
+            customer_data: this.customer_data,
             invoicedata: element,
         };
 

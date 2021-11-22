@@ -78,7 +78,7 @@ export class ProcessEnquiryPage implements OnInit {
     isLoading = false;
     isCLoading = false;
     customername: any;
-    customerdata: any;
+    customer_data: any;
 
     searchText = '';
 
@@ -148,11 +148,11 @@ export class ProcessEnquiryPage implements OnInit {
                     this.submitForm1.patchValue({
                         enquiry_id: params.enqid,
                         center_id: this.user_data.center_id,
-                        createdby: this.user_data.userid,
+                        created_by: this.user_data.user_id,
                     });
 
                     this.submitForm.patchValue({
-                        createdby: this.user_data.userid,
+                        created_by: this.user_data.user_id,
                     });
 
                     this.enqDetailsOrig = [];
@@ -176,7 +176,7 @@ export class ProcessEnquiryPage implements OnInit {
         this.submitForm = this._fb.group({
             customerctrl: [null, [Validators.required, RequireMatch]],
             enquiries: this._fb.array([]),
-            createdby: [],
+            created_by: [],
         });
 
         this.submitForm1 = this._fb1.group({
@@ -197,7 +197,7 @@ export class ProcessEnquiryPage implements OnInit {
                     Validators.pattern(/\-?\d*\.?\d{1,2}/),
                 ],
             ],
-            createdby: [],
+            created_by: [],
         });
 
         this.searchProducts();
@@ -215,7 +215,7 @@ export class ProcessEnquiryPage implements OnInit {
                     if (id != null && id.length >= 0) {
                         return this._commonApiService.getProductInfo({
                             center_id: this.user_data.center_id,
-                            search_texting: id,
+                            search_text: id,
                         });
                     } else {
                         return empty();
@@ -242,7 +242,7 @@ export class ProcessEnquiryPage implements OnInit {
                         this.enqDetailsOrig.customerDetails[0].customer_id
                     )
                     .subscribe((custData: any) => {
-                        this.customerdata = custData[0];
+                        this.customer_data = custData[0];
 
                         this.submitForm.patchValue({
                             customerctrl: custData[0],
@@ -340,7 +340,7 @@ export class ProcessEnquiryPage implements OnInit {
             switchMap((value) =>
                 this._commonApiService.getProductInfo1({
                     center_id: this.user_data.center_id,
-                    search_texting: value,
+                    search_text: value,
                 })
             )
         );
@@ -384,10 +384,10 @@ export class ProcessEnquiryPage implements OnInit {
         }
 
         if (from === 'tab') {
-            this.customerdata = event;
+            this.customer_data = event;
             this.iscustomerselected = true;
         } else {
-            this.customerdata = event.option.value;
+            this.customer_data = event.option.value;
 
             this.iscustomerselected = true;
         }
@@ -442,7 +442,7 @@ export class ProcessEnquiryPage implements OnInit {
 
         if (
             this.enqDetailsOrig.customerDetails[0].customer_id !==
-            this.customerdata.id
+            this.customer_data.id
         ) {
             this.updateCustomerDetailsinEnquiry();
         }
@@ -536,7 +536,7 @@ export class ProcessEnquiryPage implements OnInit {
 
         if (
             this.enqDetailsOrig.customerDetails[0].customer_id !==
-            this.customerdata.id
+            this.customer_data.id
         ) {
             this.updateCustomerDetailsinEnquiry();
         }
@@ -548,7 +548,7 @@ export class ProcessEnquiryPage implements OnInit {
 
         const formToMoveSale = {
             enquries: this.submitForm.value.enquiries,
-            userid: this.user_data.userid,
+            user_id: this.user_data.user_id,
         };
 
         this._commonApiService
@@ -568,7 +568,7 @@ export class ProcessEnquiryPage implements OnInit {
 
     updateCustomerDetailsinEnquiry() {
         this._commonApiService
-            .updateCustomerDetailsinEnquiry(this.customerdata.id, this.enqid)
+            .updateCustomerDetailsinEnquiry(this.customer_data.id, this.enqid)
             .subscribe((data: any) => {
                 if (data.body.result === 'success') {
                     // do nothing
@@ -828,7 +828,7 @@ export class ProcessEnquiryPage implements OnInit {
                     this._commonApiService
                         .getCustomerDetails(data.body.id)
                         .subscribe((custData: any) => {
-                            this.customerdata = custData[0];
+                            this.customer_data = custData[0];
 
                             this.customername = custData[0].name;
                             this.iscustomerselected = true;
@@ -861,7 +861,7 @@ export class ProcessEnquiryPage implements OnInit {
         dialogConfig.autoFocus = true;
         dialogConfig.width = '400px';
         dialogConfig.height = '100%';
-        dialogConfig.data = this.customerdata;
+        dialogConfig.data = this.customer_data;
         dialogConfig.position = { top: '0', right: '0' };
 
         const dialogRef = this._dialog.open(
@@ -999,7 +999,7 @@ export class ProcessEnquiryPage implements OnInit {
             product_code: this.submitForm1.value.productctrl.product_code,
             notes: this.submitForm1.value.tempdesc,
             status: 'O',
-            created_by: this.user_data.userid,
+            created_by: this.user_data.user_id,
         };
 
         this._commonApiService.addMoreEnquiry(form).subscribe((data: any) => {

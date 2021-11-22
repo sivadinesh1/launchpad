@@ -21,12 +21,14 @@
     <div class="form">
         <div class="actn-row">
             &nbsp;
-            <!-- <div class="itms-lbl">{{ accountarr.controls.length || 0 }} Rows</div> -->
+            <!-- <div class="itms-lbl">{{ account_arr.controls.length || 0 }} Rows</div> -->
             <div class="itms-lbl">&nbsp;</div>
         </div>
 
-        <div formArrayName="accountarr" class="list-block">
-            <div *ngForOf="let product of accountarr.controls; let idx = index">
+        <div formArrayName="account_arr" class="list-block">
+            <div
+                *ngForOf="let product of account_arr.controls; let idx = index"
+            >
                 <div>
                     <ng-container [formGroupName]="idx">
                         <div class="item-details">
@@ -36,7 +38,7 @@
                                     <input
                                         matInput
                                         type="number"
-                                        formControlName="receivedamount"
+                                        formControlName="received_amount"
                                         autocomplete="off"
                                     />
 
@@ -75,7 +77,8 @@
                                     <mat-select formControlName="pymtmode">
                                         <mat-option
                                             *ngFor="
-                                                let item of pymtmodes$ | async
+                                                let item of paymentModes$
+                                                    | async
                                             "
                                             [value]="item.id"
                                         >
@@ -265,15 +268,15 @@
                             font-size: 13px;
                         "
                     >
-                        {{ this.balancedue | currency: "INR" }}
+                        {{ this.balance_due | currency: "INR" }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div style="text-align: center" class="error">{{ errmsg }}</div>
-    <div class="submit" *ngIf="!iswarning">
+    <div style="text-align: center" class="error">{{ errorMsg }}</div>
+    <div class="submit" *ngIf="!is_warning">
         <button
             mat-raised-button
             color="primary"
@@ -285,7 +288,7 @@
             Add Receivables
         </button>
     </div>
-    <div class="submit" *ngIf="iswarning">
+    <div class="submit" *ngIf="is_warning">
         <div
             style="
                 font-size: 14px;

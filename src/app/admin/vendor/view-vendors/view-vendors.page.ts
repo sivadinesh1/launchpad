@@ -14,6 +14,7 @@ import { CommonApiService } from 'src/app/services/common-api.service';
 import { IonSearchbar } from '@ionic/angular';
 
 import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { filter, tap, catchError } from 'rxjs/operators';
 import { Vendor } from 'src/app/models/Vendor';
@@ -39,6 +40,10 @@ import { DeleteVendorDialogComponent } from 'src/app/components/delete-vendor-di
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewVendorsPage implements OnInit {
+    @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+
     center_id: any;
     resultList: any;
 
@@ -47,9 +52,7 @@ export class ViewVendorsPage implements OnInit {
 
     user_data$: Observable<User>;
 
-    ready = 0; // flag check - center_id (localstorage) & customerid (param)
-
-    @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
+    ready = 0; // flag check - center_id (local storage) & customer id (param)
 
     displayedColumns: string[] = [
         'name',
@@ -60,10 +63,6 @@ export class ViewVendorsPage implements OnInit {
     ];
     dataSource = new MatTableDataSource<Vendor>();
 
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-
-    @ViewChild('epltable', { static: false }) epltable: ElementRef;
     resultArray: any = [];
 
     constructor(
@@ -71,6 +70,7 @@ export class ViewVendorsPage implements OnInit {
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService,
         private _dialog: MatDialog,
+        private _snackBar: MatSnackBar,
         private _route: ActivatedRoute,
         private _router: Router
     ) {
@@ -162,24 +162,14 @@ export class ViewVendorsPage implements OnInit {
             )
             .subscribe((data: any) => {
                 if (data === 'success') {
-                    const dialogConfigSuccess = new MatDialogConfig();
-                    dialogConfigSuccess.disableClose = false;
-                    dialogConfigSuccess.autoFocus = true;
-                    dialogConfigSuccess.width = '25%';
-                    dialogConfigSuccess.height = '25%';
-                    dialogConfigSuccess.data = 'Vendor added successfully';
-
-                    const dialogRef = this._dialog.open(
-                        SuccessMessageDialogComponent,
-                        dialogConfigSuccess
-                    );
+                    this.openSnackBar('Vendor added successfully', '');
                 }
             });
     }
 
     applyFilter(filterValue: any) {
         filterValue = filterValue.target.value.trim(); // Remove whitespace
-        filterValue = filterValue.target.value.toLowerCase(); // Datasource defaults to lowercase matches
+        filterValue = filterValue.target.value.toLowerCase(); // Data source defaults to lowercase matches
 
         this.resultArray = filterValue;
 
@@ -214,17 +204,7 @@ export class ViewVendorsPage implements OnInit {
             )
             .subscribe((data: any) => {
                 if (data === 'success') {
-                    const dialogConfigSuccess = new MatDialogConfig();
-                    dialogConfigSuccess.disableClose = false;
-                    dialogConfigSuccess.autoFocus = true;
-                    dialogConfigSuccess.width = '25%';
-                    dialogConfigSuccess.height = '25%';
-                    dialogConfigSuccess.data = 'Vendor deleted successfully';
-
-                    const dialogRef = this._dialog.open(
-                        SuccessMessageDialogComponent,
-                        dialogConfigSuccess
-                    );
+                    this.openSnackBar('Vendor deleted successfully', '');
 
                     this.reloadVendors();
                 }
@@ -239,16 +219,21 @@ export class ViewVendorsPage implements OnInit {
         ]);
     }
 
+    openSnackBar(message: string, action: string) {
+        this._snackBar.open(message, action, {
+            duration: 2000,
+            panelClass: ['mat-toolbar', 'mat-primary'],
+        });
+    }
+
     exportToExcel() {
-        const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
-            this.epltable.nativeElement
-        );
-
-        ws['!cols'] = [];
-        ws['!cols'][2] = { hidden: true };
-
-        const wb: xlsx.WorkBook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-        xlsx.writeFile(wb, 'vendor_list.xlsx');
+        // const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
+        //     this.epltable.nativeElement
+        // );
+        // ws['!cols'] = [];
+        // ws['!cols'][2] = { hidden: true };
+        // const wb: xlsx.WorkBook = xlsx.utils.book_new();
+        // xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+        // xlsx.writeFile(wb, 'vendor_list.xlsx');
     }
 }

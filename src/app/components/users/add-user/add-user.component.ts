@@ -24,10 +24,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     styleUrls: ['./add-user.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddUserComponent implements OnInit {
+export class AddUserComponent {
     center_id: any;
     submitForm: any;
-    errmsg: any;
+    errorMsg: any;
 
     user_data$: Observable<User>;
     user_data: any;
@@ -75,10 +75,10 @@ export class AddUserComponent implements OnInit {
         }
     }
 
-    private _createForm(): void {
+    _createForm(): void {
         this.submitForm = this._formBuilder.group({
             center_id: [],
-            firstname: new FormControl('', Validators.required),
+            first_name: new FormControl('', Validators.required),
 
             username: new FormControl(
                 '',
@@ -101,34 +101,28 @@ export class AddUserComponent implements OnInit {
         });
     }
 
-    ngOnInit() {
-        // this.submitForm = this._formBuilder.group({
-        //   gender: new FormControl('M'),
-        // })
-    }
-
     onSubmit() {
-        this.errmsg = '';
+        this.errorMsg = '';
         if (!this.submitForm.valid) {
             return false;
         }
 
         this._commonApiService
-            .isUsernameExists(this.submitForm.value.phone)
+            .isUsernameExists(this.submitForm.value.username)
             .subscribe((data: any) => {
                 if (data.message === 'ALREADY_EXIST') {
-                    this.errmsg = 'User already exists!';
+                    this.errorMsg = 'User already exists!';
                 } else {
                     this._commonApiService
                         .addUser(this.submitForm.value)
-                        .subscribe((data: any) => {
-                            if (data.body.message === 'User Inserted') {
+                        .subscribe((data1: any) => {
+                            if (data1.body.message === 'User Inserted') {
                                 this.openSnackBar(
                                     'User successfully added',
                                     ''
                                 );
                                 this.dialogRef.close('success');
-                            } else if (data.body.message === 'DUP_USERNAME') {
+                            } else if (data1.body.message === 'DUP_USERNAME') {
                                 this.openSnackBar(
                                     'User Mobile # active in another Company',
                                     ''

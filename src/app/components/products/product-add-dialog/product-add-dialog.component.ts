@@ -79,6 +79,7 @@ export class ProductAddDialogComponent implements OnInit {
         private _authService: AuthenticationService
     ) {
         this.submitForm = this._formBuilder.group({
+            product_type: [],
             center_id: [],
             product_code: ['', Validators.required],
             product_description: ['', Validators.required],
@@ -111,8 +112,8 @@ export class ProductAddDialogComponent implements OnInit {
 
                 this._commonApiService
                     .getAllActiveBrands('A')
-                    .subscribe((data) => {
-                        this.brands = data;
+                    .subscribe((data1) => {
+                        this.brands = data1;
                     });
 
                 this._cdr.markForCheck();
@@ -154,10 +155,10 @@ export class ProductAddDialogComponent implements OnInit {
         if (this.submitForm.value.product_code.length > 0) {
             this._commonApiService
                 .isProdExists(this.submitForm.value.product_code)
-                .subscribe((data: any) => {
-                    if (data.length > 0 && data[0].id > 0) {
+                .subscribe((data2: any) => {
+                    if (data2.status === 'true') {
                         this.product_exists = true;
-                        this.temp_product_code = data[0].product_code;
+                        //    this.temp_product_code = data[0].product_code;
                         this.response_message = 'Duplicate Product Code';
                     } else {
                         this.addProduct();
@@ -172,8 +173,8 @@ export class ProductAddDialogComponent implements OnInit {
     addProduct() {
         const product = plainToClass(Product, this.submitForm.value);
 
-        this._commonApiService.addProduct(product).subscribe((data: any) => {
-            if (data.status === 201) {
+        this._commonApiService.addProduct(product).subscribe((data3: any) => {
+            if (data3.status === 201) {
                 this.dialogRef.close('success');
             }
         });
@@ -188,21 +189,4 @@ export class ProductAddDialogComponent implements OnInit {
     close() {
         this.dialogRef.close();
     }
-
-    // radioClickHandle() {
-    //     if (this.submitForm.value.product_type === 'product') {
-    //         this.submitForm.get('customerctrl').disable();
-    //     } else {
-    //         this.submitForm.value.invoiceno = '';
-    //         this.submitForm.patchValue({
-    //             invoiceno: '',
-    //             searchtype: 'all',
-    //         });
-
-    //         this.submitForm.get('customerctrl').enable();
-    //         this.submitForm.controls.invoiceno.setErrors(null);
-    //         this.submitForm.controls.invoiceno.markAsTouched();
-    //     }
-    //     this._cdr.detectChanges();
-    // }
 }

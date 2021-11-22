@@ -98,7 +98,7 @@ export class EnquiryViewDialogComponent implements OnInit {
     }
 
     // socialShare() {
-    //   // let url = `https://api.whatsapp.com/send?phone=${this.customerdata.mobile}&text=Dear Sir, Your order of ${this.saledetailsdata.length} items, Invoice value ${this.salemasterdata.net_total} is ready for shipping.}`;
+    //   // let url = `https://api.whatsapp.com/send?phone=${this.customer_data.mobile}&text=Dear Sir, Your order of ${this.saledetailsdata.length} items, Invoice value ${this.salemasterdata.net_total} is ready for shipping.}`;
     //   // window.open(url, "_blank");
     // }
 
