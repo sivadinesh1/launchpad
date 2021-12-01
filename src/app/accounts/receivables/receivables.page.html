@@ -1,0 +1,223 @@
+<ion-content>
+    <div class="receivables-head" style="padding: 1rem">
+        <div>Payments Received</div>
+
+        <div class="btn-grad-no-margin add-btn" (click)="addReceivables()">
+            <mat-icon class="add-icon">add</mat-icon>
+            <span class="add-icon-label">Add Payment</span>
+        </div>
+    </div>
+
+    <div class="receivables-search-bar">
+        <div>
+            <img
+                src="/assets/images/svg/refresh.svg"
+                width="22px"
+                height="22px"
+                style="cursor: pointer"
+                matTooltip="Reset Search Filter"
+                matTooltipClass="tooltip"
+                (click)="reset()"
+            />
+        </div>
+        <div
+            [matMenuTriggerFor]="menuN"
+            #menuTriggerN
+            style="flex: 0 0 70px; padding: 0 16px"
+        >
+            <img
+                src="/assets/images/svg/filter-results-button.svg"
+                width="22px"
+                height="22px"
+                style="cursor: pointer"
+                matTooltip="Advance Filter"
+                matTooltipClass="tooltip"
+            />
+        </div>
+
+        <app-search-customers
+            (customerOutput)="customerInfoPage($event)"
+            (customerSearchResetOutput)="customerSearchReset()"
+        ></app-search-customers>
+
+        <div class="receivables-download-btn">
+            <button
+                style="border-radius: 0px"
+                appPreventDoubleClick
+                class="cursor"
+                type="button"
+                [throttleTime]="500"
+                mat-flat-button
+                type="button"
+                color="primary"
+                tabindex="-1"
+                (click)="exportPaymentsReceived()"
+            >
+                Download
+            </button>
+        </div>
+
+        <div
+            class="receivables-filter_date_range"
+            *ngIf="!isCustomDateFilter"
+            [matMenuTriggerFor]="admin"
+        >
+            <div>
+                <div>
+                    {{this.from_date | date:'MMM dd'}} - {{this.to_date |
+                    date:'dd, yyyy'}}
+                </div>
+
+                <div style="font-weight: 600">
+                    Last {{this.searchByDays}} days
+                </div>
+            </div>
+            <div style="position: relative; top: 4px">
+                <img
+                    src="/assets/images/svg/down-arrow.svg"
+                    width="14px"
+                    height="14px"
+                />
+            </div>
+        </div>
+
+        <ng-container *ngIf="isCustomDateFilter">
+            <div class="receivables-filter_date_range">
+                <div>
+                    <mat-form-field style="margin-bottom: -1.25em">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input
+                                matStartDate
+                                matInput
+                                readonly
+                                placeholder="Start date"
+                                [ngModel]="this.from_date"
+                                (dateChange)="opsFromDateEvent($event)"
+                            />
+                            <input
+                                matEndDate
+                                matInput
+                                readonly
+                                placeholder="End date"
+                                [ngModel]="this.to_date"
+                                (dateChange)="opsToDateEvent($event)"
+                            />
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="picker"
+                        ></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+            </div>
+        </ng-container>
+        <div
+            style="padding: 0px 0px 0px 10px"
+            *ngIf="isCustomDateFilter"
+            (click)="customDateFilter()"
+        >
+            <img
+                class="cursor"
+                src="/assets/images/svg/close.svg"
+                width="20px"
+                height="20px"
+            />
+        </div>
+    </div>
+
+    <div class="receivables-table-wrap">
+        <div class="receivables-header receivables-header-style">
+            <div class="receivables-column-item">#</div>
+
+            <div class="receivables-column-item">
+                <span> Date </span>
+            </div>
+            <div class="receivables-column-item">Payment #</div>
+            <div class="receivables-column-item">Customer Name</div>
+            <div class="receivables-column-item">Invoice #</div>
+
+            <div class="receivables-column-item txt-left-align">Mode</div>
+            <div class="receivables-column-item txt-right-align">Amount</div>
+            <div class="receivables-column-item txt-right-align">
+                Unused Amt
+            </div>
+        </div>
+        <div
+            *ngIf="payment_receivables_array?.length === 0"
+            class="no-records-found"
+        >
+            No records found
+        </div>
+        <div
+            *ngFor="let item of payment_receivables_array; let idx = index"
+            class="receivables-listItem"
+        >
+            <div>{{idx + 1}}</div>
+            <div class="receivables-item">
+                {{item.payment_date | date:'d-M-yyyy' }}
+            </div>
+            <div class="receivables-item a-link" (click)="openDialog(item)">
+                {{item.payment_no }}
+            </div>
+            <div class="receivables-item">{{item.customer_name}}</div>
+            <div class="receivables-item">
+                <div *ngFor="let invoices of item.invoice_no?.split(',')">
+                    <span
+                        (click)="test(invoices.substring(0, invoices.indexOf('~')))"
+                    >
+                        {{ invoices.substring(invoices.indexOf('~')+1,
+                        invoices.length) }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="receivables-item" style="text-align: left">
+                {{item.payment_mode_name}}
+            </div>
+            <div class="receivables-item" style="text-align: right">
+                {{item.amount_payed.toLocaleString('en-IN', {style: 'currency',
+                currency: 'INR'})}}
+            </div>
+
+            <div class="receivables-item" style="text-align: right">
+                {{item.unused_amount.toLocaleString('en-IN', {style: 'currency',
+                currency: 'INR'})}}
+            </div>
+
+            <div>&nbsp;</div>
+        </div>
+    </div>
+
+    <mat-menu #admin="matMenu" [overlapTrigger]="false" class="myMenu">
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="dateFilter(14)"
+        >
+            <span>Last 14 days</span>
+        </div>
+
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="dateFilter(28)"
+        >
+            <span>Last 28 days</span>
+        </div>
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="customDateFilter()"
+        >
+            <span>Custom</span>
+        </div>
+    </mat-menu>
+
+    <mat-menu #menuN="matMenu">
+        <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
+            Search By Invoice #
+        </div>
+    </mat-menu>
+</ion-content>

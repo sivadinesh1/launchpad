@@ -1,0 +1,119 @@
+<div class="screen-header">
+    <div>Payment # {{ this.data.payment_no }}</div>
+
+    <div style="align-items: center; padding: 8px">
+        <span style="padding: 6px">
+            <mat-icon
+                #tooltip="matTooltip"
+                matTooltip="Edit/Modify Sale Details"
+                matTooltipClass="tooltip"
+                (mousedown)="tooltip.hide()"
+                [ngStyle]="{ color: '#6d78d2', cursor: 'pointer' }"
+                (click)="editPaymentReceivables()"
+                >edit
+            </mat-icon>
+        </span>
+        <span style="padding: 6px">
+            <mat-icon
+                #tooltip="matTooltip"
+                matTooltip="Edit/Modify Sale Details"
+                matTooltipClass="tooltip"
+                (mousedown)="tooltip.hide()"
+                [ngStyle]="{ color: '#6d78d2', cursor: 'pointer' }"
+                >print
+            </mat-icon>
+        </span>
+        <span style="padding: 6px">
+            <img
+                class="cursor"
+                src="/assets/images/svg/close.svg"
+                (click)="close()"
+                width="16px"
+                height="16px"
+            />
+        </span>
+    </div>
+</div>
+<div class="wrap">
+    <div style="font-size: 1.1rem; font-weight: 600px; color: black">
+        {{ this.data.center_name }}
+    </div>
+    <div style="font-size: 1rem; color: black">
+        {{ this.data.center_address_1 }}
+    </div>
+    <div style="font-size: 1rem; color: black">
+        {{ this.data.center_address_2 }}
+    </div>
+    <div style="font-size: 1rem; color: black">
+        {{ this.data.center_district }}
+    </div>
+</div>
+
+<div class="payment-receipt">PAYMENT RECEIPT</div>
+<div class="format-receipt">
+    <div>
+        <div class="payment-info">
+            <div>Payment Date:</div>
+            <div>
+                {{ this.data.payment_date | date: "dd-MMM-yyyy" }}
+            </div>
+        </div>
+
+        <div class="payment-info">
+            <div>Payment Mode:</div>
+            <div>
+                {{ this.data.payment_mode_name }}
+            </div>
+        </div>
+    </div>
+
+    <div style="align-self: center">
+        <div class="amount">
+            {{ this.data.amount_payed | currency: "INR" }}
+        </div>
+    </div>
+</div>
+
+<div style="padding: 1rem 0 0 1rem; font-size: 1rem; color: blue">Bill To</div>
+<div style="padding: 1rem 0 0 1rem">
+    <div>
+        {{ this.data?.customer_name }}
+    </div>
+    <div>
+        {{ this.data?.customer_address_1 }}
+    </div>
+
+    <div>
+        {{ this.data?.customer_district }}
+    </div>
+</div>
+
+<div style="padding: 1rem">Payment for</div>
+<div class="payment-summary-heading">
+    <div>Invoice #</div>
+    <div>Invoice Date</div>
+    <div style="text-align: right">Invoice Amount</div>
+    <div style="text-align: right">Paid Amount</div>
+</div>
+<div
+    class="payment-summary-details"
+    *ngFor="let item of payment_received_details"
+>
+    <div>
+        <span
+            (click)="openDialog(item.sale_id)"
+            style="color: blue; cursor: pointer"
+        >
+            {{ item.sale_invoice_no }}
+        </span>
+    </div>
+    <div>
+        {{ item.sale_invoice_date | date: "dd-MMM-yyyy" }}
+    </div>
+    <div style="text-align: right">
+        {{ item.invoice_amount | currency: "INR" }}
+    </div>
+    <div style="text-align: right">
+        {{ item.paid_amount | currency: "INR" }}
+    </div>
+</div>

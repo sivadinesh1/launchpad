@@ -36,6 +36,7 @@ import { Brand } from 'src/app/models/Brand';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BrandDiscountsComponent implements OnInit {
+    @ViewChild('myForm', { static: true }) myForm: NgForm;
     center_id: any;
     vendor_id: any;
     resultList: any;
@@ -50,18 +51,18 @@ export class BrandDiscountsComponent implements OnInit {
 
     user_data$: Observable<User>;
     user_data: any;
-    ready = 0; // flag check - center_id (localstorage) & customerid (param)
+
     selectedDiscType = 'NET'; // default
     selectedEffDiscStDate: any;
 
     objForm = [];
-    @ViewChild('myForm', { static: true }) myForm: NgForm;
+
     initialValues: any;
     customerName: string;
 
     elements: any;
-    responsemsg: any;
-    responsemsg1: any;
+    response_msg: any;
+    response_msg_1: any;
 
     pageLength: any;
     isTableHasData = true;
@@ -69,7 +70,7 @@ export class BrandDiscountsComponent implements OnInit {
     selectedRowIndex: any;
 
     mode = 'add';
-    brandname = '';
+    brand_name = '';
 
     dataRecords: any;
 
@@ -95,36 +96,36 @@ export class BrandDiscountsComponent implements OnInit {
             customer_id: [this.elements.id, Validators.required],
             center_id: [this.center_id, Validators.required],
             brand_id: [this.elements.brand_id, Validators.required],
-            disctype: ['NET', Validators.required],
+            disc_type: ['NET', Validators.required],
             effDiscStDate: [
                 new Date(
                     new NullToQuotePipe()
-                        .transform(this.elements.startdate)
+                        .transform(this.elements.start_date)
                         .replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
                 ),
             ],
-            gstzero: [this.elements.gstzero, Validators.required],
-            gstfive: [this.elements.gstfive, Validators.required],
-            gsttwelve: [this.elements.gsttwelve, Validators.required],
-            gsteighteen: [this.elements.gsteighteen, Validators.required],
-            gsttwentyeight: [this.elements.gsttwentyeight, Validators.required],
+            gst_zero: [this.elements.gst_zero, Validators.required],
+            gst_five: [this.elements.gst_five, Validators.required],
+            gst_twelve: [this.elements.gst_twelve, Validators.required],
+            gst_eighteen: [this.elements.gst_eighteen, Validators.required],
+            gst_twenty_eight: [this.elements.gst_twenty_eight, Validators.required],
         });
 
         this.submitForm1 = this._fb.group({
             customer_id: [this.elements.id, Validators.required],
             center_id: [this.center_id, Validators.required],
             brand_id: [null, Validators.required],
-            disctype: ['NET', Validators.required],
+            disc_type: ['NET', Validators.required],
             effDiscStDate: [new Date(), Validators.required],
-            gstzero: [null, Validators.required],
-            gstfive: [null, Validators.required],
-            gsttwelve: [null, Validators.required],
-            gsteighteen: [null, Validators.required],
-            gsttwentyeight: [null, Validators.required],
+            gst_zero: [null, Validators.required],
+            gst_five: [null, Validators.required],
+            gst_twelve: [null, Validators.required],
+            gst_eighteen: [null, Validators.required],
+            gst_twenty_eight: [null, Validators.required],
         });
 
-        this.responsemsg = '';
-        this.responsemsg1 = '';
+        this.response_msg = '';
+        this.response_msg_1 = '';
 
         this._cdr.markForCheck();
     }
@@ -164,39 +165,39 @@ export class BrandDiscountsComponent implements OnInit {
 
     internalEdit(elements) {
         this.submitForm1.reset();
-        this.responsemsg = '';
+        this.response_msg = '';
 
         this.submitForm1.patchValue({
             customer_id: elements.id,
             center_id: this.center_id,
             brand_id: elements.brand_id,
-            disctype: 'NET',
+            disc_type: 'NET',
         });
 
-        // this.submitForm.controls['invoiceno'].setErrors(null);
+        // this.submitForm.controls['invoice_no'].setErrors(null);
         this.submitForm1.setErrors(null);
 
         this.mode = 'update';
-        this.brandname = elements.brand_name;
+        this.brand_name = elements.brand_name;
 
         this.submitForm1.patchValue({
             brand_id: elements.brand_id,
             effDiscStDate: new Date(
                 new NullToQuotePipe()
-                    .transform(elements.startdate)
+                    .transform(elements.start_date)
                     .replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3')
             ),
-            gstzero: elements.gstzero,
-            gstfive: elements.gstfive,
-            gsttwelve: elements.gsttwelve,
-            gsteighteen: elements.gsteighteen,
-            gsttwentyeight: elements.gsttwentyeight,
+            gst_zero: elements.gst_zero,
+            gst_five: elements.gst_five,
+            gst_twelve: elements.gst_twelve,
+            gst_eighteen: elements.gst_eighteen,
+            gst_twenty_eight: elements.gst_twenty_eight,
         });
         this._cdr.markForCheck();
     }
 
     // discount date selection
-    handleDicountDateChange(event) {
+    handleDiscountDateChange(event) {
         this.submitForm1.patchValue({
             effDiscStDate: event.target.value,
         });
@@ -205,36 +206,37 @@ export class BrandDiscountsComponent implements OnInit {
 
     submit(action) {
         if (!this.submitForm1.valid) {
-            this.responsemsg = 'All Mandatory Fields';
+            this.response_msg = 'All Mandatory Fields';
             return false;
         } else {
-            this.responsemsg = '';
+            this.response_msg = '';
         }
 
         if (action === 'add') {
             // update discount table, currently only one set of values.
-            // FTRIMPL - date based discounts
+            // Future Implementation - date based discounts
             this._commonApiService
                 .addDiscountsByBrand(this.submitForm1.value)
                 .subscribe((data: any) => {
+
                     // if successfully update
-                    if (data.body.result === 'success') {
+                    if (data.body === 'success') {
                         this._commonApiService
                             .getBrandsMissingDiscounts('A', this.elements.id)
-                            .subscribe((data: any) => {
-                                this.brandsList = data;
+                            .subscribe((data1: any) => {
+                                this.brandsList = data1;
                                 this._cdr.markForCheck();
                             });
-                        this.openSnackBar(
-                            'Discounts Updated, Successfully',
-                            ''
-                        );
+                        // this.openSnackBar(
+                        //     'Discounts Updated, Successfully',
+                        //     ''
+                        // );
                         this.dialogRef.close('success');
                     }
                 });
         } else if (action === 'update') {
             // update discount table, currently only one set of values.
-            // FTRIMPL - date based discounts
+            // Future Implementation - date based discounts
 
             this._commonApiService
                 .updateDefaultCustomerDiscount(this.submitForm1.value)
@@ -242,10 +244,10 @@ export class BrandDiscountsComponent implements OnInit {
                     // if successfully update
 
                     if (data.body === 'true') {
-                        this.openSnackBar(
-                            'Brand Discount Updated, Successfully',
-                            ''
-                        );
+                        // this.openSnackBar(
+                        //     'Brand Discount Updated, Successfully',
+                        //     ''
+                        // );
                         this.dialogRef.close('success');
                     }
                 });
@@ -262,10 +264,10 @@ export class BrandDiscountsComponent implements OnInit {
 
     defaultEdit() {
         if (!this.submitForm.valid) {
-            this.responsemsg1 = 'All Mandatory Fields';
+            this.response_msg_1 = 'All Mandatory Fields';
             return false;
         } else {
-            this.responsemsg = '';
+            this.response_msg = '';
         }
 
         // update discount table, currently only one set of values.

@@ -1,0 +1,35 @@
+.payment-info {
+    display: grid;
+    grid-template-columns: 200px 400px;
+}
+
+.payment-details,
+.payment-details-head {
+    display: grid;
+    grid-template-columns: 120px 140px 140px 140px 180px;
+}
+
+.payment-details-head {
+    background-color: azure;
+    color: #222;
+    padding: 0.6rem 0.4rem;
+    font-weight: 600;
+}
+
+.payment-details {
+    color: #222;
+    padding: 0.6rem 0.4rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--lp-line-divider);
+}
+
+.wrap {
+    margin: 1rem;
+    padding: 1rem;
+}
+
+.info {
+    padding: 1rem 0 0 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+}

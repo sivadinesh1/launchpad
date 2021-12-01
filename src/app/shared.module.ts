@@ -120,7 +120,7 @@ import { AddUserComponent } from './components/users/add-user/add-user.component
 import { EnquiryPrintComponent } from './components/enquiry-print/enquiry-print.component';
 import { ShowStatementComponent } from './components/reports/show-statement/show-statement.component';
 import { VendorPaymentDialogComponent } from './components/vendors/vendor-payment-dialog/vendor-payment-dialog.component';
-import { AccountsPayablesComponent } from './components/accounts/accounts-payables/accounts-payables.component';
+import { AccountsPayableComponent } from './components/accounts/accounts-payable/accounts-payable.component';
 import { ShowVendorStatementComponent } from './components/reports/show-vendor-statement/show-vendor-statement.component';
 import { SelectOnFocusDirective } from './util/directives/select-focus.directive';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -131,6 +131,7 @@ import { SearchInvoiceNoComponent } from './components/search-invoice-no/search-
 import { SearchCustomersComponent } from './components/search-customers/search-customers.component';
 import { AscendingComponent } from './components/util/ascending/ascending.component';
 import { DescendingComponent } from './components/util/descending/descending.component';
+import { PrintReceivablesComponent } from './components/receivables/print-receivables/print-receivables.component';
 
 const components = [
     NullToQuotePipe,
@@ -161,6 +162,7 @@ const components = [
 
     CustomerAddDialogComponent,
     CustomerEditDialogComponent,
+    PrintReceivablesComponent,
     CustomerPaymentDialogComponent,
     VendorPaymentDialogComponent,
     SalesInvoiceDialogComponent,
@@ -178,7 +180,7 @@ const components = [
     DeleteEnquiryDialogComponent,
 
     AccountsReceivablesComponent,
-    AccountsPayablesComponent,
+    AccountsPayableComponent,
 
     ProductAddDialogComponent,
     ProductEditDialogComponent,
@@ -307,9 +309,10 @@ const matcomponents = [
         DeleteEnquiryDialogComponent,
         CustomerAddDialogComponent,
         CustomerEditDialogComponent,
+        PrintReceivablesComponent,
         CustomerAddDialogComponent,
         AccountsReceivablesComponent,
-        AccountsPayablesComponent,
+        AccountsPayableComponent,
         SuccessMessageDialogComponent,
         DeleteBrandDialogComponent,
         DeleteVendorDialogComponent,
@@ -331,6 +334,7 @@ const matcomponents = [
         InventoryReportsDialogComponent,
         ShowStatementComponent,
         ShowVendorStatementComponent,
+        PrintReceivablesComponent,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

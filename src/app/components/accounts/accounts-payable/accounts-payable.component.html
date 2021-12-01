@@ -147,23 +147,23 @@
                                                 matInput
                                                 readonly
                                                 [max]="maxDate"
-                                                [matDatepicker]="paymentdate"
-                                                formControlName="receiveddate"
+                                                [matDatepicker]="payment_date"
+                                                formControlName="received_date"
                                                 required
-                                                (focus)="paymentdate.open()"
+                                                (focus)="payment_date.open()"
                                                 autocomplete="off"
                                             />
                                             <mat-datepicker-toggle
                                                 matSuffix
-                                                [for]="paymentdate"
+                                                [for]="payment_date"
                                             ></mat-datepicker-toggle>
                                             <mat-datepicker
-                                                #paymentdate
+                                                #payment_date
                                             ></mat-datepicker>
                                             <mat-error
                                                 *ngIf="
                                                     product.controls[
-                                                        'receiveddate'
+                                                        'received_date'
                                                     ].hasError('required')
                                                 "
                                             >
@@ -176,7 +176,7 @@
                                 <div class="vendor">
                                     <mat-form-field class="example-full-width">
                                         <mat-label>Payment Mode</mat-label>
-                                        <mat-select formControlName="pymtmode">
+                                        <mat-select formControlName="payment_mode">
                                             <mat-option
                                                 *ngFor="
                                                     let item of paymentModes$
@@ -184,7 +184,7 @@
                                                 "
                                                 [value]="item.id"
                                             >
-                                                {{ item.pymt_mode_name }}
+                                                {{ item.payment_mode_name }}
                                             </mat-option>
                                         </mat-select>
                                         <mat-error
@@ -208,7 +208,7 @@
                                                 *ngFor="let item of bankList"
                                                 [value]="item"
                                             >
-                                                {{ item.bankname }}
+                                                {{ item.bank_name }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
@@ -221,7 +221,7 @@
                                             matInput
                                             autofocus="*ngIf=idx === 1"
                                             type="text"
-                                            formControlName="bankref"
+                                            formControlName="bank_ref"
                                             autocomplete="off"
                                         />
                                     </mat-form-field>
@@ -232,7 +232,7 @@
                                         <input
                                             matInput
                                             type="text"
-                                            formControlName="pymtref"
+                                            formControlName="payment_ref"
                                             autocomplete="off"
                                         />
                                     </mat-form-field>
@@ -244,7 +244,7 @@
             </div>
 
             <div
-                *ngIf="isvendorselected"
+                *ngIf="is_vendor_selected"
                 style="font-weight: 500; color: #b97676"
             >
                 UNPAID INVOICES ({{ vendorUnpaidInvoices?.length }})
@@ -256,7 +256,7 @@
                     background-color: #f1f1f1;
                     padding: 6px;
                 "
-                *ngIf="isvendorselected"
+                *ngIf="is_vendor_selected"
             >
                 <div class="theader">Invoice Date</div>
                 <div class="theader">Invoice #</div>
@@ -265,7 +265,7 @@
                 <div class="theader m-curr-field">Paid Amount</div>
                 <div class="theader m-curr-field">Balance Amount</div>
             </div>
-            <div *ngIf="isvendorselected">
+            <div *ngIf="is_vendor_selected">
                 <div
                     *ngFor="let item of origVendorUnpaidInvoices"
                     style="
@@ -311,7 +311,7 @@
                     background-color: #fbfbfb;
                     position: relative;
                 "
-                *ngIf="isvendorselected"
+                *ngIf="is_vendor_selected"
             >
                 <div>
                     <div
@@ -346,7 +346,7 @@
                                 font-size: 13px;
                             "
                         >
-                            {{ this.invoiceamount }}
+                            {{ this.invoice_amount }}
                         </div>
 
                         <div
@@ -369,7 +369,7 @@
                                 font-size: 13px;
                             "
                         >
-                            (-) {{ this.paidamount }}
+                            (-) {{ this.paid_amount }}
                         </div>
 
                         <div
@@ -442,7 +442,7 @@
                 <div style="text-align: center" class="error">
                     {{ errorMsg }}
                 </div>
-                <div class="submit" *ngIf="isvendorselected && !is_warning">
+                <div class="submit" *ngIf="is_vendor_selected && !is_warning">
                     <button
                         mat-raised-button
                         color="primary"

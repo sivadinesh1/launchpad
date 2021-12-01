@@ -1,0 +1,48 @@
+<ion-content>
+    <div class="wrap">
+        <div class="payment-info">
+            <div class="info">Customer Name</div>
+            <div class="info">{{payment_master?.customer_name}}</div>
+
+            <div class="info">Amount Received</div>
+            <div class="info">{{payment_master?.amount_payed}}</div>
+
+            <div class="info">Payment Date</div>
+            <div class="info">{{payment_master?.payment_date}}</div>
+
+            <div class="info">Payment #</div>
+            <div class="info">{{payment_master?.payment_no}}</div>
+
+            <div class="info">Payment Mode</div>
+            <div class="info">{{payment_master?.payment_mode_name}}</div>
+        </div>
+
+        <div
+            style="
+                padding: 2rem 0 0.9rem 0.4rem;
+                font-size: 1rem;
+                font-weight: 600;
+                color: #222;
+            "
+        >
+            Unpaid Invoices
+        </div>
+        <div class="payment-details-head">
+            <div>Invoice Date</div>
+            <div>Invoice #</div>
+            <div style="text-align: right">Invoice Amount</div>
+            <div style="text-align: right">Amount Due</div>
+            <div style="text-align: right">Payment</div>
+        </div>
+
+        <div class="payment-details" *ngFor="let item of payment_details">
+            <div>{{item.sale_invoice_date | date: 'dd/MMM/yyyy' }}</div>
+            <div>{{item.sale_invoice_no}}</div>
+            <div style="text-align: right">
+                {{item.invoice_amount | currency: "INR"}}
+            </div>
+            <div style="text-align: right">due amt</div>
+            <div style="text-align: right">{{item.paid_amount}}</div>
+        </div>
+    </div>
+</ion-content>

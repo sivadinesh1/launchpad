@@ -276,6 +276,30 @@ const routes: Routes = [
                         './admin/center/edit-center/edit-center.module'
                     ).then((m) => m.EditCenterPageModule),
             },
+
+            // receivables
+            {
+                path: 'receivables',
+                loadChildren: () =>
+                    import('./accounts/receivables/receivables.module').then(
+                        (m) => m.ReceivablesPageModule
+                    ),
+            },
+            {
+                path: 'edit-receivables/:payment_id',
+                loadChildren: () =>
+                    import(
+                        './accounts/receivables/edit-receivables/edit-receivables.module'
+                    ).then((m) => m.EditReceivablesPageModule),
+            },
+            {
+                path: 'add-receivables',
+                loadChildren: () =>
+                    import(
+                        './accounts/receivables/add-receivables/add-receivables.module'
+                    ).then((m) => m.AddReceivablesPageModule),
+            },
+
             {
                 path: 'reports',
                 children: [
@@ -308,6 +332,13 @@ const routes: Routes = [
                             import(
                                 './reports/item-wise-sale-reports/item-wise-sale-reports.module'
                             ).then((m) => m.ItemWiseSaleReportsPageModule),
+                    },
+                    {
+                        path: 'customer-balance-reports',
+                        loadChildren: () =>
+                            import(
+                                './reports/customer-balance-reports/customer-balance-reports.module'
+                            ).then((m) => m.CustomerBalanceReportsPageModule),
                     },
                 ],
             },
@@ -407,6 +438,13 @@ const routes: Routes = [
         loadChildren: () =>
             import('./superadmin/superadmin.module').then(
                 (m) => m.SuperadminPageModule
+            ),
+    },
+    {
+        path: 'receivables',
+        loadChildren: () =>
+            import('./accounts/receivables/receivables.module').then(
+                (m) => m.ReceivablesPageModule
             ),
     },
 ];

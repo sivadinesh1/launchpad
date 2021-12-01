@@ -272,8 +272,9 @@ input[type="number"] {
 }
 
 .mat-option.mat-active {
-    color: #fff !important;
-    background-color: rgba(0, 0, 0, 0.414);
+    // color: #fff !important;
+    //  background-color: rgba(0, 0, 0, 0.414);
+    background-color: rgb(242, 240, 255);
     border-left: 4px solid #193be2;
 }
 
@@ -436,7 +437,7 @@ input[type="number"] {
 
 .mat-option:hover:not(.mat-option-disabled),
 .mat-option:focus:not(.mat-option-disabled) {
-    background-color: #9a9999c4;
+    background-color: rgb(242, 240, 255);
 }
 
 .mat-menu-panel.myMenu {
@@ -496,4 +497,9 @@ input[type="number"] {
     align-items: center;
     border-top: 1px solid var(--lp-line-divider);
     border-bottom: 1px solid var(--lp-line-divider);
+}
+
+.a-link {
+    color: blue !important;
+    cursor: pointer;
 }

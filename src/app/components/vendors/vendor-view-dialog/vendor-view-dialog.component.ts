@@ -12,9 +12,9 @@ import { CommonApiService } from '../../../services/common-api.service';
 import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
 import {
-    GSTN_REGEX,
+    GST_N_REGEX,
     country,
-    PINCODE_REGEX,
+    PIN_CODE_REGEX,
     EMAIL_REGEX,
 } from 'src/app/util/helper/patterns';
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
@@ -66,9 +66,9 @@ export class VendorViewDialogComponent implements OnInit {
 
             district: [this.vendor.district],
             state_id: [this.vendor.state_id, Validators.required],
-            pin: [this.vendor.pin, [patternValidator(PINCODE_REGEX)]],
+            pin: [this.vendor.pin, [patternValidator(PIN_CODE_REGEX)]],
 
-            gst: [this.vendor.gst, [patternValidator(GSTN_REGEX)]],
+            gst: [this.vendor.gst, [patternValidator(GST_N_REGEX)]],
             phone: [
                 this.vendor.phone,
                 Validators.compose([

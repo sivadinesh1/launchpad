@@ -354,17 +354,13 @@ export class ViewCustomerPage {
                     )
                     .subscribe((data2: any) => {
                         if (data2 === 'success') {
-                            const dialogConfigSuccess = new MatDialogConfig();
-                            dialogConfigSuccess.disableClose = false;
-                            dialogConfigSuccess.autoFocus = true;
-                            dialogConfigSuccess.width = '25%';
-                            dialogConfigSuccess.height = '25%';
-                            dialogConfigSuccess.data = 'Discounts successfully';
 
-                            this._dialog.open(
-                                SuccessMessageDialogComponent,
-                                dialogConfigSuccess
+                            this._loadingService.openSnackBar(
+                                'Discounts added successfully',
+                                ''
                             );
+
+
                         }
                     });
             });

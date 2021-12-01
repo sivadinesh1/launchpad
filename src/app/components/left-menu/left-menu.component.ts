@@ -90,6 +90,11 @@ export class LeftMenuComponent {
             icon: '/assets/images/svg/bullet-list.svg',
         },
         {
+            name: 'Receivables',
+            link: '/home/receivables',
+            icon: '/assets/images/svg/sales.svg',
+        },
+        {
             name: 'Purchase',
             link: '/home/search-purchase-order',
             icon: '/assets/images/svg/purchase.svg',

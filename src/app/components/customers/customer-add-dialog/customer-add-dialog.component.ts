@@ -11,9 +11,9 @@ import { CommonApiService } from '../../../services/common-api.service';
 import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
 import {
-    GSTN_REGEX,
+    GST_N_REGEX,
     country,
-    PINCODE_REGEX,
+    PIN_CODE_REGEX,
     EMAIL_REGEX,
 } from 'src/app/util/helper/patterns';
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
@@ -34,10 +34,10 @@ export class CustomerAddDialogComponent implements OnInit {
     resultList: any;
     submitForm: any;
 
-    statesdata: any;
+    states_data: any;
     isLinear = true;
 
-    cexists: any;
+    c_exists: any;
     executed: boolean;
 
     discountType = ['NET'];
@@ -67,8 +67,8 @@ export class CustomerAddDialogComponent implements OnInit {
 
             district: [''],
             state_id: ['', Validators.required],
-            pin: ['', [patternValidator(PINCODE_REGEX)]],
-            gst: ['', [patternValidator(GSTN_REGEX)]],
+            pin: ['', [patternValidator(PIN_CODE_REGEX)]],
+            gst: ['', [patternValidator(GST_N_REGEX)]],
             phone: [
                 '',
                 Validators.compose([
@@ -96,16 +96,16 @@ export class CustomerAddDialogComponent implements OnInit {
             ],
             email: ['', [patternValidator(EMAIL_REGEX)]],
 
-            disctype: ['NET', Validators.required],
-            gstzero: [0, [Validators.max(100), Validators.min(0)]],
-            gstfive: [0, [Validators.max(100), Validators.min(0)]],
-            gsttwelve: [0, [Validators.max(100), Validators.min(0)]],
-            gsteighteen: [0, [Validators.max(100), Validators.min(0)]],
-            gsttwentyeight: [0, [Validators.max(100), Validators.min(0)]],
+            disc_type: ['NET', Validators.required],
+            gst_zero: [0, [Validators.max(100), Validators.min(0)]],
+            gst_five: [0, [Validators.max(100), Validators.min(0)]],
+            gst_twelve: [0, [Validators.max(100), Validators.min(0)]],
+            gst_eighteen: [0, [Validators.max(100), Validators.min(0)]],
+            gst_twenty_eight: [0, [Validators.max(100), Validators.min(0)]],
         });
 
         this._commonApiService.getStates().subscribe((data: any) => {
-            this.statesdata = data;
+            this.states_data = data;
         });
     }
 
@@ -132,10 +132,10 @@ export class CustomerAddDialogComponent implements OnInit {
                     if (data.result.length > 0) {
                         if (data.result[0].id > 0) {
                             this.responseMsg = 'Customer Already Exists!';
-                            this.cexists = true;
+                            this.c_exists = true;
                         }
                     } else {
-                        this.cexists = false;
+                        this.c_exists = false;
                     }
 
                     this._cdr.markForCheck();
@@ -149,7 +149,7 @@ export class CustomerAddDialogComponent implements OnInit {
             return false;
         }
 
-        if (this.cexists) {
+        if (this.c_exists) {
             this.responseMsg = 'Customer Already Exists!';
             this._cdr.markForCheck();
             return false;
@@ -194,12 +194,12 @@ export class CustomerAddDialogComponent implements OnInit {
     clear() {
         this.submitForm.reset();
         this.submitForm.patchValue({
-            disctype: 'NET',
-            gstzero: 0,
-            gstfive: 0,
-            gsttwelve: 0,
-            gsteighteen: 0,
-            gsttwentyeight: 0,
+            disc_type: 'NET',
+            gst_zero: 0,
+            gst_five: 0,
+            gst_twelve: 0,
+            gst_eighteen: 0,
+            gst_twenty_eight: 0,
         });
     }
 
@@ -213,10 +213,10 @@ export class CustomerAddDialogComponent implements OnInit {
     prepopulate() {
         if (!this.executed) {
             this.submitForm.patchValue({
-                gstfive: this.submitForm.value.gstzero,
-                gsttwelve: this.submitForm.value.gstzero,
-                gsteighteen: this.submitForm.value.gstzero,
-                gsttwentyeight: this.submitForm.value.gstzero,
+                gst_five: this.submitForm.value.gst_zero,
+                gst_twelve: this.submitForm.value.gst_zero,
+                gst_eighteen: this.submitForm.value.gst_zero,
+                gst_twenty_eight: this.submitForm.value.gst_zero,
             });
         }
 

@@ -12,8 +12,8 @@ import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
 
 import {
-    GSTN_REGEX,
-    PINCODE_REGEX,
+    GST_N_REGEX,
+    PIN_CODE_REGEX,
     EMAIL_REGEX,
 } from '../../../util/helper/patterns';
 import { country } from '../../../util/helper/patterns';
@@ -61,9 +61,9 @@ export class VendorAddDialogComponent implements OnInit {
 
             district: [''],
             state_id: ['', Validators.required],
-            pin: ['', [patternValidator(PINCODE_REGEX)]],
+            pin: ['', [patternValidator(PIN_CODE_REGEX)]],
 
-            gst: ['', [patternValidator(GSTN_REGEX)]],
+            gst: ['', [patternValidator(GST_N_REGEX)]],
             phone: [
                 '',
                 Validators.compose([

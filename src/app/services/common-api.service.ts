@@ -133,9 +133,9 @@ export class CommonApiService {
         );
     }
 
-    getAllActivePymtModes(status): Observable<any> {
+    getAllActivePaymentModes(status): Observable<any> {
         return this.httpClient.get<Brand[]>(
-            `${this.restApiUrl}/v1/api/all-pymt-modes/${status}`
+            `${this.restApiUrl}/v1/api/all-payment-modes/${status}`
         );
     }
 
@@ -668,7 +668,7 @@ export class CommonApiService {
         );
     }
 
-    addVendorPymtReceived(submitForm) {
+    addVendorPaymentReceived(submitForm) {
         return this.httpClient.post<any>(
             this.restApiUrl +
                 '/v1/api/purchaseaccounts/add-vendor-payment-received',
@@ -677,7 +677,7 @@ export class CommonApiService {
         );
     }
 
-    addBulkPymtReceived(submitForm) {
+    addBulkPaymentReceived(submitForm) {
         return this.httpClient.post<any>(
             this.restApiUrl + '/v1/api/accounts/add-bulk-payment-received',
             submitForm,
@@ -685,7 +685,7 @@ export class CommonApiService {
         );
     }
 
-    addBulkVendorPymtReceived(submitForm) {
+    addBulkVendorPaymentReceived(submitForm) {
         return this.httpClient.post<any>(
             this.restApiUrl +
                 '/v1/api/purchaseaccounts/add-bulk-vendor-payment-received',
@@ -1131,6 +1131,43 @@ export class CommonApiService {
     getDuplicateInvoiceNoCheked(submitForm) {
         return this.httpClient.post(
             `${this.restApiUrl}/v1/api/sale/duplicate-invoiceno-check`,
+            submitForm,
+            { observe: 'response' }
+        );
+    }
+
+    getPaymentsReceived(submitForm) {
+        return this.httpClient.post(
+            `${this.restApiUrl}/v1/api/receivables/get-payments-received`,
+            submitForm,
+            { observe: 'response' }
+        );
+    }
+
+    getPaymentsReceivedDetails(submitForm) {
+        return this.httpClient.post(
+            `${this.restApiUrl}/v1/api/receivables/get-payments-received-details`,
+            submitForm,
+            { observe: 'response' }
+        );
+    }
+
+    getEditPaymentsReceivedData(payment_id) {
+        return this.httpClient.get(
+            `${this.restApiUrl}/v1/api/receivables/get-edit-payments-receivables-data/${payment_id}`
+        );
+    }
+
+    getCustomerUnpaidInvoices(customer_id) {
+        return this.httpClient.get(
+            `${this.restApiUrl}/v1/api/receivables/get-pending-invoices/${customer_id}`
+        );
+    }
+
+    // customer balances reports
+    getCustomerBalanceReports(submitForm) {
+        return this.httpClient.post(
+            `${this.restApiUrl}/v1/api/reports/get-customer-balance-reports`,
             submitForm,
             { observe: 'response' }
         );

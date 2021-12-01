@@ -18,9 +18,9 @@ import {
 } from '@angular/forms';
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
 import {
-    GSTN_REGEX,
+    GST_N_REGEX,
     country,
-    PINCODE_REGEX,
+    PIN_CODE_REGEX,
     EMAIL_REGEX,
 } from 'src/app/util/helper/patterns';
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
@@ -90,7 +90,7 @@ export class CustomerEditShippingAddressComponent implements OnInit {
 
             district: ['', [Validators.required]],
             state_id: ['', Validators.required],
-            pin: ['', [Validators.required, patternValidator(PINCODE_REGEX)]],
+            pin: ['', [Validators.required, patternValidator(PIN_CODE_REGEX)]],
             def_address: [false],
         });
 

@@ -94,7 +94,7 @@ export class DefaultDiscountsComponent implements OnInit {
     init() {}
 
     // discount date selection
-    handleDicountDateChange(event) {
+    handleDiscountDateChange(event) {
         this.submitForm.patchValue({
             effDiscStDate: event.target.value,
         });

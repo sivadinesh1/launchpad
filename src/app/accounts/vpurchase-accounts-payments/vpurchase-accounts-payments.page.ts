@@ -27,7 +27,7 @@ import {
 import { filter, tap, map, startWith } from 'rxjs/operators';
 import { Vendor } from 'src/app/models/Vendor';
 import { VendorPaymentDialogComponent } from 'src/app/components/vendors/vendor-payment-dialog/vendor-payment-dialog.component';
-import { AccountsPayablesComponent } from 'src/app/components/accounts/accounts-payables/accounts-payables.component';
+import { AccountsPayableComponent } from 'src/app/components/accounts/accounts-payable/accounts-payable.component';
 import * as xlsx from 'xlsx';
 import * as moment from 'moment';
 
@@ -430,7 +430,7 @@ export class VpurchaseAccountsPaymentsPage implements OnInit {
         dialogConfig.data = { invoicesdata: this.invoicesdata };
 
         const dialogRef = this._dialog.open(
-            AccountsPayablesComponent,
+            AccountsPayableComponent,
             dialogConfig
         );
 

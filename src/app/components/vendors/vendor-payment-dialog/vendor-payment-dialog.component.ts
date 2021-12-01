@@ -4,6 +4,7 @@ import {
     ChangeDetectorRef,
     ChangeDetectionStrategy,
     Inject,
+    AfterViewInit,
 } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 
@@ -30,7 +31,7 @@ import { Vendor } from 'src/app/models/Vendor';
     styleUrls: ['./vendor-payment-dialog.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VendorPaymentDialogComponent implements OnInit {
+export class VendorPaymentDialogComponent implements OnInit, AfterViewInit {
     vendorAdded = false;
     submitForm: FormGroup;
     vendorData: any;
@@ -60,21 +61,21 @@ export class VendorPaymentDialogComponent implements OnInit {
         private dialogRef: MatDialogRef<VendorPaymentDialogComponent>,
         private _authService: AuthenticationService,
         @Inject(MAT_DIALOG_DATA) data: any,
-        private _modalcontroller: ModalController,
+
         private _router: Router,
         private _route: ActivatedRoute,
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService
     ) {
-        this.vendor = data.vendordata;
+        this.vendor = data.vendor_data;
         this.invoice = data.invoice_data;
 
         this.user_data$ = this._authService.currentUser;
 
         this.user_data$
-            .pipe(filter((data) => data !== null))
-            .subscribe((data: any) => {
-                this.user_data = data;
+            .pipe(filter((data1) => data !== null))
+            .subscribe((data1: any) => {
+                this.user_data = data1;
                 this.init();
                 this._cdr.markForCheck();
             });
@@ -87,7 +88,7 @@ export class VendorPaymentDialogComponent implements OnInit {
     }
 
     async init() {
-        this.paymentModes$ = this._commonApiService.getAllActivePymtModes('A');
+        this.paymentModes$ = this._commonApiService.getAllActivePaymentModes('A');
     }
 
     ngOnInit() {
@@ -104,7 +105,7 @@ export class VendorPaymentDialogComponent implements OnInit {
         // adds first record
         this.addAccount();
 
-        // subscribes to values chages of "account_arr"
+        // subscribes to values changes of "account_arr"
         this.submitForm.get('account_arr').valueChanges.subscribe((values) => {
             this.checkTotalSum();
             this._cdr.detectChanges();
@@ -126,10 +127,10 @@ export class VendorPaymentDialogComponent implements OnInit {
                     Validators.min(0),
                 ],
             ],
-            receiveddate: ['', Validators.required],
-            pymtmode: ['', Validators.required],
-            bankref: [''],
-            pymtref: [''],
+            received_date: ['', Validators.required],
+            payment_mode: ['', Validators.required],
+            bank_ref: [''],
+            payment_ref: [''],
         });
     }
 
@@ -154,7 +155,7 @@ export class VendorPaymentDialogComponent implements OnInit {
         const ctrl = this.submitForm.controls.account_arr as FormArray;
         // iterate each object in the form array
         ctrl.controls.forEach((x) => {
-            // get the itemmt value and need to parse the input to number
+            // get the item amt value and need to parse the input to number
 
             const parsed = parseFloat(
                 x.get('received_amount').value === '' ||
@@ -167,7 +168,7 @@ export class VendorPaymentDialogComponent implements OnInit {
             this.summed += parsed;
             this.getBalanceDue();
 
-            // current set of paymnets + already paid amount > actual invocie amount then error
+            // current set of payments + already paid amount > actual invoice amount then error
             if (
                 this.summed + this.invoice.paid_amount >
                 this.invoice.invoice_amt
@@ -206,8 +207,8 @@ export class VendorPaymentDialogComponent implements OnInit {
         if (this.checkTotalSum()) {
             const form = {
                 center_id: this.user_data.center_id,
-                bankref: this.submitForm.value.account_arr[0].bankref,
-                vendorid: this.submitForm.value.vendor.id,
+                bank_ref: this.submitForm.value.account_arr[0].bank_ref,
+                vendor_id: this.submitForm.value.vendor.id,
             };
             this._commonApiService
                 .getVendorPaymentBankRef(form)
@@ -237,7 +238,7 @@ export class VendorPaymentDialogComponent implements OnInit {
     finalSubmit() {
         if (this.checkTotalSum()) {
             this._commonApiService
-                .addVendorPymtReceived(this.submitForm.value)
+                .addVendorPaymentReceived(this.submitForm.value)
                 .subscribe((data: any) => {
                     if (data.body === 'success') {
                         this.submitForm.reset();

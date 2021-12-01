@@ -62,16 +62,16 @@ export class AccountsReceivablesComponent implements OnInit {
     customer_lis: Customer[];
     tabIndex = 0;
 
-    iscustomerselected = false;
-    invoicesdata: any;
+    is_customer_selected = false;
+    invoices_data: any;
 
     customerUnpaidInvoices: any;
     origCustomerUnpaidInvoices: any;
-    invoiceamount = 0;
-    paidamount = 0;
+    invoice_amount = 0;
+    paid_amount = 0;
     distributeBalance = 0;
 
-    invoicesplitArr = [];
+    invoice_split_Arr = [];
     advanceCreditUsed = 0;
 
     bankList: any;
@@ -84,21 +84,21 @@ export class AccountsReceivablesComponent implements OnInit {
         private dialogRef: MatDialogRef<AccountsReceivablesComponent>,
         private _authService: AuthenticationService,
         @Inject(MAT_DIALOG_DATA) data: any,
-        private _modalcontroller: ModalController,
+
         private _router: Router,
         private _route: ActivatedRoute,
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService,
         private _loadingService: LoadingService
     ) {
-        this.invoicesdata = data.invoicesdata;
+        this.invoices_data = data.invoicesdata;
 
         this.user_data$ = this._authService.currentUser;
 
         this.user_data$
-            .pipe(filter((data) => data !== null))
-            .subscribe((data: any) => {
-                this.user_data = data;
+            .pipe(filter((data1) => data !== null))
+            .subscribe((data1: any) => {
+                this.user_data = data1;
 
                 this.init();
                 this._cdr.markForCheck();
@@ -123,20 +123,21 @@ export class AccountsReceivablesComponent implements OnInit {
                         startWith(''),
                         map((customer) =>
                             customer
-                                ? this.filtercustomer(customer)
+                                ? this.filterCustomer(customer)
                                 : this.customer_lis.slice()
                         )
                     );
             });
 
         // fetch all payment mode list
-        this.paymentModes$ = this._commonApiService.getAllActivePymtModes('A');
+        this.paymentModes$ =
+            this._commonApiService.getAllActivePaymentModes('A');
 
         this.reloadBankDetails();
     }
 
     // filter customers as we type
-    filtercustomer(value: any) {
+    filterCustomer(value: any) {
         if (typeof value == 'object') {
             return this.customer_lis.filter((customer) =>
                 customer.name.toLowerCase().match(value.name.toLowerCase())
@@ -154,11 +155,11 @@ export class AccountsReceivablesComponent implements OnInit {
             customer: ['', Validators.required],
             center_id: [this.user_data.center_id, Validators.required],
             account_arr: this._fb.array([]),
-            invoicesplit: [],
+            invoice_split: [],
             balance_due: [],
-            appliedamount: [],
-            creditsused: 'NO',
-            creditusedamount: 0,
+            applied_amount: [],
+            credits_used: 'NO',
+            credit_used_amount: 0,
             bank_id: '',
             bank_name: '',
             created_by: this.user_data.user_id,
@@ -191,7 +192,7 @@ export class AccountsReceivablesComponent implements OnInit {
             });
         } else {
             this.submitForm.patchValue({
-                bank_name: event.value.bankname,
+                bank_name: event.value.bank_name,
                 bank_id: event.value.id,
             });
         }
@@ -209,11 +210,11 @@ export class AccountsReceivablesComponent implements OnInit {
             checkbox: [false],
 
             received_amount: ['', [Validators.required, Validators.min(1)]],
-            appliedamount: [''],
-            receiveddate: ['', Validators.required],
-            pymtmode: ['', Validators.required],
-            bankref: [''],
-            pymtref: [''],
+            applied_amount: [''],
+            received_date: ['', Validators.required],
+            payment_mode: ['', Validators.required],
+            bank_ref: [''],
+            payment_ref: [''],
         });
     }
 
@@ -223,34 +224,30 @@ export class AccountsReceivablesComponent implements OnInit {
 
     // adds one line item for payment
     addAccount() {
-        const control = <FormArray>this.submitForm.controls.account_arr;
+        const control = this.submitForm.get('account_arr') as FormArray;
         control.push(this.initAccount());
 
         this.getBalanceDue();
         this._cdr.markForCheck();
     }
 
-    ngAfterViewInit() {
-        // this.checkTotalSum();
-    }
-
     // method to calculate total payed now and balance due
     checkTotalSum() {
         this.summed = 0;
-        this.invoicesplitArr = [];
+        this.invoice_split_Arr = [];
 
         // deep  copy to new value
         this.origCustomerUnpaidInvoices = JSON.parse(
             JSON.stringify(this.customerUnpaidInvoices)
         );
 
-        const ctrl = <FormArray>this.submitForm.controls.account_arr;
+        const ctrl = this.submitForm.get('account_arr') as FormArray;
 
         let init = 0;
 
         // iterate each object in the form array
         ctrl.controls.forEach((x) => {
-            // get the itemmt value and need to parse the input to number
+            // get the item amount value and need to parse the input to number
 
             const parsed = parseFloat(
                 x.get('received_amount').value === '' ||
@@ -267,7 +264,7 @@ export class AccountsReceivablesComponent implements OnInit {
         });
 
         // after iterating all the line items (in this case, there will be only one row) distribute the amount paid (customer credit if any) to all invoices
-        if (init == ctrl.controls.length) {
+        if (init === ctrl.controls.length) {
             this.distributeBalance = +(
                 this.summed + this.customer.credit_amt
             ).toFixed(2);
@@ -284,7 +281,7 @@ export class AccountsReceivablesComponent implements OnInit {
                             this.distributeBalance - e.bal_amount
                         ).toFixed(2);
                         e.bal_amount = 0;
-                        this.invoicesplitArr.push({
+                        this.invoice_split_Arr.push({
                             id: e.sale_id,
                             applied_amount: e.paid_amount,
                         });
@@ -298,7 +295,7 @@ export class AccountsReceivablesComponent implements OnInit {
                             e.bal_amount - this.distributeBalance
                         ).toFixed(2);
                         this.distributeBalance = 0;
-                        this.invoicesplitArr.push({
+                        this.invoice_split_Arr.push({
                             id: e.sale_id,
                             applied_amount: e.paid_amount,
                         });
@@ -314,8 +311,8 @@ export class AccountsReceivablesComponent implements OnInit {
 
     getBalanceDue() {
         this.balance_due = (
-            +this.invoiceamount -
-            (+this.paidamount + this.customer.credit_amt + this.summed)
+            +this.invoice_amount -
+            (+this.paid_amount + this.customer.credit_amt + this.summed)
         ).toFixed(2);
 
         if (+this.balance_due < 0) {
@@ -332,8 +329,8 @@ export class AccountsReceivablesComponent implements OnInit {
         if (this.checkTotalSum()) {
             const form = {
                 center_id: this.user_data.center_id,
-                bankref: this.submitForm.value.account_arr[0].bankref,
-                customerid: this.customer.id,
+                bank_ref: this.submitForm.value.account_arr[0].bank_ref,
+                customer_id: this.customer.id,
             };
 
             this._commonApiService
@@ -368,20 +365,20 @@ export class AccountsReceivablesComponent implements OnInit {
     finalSubmit() {
         if (this.checkTotalSum()) {
             this.submitForm.patchValue({
-                invoicesplit: this.invoicesplitArr,
+                invoice_split: this.invoice_split_Arr,
                 customer: this.customer,
                 balance_due: this.balance_due,
             });
 
             if (this.customer.credit_amt > 0) {
                 this.submitForm.patchValue({
-                    creditsused: 'YES',
-                    creditusedamount: this.customer.credit_amt,
+                    credits_used: 'YES',
+                    credit_used_amount: this.customer.credit_amt,
                 });
             }
 
             this._commonApiService
-                .addBulkPymtReceived(this.submitForm.value)
+                .addBulkPaymentReceived(this.submitForm.value)
                 .subscribe((data: any) => {
                     if (data.body === 'success') {
                         this.submitForm.reset();
@@ -403,11 +400,12 @@ export class AccountsReceivablesComponent implements OnInit {
     }
 
     getPosts(event) {
-        const control = <FormArray>this.submitForm.controls.account_arr;
+        const control = this.submitForm.get('account_arr') as FormArray;
+
         control.removeAt(0);
 
         this.submitForm.patchValue({
-            customerid: event.option.value.id,
+            customer_id: event.option.value.id,
             customer: event.option.value.name,
         });
 
@@ -415,27 +413,23 @@ export class AccountsReceivablesComponent implements OnInit {
 
         // get all unpaid invoices for a customer
 
-        this.customerUnpaidInvoices = this.invoicesdata
+        this.customerUnpaidInvoices = this.invoices_data
             .filter((e) => e.customer_id === event.option.value.id)
-            .filter((e1) => e1.payment_status != 'PAID');
+            .filter((e1) => e1.payment_status !== 'PAID');
 
         this.origCustomerUnpaidInvoices = JSON.parse(
             JSON.stringify(this.customerUnpaidInvoices)
         );
 
-        this.invoiceamount = this.customerUnpaidInvoices
-            .reduce(function (acc, curr) {
-                return acc + curr.invoice_amt;
-            }, 0)
+        this.invoice_amount = this.customerUnpaidInvoices
+            .reduce((acc, curr) => acc + curr.invoice_amt, 0)
             .toFixed(2);
 
-        this.paidamount = this.customerUnpaidInvoices
-            .reduce(function (acc, curr) {
-                return acc + curr.paid_amount;
-            }, 0)
+        this.paid_amount = this.customerUnpaidInvoices
+            .reduce((acc, curr) => acc + curr.paid_amount, 0)
             .toFixed(2);
 
-        this.iscustomerselected = true;
+        this.is_customer_selected = true;
 
         this.addAccount();
 
@@ -444,11 +438,11 @@ export class AccountsReceivablesComponent implements OnInit {
 
     clearInput() {
         this.submitForm.patchValue({
-            customerid: 'all',
+            customer_id: 'all',
             customer: '',
         });
         this.initAccount();
-        this.iscustomerselected = false;
+        this.is_customer_selected = false;
         this._cdr.markForCheck();
     }
 }

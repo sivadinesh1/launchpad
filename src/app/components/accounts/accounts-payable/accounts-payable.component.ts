@@ -26,13 +26,13 @@ import { Vendor } from 'src/app/models/Vendor';
 import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
-    selector: 'app-accounts-payables',
-    templateUrl: './accounts-payables.component.html',
-    styleUrls: ['./accounts-payables.component.scss'],
+    selector: 'app-accounts-payable',
+    templateUrl: './accounts-payable.component.html',
+    styleUrls: ['./accounts-payable.component.scss'],
 
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountsPayablesComponent implements OnInit {
+export class AccountsPayableComponent implements OnInit {
     vendorAdded = false;
     submitForm: FormGroup;
 
@@ -57,16 +57,16 @@ export class AccountsPayablesComponent implements OnInit {
     vendor_lis: Vendor[];
     tabIndex = 0;
 
-    isvendorselected = false;
-    invoicesdata: any;
+    is_vendor_selected = false;
+    invoices_data: any;
 
     vendorUnpaidInvoices: any;
     origVendorUnpaidInvoices: any;
-    invoiceamount = 0;
-    paidamount = 0;
+    invoice_amount = 0;
+    paid_amount = 0;
     distributeBalance = 0;
 
-    invoicesplitArr = [];
+    invoice_split_arr = [];
     advanceCreditUsed = 0;
     bankList: any;
     is_warning = false;
@@ -75,10 +75,10 @@ export class AccountsPayablesComponent implements OnInit {
         private _fb: FormBuilder,
         public dialog: MatDialog,
         private currencyPipe: CurrencyPipe,
-        private dialogRef: MatDialogRef<AccountsPayablesComponent>,
+        private dialogRef: MatDialogRef<AccountsPayableComponent>,
         private _authService: AuthenticationService,
         @Inject(MAT_DIALOG_DATA) data: any,
-        private _modalcontroller: ModalController,
+
         private _router: Router,
         private _route: ActivatedRoute,
         private _cdr: ChangeDetectorRef,
@@ -86,14 +86,14 @@ export class AccountsPayablesComponent implements OnInit {
         private _loadingService: LoadingService,
         public alertController: AlertController
     ) {
-        this.invoicesdata = data.invoicesdata;
+        this.invoices_data = data.invoices_data;
 
         this.user_data$ = this._authService.currentUser;
 
         this.user_data$
-            .pipe(filter((data) => data !== null))
-            .subscribe((data: any) => {
-                this.user_data = data;
+            .pipe(filter((data1) => data !== null))
+            .subscribe((data1: any) => {
+                this.user_data = data1;
                 this.init();
                 this._cdr.markForCheck();
             });
@@ -115,18 +115,18 @@ export class AccountsPayablesComponent implements OnInit {
                     startWith(''),
                     map((vendor) =>
                         vendor
-                            ? this.filtervendor(vendor)
+                            ? this.filterVendor(vendor)
                             : this.vendor_lis.slice()
                     )
                 );
         });
 
         // fetch all payment mode list
-        this.paymentModes$ = this._commonApiService.getAllActivePymtModes('A');
+        this.paymentModes$ = this._commonApiService.getAllActivePaymentModes('A');
     }
 
     // filter vendors as we type
-    filtervendor(value: any) {
+    filterVendor(value: any) {
         if (typeof value == 'object') {
             return this.vendor_lis.filter(
                 (vendor) =>
@@ -150,11 +150,11 @@ export class AccountsPayablesComponent implements OnInit {
             vendor: ['', Validators.required],
             center_id: [this.user_data.center_id, Validators.required],
             account_arr: this._fb.array([]),
-            invoicesplit: [],
+            invoice_split: [],
             balance_due: [],
-            appliedamount: [],
-            creditsused: 'NO',
-            creditusedamount: 0,
+            applied_amount: [],
+            credits_used: 'NO',
+            credit_used_amount: 0,
             bank_id: '',
             bank_name: '',
             created_by: this.user_data.user_id,
@@ -185,11 +185,11 @@ export class AccountsPayablesComponent implements OnInit {
             checkbox: [false],
 
             received_amount: ['', [Validators.required, Validators.min(1)]],
-            appliedamount: [''],
-            receiveddate: ['', Validators.required],
-            pymtmode: ['', Validators.required],
-            bankref: [''],
-            pymtref: [''],
+            applied_amount: [''],
+            received_date: ['', Validators.required],
+            payment_mode: ['', Validators.required],
+            bank_ref: [''],
+            payment_ref: [''],
         });
     }
 
@@ -199,16 +199,15 @@ export class AccountsPayablesComponent implements OnInit {
 
     // adds one line item for payment
     addAccount() {
-        const control = <FormArray>this.submitForm.controls.account_arr;
+
+        const control = this.submitForm.get('account_arr') as FormArray;
         control.push(this.initAccount());
 
         this.getBalanceDue();
         this._cdr.markForCheck();
     }
 
-    ngAfterViewInit() {
-        // this.checkTotalSum();
-    }
+
 
     reloadBankDetails() {
         this._commonApiService.getBanks().subscribe((data: any) => {
@@ -221,20 +220,20 @@ export class AccountsPayablesComponent implements OnInit {
     // method to calculate total payed now and balance due
     checkTotalSum() {
         this.summed = 0;
-        this.invoicesplitArr = [];
+        this.invoice_split_arr = [];
 
         // deep  copy to new value
         this.origVendorUnpaidInvoices = JSON.parse(
             JSON.stringify(this.vendorUnpaidInvoices)
         );
 
-        const ctrl = <FormArray>this.submitForm.controls.account_arr;
+        const ctrl = this.submitForm.get('account_arr') as FormArray;
 
         let init = 0;
 
         // iterate each object in the form array
         ctrl.controls.forEach((x) => {
-            // get the itemmt value and need to parse the input to number
+            // get the item amt value and need to parse the input to number
 
             const parsed = parseFloat(
                 x.get('received_amount').value === '' ||
@@ -251,7 +250,7 @@ export class AccountsPayablesComponent implements OnInit {
         });
 
         // after iterating all the line items (in this case, there will be only one row) distribute the amount paid (vendor credit if any) to all invoices
-        if (init == ctrl.controls.length) {
+        if (init === ctrl.controls.length) {
             this.distributeBalance = +(
                 this.summed + this.vendor.credit_amt
             ).toFixed(2);
@@ -268,7 +267,7 @@ export class AccountsPayablesComponent implements OnInit {
                             this.distributeBalance - e.bal_amount
                         ).toFixed(2);
                         e.bal_amount = 0;
-                        this.invoicesplitArr.push({
+                        this.invoice_split_arr.push({
                             id: e.purchase_id,
                             applied_amount: e.paid_amount,
                         });
@@ -282,7 +281,7 @@ export class AccountsPayablesComponent implements OnInit {
                             e.bal_amount - this.distributeBalance
                         ).toFixed(2);
                         this.distributeBalance = 0;
-                        this.invoicesplitArr.push({
+                        this.invoice_split_arr.push({
                             id: e.purchase_id,
                             applied_amount: e.paid_amount,
                         });
@@ -298,8 +297,8 @@ export class AccountsPayablesComponent implements OnInit {
 
     getBalanceDue() {
         this.balance_due = (
-            +this.invoiceamount -
-            (+this.paidamount + this.vendor.credit_amt + this.summed)
+            +this.invoice_amount -
+            (+this.paid_amount + this.vendor.credit_amt + this.summed)
         ).toFixed(2);
 
         if (+this.balance_due < 0) {
@@ -316,8 +315,8 @@ export class AccountsPayablesComponent implements OnInit {
         if (this.checkTotalSum()) {
             const form = {
                 center_id: this.user_data.center_id,
-                bankref: this.submitForm.value.account_arr[0].bankref,
-                vendorid: this.vendor.id,
+                bank_ref: this.submitForm.value.account_arr[0].bank_ref,
+                vendor_id: this.vendor.id,
             };
 
             this._commonApiService
@@ -352,21 +351,21 @@ export class AccountsPayablesComponent implements OnInit {
     finalSubmit() {
         if (this.checkTotalSum()) {
             this.submitForm.patchValue({
-                invoicesplit: this.invoicesplitArr,
+                invoice_split: this.invoice_split_arr,
                 vendor: this.vendor,
                 balance_due: this.balance_due,
             });
 
             if (this.vendor.credit_amt > 0) {
                 this.submitForm.patchValue({
-                    creditsused: 'YES',
-                    creditusedamount: this.vendor.credit_amt,
+                    credits_used: 'YES',
+                    credit_used_amount: this.vendor.credit_amt,
                 });
             }
         }
 
         this._commonApiService
-            .addBulkVendorPymtReceived(this.submitForm.value)
+            .addBulkVendorPaymentReceived(this.submitForm.value)
             .subscribe((data: any) => {
                 if (data.body === 'success') {
                     this.submitForm.reset();
@@ -387,11 +386,12 @@ export class AccountsPayablesComponent implements OnInit {
     }
 
     getPosts(event) {
-        const control = <FormArray>this.submitForm.controls.account_arr;
+
+        const control = this.submitForm.get('account_arr') as FormArray;
         control.removeAt(0);
 
         this.submitForm.patchValue({
-            vendorid: event.option.value.id,
+            vendor_id: event.option.value.id,
             vendor: event.option.value.name,
         });
 
@@ -399,27 +399,23 @@ export class AccountsPayablesComponent implements OnInit {
 
         // get all unpaid invoices for a vendor
 
-        this.vendorUnpaidInvoices = this.invoicesdata
+        this.vendorUnpaidInvoices = this.invoices_data
             .filter((e) => e.vendor_id === event.option.value.id)
-            .filter((e1) => e1.payment_status != 'PAID');
+            .filter((e1) => e1.payment_status !== 'PAID');
 
         this.origVendorUnpaidInvoices = JSON.parse(
             JSON.stringify(this.vendorUnpaidInvoices)
         );
 
-        this.invoiceamount = this.vendorUnpaidInvoices
-            .reduce(function (acc, curr) {
-                return acc + curr.invoice_amt;
-            }, 0)
+        this.invoice_amount = this.vendorUnpaidInvoices
+            .reduce( (acc, curr) => acc + curr.bal_amount, 0)
             .toFixed(2);
 
-        this.paidamount = this.vendorUnpaidInvoices
-            .reduce(function (acc, curr) {
-                return acc + curr.paid_amount;
-            }, 0)
+        this.paid_amount = this.vendorUnpaidInvoices
+            .reduce( (acc, curr) => acc + curr.paid_amount, 0)
             .toFixed(2);
 
-        this.isvendorselected = true;
+        this.is_vendor_selected = true;
 
         this.addAccount();
 
@@ -428,7 +424,7 @@ export class AccountsPayablesComponent implements OnInit {
 
     clearInput() {
         this.submitForm.patchValue({
-            vendorid: 'all',
+            vendor_id: 'all',
             vendor: '',
         });
         this._cdr.markForCheck();
@@ -442,7 +438,7 @@ export class AccountsPayablesComponent implements OnInit {
             });
         } else {
             this.submitForm.patchValue({
-                bank_name: event.value.bankname,
+                bank_name: event.value.bank_name,
                 bank_id: event.value.id,
             });
         }

@@ -33,6 +33,10 @@ export class ReportsHomePage implements OnInit {
         this._router.navigateByUrl('/home/enquiry/back-order');
     }
 
+    customerBalance() {
+        this._router.navigate(['home/reports/customer-balance-reports']);
+    }
+
     async exportCompletedPurchaseToExcel() {
         const fileName = `Full_Stock_List_${moment().format(
             'DD-MM-YYYY'

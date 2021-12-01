@@ -89,7 +89,7 @@ export class CustomerPaymentDialogComponent implements OnInit, AfterViewInit {
     }
 
     async init() {
-        this.paymentModes$ = this._commonApiService.getAllActivePymtModes('A');
+        this.paymentModes$ = this._commonApiService.getAllActivePaymentModes('A');
     }
 
     ngOnInit() {

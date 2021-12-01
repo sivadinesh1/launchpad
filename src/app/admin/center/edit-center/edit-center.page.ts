@@ -18,9 +18,9 @@ import {
 import { patternValidator } from 'src/app/util/validators/pattern-validator';
 import {
     EMAIL_REGEX,
-    GSTN_REGEX,
+    GST_N_REGEX,
     country,
-    PINCODE_REGEX,
+    PIN_CODE_REGEX,
 } from 'src/app/util/helper/patterns';
 import { PhoneValidator } from 'src/app/util/validators/phone.validator';
 import { Observable } from 'rxjs';
@@ -88,10 +88,10 @@ export class EditCenterPage implements OnInit {
 
                     district: [''],
                     state_id: ['', Validators.required],
-                    pin: ['', [patternValidator(PINCODE_REGEX)]],
+                    pin: ['', [patternValidator(PIN_CODE_REGEX)]],
                 }),
                 this._formBuilder.group({
-                    gst: ['', [patternValidator(GSTN_REGEX)]],
+                    gst: ['', [patternValidator(GST_N_REGEX)]],
                     phone: [
                         '',
                         Validators.compose([

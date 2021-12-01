@@ -20,41 +20,41 @@
 		</div>
 		<div class="listItemRow" style="padding-top: 16px">
 			<div>&nbsp;</div>
-			<div>{{ elements?.startdate }}</div>
+			<div>{{ elements?.start_date | date: 'dd/MMM/yyyy'}}</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>GST (0%)</mat-label>
-					<input type="number" matInput formControlName="gstzero" required />
+					<input type="number" matInput formControlName="gst_zero" required />
 
-					<mat-error *ngIf="submitForm.get('gstzero').hasError('required')"> Mandatory</mat-error>
+					<mat-error *ngIf="submitForm.get('gst_zero').hasError('required')"> Mandatory</mat-error>
 				</mat-form-field>
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>GST (5%)</mat-label>
-					<input type="number" matInput formControlName="gstfive" required />
-					<mat-error *ngIf="submitForm.controls['gstfive'].hasError('required')"> Mandatory </mat-error>
+					<input type="number" matInput formControlName="gst_five" required />
+					<mat-error *ngIf="submitForm.controls['gst_five'].hasError('required')"> Mandatory </mat-error>
 				</mat-form-field>
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>GST (12%)</mat-label>
-					<input type="number" matInput formControlName="gsttwelve" required />
-					<mat-error *ngIf="submitForm.get('gsttwelve').hasError('required') && submitForm.get('gsttwelve').touched"> Mandatory </mat-error>
+					<input type="number" matInput formControlName="gst_twelve" required />
+					<mat-error *ngIf="submitForm.get('gst_twelve').hasError('required') && submitForm.get('gst_twelve').touched"> Mandatory </mat-error>
 				</mat-form-field>
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>GST (18%)</mat-label>
-					<input type="number" matInput formControlName="gsteighteen" required />
-					<mat-error *ngIf="submitForm.get('gsteighteen').hasError('required') && submitForm.get('gsteighteen').touched"> Mandatory </mat-error>
+					<input type="number" matInput formControlName="gst_eighteen" required />
+					<mat-error *ngIf="submitForm.get('gst_eighteen').hasError('required') && submitForm.get('gst_eighteen').touched"> Mandatory </mat-error>
 				</mat-form-field>
 			</div>
 			<div>
 				<mat-form-field class="mat-width-ext">
 					<mat-label>GST (28%)</mat-label>
-					<input type="number" matInput formControlName="gsttwentyeight" required />
-					<mat-error *ngIf="submitForm.get('gsttwentyeight').hasError('required') && submitForm.get('gsttwentyeight').touched"> Mandatory </mat-error>
+					<input type="number" matInput formControlName="gst_twenty_eight" required />
+					<mat-error *ngIf="submitForm.get('gst_twenty_eight').hasError('required') && submitForm.get('gst_twenty_eight').touched"> Mandatory </mat-error>
 				</mat-form-field>
 			</div>
 			<div>
@@ -77,12 +77,12 @@
 	</div>
 	<div class="listItemRow" *ngFor="let element of dataRecords">
 		<div>{{ element.brand_name }}</div>
-		<div>{{ element.startdate }}</div>
-		<div>{{ element.gstzero }}</div>
-		<div>{{ element.gstfive }}</div>
-		<div>{{ element.gsttwelve }}</div>
-		<div>{{ element.gsteighteen }}</div>
-		<div>{{ element.gsttwentyeight }}</div>
+		<div>{{ element.start_date | date: 'dd/MMM/yyyy'}}</div>
+		<div>{{ element.gst_zero }}</div>
+		<div>{{ element.gst_five }}</div>
+		<div>{{ element.gst_twelve }}</div>
+		<div>{{ element.gst_eighteen }}</div>
+		<div>{{ element.gst_twenty_eight }}</div>
 		<div>
 			<mat-icon style="cursor: pointer" (click)="internalEdit(element)">edit</mat-icon>
 		</div>
@@ -100,7 +100,7 @@
 					<mat-select formControlName="brand_id" required>
 						<mat-option>Select a brand</mat-option>
 						<mat-option *ngFor="let item of brandsList" [value]="item.id">
-							{{ item.name }}
+							{{ item.brand_name }}
 						</mat-option>
 					</mat-select>
 					<mat-error *ngIf="submitForm1.get('brand_id').hasError('required')"> This field is <strong>required</strong> </mat-error>
@@ -110,7 +110,7 @@
 			<span *ngIf="mode === 'update'">
 				<div> Brand: </div>
 				<div>
-					{{ brandname }}
+					{{ brand_name }}
 				</div>
 			</span>
 		</div>
@@ -135,45 +135,45 @@
 		<div>
 			<mat-form-field class="mat-width-ext">
 				<mat-label>GST (0%)</mat-label>
-				<input type="number" matInput formControlName="gstzero" required />
+				<input type="number" matInput formControlName="gst_zero" required />
 
-				<mat-error *ngIf="submitForm1.get('gstzero').hasError('required')"> Mandatory</mat-error>
+				<mat-error *ngIf="submitForm1.get('gst_zero').hasError('required')"> Mandatory</mat-error>
 			</mat-form-field>
 		</div>
 		<div>
 			<mat-form-field class="mat-width-ext">
 				<mat-label>GST (5%)</mat-label>
-				<input type="number" matInput formControlName="gstfive" required />
-				<mat-error *ngIf="submitForm1.controls['gstfive'].hasError('required')"> Mandatory </mat-error>
+				<input type="number" matInput formControlName="gst_five" required />
+				<mat-error *ngIf="submitForm1.controls['gst_five'].hasError('required')"> Mandatory </mat-error>
 			</mat-form-field>
 		</div>
 
 		<div>
 			<mat-form-field class="mat-width-ext">
 				<mat-label>GST (12%)</mat-label>
-				<input type="number" matInput formControlName="gsttwelve" required />
-				<mat-error *ngIf="submitForm1.get('gsttwelve').hasError('required') && submitForm1.get('gsttwelve').touched"> Mandatory </mat-error>
+				<input type="number" matInput formControlName="gst_twelve" required />
+				<mat-error *ngIf="submitForm1.get('gst_twelve').hasError('required') && submitForm1.get('gst_twelve').touched"> Mandatory </mat-error>
 			</mat-form-field>
 		</div>
 		<div>
 			<mat-form-field class="mat-width-ext">
 				<mat-label>GST (18%)</mat-label>
-				<input type="number" matInput formControlName="gsteighteen" required />
-				<mat-error *ngIf="submitForm1.get('gsteighteen').hasError('required') && submitForm1.get('gsteighteen').touched"> Mandatory </mat-error>
+				<input type="number" matInput formControlName="gst_eighteen" required />
+				<mat-error *ngIf="submitForm1.get('gst_eighteen').hasError('required') && submitForm1.get('gst_eighteen').touched"> Mandatory </mat-error>
 			</mat-form-field>
 		</div>
 
 		<div>
 			<mat-form-field class="mat-width-ext">
 				<mat-label>GST (28%)</mat-label>
-				<input type="number" matInput formControlName="gsttwentyeight" required />
-				<mat-error *ngIf="submitForm1.get('gsttwentyeight').hasError('required') && submitForm1.get('gsttwentyeight').touched"> Mandatory </mat-error>
+				<input type="number" matInput formControlName="gst_twenty_eight" required />
+				<mat-error *ngIf="submitForm1.get('gst_twenty_eight').hasError('required') && submitForm1.get('gst_twenty_eight').touched"> Mandatory </mat-error>
 			</mat-form-field>
 		</div>
 	</div>
 
 	<div style="display: grid; grid-column: 1 / span 5; text-align: left; width: 50%; margin: 0 auto" class="error">
-		{{ responsemsg }}
+		{{ response_msg }}
 	</div>
 
 	<div *ngIf="mode === 'add'" style="display: grid; width: 50%; margin: 0 auto; grid-column: 1 / span 5">
