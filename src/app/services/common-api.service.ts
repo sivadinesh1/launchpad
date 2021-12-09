@@ -1164,6 +1164,20 @@ export class CommonApiService {
         );
     }
 
+    getPendingReceivablesByCenter(submitForm) {
+        return this.httpClient.post(
+            `${this.restApiUrl}/v1/api/receivables/get-pending-receivables`,
+            submitForm,
+            { observe: 'response' }
+        );
+    }
+
+    getExcessPaidPayments(customer_id) {
+        return this.httpClient.get(
+            `${this.restApiUrl}/v1/api/receivables/get-excess-paid-payments/${customer_id}`
+        );
+    }
+
     // customer balances reports
     getCustomerBalanceReports(submitForm) {
         return this.httpClient.post(

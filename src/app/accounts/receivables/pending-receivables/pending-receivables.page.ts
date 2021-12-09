@@ -23,18 +23,19 @@ import { SearchCustomersComponent } from 'src/app/components/search-customers/se
 import * as xlsx from 'xlsx';
 import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { PrintReceivablesComponent } from 'src/app/components/receivables/print-receivables/print-receivables.component';
+import { ApplyNowComponent } from 'src/app/components/receivables/apply-now/apply-now.component';
 
 @Component({
-    selector: 'app-receivables',
-    templateUrl: './receivables.page.html',
-    styleUrls: ['./receivables.page.scss'],
+    selector: 'app-pending-receivables',
+    templateUrl: './pending-receivables.page.html',
+    styleUrls: ['./pending-receivables.page.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReceivablesPage implements OnInit {
+export class PendingReceivablesPage implements OnInit {
     @ViewChild('menuTriggerN', { static: true }) menuTriggerN: any;
     @ViewChild(SearchCustomersComponent) child: SearchCustomersComponent;
 
-    payment_receivables_array;
+    pending_receivables_array;
 
     orderDefaultFlag = 'desc';
 
@@ -76,7 +77,7 @@ export class ReceivablesPage implements OnInit {
         private _fb: FormBuilder
     ) {
         this._route.data.subscribe((data) => {
-            this.payment_receivables_array = data.payments_received_data.body;
+            this.pending_receivables_array = data.pending_receivables_data.body;
         });
 
         this.submitForm = this._fb.group({
@@ -226,9 +227,9 @@ export class ReceivablesPage implements OnInit {
 
     search() {
         this._commonApiService
-            .getPaymentsReceived(this.submitForm.value)
+            .getPendingReceivablesByCenter(this.submitForm.value)
             .subscribe((data) => {
-                this.payment_receivables_array = data.body;
+                this.pending_receivables_array = data.body;
                 this._cdr.markForCheck();
             });
     }
@@ -269,7 +270,7 @@ export class ReceivablesPage implements OnInit {
         const fileName = 'Payments-received-Reports.xlsx';
 
         const reportData = JSON.parse(
-            JSON.stringify(this.payment_receivables_array)
+            JSON.stringify(this.pending_receivables_array)
         );
 
         reportData.forEach((e) => {
@@ -381,4 +382,28 @@ export class ReceivablesPage implements OnInit {
     }
 
     onSubmit() {}
+
+    applyNow(item): void {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = false;
+        dialogConfig.width = '70%';
+        dialogConfig.height = '100%';
+        dialogConfig.data = item;
+        dialogConfig.position = { top: '0', right: '0' };
+
+        const dialogRef = this._dialog.open(ApplyNowComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log('The dialog was closed');
+        });
+    }
 }
+
+// aging_days: 5
+// balance_due: 0
+// invoice_amount: 968
+// invoice_date: "2021-12-02T18:30:00.000Z"
+// invoice_no: "21/12/002845"
+// name: "dinesh"
+// sale_ref_id: 4152

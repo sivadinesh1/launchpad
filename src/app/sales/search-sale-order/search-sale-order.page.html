@@ -1,5 +1,24 @@
 <ion-content>
-    <div class="search-sale-header" style="padding: 1rem">All Sale Orders</div>
+    <div class="search-sale-header" style="padding: 1rem">
+        <div>All Sale Orders</div>
+
+        <div class="full-download" style="align-self: center">
+            <button
+                style="border-radius: 0px"
+                appPreventDoubleClick
+                class="cursor"
+                type="button"
+                [throttleTime]="500"
+                mat-flat-button
+                type="button"
+                color="primary"
+                tabindex="-1"
+                (click)="exportCompletedSalesToExcel()"
+            >
+                Download
+            </button>
+        </div>
+    </div>
     <div class="search-bar">
         <div>
             <img
@@ -122,7 +141,7 @@
     </div>
 
     <div class="header header-style">
-        <div class="column-item">#</div>
+        <div class="column-item" style="padding-left: 0.5rem">#</div>
 
         <div
             class="column-item"
@@ -148,18 +167,10 @@
 
         <div class="column-item txt-right-align">Items</div>
         <div class="column-item txt-right-align">Total Value</div>
-        <div class="column-item txt-center-align">Status</div>
-        <div>
-            <img
-                matTooltip="Download"
-                matTooltipClass="tooltip"
-                src="/assets/images/svg/direct-download.svg"
-                style="cursor: pointer"
-                width="32px"
-                height="32px"
-                (click)="exportCompletedSalesToExcel()"
-            />
+        <div class="column-item txt-left-align" style="padding-left: 1rem">
+            Status
         </div>
+        <!-- <div class="column-item txt-center-align">Payment</div> -->
         <div>View</div>
         <div>Edit</div>
         <div>&nbsp;</div>
@@ -168,7 +179,7 @@
         No records found
     </div>
     <div *ngFor="let item of filteredValues; let idx = index" class="listItem">
-        <div>{{idx + 1}}</div>
+        <div style="padding-left: 0.5rem">{{idx + 1}}</div>
         <div class="item">{{item.invoice_date | date:'d-M-yyyy' }}</div>
         <div class="item">{{item.customer_name}}</div>
         <div class="item" (click)="openDialog(item)">{{item.invoice_no}}</div>
@@ -178,13 +189,22 @@
             {{item.net_total.toLocaleString('en-IN')}}
         </div>
 
-        <div class="item" style="text-align: right">
-            <span [ngClass]="isCompleted(item.status)">
+        <div class="item" style="text-align: left; padding-left: 1rem">
+            <div [ngClass]="isCompleted(item.status)">
                 {{item.status === 'D' ? 'Draft' : 'Invoiced'}}
-            </span>
+            </div>
+            <div style="font: 8px; color: rgba(54, 54, 255, 0.571)">
+                {{item.payment_status === 'F' ? 'Paid' : item.payment_status ===
+                'P' ? 'Partially Paid' : 'Unpaid'}}
+            </div>
         </div>
 
-        <div class="item" style="text-align: right">&nbsp;</div>
+        <!-- <div class="item" style="text-align: right">
+            <span [ngClass]="isCompleted(item.payment_status)">
+                {{item.payment_status === 'F' ? 'Paid' : item.payment_status ===
+                'P' ? 'Partially Paid' : 'Unpaid'}}
+            </span>
+        </div> -->
         <div class="item" style="text-align: center">
             <mat-icon
                 #tooltip="matTooltip"
@@ -199,6 +219,16 @@
 
         <div class="item" style="text-align: center">
             <mat-icon
+                *ngIf="item.payment_status === 'F' || item.payment_status === 'P'"
+                #tooltip="matTooltip"
+                matTooltip="Locked. Invoice is paid"
+                matTooltipClass="tooltip"
+                (mousedown)="tooltip.hide()"
+                [ngStyle]="{'color':'grey'}"
+                >edit
+            </mat-icon>
+            <mat-icon
+                *ngIf="item.payment_status === 'U' || item.payment_status === null"
                 #tooltip="matTooltip"
                 matTooltip="Edit/Modify Sale Details"
                 matTooltipClass="tooltip"

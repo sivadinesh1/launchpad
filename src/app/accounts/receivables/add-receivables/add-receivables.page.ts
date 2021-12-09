@@ -1,6 +1,12 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormArray, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import {
+    FormBuilder,
+    FormArray,
+    FormGroup,
+    Validators,
+    FormGroupDirective,
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 
@@ -18,6 +24,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     styleUrls: ['./add-receivables.page.scss'],
 })
 export class AddReceivablesPage implements OnInit {
+    @ViewChild(FormGroupDirective) formRef: FormGroupDirective;
     filteredCustomer: Observable<any[]>;
     customer_lis: Customer[];
     bankList: any;
@@ -34,7 +41,7 @@ export class AddReceivablesPage implements OnInit {
     customerUnpaidInvoices: any;
     origCustomerUnpaidInvoices: any;
     invoice_amount = 0;
-    paid_amount = 0;
+    paid_amount_sum = 0;
     distributeBalance = 0;
 
     invoice_split_Arr = [];
@@ -60,6 +67,7 @@ export class AddReceivablesPage implements OnInit {
         private _loadingService: LoadingService,
         private _snackBar: MatSnackBar
     ) {
+        this.init();
         this.user_data$ = this._authService.currentUser;
 
         this.user_data$
@@ -68,16 +76,16 @@ export class AddReceivablesPage implements OnInit {
                 this.user_data = data;
                 this.init();
                 this._cdr.markForCheck();
-            });
 
-        this._route.params.subscribe((params) => {
-            if (this.user_data !== undefined) {
-                this.init();
-            }
-        });
+                this._route.params.subscribe((params) => {
+                    this.init();
+                });
+            });
     }
 
     async init() {
+        this.is_customer_selected = false;
+        this.origCustomerUnpaidInvoices = [];
         // onload list all active customers in the dropdown
         this._commonApiService
             .getAllActiveCustomers()
@@ -113,7 +121,7 @@ export class AddReceivablesPage implements OnInit {
             credit_used_amount: 0,
             bank_id: '',
             bank_name: '',
-            created_by: this.user_data.user_id,
+            excess_amount: 0.0,
         });
 
         this.initAccount();
@@ -161,7 +169,9 @@ export class AddReceivablesPage implements OnInit {
         }
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        console.log('Add Receivables.....');
+    }
 
     get account_arr(): FormGroup {
         return this.submitForm.get('account_arr') as FormGroup;
@@ -189,7 +199,10 @@ export class AddReceivablesPage implements OnInit {
             payment_mode: ['', Validators.required],
             bank_ref: [''],
             payment_ref: [''],
+            excess_amount: [0.0],
         });
+
+        this.summed = 0;
     }
 
     getPosts(event) {
@@ -198,6 +211,7 @@ export class AddReceivablesPage implements OnInit {
         const control = <FormArray>this.submitForm.controls.account_arr;
 
         control.removeAt(0);
+        this.origCustomerUnpaidInvoices = [];
 
         this.submitForm.patchValue({
             customer_id: event.option.value.id,
@@ -217,7 +231,7 @@ export class AddReceivablesPage implements OnInit {
                     .reduce((acc, curr) => acc + curr.invoice_amt, 0)
                     .toFixed(2);
 
-                this.paid_amount = this.customerUnpaidInvoices
+                this.paid_amount_sum = this.customerUnpaidInvoices
                     .reduce((acc, curr) => acc + curr.paid_amount, 0)
                     .toFixed(2);
 
@@ -249,8 +263,10 @@ export class AddReceivablesPage implements OnInit {
             customer_id: 'all',
             customer: '',
         });
-        // this.initAccount();
-        // this.is_customer_selected = false;
+        this.initAccount();
+        this.is_customer_selected = false;
+        this.is_warning = false;
+        this.summed = 0;
         this._cdr.markForCheck();
     }
 
@@ -290,9 +306,7 @@ export class AddReceivablesPage implements OnInit {
 
         // after iterating all the line items (in this case, there will be only one row) distribute the amount paid (customer credit if any) to all invoices
         if (init === ctrl.controls.length) {
-            this.distributeBalance = +(
-                this.summed + this.customer.credit_amt
-            ).toFixed(2);
+            this.distributeBalance = +this.summed.toFixed(2);
 
             this.origCustomerUnpaidInvoices.map((e) => {
                 if (this.distributeBalance > 0) {
@@ -302,6 +316,8 @@ export class AddReceivablesPage implements OnInit {
                     ) {
                         //excess distribution
                         e.paid_amount = e.bal_amount;
+                        e.now_paying = e.bal_amount;
+
                         this.distributeBalance = +(
                             this.distributeBalance - e.bal_amount
                         ).toFixed(2);
@@ -316,6 +332,7 @@ export class AddReceivablesPage implements OnInit {
                     ) {
                         //shortage distribution
                         e.paid_amount = this.distributeBalance;
+                        e.now_paying = this.distributeBalance;
                         e.bal_amount = +(
                             e.bal_amount - this.distributeBalance
                         ).toFixed(2);
@@ -337,12 +354,17 @@ export class AddReceivablesPage implements OnInit {
     getBalanceDue() {
         this.balance_due = (
             +this.invoice_amount -
-            (+this.paid_amount + this.customer.credit_amt + this.summed)
+            (+this.paid_amount_sum + this.summed)
         ).toFixed(2);
 
         if (+this.balance_due < 0) {
-            this.errorMsg =
-                'Amount paid is more than invoice outstanding. Excess amount will be moved to customer credit.';
+            //  this.errorMsg =
+            // 'Amount paid is more than invoice outstanding. Excess amount will be moved to customer credit.';
+
+            // this.submitForm.patchValue({
+            //     excess_amount: +this.balance_due,
+            // });
+
             this._cdr.markForCheck();
         } else {
             this.errorMsg = '';
@@ -356,6 +378,8 @@ export class AddReceivablesPage implements OnInit {
                 center_id: this.user_data.center_id,
                 bank_ref: this.submitForm.value.account_arr[0].bank_ref,
                 customer_id: this.customer.id,
+                // excess_amount:
+                //     this.submitForm.value.account_arr[0].excess_amount,
             };
 
             this._commonApiService
@@ -385,24 +409,41 @@ export class AddReceivablesPage implements OnInit {
 
     finalSubmit() {
         if (this.checkTotalSum()) {
+            const latest_payments = this.origCustomerUnpaidInvoices
+                .reduce((acc, curr) => acc + +curr.now_paying, 0)
+                .toFixed(2);
+
+            // if amount received < sum of now_paying throw a warning
+
+            if (
+                this.submitForm.value.account_arr[0].received_amount <
+                latest_payments
+            ) {
+                this.errorMsg = 'Paid amount is more than received amount.';
+                return false;
+            }
+
+            const ex_amount = +this.balance_due - +latest_payments;
+
             this.submitForm.patchValue({
                 invoice_split: this.invoice_split_Arr,
                 customer: this.customer,
                 balance_due: this.balance_due,
+                excess_amount: ex_amount < 0 ? this.balance_due : 0,
             });
 
-            if (this.customer.credit_amt > 0) {
-                this.submitForm.patchValue({
-                    credits_used: 'YES',
-                    credit_used_amount: this.customer.credit_amt,
-                });
-            }
+            // if (this.customer.credit_amt > 0) {
+            //     this.submitForm.patchValue({
+            //         credits_used: 'YES',
+            //         credit_used_amount: this.customer.credit_amt,
+            //     });
+            // }
 
             this._commonApiService
                 .addBulkPaymentReceived(this.submitForm.value)
                 .subscribe((data: any) => {
                     if (data.body.result === 'success') {
-                        this.submitForm.reset();
+                        this.formRef.resetForm();
                         this.clearInput();
 
                         // this._loadingService.openSnackBar(
@@ -441,5 +482,43 @@ export class AddReceivablesPage implements OnInit {
             duration: 2000,
             panelClass: ['mat-toolbar', color],
         });
+    }
+
+    handlePayment(item, idx, event) {
+        // console.log(item);
+        // console.log(event);
+        this.origCustomerUnpaidInvoices[idx].now_paying = event.target.value;
+
+        this.origCustomerUnpaidInvoices[idx].bal_amount =
+            +this.customerUnpaidInvoices[idx].invoice_amt -
+            (+this.customerUnpaidInvoices[idx].paid_amount +
+                +event.target.value);
+
+        this.verifyBalances();
+    }
+
+    verifyBalances() {
+        const latest_payment = this.origCustomerUnpaidInvoices
+            .reduce((acc, curr) => acc + +curr.now_paying, 0)
+            .toFixed(2);
+
+        this.balance_due = (
+            +this.invoice_amount -
+            (+this.paid_amount_sum + +latest_payment)
+        ).toFixed(2);
+
+        if (+this.balance_due < 0) {
+            //  this.errorMsg =
+            // 'Amount paid is more than invoice outstanding. Excess amount will be moved to customer credit.';
+
+            // this.submitForm.patchValue({
+            //     excess_amount: +this.balance_due,
+            // });
+
+            this._cdr.markForCheck();
+        } else {
+            this.errorMsg = '';
+            this._cdr.markForCheck();
+        }
     }
 }

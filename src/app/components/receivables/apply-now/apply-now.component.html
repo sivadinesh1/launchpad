@@ -1,0 +1,41 @@
+<div>
+    <div style="background-color: aliceblue; padding: 0.5rem">
+        <div>Apply Credits for {{ this.data.invoice_no }}</div>
+        <div style="display: flex; justify-content: end">
+            <span>Invoice Balance:</span>
+            <span>{{
+                this.data.balance_due.toLocaleString("en-IN", {
+                    style: "currency",
+                    currency: "INR"
+                })
+            }}</span>
+        </div>
+    </div>
+
+    <div class="header">
+        <div>#</div>
+        <div>Credit Note</div>
+        <div>Payment #</div>
+        <div>CN Date</div>
+        <div>Credit Amount</div>
+        <div>Credits Available</div>
+        <div>&nbsp;</div>
+    </div>
+
+    <div *ngFor="let item of excess_payments; let idx = index" class="list">
+        <div>{{ idx + 1 }}</div>
+        <div>Excess Payment</div>
+
+        <div>{{ item.payment_no }}</div>
+        <div>{{ item.payment_date | date: "dd/MMM/yyyy" }}</div>
+        <div>
+            {{
+                item.excess_amount.toLocaleString("en-IN", {
+                    style: "currency",
+                    currency: "INR"
+                })
+            }}
+        </div>
+        <div>&nbsp;</div>
+    </div>
+</div>

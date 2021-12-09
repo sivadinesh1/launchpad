@@ -132,6 +132,7 @@ import { SearchCustomersComponent } from './components/search-customers/search-c
 import { AscendingComponent } from './components/util/ascending/ascending.component';
 import { DescendingComponent } from './components/util/descending/descending.component';
 import { PrintReceivablesComponent } from './components/receivables/print-receivables/print-receivables.component';
+import { ApplyNowComponent } from './components/receivables/apply-now/apply-now.component';
 
 const components = [
     NullToQuotePipe,
@@ -163,6 +164,7 @@ const components = [
     CustomerAddDialogComponent,
     CustomerEditDialogComponent,
     PrintReceivablesComponent,
+    ApplyNowComponent,
     CustomerPaymentDialogComponent,
     VendorPaymentDialogComponent,
     SalesInvoiceDialogComponent,
@@ -334,7 +336,8 @@ const matcomponents = [
         InventoryReportsDialogComponent,
         ShowStatementComponent,
         ShowVendorStatementComponent,
-        PrintReceivablesComponent,
+
+        ApplyNowComponent,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

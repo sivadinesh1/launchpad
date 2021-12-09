@@ -1,30 +1,8 @@
 <ion-content>
     <div class="receivables-head" style="padding: 1rem">
-        <div>Payments Received</div>
+        <div>Pending Invoices</div>
 
-        <div style="display: flex">
-            <span (click)="goPendingReceivables()">
-                <span
-                    style="
-                        display: flex;
-                        color: #fff;
-                        cursor: pointer;
-                        font-size: 14px;
-                        padding: 0.5rem 1.4rem;
-                        margin: 0 1rem;
-                        font-weight: 600;
-                        background-color: blue;
-                        opacity: 0.8;
-                    "
-                >
-                    Pending Invoices
-                </span>
-            </span>
-            <span class="btn-grad-no-margin add-btn" (click)="addReceivables()">
-                <mat-icon class="add-icon">add</mat-icon>
-                <span class="add-icon-label">Add Payment</span>
-            </span>
-        </div>
+        <div style="display: flex">&nbsp;</div>
     </div>
 
     <div class="receivables-search-bar">
@@ -153,59 +131,63 @@
             <div class="receivables-column-item">
                 <span> Date </span>
             </div>
-            <div class="receivables-column-item">Payment #</div>
-            <div class="receivables-column-item">Customer Name</div>
             <div class="receivables-column-item">Invoice #</div>
-
-            <div class="receivables-column-item txt-left-align">Mode</div>
-            <div class="receivables-column-item txt-right-align">Amount</div>
+            <div class="receivables-column-item">Customer Name</div>
             <div class="receivables-column-item txt-right-align">
-                Unused Amt
+                Aging Days
             </div>
+
+            <div class="receivables-column-item txt-right-align">Inv. Amt</div>
+            <div class="receivables-column-item txt-right-align">Inv. Bal</div>
+            <div class="receivables-column-item txt-right-align">
+                Credits Avl.
+            </div>
+            <div>&nbsp;</div>
         </div>
         <div
-            *ngIf="payment_receivables_array?.length === 0"
+            *ngIf="pending_receivables_array?.length === 0"
             class="no-records-found"
         >
             No records found
         </div>
         <div
-            *ngFor="let item of payment_receivables_array; let idx = index"
+            *ngFor="let item of pending_receivables_array; let idx = index"
             class="receivables-listItem"
         >
             <div>{{idx + 1}}</div>
             <div class="receivables-item">
-                {{item.payment_date | date:'d-M-yyyy' }}
+                {{item.invoice_date | date:'d-M-yyyy' }}
             </div>
             <div class="receivables-item a-link" (click)="openDialog(item)">
-                {{item.payment_no }}
+                {{item.invoice_no }}
             </div>
             <div class="receivables-item">{{item.customer_name}}</div>
-            <div class="receivables-item">
-                <div *ngFor="let invoices of item.invoice_no?.split(',')">
-                    <span
-                        (click)="test(invoices.substring(0, invoices.indexOf('~')))"
-                    >
-                        {{ invoices.substring(invoices.indexOf('~')+1,
-                        invoices.length) }}
-                    </span>
-                </div>
-            </div>
 
-            <div class="receivables-item" style="text-align: left">
-                {{item.payment_mode_name}}
+            <div class="receivables-item" style="text-align: right">
+                {{item.aging_days}}
             </div>
             <div class="receivables-item" style="text-align: right">
-                {{item.amount_payed.toLocaleString('en-IN', {style: 'currency',
-                currency: 'INR'})}}
+                {{item.invoice_amount.toLocaleString('en-IN', {style:
+                'currency', currency: 'INR'})}}
             </div>
 
             <div class="receivables-item" style="text-align: right">
-                {{item.unused_amount.toLocaleString('en-IN', {style: 'currency',
+                {{item.balance_due.toLocaleString('en-IN', {style: 'currency',
                 currency: 'INR'})}}
             </div>
 
-            <div>&nbsp;</div>
+            <div style="text-align: right">
+                {{item.credit_amt.toLocaleString('en-IN', {style: 'currency',
+                currency: 'INR'})}}
+            </div>
+            <div style="text-align: right">
+                <span
+                    style="cursor: pointer; font-size: 12px; color: blue"
+                    (click)="applyNow(item)"
+                >
+                    Apply Now
+                </span>
+            </div>
         </div>
     </div>
 

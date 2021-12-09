@@ -42,7 +42,6 @@
                                 border-bottom: 1px solid lightsteelblue;
                             "
                         >
-                            <!-- <span>{{ customer.name }} </span> -->
                             <div
                                 style="
                                     display: grid;
@@ -122,6 +121,7 @@
                                         <mat-form-field style="width: 100%">
                                             <mat-label>Bank</mat-label>
                                             <mat-select
+                                                required
                                                 (selectionChange)="handleChange($event)"
                                             >
                                                 <mat-option value="0">
@@ -168,6 +168,7 @@
                                         <mat-form-field style="width: 100%">
                                             <mat-label>Payment Mode</mat-label>
                                             <mat-select
+                                                required
                                                 formControlName="payment_mode"
                                             >
                                                 <mat-option
@@ -231,7 +232,7 @@
                     </div>
 
                     <div class="theader m-curr-field" style="text-align: right">
-                        Balance Due
+                        Amount Due
                     </div>
                     <div class="theader m-curr-field" style="text-align: right">
                         Payment
@@ -239,7 +240,7 @@
                 </div>
                 <div *ngIf="is_customer_selected">
                     <div
-                        *ngFor="let item of origCustomerUnpaidInvoices"
+                        *ngFor="let item of origCustomerUnpaidInvoices; let idx = index;"
                         class="list-item"
                     >
                         <div style="padding: 4px 4px 4px 6px; font-size: 13px">
@@ -270,7 +271,7 @@
                             {{ item.bal_amount | currency: "INR" }}
                         </div>
 
-                        <div
+                        <!-- <div
                             class="m-curr-field"
                             style="
                                 padding: 4px;
@@ -279,26 +280,37 @@
                             "
                         >
                             <span [ngClass]="balanceCheckColor(item)">
-                                {{ item.paid_amount | currency: "INR" }}
+                                {{ item.now_paying | currency: "INR" }}
                             </span>
+                        </div> -->
+
+                        <div
+                            class="m-curr-field"
+                            style="
+                                padding: 4px;
+                                font-size: 13px;
+                                text-align: right;
+                            "
+                        >
+                            <mat-form-field>
+                                <mat-label>Pay Now</mat-label>
+                                <input
+                                    matInput
+                                    tabindex="-1"
+                                    type="number"
+                                    name="now_paying"
+                                    (keyup)="handlePayment(item, idx, $event)"
+                                    value="{{item.now_paying}}"
+                                    appSelectOnFocus
+                                    autocomplete="off"
+                                />
+                            </mat-form-field>
                         </div>
                     </div>
                 </div>
-
+                <!-- (change)="checkIsNumber('transport_charges')" -->
                 <div class="bottom" *ngIf="is_customer_selected">
-                    <div>
-                        <div
-                            style="
-                                text-align: left;
-                                padding: 2px;
-                                color: #333333;
-                                font-size: 13px;
-                            "
-                        >
-                            Credit Available: {{ this.customer?.credit_amt |
-                            currency: "INR" }}
-                        </div>
-                    </div>
+                    <div>&nbsp;</div>
                     <div style="display: flex; justify-content: flex-end">
                         <div
                             style="
@@ -328,7 +340,6 @@
                             </div>
 
                             <div
-                                *ngIf="this.invoice?.paid_amount !== 0.0"
                                 style="
                                     text-align: right;
                                     padding: 2px;
@@ -339,7 +350,6 @@
                                 Received Payments
                             </div>
                             <div
-                                *ngIf="this.invoice?.paid_amount !== 0.0"
                                 style="
                                     text-align: right;
                                     padding: 2px;
@@ -347,7 +357,7 @@
                                     font-size: 13px;
                                 "
                             >
-                                (-) {{ this.paid_amount }}
+                                (-) {{ this.paid_amount_sum }}
                             </div>
 
                             <div
@@ -371,7 +381,7 @@
                                 (-) {{ this.summed }}
                             </div>
 
-                            <div
+                            <!-- <div
                                 *ngIf="this.customer?.credit_amt !== 0.0"
                                 style="
                                     text-align: right;
@@ -392,7 +402,7 @@
                                 "
                             >
                                 (-) {{ this.customer?.credit_amt }}
-                            </div>
+                            </div> -->
 
                             <div
                                 style="
@@ -402,7 +412,12 @@
                                     font-weight: 500;
                                 "
                             >
-                                Balance Due
+                                <span *ngIf="+this.balance_due >= +0.00"
+                                    >Balance Due Total</span
+                                >
+                                <span *ngIf="+this.balance_due < +0.00"
+                                    >Excess Paid</span
+                                >
                             </div>
                             <div
                                 style="
@@ -420,7 +435,7 @@
                 </div>
             </div>
 
-            <div style="text-align: center" class="error">{{ errorMsg }}</div>
+            <!-- <div style="text-align: center" class="error">{{ errorMsg }}</div> -->
             <div class="submit" *ngIf="is_customer_selected && !is_warning">
                 <button
                     mat-raised-button
@@ -441,9 +456,10 @@
                         font-style: italic;
                         text-align: center;
                         display: flex;
-                        justify-content: flex-end !important;
+
                         align-items: center;
                         padding-top: 16px;
+                        padding-bottom: 16px;
                     "
                 >
                     <b>Warning!: </b> Duplicate Bank reference (or) Current paid

@@ -17,6 +17,10 @@ const routes: Routes = [
   {
     path: 'add-receivables',
     loadChildren: () => import('./add-receivables/add-receivables.module').then( m => m.AddReceivablesPageModule)
+  },
+  {
+    path: 'pending-receivables',
+    loadChildren: () => import('./pending-receivables/pending-receivables.module').then( m => m.PendingReceivablesPageModule)
   }
 ];
 

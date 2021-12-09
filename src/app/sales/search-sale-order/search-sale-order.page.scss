@@ -25,7 +25,7 @@
 .listItem,
 .headerRow {
     display: grid;
-    grid-template-columns: 40px 100px 240px 120px 100px 130px 90px 90px 50px 50px 50px;
+    grid-template-columns: 40px 100px 240px 120px 100px 130px 140px 50px 50px 50px;
     align-items: center;
     padding: 5px;
 }
@@ -39,7 +39,7 @@
 }
 
 .header-style {
-    padding: 0.2rem 1rem;
+    padding: 0.2rem 0rem;
     color: #333;
     color: #606060;
     font-weight: 600;
@@ -156,6 +156,8 @@
 }
 
 .search-sale-header {
+    display: flex;
+    justify-content: space-between;
     padding: 1rem;
     font-size: 1.5rem;
     letter-spacing: 1px;
@@ -163,7 +165,6 @@
 }
 
 .column-item {
-    display: flex;
     align-items: center;
 }
 
