@@ -55,6 +55,8 @@ export class AddReceivablesPage implements OnInit {
     maxDate = new Date();
     is_customer_selected = false;
     invoices_data: any;
+    excess_amount_final = 0;
+    latest_payment_final = 0;
 
     constructor(
         private _fb: FormBuilder,
@@ -67,7 +69,7 @@ export class AddReceivablesPage implements OnInit {
         private _loadingService: LoadingService,
         private _snackBar: MatSnackBar
     ) {
-        this.init();
+        //  this.init();
         this.user_data$ = this._authService.currentUser;
 
         this.user_data$
@@ -224,8 +226,17 @@ export class AddReceivablesPage implements OnInit {
             .getCustomerUnpaidInvoices(event.option.value.id)
             .subscribe((data) => {
                 console.log('home many times');
-                this.origCustomerUnpaidInvoices = data;
+                //   this.origCustomerUnpaidInvoices = data;
                 this.customerUnpaidInvoices = data;
+
+                // deep  copy to new value
+                this.origCustomerUnpaidInvoices = JSON.parse(
+                    JSON.stringify(this.customerUnpaidInvoices)
+                );
+
+                // this.origCustomerUnpaidInvoices = [
+                //     ...this.customerUnpaidInvoices,
+                // ];
 
                 this.invoice_amount = this.customerUnpaidInvoices
                     .reduce((acc, curr) => acc + curr.invoice_amt, 0)
@@ -275,10 +286,17 @@ export class AddReceivablesPage implements OnInit {
         this.summed = 0;
         this.invoice_split_Arr = [];
 
+        // // deep  copy to new value
+        // this.origCustomerUnpaidInvoices = JSON.parse(
+        //     JSON.stringify(this.customerUnpaidInvoices)
+        // );
+
         // deep  copy to new value
         this.origCustomerUnpaidInvoices = JSON.parse(
             JSON.stringify(this.customerUnpaidInvoices)
         );
+
+        //  this.origCustomerUnpaidInvoices = [...this.customerUnpaidInvoices];
 
         // const ctrl = this.submitForm.get('account_arr') as FormArray;
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -299,7 +317,6 @@ export class AddReceivablesPage implements OnInit {
             // add to total
 
             this.summed += parsed;
-            this.getBalanceDue();
 
             init++;
         });
@@ -343,12 +360,12 @@ export class AddReceivablesPage implements OnInit {
                         });
                     }
                 }
-
+                this.getBalanceDue();
                 this._cdr.markForCheck();
             });
         }
 
-        return true;
+        //  return true;
     }
 
     getBalanceDue() {
@@ -370,99 +387,111 @@ export class AddReceivablesPage implements OnInit {
             this.errorMsg = '';
             this._cdr.markForCheck();
         }
+
+        const latest_payments = this.origCustomerUnpaidInvoices
+            .reduce((acc, curr) => acc + +curr.now_paying, 0)
+            .toFixed(2);
+
+        this.excess_amount_final = +this.summed - +latest_payments;
+        this.latest_payment_final = +latest_payments;
+        this._cdr.markForCheck();
     }
 
     onSubmit() {
-        if (this.checkTotalSum()) {
-            const form = {
-                center_id: this.user_data.center_id,
-                bank_ref: this.submitForm.value.account_arr[0].bank_ref,
-                customer_id: this.customer.id,
-                // excess_amount:
-                //     this.submitForm.value.account_arr[0].excess_amount,
-            };
+        //  if (this.checkTotalSum()) {
+        const form = {
+            center_id: this.user_data.center_id,
+            bank_ref: this.submitForm.value.account_arr[0].bank_ref,
+            customer_id: this.customer.id,
+            // excess_amount:
+            //     this.submitForm.value.account_arr[0].excess_amount,
+        };
 
-            this._commonApiService
-                .getPaymentBankRef(form)
-                .subscribe((data: any) => {
-                    if (data.body.result[0].count > 0) {
-                        // warning
+        this._commonApiService
+            .getPaymentBankRef(form)
+            .subscribe((data: any) => {
+                if (data.body.result[0].count > 0) {
+                    // warning
+                    this.is_warning = true;
+                    this._cdr.markForCheck();
+                } else if (data.body.result1.length === 1) {
+                    // check if the last paid amount is the same is current paid amount and if yes throw a warning.
+                    if (
+                        data.body.result1[0].payment_now_amt ===
+                        this.submitForm.value.account_arr[0].received_amount
+                    ) {
                         this.is_warning = true;
                         this._cdr.markForCheck();
-                    } else if (data.body.result1.length === 1) {
-                        // check if the last paid amount is the same is current paid amount and if yes throw a warning.
-                        if (
-                            data.body.result1[0].payment_now_amt ===
-                            this.submitForm.value.account_arr[0].received_amount
-                        ) {
-                            this.is_warning = true;
-                            this._cdr.markForCheck();
-                        } else {
-                            this.finalSubmit();
-                        }
                     } else {
                         this.finalSubmit();
                     }
-                });
-        }
+                } else {
+                    this.finalSubmit();
+                }
+            });
+        // }
     }
 
     finalSubmit() {
-        if (this.checkTotalSum()) {
-            const latest_payments = this.origCustomerUnpaidInvoices
-                .reduce((acc, curr) => acc + +curr.now_paying, 0)
-                .toFixed(2);
+        //   if (this.checkTotalSum()) {
+        const latest_payments = this.origCustomerUnpaidInvoices
+            .reduce((acc, curr) => acc + +curr.now_paying, 0)
+            .toFixed(2);
 
-            // if amount received < sum of now_paying throw a warning
+        // if amount received < sum of now_paying throw a warning
 
-            if (
-                this.submitForm.value.account_arr[0].received_amount <
-                latest_payments
-            ) {
-                this.errorMsg = 'Paid amount is more than received amount.';
-                return false;
-            }
-
-            const ex_amount = +this.balance_due - +latest_payments;
-
-            this.submitForm.patchValue({
-                invoice_split: this.invoice_split_Arr,
-                customer: this.customer,
-                balance_due: this.balance_due,
-                excess_amount: ex_amount < 0 ? this.balance_due : 0,
-            });
-
-            // if (this.customer.credit_amt > 0) {
-            //     this.submitForm.patchValue({
-            //         credits_used: 'YES',
-            //         credit_used_amount: this.customer.credit_amt,
-            //     });
-            // }
-
-            this._commonApiService
-                .addBulkPaymentReceived(this.submitForm.value)
-                .subscribe((data: any) => {
-                    if (data.body.result === 'success') {
-                        this.formRef.resetForm();
-                        this.clearInput();
-
-                        // this._loadingService.openSnackBar(
-                        //     'Payments Recorded Successfully',
-                        //     ''
-                        // );
-                        this.openSnackBar(
-                            `Payments Recorded Successfully!`,
-                            '',
-                            'mat-primary'
-                        );
-
-                        this._router.navigateByUrl('/home/receivables');
-                    } else {
-                        // todo nothing as of now
-                    }
-                    this._cdr.markForCheck();
-                });
+        if (
+            this.submitForm.value.account_arr[0].received_amount <
+            latest_payments
+        ) {
+            this.errorMsg = 'Paid amount is more than received amount.';
+            this._cdr.markForCheck();
+            return false;
         }
+
+        const ex_amount = +this.balance_due - +latest_payments;
+
+        console.log('dinesh' + +this.balance_due);
+        console.log('dinesh' + +latest_payments);
+
+        this.submitForm.patchValue({
+            invoice_split: this.invoice_split_Arr,
+            customer: this.customer,
+            balance_due: this.balance_due,
+            excess_amount: ex_amount < 0 ? this.balance_due : 0,
+        });
+
+        // if (this.customer.credit_amt > 0) {
+        //     this.submitForm.patchValue({
+        //         credits_used: 'YES',
+        //         credit_used_amount: this.customer.credit_amt,
+        //     });
+        // }
+
+        // this._commonApiService
+        //     .addBulkPaymentReceived(this.submitForm.value)
+        //     .subscribe((data: any) => {
+        //         if (data.body.result === 'success') {
+        //             this.formRef.resetForm();
+        //             this.clearInput();
+
+        //             // this._loadingService.openSnackBar(
+        //             //     'Payments Recorded Successfully',
+        //             //     ''
+        //             // );
+        //             this.openSnackBar(
+        //                 `Payments Recorded Successfully!`,
+        //                 '',
+        //                 'mat-primary'
+        //             );
+
+        //             this._router.navigateByUrl('/home/receivables');
+        //         } else {
+        //             // todo nothing as of now
+        //         }
+        //         this._cdr.markForCheck();
+        //     });
+        // }
     }
 
     cancel() {
@@ -487,12 +516,25 @@ export class AddReceivablesPage implements OnInit {
     handlePayment(item, idx, event) {
         // console.log(item);
         // console.log(event);
-        this.origCustomerUnpaidInvoices[idx].now_paying = event.target.value;
 
-        this.origCustomerUnpaidInvoices[idx].bal_amount =
-            +this.customerUnpaidInvoices[idx].invoice_amt -
-            (+this.customerUnpaidInvoices[idx].paid_amount +
-                +event.target.value);
+        this.origCustomerUnpaidInvoices[idx].now_paying =
+            event.target.value === '' ? 0 : +event.target.value;
+
+        if (
+            this.customerUnpaidInvoices[idx].bal_amount <
+            (event.target.value === '' ? 0 : +event.target.value)
+        ) {
+            this.origCustomerUnpaidInvoices[idx].bal_amount =
+                this.customerUnpaidInvoices[idx].bal_amount;
+        } else {
+            this.origCustomerUnpaidInvoices[idx].bal_amount =
+                +this.customerUnpaidInvoices[idx].invoice_amt -
+                (+this.customerUnpaidInvoices[idx].paid_amount +
+                    event.target.value ===
+                ''
+                    ? 0
+                    : +event.target.value);
+        }
 
         this.verifyBalances();
     }
@@ -502,10 +544,14 @@ export class AddReceivablesPage implements OnInit {
             .reduce((acc, curr) => acc + +curr.now_paying, 0)
             .toFixed(2);
 
+        this.latest_payment_final = latest_payment;
+
         this.balance_due = (
             +this.invoice_amount -
             (+this.paid_amount_sum + +latest_payment)
         ).toFixed(2);
+
+        this.excess_amount_final = +this.summed - +latest_payment;
 
         if (+this.balance_due < 0) {
             //  this.errorMsg =

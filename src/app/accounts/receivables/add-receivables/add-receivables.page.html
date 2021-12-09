@@ -378,7 +378,7 @@
                                     font-size: 13px;
                                 "
                             >
-                                (-) {{ this.summed }}
+                                (-) {{ this.latest_payment_final }}
                             </div>
 
                             <!-- <div
@@ -430,12 +430,34 @@
                             >
                                 {{ this.balance_due | currency: "INR" }}
                             </div>
+
+                            <div
+                                style="
+                                    text-align: right;
+                                    padding: 2px;
+                                    color: #000000;
+                                    font-weight: 500;
+                                "
+                            >
+                                Excess Paid
+                            </div>
+                            <div
+                                style="
+                                    text-align: right;
+                                    padding: 2px;
+                                    color: #000000;
+                                    font-weight: 500;
+                                    font-size: 13px;
+                                "
+                            >
+                                {{ this.excess_amount_final | currency: "INR" }}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- <div style="text-align: center" class="error">{{ errorMsg }}</div> -->
+            <div style="text-align: center" class="error">{{ errorMsg }}</div>
             <div class="submit" *ngIf="is_customer_selected && !is_warning">
                 <button
                     mat-raised-button
