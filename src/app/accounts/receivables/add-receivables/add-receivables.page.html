@@ -222,7 +222,7 @@
                     *ngIf="is_customer_selected"
                     style="font-weight: 500; color: #b97676"
                 >
-                    UNPAID INVOICES ({{ origCustomerUnpaidInvoices?.length }})
+                    UNPAID INVOICES ({{ copyOfUnpaidInvoices?.length }})
                 </div>
                 <div class="list-header" *ngIf="is_customer_selected">
                     <div class="theader">Invoice Date</div>
@@ -240,7 +240,7 @@
                 </div>
                 <div *ngIf="is_customer_selected">
                     <div
-                        *ngFor="let item of origCustomerUnpaidInvoices; let idx = index;"
+                        *ngFor="let item of copyOfUnpaidInvoices; let idx = index;"
                         class="list-item"
                     >
                         <div style="padding: 4px 4px 4px 6px; font-size: 13px">
@@ -412,12 +412,7 @@
                                     font-weight: 500;
                                 "
                             >
-                                <span *ngIf="+this.balance_due >= +0.00"
-                                    >Balance Due Total</span
-                                >
-                                <span *ngIf="+this.balance_due < +0.00"
-                                    >Excess Paid</span
-                                >
+                                Balance Due Total
                             </div>
                             <div
                                 style="

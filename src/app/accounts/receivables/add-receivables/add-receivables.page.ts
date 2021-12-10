@@ -38,8 +38,8 @@ export class AddReceivablesPage implements OnInit {
 
     customer: Customer;
 
-    customerUnpaidInvoices: any;
-    origCustomerUnpaidInvoices: any;
+    unpaidInvoices: any;
+    copyOfUnpaidInvoices: any;
     invoice_amount = 0;
     paid_amount_sum = 0;
     distributeBalance = 0;
@@ -69,7 +69,6 @@ export class AddReceivablesPage implements OnInit {
         private _loadingService: LoadingService,
         private _snackBar: MatSnackBar
     ) {
-        //  this.init();
         this.user_data$ = this._authService.currentUser;
 
         this.user_data$
@@ -87,7 +86,7 @@ export class AddReceivablesPage implements OnInit {
 
     async init() {
         this.is_customer_selected = false;
-        this.origCustomerUnpaidInvoices = [];
+        this.copyOfUnpaidInvoices = [];
         // onload list all active customers in the dropdown
         this._commonApiService
             .getAllActiveCustomers()
@@ -126,7 +125,7 @@ export class AddReceivablesPage implements OnInit {
             excess_amount: 0.0,
         });
 
-        this.initAccount();
+        //      this.initAccount();
         this.clearInput();
     }
 
@@ -203,8 +202,6 @@ export class AddReceivablesPage implements OnInit {
             payment_ref: [''],
             excess_amount: [0.0],
         });
-
-        this.summed = 0;
     }
 
     getPosts(event) {
@@ -213,7 +210,7 @@ export class AddReceivablesPage implements OnInit {
         const control = <FormArray>this.submitForm.controls.account_arr;
 
         control.removeAt(0);
-        this.origCustomerUnpaidInvoices = [];
+        this.copyOfUnpaidInvoices = [];
 
         this.submitForm.patchValue({
             customer_id: event.option.value.id,
@@ -226,23 +223,19 @@ export class AddReceivablesPage implements OnInit {
             .getCustomerUnpaidInvoices(event.option.value.id)
             .subscribe((data) => {
                 console.log('home many times');
-                //   this.origCustomerUnpaidInvoices = data;
-                this.customerUnpaidInvoices = data;
+
+                this.unpaidInvoices = data;
 
                 // deep  copy to new value
-                this.origCustomerUnpaidInvoices = JSON.parse(
-                    JSON.stringify(this.customerUnpaidInvoices)
+                this.copyOfUnpaidInvoices = JSON.parse(
+                    JSON.stringify(this.unpaidInvoices)
                 );
 
-                // this.origCustomerUnpaidInvoices = [
-                //     ...this.customerUnpaidInvoices,
-                // ];
-
-                this.invoice_amount = this.customerUnpaidInvoices
+                this.invoice_amount = this.unpaidInvoices
                     .reduce((acc, curr) => acc + curr.invoice_amt, 0)
                     .toFixed(2);
 
-                this.paid_amount_sum = this.customerUnpaidInvoices
+                this.paid_amount_sum = this.unpaidInvoices
                     .reduce((acc, curr) => acc + curr.paid_amount, 0)
                     .toFixed(2);
 
@@ -258,12 +251,12 @@ export class AddReceivablesPage implements OnInit {
         // get all unpaid invoices for a customer
 
         // to delete
-        // this.customerUnpaidInvoices = this.invoices_data
+        // this.unpaidInvoices = this.invoices_data
         //     .filter((e) => e.customer_id === event.option.value.id)
         //     .filter((e1) => e1.payment_status !== 'PAID');
 
-        // this.origCustomerUnpaidInvoices = JSON.parse(
-        //     JSON.stringify(this.customerUnpaidInvoices)
+        // this.copyOfUnpaidInvoices = JSON.parse(
+        //     JSON.stringify(this.unpaidInvoices)
         // );
 
         // to delete
@@ -287,16 +280,16 @@ export class AddReceivablesPage implements OnInit {
         this.invoice_split_Arr = [];
 
         // // deep  copy to new value
-        // this.origCustomerUnpaidInvoices = JSON.parse(
-        //     JSON.stringify(this.customerUnpaidInvoices)
+        // this.copyOfUnpaidInvoices = JSON.parse(
+        //     JSON.stringify(this.unpaidInvoices)
         // );
 
         // deep  copy to new value
-        this.origCustomerUnpaidInvoices = JSON.parse(
-            JSON.stringify(this.customerUnpaidInvoices)
+        this.copyOfUnpaidInvoices = JSON.parse(
+            JSON.stringify(this.unpaidInvoices)
         );
 
-        //  this.origCustomerUnpaidInvoices = [...this.customerUnpaidInvoices];
+        //  this.copyOfUnpaidInvoices = [...this.unpaidInvoices];
 
         // const ctrl = this.submitForm.get('account_arr') as FormArray;
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -325,7 +318,7 @@ export class AddReceivablesPage implements OnInit {
         if (init === ctrl.controls.length) {
             this.distributeBalance = +this.summed.toFixed(2);
 
-            this.origCustomerUnpaidInvoices.map((e) => {
+            this.copyOfUnpaidInvoices.map((e) => {
                 if (this.distributeBalance > 0) {
                     if (
                         e.bal_amount > 0 &&
@@ -381,14 +374,14 @@ export class AddReceivablesPage implements OnInit {
             // this.submitForm.patchValue({
             //     excess_amount: +this.balance_due,
             // });
-
+            this.balance_due = 0;
             this._cdr.markForCheck();
         } else {
             this.errorMsg = '';
             this._cdr.markForCheck();
         }
 
-        const latest_payments = this.origCustomerUnpaidInvoices
+        const latest_payments = this.copyOfUnpaidInvoices
             .reduce((acc, curr) => acc + +curr.now_paying, 0)
             .toFixed(2);
 
@@ -434,7 +427,7 @@ export class AddReceivablesPage implements OnInit {
 
     finalSubmit() {
         //   if (this.checkTotalSum()) {
-        const latest_payments = this.origCustomerUnpaidInvoices
+        const latest_payments = this.copyOfUnpaidInvoices
             .reduce((acc, curr) => acc + +curr.now_paying, 0)
             .toFixed(2);
 
@@ -514,22 +507,18 @@ export class AddReceivablesPage implements OnInit {
     }
 
     handlePayment(item, idx, event) {
-        // console.log(item);
-        // console.log(event);
-
-        this.origCustomerUnpaidInvoices[idx].now_paying =
+        this.copyOfUnpaidInvoices[idx].now_paying =
             event.target.value === '' ? 0 : +event.target.value;
 
         if (
-            this.customerUnpaidInvoices[idx].bal_amount <
+            this.unpaidInvoices[idx].bal_amount <
             (event.target.value === '' ? 0 : +event.target.value)
         ) {
-            this.origCustomerUnpaidInvoices[idx].bal_amount = 0;
+            this.copyOfUnpaidInvoices[idx].bal_amount = 0;
         } else {
-            this.origCustomerUnpaidInvoices[idx].bal_amount =
-                +this.customerUnpaidInvoices[idx].invoice_amt -
-                (+this.customerUnpaidInvoices[idx].paid_amount +
-                    event.target.value ===
+            this.copyOfUnpaidInvoices[idx].bal_amount =
+                +this.unpaidInvoices[idx].invoice_amt -
+                (+this.unpaidInvoices[idx].paid_amount + event.target.value ===
                 ''
                     ? 0
                     : +event.target.value);
@@ -539,7 +528,7 @@ export class AddReceivablesPage implements OnInit {
     }
 
     verifyBalances() {
-        const latest_payment = this.origCustomerUnpaidInvoices
+        const latest_payment = this.copyOfUnpaidInvoices
             .reduce((acc, curr) => acc + +curr.now_paying, 0)
             .toFixed(2);
 
