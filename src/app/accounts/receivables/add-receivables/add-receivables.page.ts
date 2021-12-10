@@ -524,8 +524,7 @@ export class AddReceivablesPage implements OnInit {
             this.customerUnpaidInvoices[idx].bal_amount <
             (event.target.value === '' ? 0 : +event.target.value)
         ) {
-            this.origCustomerUnpaidInvoices[idx].bal_amount =
-                this.customerUnpaidInvoices[idx].bal_amount;
+            this.origCustomerUnpaidInvoices[idx].bal_amount = 0;
         } else {
             this.origCustomerUnpaidInvoices[idx].bal_amount =
                 +this.customerUnpaidInvoices[idx].invoice_amt -
