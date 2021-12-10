@@ -193,10 +193,6 @@
             <div [ngClass]="isCompleted(item.status)">
                 {{item.status === 'D' ? 'Draft' : 'Invoiced'}}
             </div>
-            <div style="font: 8px; color: rgba(54, 54, 255, 0.571)">
-                {{item.payment_status === 'F' ? 'Paid' : item.payment_status ===
-                'P' ? 'Partially Paid' : 'Unpaid'}}
-            </div>
         </div>
 
         <!-- <div class="item" style="text-align: right">
@@ -218,17 +214,18 @@
         </div>
 
         <div class="item" style="text-align: center">
-            <mat-icon
+            <img
                 *ngIf="item.payment_status === 'F' || item.payment_status === 'P'"
-                #tooltip="matTooltip"
-                matTooltip="Locked. Invoice is paid"
+                src="/assets/images/svg/lock.svg"
+                width="22px"
+                height="22px"
+                style="cursor: pointer"
+                matTooltip="Paid or Partially Paid"
                 matTooltipClass="tooltip"
-                (mousedown)="tooltip.hide()"
-                [ngStyle]="{'color':'grey'}"
-                >edit
-            </mat-icon>
+            />
+
             <mat-icon
-                *ngIf="item.payment_status === 'U' || item.payment_status === null"
+                *ngIf="item.payment_status === 'N' || item.payment_status === null"
                 #tooltip="matTooltip"
                 matTooltip="Edit/Modify Sale Details"
                 matTooltipClass="tooltip"

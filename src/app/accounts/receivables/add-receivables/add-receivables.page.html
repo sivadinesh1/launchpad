@@ -91,129 +91,115 @@
                 style="padding-top: 16px"
                 *ngIf="is_customer_selected"
             >
-                <div formArrayName="account_arr" class="list-block">
-                    <div
-                        *ngFor="let product of $any(account_arr).controls; let idx = index"
-                    >
-                        <div>
-                            <ng-container [formGroupName]="idx">
-                                <div class="split">
-                                    <div>
-                                        <mat-form-field
-                                            class="example-full-width"
+                <div class="list-block">
+                    <div>
+                        <div class="split">
+                            <div>
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>Amount Received</mat-label>
+                                    <input
+                                        matInput
+                                        min="0"
+                                        oninput="this.value = Math.abs(this.value)"
+                                        type="number"
+                                        (keyup)="blurFn()"
+                                        formControlName="received_amount"
+                                        autocomplete="off"
+                                    />
+                                </mat-form-field>
+                            </div>
+
+                            <div>
+                                <mat-form-field style="width: 100%">
+                                    <mat-label
+                                        >Select The Bank from List</mat-label
+                                    >
+                                    <mat-select
+                                        required
+                                        (selectionChange)="handleChange($event)"
+                                    >
+                                        <mat-option
+                                            *ngFor="let item of bankList"
+                                            [value]="item"
                                         >
-                                            <mat-label
-                                                >Amount Received</mat-label
-                                            >
-                                            <input
-                                                matInput
-                                                type="number"
-                                                (keyup)="blurFn()"
-                                                formControlName="received_amount"
-                                                autocomplete="off"
-                                            />
+                                            {{ item.bank_name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
 
-                                            <!-- <mat-icon matSuffix (click)="openCurrencyPad(idx)">view_comfy</mat-icon> -->
-                                        </mat-form-field>
-                                    </div>
+                        <div class="split1">
+                            <div>
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>Payment Date</mat-label>
+                                    <input
+                                        matInput
+                                        readonly
+                                        [max]="maxDate"
+                                        [matDatepicker]="payment_date"
+                                        formControlName="received_date"
+                                        required
+                                        (focus)="payment_date.open()"
+                                        autocomplete="off"
+                                    />
+                                    <mat-datepicker-toggle
+                                        matSuffix
+                                        [for]="payment_date"
+                                    ></mat-datepicker-toggle>
+                                    <mat-datepicker
+                                        #payment_date
+                                    ></mat-datepicker>
+                                </mat-form-field>
+                            </div>
 
-                                    <div>
-                                        <mat-form-field style="width: 100%">
-                                            <mat-label>Bank</mat-label>
-                                            <mat-select
-                                                required
-                                                (selectionChange)="handleChange($event)"
-                                            >
-                                                <mat-option value="0">
-                                                    Select The Bank from List
-                                                </mat-option>
-                                                <mat-option
-                                                    *ngFor="let item of bankList"
-                                                    [value]="item"
-                                                >
-                                                    {{ item.bank_name }}
-                                                </mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
-                                    </div>
-                                </div>
-
-                                <div class="split1">
-                                    <div>
-                                        <mat-form-field
-                                            class="example-full-width"
-                                        >
-                                            <mat-label>Payment Date</mat-label>
-                                            <input
-                                                matInput
-                                                readonly
-                                                [max]="maxDate"
-                                                [matDatepicker]="payment_date"
-                                                formControlName="received_date"
-                                                required
-                                                (focus)="payment_date.open()"
-                                                autocomplete="off"
-                                            />
-                                            <mat-datepicker-toggle
-                                                matSuffix
-                                                [for]="payment_date"
-                                            ></mat-datepicker-toggle>
-                                            <mat-datepicker
-                                                #payment_date
-                                            ></mat-datepicker>
-                                        </mat-form-field>
-                                    </div>
-
-                                    <div>
-                                        <mat-form-field style="width: 100%">
-                                            <mat-label>Payment Mode</mat-label>
-                                            <mat-select
-                                                required
-                                                formControlName="payment_mode"
-                                            >
-                                                <mat-option
-                                                    *ngFor="
+                            <div>
+                                <mat-form-field style="width: 100%">
+                                    <mat-label>Payment Mode</mat-label>
+                                    <mat-select
+                                        required
+                                        formControlName="payment_mode"
+                                    >
+                                        <mat-option
+                                            *ngFor="
                                                 let item of paymentModes$
                                                     | async
                                             "
-                                                    [value]="item.id"
-                                                >
-                                                    {{ item.payment_mode_name }}
-                                                </mat-option>
-                                            </mat-select>
-                                            <mat-error
-                                                >This field is
-                                                required</mat-error
-                                            >
-                                        </mat-form-field>
-                                    </div>
-                                </div>
+                                            [value]="item.id"
+                                        >
+                                            {{ item.payment_mode_name }}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error
+                                        >This field is required</mat-error
+                                    >
+                                </mat-form-field>
+                            </div>
+                        </div>
 
-                                <div>
-                                    <mat-form-field class="mat-auto-width">
-                                        <mat-label>Bank Reference#</mat-label>
-                                        <input
-                                            matInput
-                                            autofocus="*ngIf=idx === 1"
-                                            type="text"
-                                            formControlName="bank_ref"
-                                            autocomplete="off"
-                                        />
-                                    </mat-form-field>
-                                </div>
+                        <div>
+                            <mat-form-field class="mat-auto-width">
+                                <mat-label>Bank Reference#</mat-label>
+                                <input
+                                    matInput
+                                    autofocus="*ngIf=idx === 1"
+                                    type="text"
+                                    formControlName="bank_ref"
+                                    autocomplete="off"
+                                />
+                            </mat-form-field>
+                        </div>
 
-                                <div>
-                                    <mat-form-field class="mat-auto-width">
-                                        <mat-label>Notes</mat-label>
-                                        <input
-                                            matInput
-                                            type="text"
-                                            formControlName="payment_ref"
-                                            autocomplete="off"
-                                        />
-                                    </mat-form-field>
-                                </div>
-                            </ng-container>
+                        <div>
+                            <mat-form-field class="mat-auto-width">
+                                <mat-label>Notes</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    formControlName="payment_ref"
+                                    autocomplete="off"
+                                />
+                            </mat-form-field>
                         </div>
                     </div>
                 </div>
@@ -231,10 +217,16 @@
                         Invoice Amount
                     </div>
 
-                    <div class="theader m-curr-field" style="text-align: right">
+                    <div
+                        class="theader m-curr-field"
+                        style="text-align: right; padding-right: 1rem"
+                    >
                         Amount Due
                     </div>
-                    <div class="theader m-curr-field" style="text-align: right">
+                    <div
+                        class="theader m-curr-field"
+                        style="text-align: right; padding-right: 2rem"
+                    >
                         Payment
                     </div>
                 </div>
@@ -266,6 +258,7 @@
                                 padding: 4px;
                                 font-size: 13px;
                                 text-align: right;
+                                padding-right: 1rem;
                             "
                         >
                             {{ item.bal_amount | currency: "INR" }}
@@ -292,11 +285,15 @@
                                 text-align: right;
                             "
                         >
-                            <mat-form-field>
+                            <mat-form-field
+                                style="width: 80px; margin-bottom: -1.25em"
+                            >
                                 <mat-label>Pay Now</mat-label>
                                 <input
                                     matInput
+                                    min="0"
                                     tabindex="-1"
+                                    oninput="this.value = Math.abs(this.value)"
                                     type="number"
                                     name="now_paying"
                                     (keyup)="handlePayment(item, idx, $event)"
@@ -308,7 +305,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- (change)="checkIsNumber('transport_charges')" -->
+
                 <div class="bottom" *ngIf="is_customer_selected">
                     <div>&nbsp;</div>
                     <div style="display: flex; justify-content: flex-end">
@@ -357,7 +354,7 @@
                                     font-size: 13px;
                                 "
                             >
-                                (-) {{ this.paid_amount_sum }}
+                                (-) {{ this.previous_paid_line_total }}
                             </div>
 
                             <div
@@ -380,29 +377,6 @@
                             >
                                 (-) {{ this.latest_payment_final }}
                             </div>
-
-                            <!-- <div
-                                *ngIf="this.customer?.credit_amt !== 0.0"
-                                style="
-                                    text-align: right;
-                                    padding: 2px;
-                                    color: #333333;
-                                    font-size: 13px;
-                                "
-                            >
-                                Credits used
-                            </div>
-                            <div
-                                *ngIf="this.customer?.credit_amt !== 0.0"
-                                style="
-                                    text-align: right;
-                                    padding: 2px;
-                                    color: red;
-                                    font-size: 13px;
-                                "
-                            >
-                                (-) {{ this.customer?.credit_amt }}
-                            </div> -->
 
                             <div
                                 style="
@@ -463,46 +437,6 @@
                     [disabled]="!submitForm.valid"
                 >
                     Add Receivables
-                </button>
-            </div>
-            <div class="submit" *ngIf="is_warning">
-                <div
-                    style="
-                        font-size: 14px;
-                        color: orangered;
-                        font-style: italic;
-                        text-align: center;
-                        display: flex;
-
-                        align-items: center;
-                        padding-top: 16px;
-                        padding-bottom: 16px;
-                    "
-                >
-                    <b>Warning!: </b> Duplicate Bank reference (or) Current paid
-                    amount is same as last payment. please check again and
-                    proceed.
-                </div>
-                &nbsp;&nbsp;
-                <button
-                    mat-stroked-button
-                    color="primary"
-                    type="button"
-                    (click)="cancel()"
-                    class="cursor"
-                    [disabled]="!submitForm.valid"
-                >
-                    Cancel & Recheck</button
-                >&nbsp;&nbsp;
-                <button
-                    mat-raised-button
-                    color="primary"
-                    type="button"
-                    (click)="finalSubmit()"
-                    class="cursor"
-                    [disabled]="!submitForm.valid"
-                >
-                    Continue to Add Receivables
                 </button>
             </div>
         </form>

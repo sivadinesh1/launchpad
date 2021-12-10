@@ -428,9 +428,9 @@
                             <div class="item2 headstyl-left">Items Code</div>
                             <!-- <div class="item2 headstyl-left">Item Description</div> -->
 
-                            <div class="item3 headstyl-right">Qty</div>
-                            <div class="item3 headstyl-right">MRP</div>
-                            <div class="item3 headstyl-center">Discount %</div>
+                            <div class="item3 headstyl-left">Qty</div>
+                            <div class="item3 headstyl-left">MRP</div>
+                            <div class="item3 headstyl-left">Discount %</div>
 
                             <div class="item4 headstyl-right">Tax %</div>
 
@@ -481,12 +481,11 @@
                                     <div>{{item.product_description}}</div>
                                 </div>
 
-                                <div style="text-align: right">
+                                <div style="text-align: left">
                                     <mat-form-field
                                         style="
                                             margin-bottom: -1.25em;
                                             width: 80px;
-                                            text-align: right;
                                         "
                                     >
                                         <input
@@ -519,12 +518,11 @@
                   {{item.mrp | number:'1.2-2'}}
                 </div> -->
 
-                                <div style="text-align: right">
+                                <div style="text-align: left">
                                     <mat-form-field
                                         style="
                                             margin-bottom: -1.25em;
                                             width: 80px;
-                                            text-align: right;
                                         "
                                     >
                                         <input
@@ -545,14 +543,13 @@
                                 </div>
 
                                 <div
-                                    style="text-align: right"
+                                    style="text-align: left"
                                     class="num-format-cell-style"
                                 >
                                     <mat-form-field
                                         style="
                                             margin-bottom: -1.25em;
                                             width: 80px;
-                                            text-align: right;
                                         "
                                     >
                                         <input
@@ -580,21 +577,13 @@
                                 </div>
 
                                 <div
-                                    class="
-                                        item4
-                                        txt-right-align
-                                        num-format-cell-style
-                                    "
+                                    class=" item4 txt-right-align num-format-cell-style"
                                 >
                                     {{item.tax}}
                                 </div>
 
                                 <div
-                                    class="
-                                        item4
-                                        txt-right-align
-                                        num-format-cell-style
-                                    "
+                                    class=" item4 txt-right-align num-format-cell-style"
                                 >
                                     <span [ngClass]="marginCheck(item.margin)">
                                         {{item.total_value }}
@@ -948,11 +937,7 @@
                                 </div>
                                 <div
                                     style="text-align: right; font-size: 22px"
-                                    class="
-                                        align-self-center
-                                        left-pad20
-                                        fweight500
-                                    "
+                                    class=" align-self-center left-pad20 fweight500"
                                 >
                                     {{this.total | number:'1.2-2'}}
                                 </div>
