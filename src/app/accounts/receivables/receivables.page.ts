@@ -23,6 +23,9 @@ import { SearchCustomersComponent } from 'src/app/components/search-customers/se
 import * as xlsx from 'xlsx';
 import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { PrintReceivablesComponent } from 'src/app/components/receivables/print-receivables/print-receivables.component';
+import { DeletePaymentDialogComponent } from 'src/app/components/delete-payments-dialog/delete-payments-dialog.component';
+import { filter, tap } from 'rxjs/operators';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
     selector: 'app-receivables',
@@ -73,7 +76,8 @@ export class ReceivablesPage implements OnInit {
         private _route: ActivatedRoute,
         private _router: Router,
         public _dialog1: MatDialog,
-        private _fb: FormBuilder
+        private _fb: FormBuilder,
+        private loadingService: LoadingService
     ) {
         this._route.data.subscribe((data) => {
             this.payment_receivables_array = data.payments_received_data.body;
@@ -381,4 +385,38 @@ export class ReceivablesPage implements OnInit {
     }
 
     onSubmit() {}
+
+    deletePayment(payment: any) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '40%';
+        dialogConfig.height = '40%';
+        dialogConfig.data = payment;
+
+        const dialogRef = this._dialog.open(
+            DeletePaymentDialogComponent,
+            dialogConfig
+        );
+
+        dialogRef
+            .afterClosed()
+            .pipe(
+                filter((val) => !!val),
+                tap(() => {
+                    this.reloadSearch();
+                    this._cdr.markForCheck();
+                })
+            )
+            .subscribe((data: any) => {
+                if (data === 'success') {
+                    this.loadingService.openSnackBar(
+                        'Payment deleted successfully',
+                        ''
+                    );
+
+                    this.reloadSearch();
+                }
+            });
+    }
 }

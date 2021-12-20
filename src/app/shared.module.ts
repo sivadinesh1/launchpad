@@ -133,6 +133,7 @@ import { AscendingComponent } from './components/util/ascending/ascending.compon
 import { DescendingComponent } from './components/util/descending/descending.component';
 import { PrintReceivablesComponent } from './components/receivables/print-receivables/print-receivables.component';
 import { ApplyNowComponent } from './components/receivables/apply-now/apply-now.component';
+import { DeletePaymentDialogComponent } from './components/delete-payments-dialog/delete-payments-dialog.component';
 
 const components = [
     NullToQuotePipe,
@@ -178,6 +179,7 @@ const components = [
 
     DeleteBrandDialogComponent,
     DeleteVendorDialogComponent,
+    DeletePaymentDialogComponent,
 
     DeleteEnquiryDialogComponent,
 
@@ -318,6 +320,7 @@ const matcomponents = [
         SuccessMessageDialogComponent,
         DeleteBrandDialogComponent,
         DeleteVendorDialogComponent,
+        DeletePaymentDialogComponent,
         CustomerViewDialogComponent,
         CustomerEditShippingAddressComponent,
         InvoiceSuccessComponent,

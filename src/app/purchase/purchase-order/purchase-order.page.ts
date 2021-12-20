@@ -38,7 +38,7 @@ import { filter, tap, debounceTime, switchMap } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { IProduct } from '../../models/Product';
-import { empty } from 'rxjs';
+import { EMPTY } from 'rxjs';
 import { RequireMatch } from '../../util/directives/requireMatch';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
@@ -459,10 +459,10 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                     if (id != null && id.length >= 2) {
                         return this._commonApiService.getVendorInfo({
                             center_id: this.user_data.center_id,
-                            search_text: id,
+                            product_search_text: id,
                         });
                     } else {
-                        return empty();
+                        return EMPTY;
                     }
                 })
             )
@@ -497,7 +497,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                             search_text: id,
                         });
                     } else {
-                        return empty();
+                        return EMPTY;
                     }
                 })
             )

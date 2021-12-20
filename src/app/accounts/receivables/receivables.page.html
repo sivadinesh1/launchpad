@@ -205,7 +205,14 @@
                 currency: 'INR'})}}
             </div>
 
-            <div>&nbsp;</div>
+            <div class="delete-me">
+                <img
+                    src="/assets/images/svg/trash.svg"
+                    width="18px"
+                    height="18px"
+                    (click)="deletePayment(item)"
+                />
+            </div>
         </div>
     </div>
 

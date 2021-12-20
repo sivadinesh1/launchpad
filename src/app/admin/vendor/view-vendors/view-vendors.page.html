@@ -1,8 +1,50 @@
 <ion-content>
     <div class="content">
-        <app-messages></app-messages>
+        <div class="header">
+            <div>
+                <div>Vendors Profile</div>
+            </div>
+            <div>
+                <div class="btn-grad-no-margin add-btn" (click)="add()">
+                    <mat-icon class="add-icon">add</mat-icon>
+                    <span class="add-icon-label">Add Vendor</span>
+                </div>
+            </div>
+        </div>
 
-        <div style="display: flex; justify-content: space-between">
+        <div class="head">
+            <div class="search_box" style="padding-left: 16px">
+                <ion-searchbar
+                    style="width: 300px"
+                    autofocus
+                    debounce="400"
+                    placeholder="Search..."
+                    #mySearchbar
+                    show-cancel-button="focus"
+                    (ionClear)="reset()"
+                    (ionChange)="applyFilter($event)"
+                ></ion-searchbar>
+            </div>
+
+            <div class="full-download" style="align-self: center">
+                <button
+                    style="border-radius: 0px"
+                    appPreventDoubleClick
+                    class="cursor"
+                    type="button"
+                    [throttleTime]="500"
+                    mat-flat-button
+                    type="button"
+                    color="primary"
+                    tabindex="-1"
+                    (click)="exportVendorDataToExcel()"
+                >
+                    Download
+                </button>
+            </div>
+        </div>
+
+        <!-- <div style="display: flex; justify-content: space-between">
             <div
                 style="
                     padding: 1rem 0rem 0rem 2rem;
@@ -49,7 +91,7 @@
                     (ionChange)="applyFilter($event)"
                 ></ion-searchbar>
             </div>
-        </div>
+        </div> -->
 
         <ng-container *ngIf="isTableHasData">
             <div style="width: 90%; display: grid; margin: 0 auto">
@@ -71,7 +113,7 @@
                     </div>
                 </div>
 
-                <div class="header lp-table-header">
+                <div class="table_header lp-table-header">
                     <div class="column-item">#</div>
                     <div class="column-item">Name</div>
                     <div class="column-item">Additional Info</div>
@@ -85,7 +127,18 @@
                 >
                     <div>{{idx + 1}}</div>
                     <div class="item">
-                        <div style="padding: 3px">{{item.vendor_name}}</div>
+                        <div
+                            style="padding: 3px"
+                            (click)="edit(item)"
+                            style="
+                                cursor: pointer;
+                                color: #4a4ccf;
+                                font-size: 16px;
+                                font-weight: 600;
+                            "
+                        >
+                            {{item.vendor_name}}
+                        </div>
 
                         <div style="padding: 3px">
                             CR:
@@ -116,11 +169,11 @@
                         (click)="goVendorFinancials(item)"
                     >
                         <div>
-                            <span style="color: blue"> Financial Reports </span>
+                            <span style="color: blue"> Accounts </span>
                         </div>
                     </div>
 
-                    <div style="text-align: left; cursor: pointer">
+                    <!-- <div style="text-align: left; cursor: pointer">
                         <div>
                             <button mat-menu-item (click)="edit(item)">
                                 <mat-icon
@@ -132,7 +185,7 @@
                                 </mat-icon>
                             </button>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div>
                         <button mat-menu-item (click)="delete(item)">

@@ -226,7 +226,7 @@ export class ViewVendorsPage implements OnInit {
         });
     }
 
-    exportToExcel() {
+    exportVendorDataToExcel() {
         // const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
         //     this.epltable.nativeElement
         // );

@@ -1186,4 +1186,10 @@ export class CommonApiService {
             { observe: 'response' }
         );
     }
+
+    deletePayment(payment_id) {
+        return this.httpClient.get(
+            `${this.restApiUrl}/v1/api/receivables/delete-payment/${payment_id}`
+        );
+    }
 }

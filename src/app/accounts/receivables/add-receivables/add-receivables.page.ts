@@ -268,9 +268,11 @@ export class AddReceivablesPage implements OnInit {
                         this.distributeBalance - e.bal_amount
                     ).toFixed(2);
                     e.bal_amount = 0;
+
                     this.invoice_split_Arr.push({
                         id: e.sale_id,
                         applied_amount: e.paid_amount,
+                        invoice_amount: e.invoice_amt,
                     });
                 } else if (
                     e.bal_amount > 0 &&
@@ -286,6 +288,7 @@ export class AddReceivablesPage implements OnInit {
                     this.invoice_split_Arr.push({
                         id: e.sale_id,
                         applied_amount: e.paid_amount,
+                        invoice_amount: e.invoice_amt,
                     });
                 }
             }
