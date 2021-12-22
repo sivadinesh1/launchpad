@@ -56,7 +56,7 @@ export class ViewCustomerPage {
 
     customersOriglist: any;
 
-    is_loaded = true;
+    is_loaded = false;
     isactive = true;
 
     displayedColumns: string[] = ['name', 'address1', 'credit', 'actions'];
@@ -82,7 +82,6 @@ export class ViewCustomerPage {
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
                 this.center_id = data.center_id;
-                this.ready = 1;
 
                 this._cdr.markForCheck();
             });
@@ -93,9 +92,7 @@ export class ViewCustomerPage {
     }
 
     init() {
-        // if (this.ready === 1) {
-        //     this.reloadCustomers();
-        // }
+        this.reloadCustomers();
     }
 
     //   of([1,2,3]).subscribe({
@@ -104,19 +101,19 @@ export class ViewCustomerPage {
     //     complete: () => console.info('complete')
     // })
 
-    // reloadCustomers() {
-    //     this.is_loaded = false;
-    //     this._commonApiService.getAllActiveCustomers().subscribe({
-    //         next: (data: any) => {
-    //             this.arr = data;
-    //             this.is_loaded = true;
-    //             this.resultArray = data;
-    //             this.pageLength = data.length;
-    //         },
-    //         error: (e) => console.error(e),
-    //         complete: () => {},
-    //     });
-    // }
+    reloadCustomers() {
+        this.is_loaded = false;
+        this._commonApiService.getAllActiveCustomers().subscribe({
+            next: (data: any) => {
+                this.arr = data;
+                this.is_loaded = true;
+                this.resultArray = data;
+                this._cdr.markForCheck();
+            },
+            error: (e) => console.error(e),
+            complete: () => {},
+        });
+    }
 
     add() {
         const dialogConfig = new MatDialogConfig();
@@ -241,47 +238,6 @@ export class ViewCustomerPage {
         this.searchbar.value = '';
     }
 
-    async exportCustomerDataToExcel() {
-        const fileName = 'Active_Customers_Reports.xlsx';
-
-        const reportData = JSON.parse(JSON.stringify(this.arr));
-
-        reportData.forEach((e) => {
-            delete e.id;
-            delete e.center_id;
-            delete e.state_id;
-            delete e.code;
-            delete e.isactive;
-        });
-        this.arr.splice(0, 1);
-
-        const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
-        const wb1: xlsx.WorkBook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
-
-        //then add ur Title txt
-        xlsx.utils.sheet_add_json(
-            wb1.Sheets.sheet1,
-            [
-                {
-                    header: 'Customers List',
-                },
-            ],
-            {
-                skipHeader: true,
-                origin: 'A1',
-            }
-        );
-
-        //start frm A2 here
-        xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
-            skipHeader: false,
-            origin: 'A2',
-        });
-
-        xlsx.writeFile(wb1, fileName);
-    }
-
     editdefault(element) {
         this._commonApiService
             .getAllCustomerDefaultDiscounts(element.id)
@@ -354,13 +310,10 @@ export class ViewCustomerPage {
                     )
                     .subscribe((data2: any) => {
                         if (data2 === 'success') {
-
                             this._loadingService.openSnackBar(
                                 'Discounts added successfully',
                                 ''
                             );
-
-
                         }
                     });
             });
@@ -398,4 +351,127 @@ export class ViewCustomerPage {
                 this._cdr.detectChanges();
             });
     }
+
+    async exportCustomerDataToExcel() {
+        const fileName = 'customer_list.xlsx';
+
+        const reportData = this.resultArray;
+        debugger;
+        reportData.forEach((e) => {
+            e['Customer Name'] = e.customer_name;
+            delete e.vendor_name;
+
+            e['Address 1'] = e.address1;
+            delete e.address1;
+
+            e['Address 2'] = e.address2;
+            delete e.address2;
+
+            e.District = e.district;
+            delete e.district;
+
+            e.Pin = e.pin;
+            delete e.pin;
+
+            e.State = e.description;
+            delete e.description;
+
+            e.Mobile = e.mobile;
+            delete e.mobile;
+
+            delete e.balance_amt;
+            delete e.center_id;
+            delete e.code;
+            delete e.credit_amt;
+            delete e.email;
+            delete e.gst;
+            delete e.id;
+            delete e.is_active;
+            delete e.last_paid_date;
+            delete e.mobile2;
+
+            delete e.state_id;
+            delete e.whatsapp;
+        });
+
+        const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+
+        const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
+
+        ws1['!cols'] = [
+            { width: 32 },
+            { width: 32 },
+            { width: 32 },
+            { width: 32 },
+            { width: 13 },
+            { width: 13 },
+
+            { width: 13 },
+            { width: 13 },
+            { width: 19 },
+        ];
+
+        const wsrows = [
+            { hpt: 30 }, // row 1 sets to the height of 12 in points
+            { hpx: 30 }, // row 2 sets to the height of 16 in pixels
+        ];
+
+        ws1['!rows'] = wsrows; // ws - worksheet
+
+        const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+
+        ws1['!merges'] = merge;
+
+        xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+        //then add ur Title txt
+        xlsx.utils.sheet_add_json(
+            wb1.Sheets.sheet1,
+            [
+                {
+                    header: 'Customer Reports',
+                },
+            ],
+            {
+                skipHeader: true,
+                origin: 'A1',
+            }
+        );
+
+        //start frm A2 here
+        xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+            skipHeader: false,
+            origin: 'A2',
+            header: [
+                'Customer Name',
+                'Address 1',
+                'Address 2',
+                'Address 3',
+                'Mobile',
+            ],
+        });
+
+        xlsx.writeFile(wb1, fileName);
+    }
 }
+
+// address1: "3, Maniakarampalayam, Sengalipalayam Post "
+// address2: "Idikarai Village "
+// balance_amt: 0
+// center_id: 2
+// code: "33"
+// credit_amt: 0
+// description: "TAMIL NADU"
+// district: "Coimbatore "
+// email: ""
+// gst: "33AACCA7524Q1ZF"
+// id: 540
+// is_active: "A"
+// last_paid_date: "11-Aug-2021"
+// mobile: "9600917128"
+// mobile2: ""
+// name: " APM Auto Parts Private Limited"
+// phone: ""
+// pin: "641022"
+// state_id: 26
+// whatsapp: ""

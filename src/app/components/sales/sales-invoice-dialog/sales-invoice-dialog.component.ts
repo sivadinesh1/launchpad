@@ -169,20 +169,14 @@ export class SalesInvoiceDialogComponent implements OnInit {
             e['Taxable Value'] = e.after_tax_value;
             delete e.after_tax_value;
 
-            e['CGST'] = e.cgs_t;
-            delete e.cgs_t;
-
-            e['SGST'] = e.sgs_t;
-            delete e.sgs_t;
-
-            e['IGST'] = e.igs_t;
-            delete e.igs_t;
+            e['Mrp'] = e.mrp;
+            delete e.mrp;
 
             e['Disc. %'] = e.disc_percent;
             delete e.disc_percent;
 
-            e['HSN Code'] = e.hsn_code;
-            delete e.hsn_code;
+            e['HSN Code'] = e.product.hsn_code;
+            delete e.product.hsn_code;
 
             e['Item Code'] = e.product.product_code;
             delete e.product.product_code;
@@ -205,6 +199,9 @@ export class SalesInvoiceDialogComponent implements OnInit {
             e['Disc Value'] = e.disc_value;
             delete e.disc_value;
 
+            delete e.igs_t;
+            delete e.cgs_t;
+            delete e.sgs_t;
             delete e.batch_date;
             delete e.center_id;
             delete e.customer_id;
@@ -277,12 +274,11 @@ export class SalesInvoiceDialogComponent implements OnInit {
                 'Item Description',
                 'HSN Code',
                 'Quantity',
+                'Mrp',
                 'Tax',
                 'Disc. %',
                 'Disc Value',
-                'CGST',
-                'SGST',
-                'IGST',
+
                 'Unit Price',
                 'Taxable Value',
                 'Total Value',
@@ -291,4 +287,36 @@ export class SalesInvoiceDialogComponent implements OnInit {
 
         xlsx.writeFile(wb1, fileName);
     }
+
+    goSalesEditScreen() {
+        this.close();
+        this._router.navigateByUrl(`/home/sales/edit/${this.data.id}/TI`);
+    }
 }
+
+// after_tax_value: "335.35"
+// batch_date: "2021-12-20T00:00:00.000Z"
+// center_id: null
+// cgs_t: "14"
+// createdAt: null
+// created_by: null
+// disc_percent: "15"
+// disc_type: "NET"
+// disc_value: "75.75"
+// hsn_code: null
+// id: "32885"
+// igs_t: "0"
+// mrp: "505"
+// product: {id: '79636', center_id: '2', brand_id: '6', product_type: 'P', product_code: '200415030A', …}
+// product_id: "79636"
+// quantity: 1
+// returned: 0
+// sale_id: "4569"
+// sgs_t: "14"
+// stock: {id: '24474', center_id: null, product_id: '79636', mrp: '474', available_stock: 1, …}
+// stock_id: "24474"
+// tax: 28
+// total_value: "429.25"
+// unit_price: "353.5"
+// updatedAt: null
+// updated_by: null

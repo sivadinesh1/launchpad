@@ -170,9 +170,7 @@
         <div class="column-item txt-left-align" style="padding-left: 1rem">
             Status
         </div>
-        <!-- <div class="column-item txt-center-align">Payment</div> -->
-        <div>View</div>
-        <div>Edit</div>
+
         <div>&nbsp;</div>
     </div>
     <div *ngIf="filteredValues?.length === 0" class="no-records-found">
@@ -182,7 +180,9 @@
         <div style="padding-left: 0.5rem">{{idx + 1}}</div>
         <div class="item">{{item.invoice_date | date:'d-M-yyyy' }}</div>
         <div class="item">{{item.customer_name}}</div>
-        <div class="item" (click)="openDialog(item)">{{item.invoice_no}}</div>
+        <div class="item link-it" (click)="openDialog(item)">
+            {{item.invoice_no}}
+        </div>
 
         <div class="item" style="text-align: right">{{item.no_of_items}}</div>
         <div class="item" style="text-align: right">
@@ -201,40 +201,6 @@
                 'P' ? 'Partially Paid' : 'Unpaid'}}
             </span>
         </div> -->
-        <div class="item" style="text-align: center">
-            <mat-icon
-                #tooltip="matTooltip"
-                matTooltip="View"
-                matTooltipClass="tooltip"
-                (mousedown)="tooltip.hide()"
-                [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
-                (click)="openDialog(item)"
-                >remove_red_eye
-            </mat-icon>
-        </div>
-
-        <div class="item" style="text-align: center">
-            <img
-                *ngIf="item.payment_status === 'F' || item.payment_status === 'P'"
-                src="/assets/images/svg/lock.svg"
-                width="22px"
-                height="22px"
-                style="cursor: pointer"
-                matTooltip="Paid or Partially Paid"
-                matTooltipClass="tooltip"
-            />
-
-            <mat-icon
-                *ngIf="item.payment_status === 'N' || item.payment_status === null"
-                #tooltip="matTooltip"
-                matTooltip="Edit/Modify Sale Details"
-                matTooltipClass="tooltip"
-                (mousedown)="tooltip.hide()"
-                [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
-                (click)="goSalesEditScreen(item)"
-                >edit
-            </mat-icon>
-        </div>
 
         <div
             class="item"

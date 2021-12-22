@@ -226,14 +226,108 @@ export class ViewVendorsPage implements OnInit {
         });
     }
 
-    exportVendorDataToExcel() {
-        // const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
-        //     this.epltable.nativeElement
-        // );
-        // ws['!cols'] = [];
-        // ws['!cols'][2] = { hidden: true };
-        // const wb: xlsx.WorkBook = xlsx.utils.book_new();
-        // xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-        // xlsx.writeFile(wb, 'vendor_list.xlsx');
+    async exportVendorDataToExcel() {
+        const fileName = 'vendor_list.xlsx';
+
+        const reportData = this.resultArray;
+
+        reportData.forEach((e) => {
+            e['Vendor Name'] = e.vendor_name;
+            delete e.vendor_name;
+
+            e['Address 1'] = e.address1;
+            delete e.address1;
+
+            e['Address 2'] = e.address2;
+            delete e.address2;
+
+            e['Address 3'] = e.address3;
+            delete e.address3;
+
+            e.District = e.district;
+            delete e.district;
+
+            e.Pin = e.pin;
+            delete e.pin;
+
+            e.State = e.state;
+            delete e.state;
+
+            e.Mobile = e.mobile;
+            delete e.mobile;
+
+            delete e.balance_amt;
+            delete e.center_id;
+            delete e.code;
+            delete e.credit_amt;
+            delete e.email;
+            delete e.gst;
+            delete e.id;
+            delete e.is_active;
+            delete e.last_paid_date;
+            delete e.mobile2;
+
+            delete e.state_id;
+            delete e.whatsapp;
+        });
+
+        const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+
+        const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
+
+        ws1['!cols'] = [
+            { width: 32 },
+            { width: 32 },
+            { width: 32 },
+            { width: 32 },
+            { width: 13 },
+            { width: 13 },
+
+            { width: 13 },
+            { width: 13 },
+            { width: 19 },
+        ];
+
+        const wsrows = [
+            { hpt: 30 }, // row 1 sets to the height of 12 in points
+            { hpx: 30 }, // row 2 sets to the height of 16 in pixels
+        ];
+
+        ws1['!rows'] = wsrows; // ws - worksheet
+
+        const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+
+        ws1['!merges'] = merge;
+
+        xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+        //then add ur Title txt
+        xlsx.utils.sheet_add_json(
+            wb1.Sheets.sheet1,
+            [
+                {
+                    header: 'Vendor Reports',
+                },
+            ],
+            {
+                skipHeader: true,
+                origin: 'A1',
+            }
+        );
+
+        //start frm A2 here
+        xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+            skipHeader: false,
+            origin: 'A2',
+            header: [
+                'Vendor Name',
+                'Address 1',
+                'Address 2',
+                'Address 3',
+                'Mobile',
+            ],
+        });
+
+        xlsx.writeFile(wb1, fileName);
     }
 }

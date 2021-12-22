@@ -540,7 +540,7 @@ export class SearchSaleOrderPage implements OnInit {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = false;
-        dialogConfig.width = '50%';
+        dialogConfig.width = '70%';
         dialogConfig.height = '100%';
         dialogConfig.data = row;
         dialogConfig.position = { top: '0', right: '0' };

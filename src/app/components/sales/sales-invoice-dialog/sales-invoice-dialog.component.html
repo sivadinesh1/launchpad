@@ -21,6 +21,34 @@
             >
         </div>
         <div>
+            <span>
+                <img
+                    *ngIf="
+                        this.data.payment_status === 'F' ||
+                        this.data.payment_status === 'P'
+                    "
+                    src="/assets/images/svg/lock.svg"
+                    width="22px"
+                    height="22px"
+                    style="cursor: pointer"
+                    matTooltip="Payments Associated"
+                    matTooltipClass="tooltip"
+                />
+
+                <mat-icon
+                    *ngIf="
+                        this.data.payment_status === 'N' ||
+                        this.data.payment_status === null
+                    "
+                    #tooltip="matTooltip"
+                    matTooltip="Edit"
+                    matTooltipClass="tooltip"
+                    (mousedown)="tooltip.hide()"
+                    [ngStyle]="{ color: '#6d78d2', cursor: 'pointer' }"
+                    (click)="goSalesEditScreen()"
+                    >edit
+                </mat-icon>
+            </span>
             <span
                 *ngIf="this.data.status === 'C'"
                 (click)="salesReturn()"
@@ -29,16 +57,23 @@
                 SALES RETURN
             </span>
 
-            <span style="padding: 0px 6px"
-                ><img
-                    matTooltip="Download"
-                    matTooltipClass="tooltip"
-                    src="/assets/images/svg/direct-download.svg"
-                    style="cursor: pointer"
-                    width="24px"
-                    height="24px"
+            <span style="padding: 0px 6px">
+                <button
+                    style="border-radius: 0px"
+                    appPreventDoubleClick
+                    class="cursor"
+                    type="button"
+                    [throttleTime]="500"
+                    mat-flat-button
+                    type="button"
+                    color="primary"
+                    tabindex="-1"
                     (click)="exportToExcel()"
-            /></span>
+                >
+                    Download
+                </button>
+            </span>
+
             <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         </div>
     </div>
@@ -151,6 +186,7 @@
                     <th style="text-align: left">SNo</th>
                     <th style="text-align: left">CODE</th>
                     <th style="text-align: left">DESCRIPTION</th>
+                    <th style="text-align: left">H.CODE</th>
                     <th style="text-align: right">QTY</th>
 
                     <th style="text-align: right">MRP</th>
@@ -172,13 +208,13 @@
                     <td style="text-align: left">{{ idx + 1 }}</td>
                     <td>{{ item.product.product_code }}</td>
                     <td>{{ item.product.product_description }}</td>
-
+                    <td>{{ item.product.hsn_code }}</td>
                     <td style="text-align: right">{{ item?.quantity }}</td>
                     <td style="text-align: right">
                         {{ (+item?.mrp).toFixed(2) }}
                     </td>
                     <td style="text-align: right">{{ item?.disc_percent }}</td>
-                    <td style="text-align: right">{{ item?.tax_rate }}</td>
+                    <td style="text-align: right">{{ item?.tax }}</td>
                     <td style="text-align: right">
                         {{ (+item?.total_value).toFixed(2) }}
                     </td>

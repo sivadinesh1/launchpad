@@ -58,7 +58,7 @@ export class LeftMenuComponent {
         },
         {
             name: 'Customers',
-            link: '/home/view-customers',
+            link: '',
             icon: '/assets/images/svg/customers.svg',
             children: [
                 {
@@ -102,7 +102,7 @@ export class LeftMenuComponent {
 
         {
             name: 'Vendors',
-            link: '/home/view-vendors',
+            link: '',
             icon: '/assets/images/svg/vendors.svg',
             children: [
                 {
@@ -244,6 +244,8 @@ export class LeftMenuComponent {
             this._router.navigateByUrl('/home/admin-dashboard');
         } else if (name === 'Settings') {
             this.openSettings();
+        } else if (name === 'Vendors' || name === 'Customers') {
+            // do nothing just expand / collapse
         } else {
             this._router.navigateByUrl(url);
         }

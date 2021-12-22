@@ -13,7 +13,7 @@
         </div>
 
         <div class="head">
-            <div class="search_box" style="padding-left: 16px">
+            <div class="search_box">
                 <ion-searchbar
                     style="width: 300px"
                     autofocus
@@ -60,7 +60,6 @@
                 <div>{{idx + 1}}</div>
                 <div class="item">
                     <div>{{item.name}}</div>
-                    <div>{{item.last_paid_date}}</div>
                 </div>
 
                 <div class="item">
@@ -83,11 +82,10 @@
                         [matMenuTriggerData]="{element: item}"
                         style="color: blue; font-size: 18px; font-weight: 400"
                     >
-                        More
                         <img
-                            src="/assets/images/svg/down-arrow.svg"
-                            width="12px"
-                            height="12px"
+                            src="/assets/images/svg/ellipsis-horizontal.svg"
+                            width="24px"
+                            height="24px"
                             alt=""
                         />
                     </button>
