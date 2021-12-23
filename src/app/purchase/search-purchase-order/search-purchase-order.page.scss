@@ -25,9 +25,9 @@
 .listItem,
 .headerRow {
     display: grid;
-    grid-template-columns: 30px 100px 190px 100px 100px 60px 100px 100px 50px 50px 50px 40px;
+    grid-template-columns: 30px 100px 240px 110px 120px 70px 110px 110px;
     align-items: center;
-    padding: 5px;
+    padding: 5px 1rem;
 }
 
 .main-box {
@@ -39,6 +39,7 @@
 }
 
 .header-style {
+    display: grid;
     padding: 0.2rem 1rem;
     color: #333;
     color: #606060;
@@ -163,7 +164,6 @@
 }
 
 .column-item {
-    display: flex;
     align-items: center;
 }
 
@@ -182,4 +182,18 @@
     padding: 0 16px 0 28px;
     margin-left: auto;
     cursor: pointer;
+}
+
+.link-it {
+    color: blue;
+    cursor: pointer;
+}
+
+.search-purchase-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    font-weight: 500;
 }

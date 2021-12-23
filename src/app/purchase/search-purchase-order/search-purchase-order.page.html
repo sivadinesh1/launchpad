@@ -1,6 +1,23 @@
 <ion-content>
-    <div class="search-sale-header" style="padding: 1rem">
-        All Purchase Orders
+    <div class="search-purchase-header" style="padding: 1rem">
+        <div>All Purchase Orders</div>
+
+        <div class="full-download" style="align-self: center">
+            <button
+                style="border-radius: 0px"
+                appPreventDoubleClick
+                class="cursor"
+                type="button"
+                [throttleTime]="500"
+                mat-flat-button
+                type="button"
+                color="primary"
+                tabindex="-1"
+                (click)="exportCompletedPurchaseToExcel()"
+            >
+                Download
+            </button>
+        </div>
     </div>
     <div class="search-bar">
         <div>
@@ -123,25 +140,12 @@
         <div class="column-item">Vendor Name</div>
         <div class="column-item">PO #</div>
 
-        <div class="column-item">LR #</div>
+        <div class="column-item txt-right-align">LR #</div>
 
         <div class="column-item txt-right-align">Items</div>
         <div class="column-item txt-right-align">Net Total</div>
-        <div class="column-item txt-right-align">Edit</div>
 
-        <div>
-            <img
-                matTooltip="Download"
-                matTooltipClass="tooltip"
-                src="/assets/images/svg/direct-download.svg"
-                style="cursor: pointer"
-                width="32px"
-                height="32px"
-                (click)="exportDraftPurchaseToExcel()"
-            />
-        </div>
-
-        <div>Revision</div>
+        <div class="column-item txt-center-align">Revision</div>
     </div>
     <div *ngIf="filteredValues?.length === 0" class="no-records-found">
         No records found
@@ -153,7 +157,9 @@
 
         <div class="item">{{item.vendor_name}}</div>
 
-        <div class="item" (click)="openDialog(item)">{{item.invoice_no}}</div>
+        <div class="item link-it" (click)="openDialog(item)">
+            {{item.invoice_no}}
+        </div>
 
         <div class="item" style="text-align: right">{{item.lr_no}}</div>
 
@@ -161,30 +167,6 @@
 
         <div class="item" style="text-align: right">
             {{item.net_total.toLocaleString('en-IN')}}
-        </div>
-
-        <div class="item" style="text-align: center">
-            <mat-icon
-                #tooltip="matTooltip"
-                matTooltip="Edit/Modify Sale Details"
-                matTooltipClass="tooltip"
-                (mousedown)="tooltip.hide()"
-                [ngStyle]="{'color':'#6d78d2', 'cursor': 'pointer'}"
-                (click)="goPurchaseEditScreen(item)"
-                >edit
-            </mat-icon>
-        </div>
-
-        <div class="item cursor" style="text-align: center">
-            <mat-icon
-                #tooltip="matTooltip"
-                matTooltip="View Purchase Details"
-                matTooltipClass="tooltip"
-                (mousedown)="tooltip.hide()"
-                [ngStyle]="{'color':'#6d78d2'}"
-                (click)="openDialog(item)"
-                >remove_red_eye
-            </mat-icon>
         </div>
 
         <div class="txt-center-align">

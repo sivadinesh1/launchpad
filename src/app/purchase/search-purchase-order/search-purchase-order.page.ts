@@ -374,7 +374,7 @@ export class SearchPurchaseOrderPage implements OnInit {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
-        dialogConfig.width = '50%';
+        dialogConfig.width = '70%';
         dialogConfig.height = '100%';
         dialogConfig.data = row;
         dialogConfig.position = { top: '0', right: '0' };
@@ -444,107 +444,6 @@ export class SearchPurchaseOrderPage implements OnInit {
         this.isCustomDateFilter = !this.isCustomDateFilter;
     }
 
-    async exportDraftPurchaseToExcel() {
-        this.arr = [];
-        const fileName = 'Draft_Purchase_Reports.xlsx';
-
-        this.arr = await lastValueFrom(this.draftPurchase$);
-
-        const reportData = JSON.parse(JSON.stringify(this.arr));
-
-        reportData.forEach((e) => {
-            e['Vendor Name'] = e.vendor_name;
-            delete e.vendor_name;
-
-            e['Invoice #'] = e.invoice_no;
-            delete e.invoice_no;
-
-            e['Invoice Date'] = e.invoice_date;
-            delete e.invoice_date;
-
-            e['Purchase Type'] = e.purchase_type;
-            delete e.purchase_type;
-
-            e['Total Qty'] = e.total_qty;
-            delete e.total_qty;
-
-            e['# of Items'] = e.no_of_items;
-            delete e.no_of_items;
-
-            e['Taxable Value'] = e.after_tax_value;
-            delete e.after_tax_value;
-
-            e.CGST = e.cgst;
-            delete e.cgst;
-
-            e.SGST = e.sgst;
-            delete e.sgst;
-
-            e.IGST = e.igst;
-            delete e.igst;
-
-            e['Total Value'] = e.total_value;
-            delete e.total_value;
-
-            e['Net Total'] = e.net_total;
-            delete e.net_total;
-
-            e['Stock Inwards Date Time'] = e.stock_inwards_datetime;
-            delete e.stock_inwards_datetime;
-
-            delete e.id;
-            delete e.center_id;
-            delete e.vendor_id;
-            delete e.lr_no;
-            delete e.lr_date;
-            delete e.received_date;
-            delete e.order_no;
-            delete e.order_date;
-            delete e.transport_charges;
-
-            delete e.unloading_charges;
-            delete e.misc_charges;
-            delete e.status;
-            delete e.revision;
-            delete e.tax_applicable;
-            delete e.roundoff;
-            delete e.retail_customer_name;
-            delete e.no_of_boxes;
-        });
-
-        const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
-        const wb1: xlsx.WorkBook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
-
-        //then add ur Title txt
-        xlsx.utils.sheet_add_json(
-            wb1.Sheets.sheet1,
-            [
-                {
-                    header: 'Draft Purchase Reports',
-                    from_date: `From: ${moment(
-                        this.submitForm.value.from_date
-                    ).format('DD/MM/YYYY')}`,
-                    to_date: `To: ${moment(
-                        this.submitForm.value.to_date
-                    ).format('DD/MM/YYYY')}`,
-                },
-            ],
-            {
-                skipHeader: true,
-                origin: 'A1',
-            }
-        );
-
-        //start frm A2 here
-        xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
-            skipHeader: false,
-            origin: 'A2',
-        });
-
-        xlsx.writeFile(wb1, fileName);
-    }
-
     async exportCompletedPurchaseToExcel() {
         this.arr = [];
         const fileName = 'Completed_Purchase_Reports.xlsx';
@@ -560,14 +459,15 @@ export class SearchPurchaseOrderPage implements OnInit {
             e['Invoice #'] = e.invoice_no;
             delete e.invoice_no;
 
-            e['Invoice Date'] = e.invoice_date;
+            e['Invoice Date'] = moment(e.invoice_date).format('DD-MM-YYYY');
+
             delete e.invoice_date;
 
             e['Purchase Type'] = e.purchase_type;
             delete e.purchase_type;
 
-            e['Total Qty'] = e.total_qty;
-            delete e.total_qty;
+            e['Total Qty'] = e.total_quantity;
+            delete e.total_quantity;
 
             e['# of Items'] = e.no_of_items;
             delete e.no_of_items;
@@ -575,14 +475,14 @@ export class SearchPurchaseOrderPage implements OnInit {
             e['Taxable Value'] = e.after_tax_value;
             delete e.after_tax_value;
 
-            e.CGST = e.cgst;
-            delete e.cgst;
+            e.CGST = e.sgs_t;
+            delete e.cgs_t;
 
-            e.SGST = e.sgst;
-            delete e.sgst;
+            e.SGST = e.sgs_t;
+            delete e.sgs_t;
 
-            e.IGST = e.igst;
-            delete e.igst;
+            e.IGST = e.igs_t;
+            delete e.igs_t;
 
             e['Total Value'] = e.total_value;
             delete e.total_value;
@@ -590,8 +490,10 @@ export class SearchPurchaseOrderPage implements OnInit {
             e['Net Total'] = e.net_total;
             delete e.net_total;
 
-            e['Stock Inwards Date Time'] = e.stock_inwards_datetime;
-            delete e.stock_inwards_datetime;
+            e['Stock Inwards Date Time'] = moment(
+                e.stock_inwards_date_time
+            ).format('DD-MM-YYYY HH:mm:ss');
+            delete e.stock_inwards_date_time;
 
             delete e.id;
             delete e.center_id;
@@ -608,13 +510,48 @@ export class SearchPurchaseOrderPage implements OnInit {
             delete e.status;
             delete e.revision;
             delete e.tax_applicable;
-            delete e.roundoff;
+            delete e.round_off;
             delete e.retail_customer_name;
             delete e.no_of_boxes;
+            delete e.createdAt;
+            delete e.updatedAt;
+            delete e.created_by;
+            delete e.updated_by;
         });
 
         const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
         const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+
+        ws1['!cols'] = [
+            { width: 35 },
+            { width: 26 },
+            { width: 25 },
+            { width: 14 },
+            { width: 8 },
+            { width: 8 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 19 },
+            { width: 12 },
+            { width: 16 },
+            { width: 19 },
+        ];
+
+        const wsrows = [
+            { hpt: 30 }, // row 1 sets to the height of 12 in points
+            { hpx: 30 }, // row 2 sets to the height of 16 in pixels
+        ];
+
+        ws1['!rows'] = wsrows; // ws - worksheet
+
+        const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+
+        ws1['!merges'] = merge;
+
         xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
 
         //then add ur Title txt
@@ -641,6 +578,21 @@ export class SearchPurchaseOrderPage implements OnInit {
         xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
             skipHeader: false,
             origin: 'A2',
+            header: [
+                'Vendor Name',
+                'Invoice #',
+                'Invoice Date',
+                'Purchase Type',
+                'Total Qty',
+                '# of Items',
+                'CGST',
+                'SGST',
+                'IGST',
+                'Taxable Value',
+                'Total Value',
+                'Net Total',
+                'Stock Inwards Date Time',
+            ],
         });
 
         xlsx.writeFile(wb1, fileName);
