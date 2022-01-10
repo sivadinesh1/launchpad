@@ -1,153 +1,191 @@
-<ion-content>
-    <div class="content">
+<ion-content [fullscreen]="true" class="ion-padding">
+    <div
+        class="sticky"
+        style="
+            display: flex;
+            justify-content: space-between;
+
+            padding: 16px 0;
+            background-color: #fff;
+            z-index: 1;
+        "
+    >
         <div
             style="
-                display: flex;
-                justify-content: space-between;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-                padding: 16px 0;
+                font-size: 1.5rem;
+                letter-spacing: 1px;
+                font-weight: 500;
+                align-self: center;
+                padding-left: 1rem;
             "
         >
+            Products & Stock Management
+        </div>
+
+        <div
+            class="btn-grad add-btn"
+            style="padding-right: 1rem"
+            (click)="add()"
+        >
+            <mat-icon class="add-icon">add</mat-icon>
+            <span style="padding-left: 10px">Add Product</span>
+        </div>
+    </div>
+
+    <div class="head sticky1" style="padding: 1rem 0">
+        <div style="display: flex">
+            <ion-searchbar
+                style="width: 400px"
+                autofocus
+                debounce="400"
+                placeholder="Search stocks..."
+                #mySearchbar
+                class="search"
+                show-cancel-button="focus"
+                (ionClear)="reset()"
+                (ionChange)="openDialog($event)"
+            ></ion-searchbar>
             <div
                 style="
-                    font-size: 1.5rem;
-                    letter-spacing: 1px;
-                    font-weight: 500;
+                    display: flex;
                     align-self: center;
+                    font-style: italic;
+                    font-size: 13px;
                 "
             >
-                Products & Stock Management
-            </div>
-
-            <div class="btn-grad add-btn" (click)="add()">
-                <mat-icon class="add-icon">add</mat-icon>
-                <span style="padding-left: 10px">Add Product</span>
+                Showing&nbsp;
+                <span style="font-weight: 600">{{this.listArray?.length}}</span
+                >&nbsp;of&nbsp;<span style="font-weight: 600"
+                    >{{this.full_count}}</span
+                >
             </div>
         </div>
 
-        <div class="head" style="padding: 1rem 0">
-            <div>
-                <ion-searchbar
-                    style="width: 400px"
-                    autofocus
-                    debounce="400"
-                    placeholder="Search stocks..."
-                    #mySearchbar
-                    class="search"
-                    show-cancel-button="focus"
-                    (ionClear)="reset()"
-                    (ionChange)="openDialog($event)"
-                ></ion-searchbar>
-            </div>
-            <div class="full-download" style="align-self: center">
-                <button
-                    style="border-radius: 0px"
-                    appPreventDoubleClick
-                    class="cursor"
-                    type="button"
-                    [throttleTime]="500"
-                    mat-flat-button
-                    type="button"
-                    color="primary"
-                    tabindex="-1"
-                >
-                    Download
-                </button>
-                <button
-                    mat-flat-button
-                    color="primary"
-                    tabindex="-1"
-                    #ddTrigger="matMenuTrigger"
-                    [matMenuTriggerFor]="beforeMenu"
-                    style="border-radius: 0px; border-left: 1px solid grey"
-                >
-                    <mat-icon style="color: white">arrow_drop_down</mat-icon>
-                </button>
-            </div>
+        <div class="full-download" style="align-self: center">
+            <button
+                style="border-radius: 0px"
+                appPreventDoubleClick
+                class="cursor"
+                type="button"
+                [throttleTime]="500"
+                mat-flat-button
+                type="button"
+                color="primary"
+                tabindex="-1"
+            >
+                Download
+            </button>
+            <button
+                mat-flat-button
+                color="primary"
+                tabindex="-1"
+                #ddTrigger="matMenuTrigger"
+                [matMenuTriggerFor]="beforeMenu"
+                style="border-radius: 0px; border-left: 1px solid grey"
+            >
+                <mat-icon style="color: white">arrow_drop_down</mat-icon>
+            </button>
         </div>
-        <div></div>
-
-        <ng-container>
-            <div style="width: 100%; display: grid; margin: 0 auto">
-                <div class="row1" *ngIf="isTableHasData">
-                    <div class="row-cnt">
-                        &nbsp;&nbsp;
-                        <span
-                            *ngIf="pageLength >= 50"
-                            style="font-size: 14px; color: #4a4ccf"
-                        >
-                            Showing {{ pageLength }} + matching records
-                        </span>
-                        <span
-                            *ngIf="pageLength < 50"
-                            style="font-size: 14px; color: #4a4ccf"
-                        >
-                            Showing {{ pageLength }} matching records
-                        </span>
-                    </div>
-                </div>
-
-                <div class="header">
-                    <div class="column-item">#</div>
-                    <div class="column-item">Code</div>
-                    <div class="column-item">Description</div>
-                    <div class="column-item">Brand</div>
-                    <div class="column-item">Rack Info</div>
-                    <div class="column-item">Available Stock</div>
-                    <div class="column-item">MRP</div>
-                    <div class="column-item">Action</div>
-                </div>
-
-                <div
-                    *ngFor="let item of resultArray; let idx = index"
-                    class="listItem"
-                >
-                    <div>{{idx + 1}}</div>
-                    <div class="item">{{item.product_code}}</div>
-                    <div class="item">{{item.product_description}}</div>
-                    <div class="item">{{item.brand_name}}</div>
-                    <div class="item">{{item.rack_info}}</div>
-                    <div class="item">{{item.available_stock}}</div>
-                    <div class="item">{{item.mrp}}</div>
-                    <div>
-                        <button
-                            mat-button
-                            [matMenuTriggerFor]="menu"
-                            [matMenuTriggerData]="{element: item}"
-                            style="
-                                color: blue;
-                                font-size: 18px;
-                                font-weight: 400;
-                            "
-                        >
-                            More
-                            <img
-                                src="/assets/images/svg/down-arrow.svg"
-                                width="12px"
-                                height="12px"
-                                alt=""
-                            />
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </ng-container>
     </div>
-</ion-content>
+    <div></div>
 
-<mat-menu #menu="matMenu">
-    <ng-template matMenuContent let-element="element">
-        <button mat-menu-item (click)="edit(element)">
-            <span> Edit</span>
-        </button>
-        <button mat-menu-item (click)="correctProduct(element)">
-            <span> Stock Correction</span>
-        </button>
-        <button mat-menu-item (click)="showInventoryReportsDialog(element)">
-            <span> Stock Audit</span>
-        </button>
-    </ng-template>
-</mat-menu>
+    <ng-container>
+        <div
+            style="
+                width: 100%;
+
+                margin: 0 auto;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            "
+        >
+            <div class="row1" *ngIf="isTableHasData">
+                <div class="row-cnt">
+                    &nbsp;&nbsp;
+                    <span
+                        *ngIf="pageLength >= 50"
+                        style="font-size: 14px; color: #4a4ccf"
+                    >
+                        Showing {{ pageLength }} + matching records
+                    </span>
+                    <span
+                        *ngIf="pageLength < 50"
+                        style="font-size: 14px; color: #4a4ccf"
+                    >
+                        Showing {{ pageLength }} matching records
+                    </span>
+                </div>
+            </div>
+
+            <div class="header header-style sticky2">
+                <div class="column-item">#</div>
+                <div class="column-item">Code</div>
+                <div class="column-item" style="padding-left: 16px">
+                    Description
+                </div>
+                <div class="column-item" style="padding-left: 16px">Brand</div>
+                <div class="column-item" style="padding-left: 16px">
+                    Rack Info
+                </div>
+                <div
+                    class="column-item txt-right-align"
+                    style="padding-right: 16px"
+                >
+                    Available Stock
+                </div>
+                <div
+                    class="column-item txt-right-align"
+                    style="padding-right: 16px"
+                >
+                    MRP
+                </div>
+                <div class="column-item txt-center-align">&nbsp;</div>
+            </div>
+
+            <div
+                *ngFor="let item of listArray; let idx = index"
+                class="listItem"
+            >
+                <div>{{idx + 1}}</div>
+                <div class="item a-link" (click)="edit(item)">
+                    {{item?.product_code}}
+                </div>
+                <div class="item" style="padding-left: 16px">
+                    {{item?.product_description}}
+                </div>
+                <div class="item" style="padding-left: 16px">
+                    {{item?.brand_name}}
+                </div>
+                <div class="item" style="padding-left: 16px">
+                    {{item?.rack_info}}
+                </div>
+                <div class="item txt-right-align" style="padding-right: 16px">
+                    {{item?.available_stock}}
+                </div>
+                <div class="item txt-right-align" style="padding-right: 16px">
+                    {{item?.mrp}}
+                </div>
+                <div class="more a-link" (click)="correctProduct(item)">
+                    Adjustment
+                </div>
+                <div
+                    class="more a-link"
+                    (click)="showInventoryReportsDialog(item)"
+                >
+                    Audit
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Loading more data..."
+        >
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+</ion-content>
 
 <mat-menu #beforeMenu="matMenu" [overlapTrigger]="false" xPosition="before">
     <mat-option>

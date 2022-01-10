@@ -36,6 +36,7 @@ import { InventoryReportsDialogComponent } from 'src/app/components/reports/inve
     selector: 'app-view-products',
     templateUrl: './view-products.page.html',
     styleUrls: ['./view-products.page.scss'],
+
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
 })
@@ -64,7 +65,18 @@ export class ViewProductsPage implements OnInit {
 
     temp_product_search_text = '';
     mrp_flag = false;
-    resultArray: any = [];
+
+    listArray: any[] = [];
+    tempListArray: any[] = [];
+    offset = 0;
+    length = 50;
+    direction = '';
+
+    array = [];
+    sum = 100;
+    throttle = 300;
+
+    full_count = 0;
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -96,6 +108,7 @@ export class ViewProductsPage implements OnInit {
 
     ngOnInit() {
         this.dataSource.paginator = this.paginator;
+        this.getData('', this.offset, this.length, '');
     }
 
     addProduct() {
@@ -108,23 +121,40 @@ export class ViewProductsPage implements OnInit {
         );
     }
 
-    ionViewDidEnter() {}
-
     openDialog(filterValue: any): void {
         const search_text =
             filterValue.target === undefined
                 ? filterValue
                 : filterValue.target.value;
 
+        this.getData(search_text, this.offset, this.length, '');
+    }
+
+    getData(search_text, offset, length, event) {
         this._commonApiService
             .getProductInfo({
                 center_id: this.center_id,
                 product_search_text: search_text.trim(),
+                offset,
+                length,
             })
             .subscribe((data: any) => {
                 this.temp_product_search_text = search_text.trim();
 
-                this.resultArray = data.body;
+                if (event === '') {
+                    this.full_count = data.body.full_count;
+                    this.tempListArray = data.body.result;
+                    this.listArray = data.body.result;
+                } else {
+                    this.full_count = data.body.full_count;
+                    this.listArray = this.tempListArray.concat(
+                        data.body.result
+                    );
+                    this.tempListArray = this.listArray;
+
+                    event.target.complete();
+                    this._cdr.detectChanges();
+                }
 
                 this.dataSource.sort = this.sort;
                 this.pageLength = data.body.length;
@@ -430,5 +460,14 @@ export class ViewProductsPage implements OnInit {
 
                 xlsx.writeFile(wb1, fileName);
             });
+    }
+
+    doInfinite(ev: any) {
+        console.log('scrolled down!!', ev);
+
+        this.offset += 50;
+        this.getData('', this.offset, this.length, ev);
+
+        this.direction = 'scroll down';
     }
 }

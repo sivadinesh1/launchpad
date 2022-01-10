@@ -1,5 +1,5 @@
 <div class="screenheader">
-    <div>Corrections</div>
+    <div>Stock Adjustments</div>
     <div>
         <img
             class="cursor"
@@ -12,26 +12,29 @@
 </div>
 
 <div class="content">
-    <div>
-        <div style="font-size: 18px">
+    <div style="padding: 0 0 1rem 0">
+        <div style="font-size: 13px; color: grey">Product Code</div>
+        <div style="font-size: 16px">
             {{ this.data.product_code }}
         </div>
-        <div style="font-size: 16px; color: grey">
+        <div style="font-size: 13px; color: grey">Item Description</div>
+        <div style="font-size: 16px">
             {{ this.data.product_description }}
         </div>
     </div>
     <div>
+        <div>Stock / MRP Info</div>
         <div class="listHeader">
-            <div>MRP</div>
-            <div>Avl. Stock</div>
-            <div>Status</div>
+            <div class="txt-right-align">MRP</div>
+            <div class="txt-right-align">In Stock</div>
+            <div class="txt-left-align" style="padding-left: 16px">Status</div>
             <div>&nbsp;</div>
             <div>&nbsp;</div>
         </div>
         <div *ngFor="let item of stock_list_array" class="listItem">
-            <div style="text-align: left">{{ item.mrp }}</div>
-            <div style="text-align: left">{{ item.available_stock }}</div>
-            <div style="text-align: left">
+            <div style="text-align: right">{{ item.mrp }}</div>
+            <div style="text-align: right">{{ item.available_stock }}</div>
+            <div style="text-align: left; padding-left: 16px">
                 {{ item.is_active === "A" ? "Active" : "In Active" }}
             </div>
 
@@ -45,14 +48,13 @@
             </div>
             <div
                 *ngIf="item.is_active === 'N'"
-                (click)="correct(item)"
                 style="
                     color: rgb(183, 183, 183);
                     cursor: pointer;
                     text-align: left;
                 "
             >
-                Not Applicable
+                Adjustment (disabled)
             </div>
 
             <div
@@ -75,22 +77,34 @@
     <br />
     <div>
         <div
-            style="font-size: 18px; padding: 1rem 0rem 0rem"
+            style="
+                font-size: 16px;
+                font-style: italic;
+                color: orangered;
+                padding: 1rem 0rem 0.5rem 0;
+            "
             *ngIf="selected_item"
         >
-            Stock Correction
+            Correct Stock if required
         </div>
 
         <div class="listHeader1" *ngIf="selected_item">
-            <div>MRP</div>
-            <div style="text-align: right">Avl. Stock</div>
-            <div style="text-align: right; width: 90px">Adjusted Qty</div>
+            <div class="txt-right-align">MRP</div>
+            <div style="text-align: right">In Stock</div>
+            <div
+                class="text-align: right"
+                style="text-align: right; width: 90px"
+            >
+                New Qty
+            </div>
             <div>&nbsp;</div>
         </div>
         <div *ngIf="selected_item">
             <form #loginForm="ngForm">
                 <div class="listItem1">
-                    <div style="text-align: left">{{ selected_item?.mrp }}</div>
+                    <div style="text-align: right">
+                        {{ selected_item?.mrp }}
+                    </div>
                     <div style="text-align: right">
                         {{ selected_item?.available_stock }}
                     </div>
@@ -114,8 +128,23 @@
                                 required
                                 (selectionChange)="handleChange($event)"
                             >
-                                <mat-option value="Missing">Missing</mat-option>
-                                <mat-option value="Others">Others</mat-option>
+                                <mat-option value="Missing"
+                                    >Missing Item</mat-option
+                                >
+                                <mat-option value="Waste">Waste</mat-option>
+                                <mat-option value="Breakage"
+                                    >Breakage</mat-option
+                                >
+                                <mat-option value="Shrinkage"
+                                    >Shrinkage</mat-option
+                                >
+                                <mat-option value="Write-offs"
+                                    >Write-offs</mat-option
+                                >
+                                <mat-option value="Internal"
+                                    >Internal</mat-option
+                                >
+                                <mat-option value="Other">Other</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
@@ -145,22 +174,7 @@
                         CANCEL
                     </div>
 
-                    <div
-                        (click)="update(loginForm)"
-                        style="
-                            color: blue;
-                            cursor: pointer;
-                            border-radius: 20px;
-                            border-color: blue;
-                            border: 1px solid;
-                            width: 120px;
-                            text-align: center;
-                            padding: 4px;
-                            font-size: 14px;
-                        "
-                    >
-                        UPDATE
-                    </div>
+                    <div (click)="update(loginForm)" class="update">UPDATE</div>
                 </div>
             </form>
         </div>

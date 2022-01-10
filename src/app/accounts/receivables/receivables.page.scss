@@ -27,13 +27,13 @@
 
 .receivables-listItem:hover {
     background-color: #f5f5f5;
-    cursor: pointer;
 }
 
 .receivables-listItem:hover .delete-me {
     background-color: #f5f5f5;
     cursor: pointer;
-    display: block;
+    display: flex;
+    padding-left: 2rem;
 }
 
 .delete-me {

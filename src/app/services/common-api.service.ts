@@ -1102,9 +1102,9 @@ export class CommonApiService {
         );
     }
 
-    deleteProductFromStock(product_id, mrp) {
+    deleteProductFromStock(product_id, mrp, is_active) {
         return this.httpClient.delete(
-            `${this.restApiUrl}/v1/api/stock/delete-product-from-stock/${product_id}/${mrp}`
+            `${this.restApiUrl}/v1/api/stock/delete-product-from-stock/${product_id}/${mrp}/${is_active}`
         );
     }
 

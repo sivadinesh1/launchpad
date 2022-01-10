@@ -22,6 +22,7 @@ import { IProduct } from 'src/app/models/Product';
 import { NgForm } from '@angular/forms';
 import { plainToClass } from 'class-transformer';
 import { Stock } from 'src/app/models/Stock';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
     selector: 'app-product-correction-dialog',
@@ -31,7 +32,7 @@ import { Stock } from 'src/app/models/Stock';
 })
 export class ProductCorrectionDialogComponent implements OnInit {
     isLinear = true;
-    center_id: any;
+    // center_id: any;
     pexists = false;
     temppcode: any;
 
@@ -67,11 +68,12 @@ export class ProductCorrectionDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) product: IProduct,
         private _commonApiService: CommonApiService,
         private dialogRef: MatDialogRef<ProductCorrectionDialogComponent>,
-        private _authService: AuthenticationService
+        private _authService: AuthenticationService,
+        private _loadingService: LoadingService
     ) {
         // checkda
         const currentUser = this._authService.currentUserValue;
-        this.center_id = currentUser.center_id;
+        //this.center_id = currentUser.center_id;
         this.currentStep = 0;
         this.data = product;
     }
@@ -98,7 +100,7 @@ export class ProductCorrectionDialogComponent implements OnInit {
 
     deactivate(item) {
         this._commonApiService
-            .deleteProductFromStock(item.product_id, item.mrp)
+            .deleteProductFromStock(item.product_id, item.mrp, 'I')
             .subscribe((data: any) => {
                 this.dialogRef.close('success');
             });
@@ -106,7 +108,7 @@ export class ProductCorrectionDialogComponent implements OnInit {
 
     activate(item) {
         this._commonApiService
-            .deleteProductFromStock(item.product_id, item.mrp)
+            .deleteProductFromStock(item.product_id, item.mrp, 'A')
             .subscribe((data: any) => {
                 this.dialogRef.close('success');
             });
@@ -140,6 +142,16 @@ export class ProductCorrectionDialogComponent implements OnInit {
         console.log(loginForm.value.qty);
         console.log('selected item ' + JSON.stringify(this.selected_item));
 
+        if (!this.selected_reason) {
+            // throw snack error
+            this._loadingService.openSnackBar(
+                'Select a reason for correction',
+                '',
+                'mat-warn'
+            );
+            return false;
+        }
+
         const submitForm = {
             id: this.selected_item.stock_id,
             product_id: this.selected_item.product_id,
@@ -147,13 +159,13 @@ export class ProductCorrectionDialogComponent implements OnInit {
             available_stock: +this.selected_item.available_stock,
             corrected_stock: loginForm.value.qty,
             reason: this.selected,
-            center_id: this.center_id,
+            // center_id: this.center_id,
         };
 
         const stock = plainToClass(Stock, submitForm);
 
         this._commonApiService.stockCorrection(stock).subscribe((data: any) => {
-            if (data.body.result === 'updated') {
+            if (data.body.result.count > 0) {
                 this.dialogRef.close('success');
             }
 

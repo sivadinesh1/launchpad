@@ -21,6 +21,7 @@ import { HomePageModule } from './home/home.module';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { HttpErrorInterceptor } from './services/http-error-interceptor';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 registerLocaleData(localeIn);
 @NgModule({
@@ -39,6 +40,7 @@ registerLocaleData(localeIn);
         AppRoutingModule,
         NgxSkeletonLoaderModule,
         BrowserAnimationsModule,
+        InfiniteScrollModule,
     ],
     exports: [BrowserModule],
     providers: [

@@ -11,7 +11,6 @@
     display: grid;
     width: 100%;
     margin: 0 auto;
-    padding: 8px;
 }
 
 .listHeader,
@@ -20,7 +19,11 @@
     grid-template-columns: 80px 80px 100px 100px 150px;
     padding-top: 0.2rem;
     padding-bottom: 0.2rem;
-    padding-left: 1rem;
+}
+
+.listItem {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 
 .listHeader,
@@ -35,5 +38,22 @@
     padding-top: 0.2rem;
     padding-right: 1rem;
     padding-bottom: 0.2rem;
-    padding-left: 1rem;
+}
+
+.update {
+    color: blue;
+
+    border-radius: 20px;
+    border-color: blue;
+    border: 1px solid;
+    width: 120px;
+    text-align: center;
+    padding: 4px;
+    font-size: 14px;
+}
+
+.update:hover {
+    background-color: blue;
+    color: #fff;
+    cursor: pointer;
 }
