@@ -44,7 +44,7 @@ export class SearchPurchaseOrderPage implements OnInit {
 
     @ViewChild(SearchCustomersComponent) child: SearchCustomersComponent;
 
-    purchases$: Observable<Purchase[]>;
+    purchases$: Observable<any>;
     vendor$: Observable<Vendor[]>;
 
     resultList: any;
@@ -80,14 +80,16 @@ export class SearchPurchaseOrderPage implements OnInit {
 
     sumTotalValue = 0.0;
     sumNumItems = 0;
-    // uniqCustCount = 0;
 
-    purchase$: Observable<Purchase[]>;
+    tempListArray: any[] = [];
+    full_count = 0;
 
-    draftPurchase$: Observable<Purchase[]>;
+    purchase$: Observable<any[]>;
+
+    // draftPurchase$: Observable<Purchase[]>;
     fullfilledPurchase$: Observable<Purchase[]>;
 
-    filteredPurchase$: Observable<Purchase[]>;
+    filteredPurchase$: Observable<any>;
     user_data$: Observable<User>;
     user_data: any;
 
@@ -97,6 +99,9 @@ export class SearchPurchaseOrderPage implements OnInit {
     filteredVendor: Observable<any[]>;
     vendor_lis: Vendor[];
     clickedColumn: string;
+
+    offset = 0;
+    length = 20;
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -109,7 +114,7 @@ export class SearchPurchaseOrderPage implements OnInit {
         public _dialog1: MatDialog,
         private _authService: AuthenticationService
     ) {
-        const dateOffset = 24 * 60 * 60 * 1000 * 10;
+        const dateOffset = 24 * 60 * 60 * 1000 * 7;
         this.from_date.setTime(this.minDate.getTime() - dateOffset);
 
         this.submitForm = this._fb.group({
@@ -119,6 +124,7 @@ export class SearchPurchaseOrderPage implements OnInit {
             from_date: [this.from_date, Validators.required],
             status: new FormControl('all'),
             order: ['desc'],
+            invoice_no: [''],
         });
 
         this.user_data$ = this._authService.currentUser;
@@ -127,6 +133,7 @@ export class SearchPurchaseOrderPage implements OnInit {
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
                 this.user_data = data;
+                this.offset = 0;
                 this.init();
                 this._cdr.markForCheck();
             });
@@ -154,7 +161,7 @@ export class SearchPurchaseOrderPage implements OnInit {
                     )
                 );
 
-            this.search();
+            this.search('');
             this._cdr.markForCheck();
         });
     }
@@ -184,7 +191,7 @@ export class SearchPurchaseOrderPage implements OnInit {
         });
 
         this.tabIndex = 0;
-        this.search();
+        this.search('');
         this._cdr.markForCheck();
     }
 
@@ -208,8 +215,7 @@ export class SearchPurchaseOrderPage implements OnInit {
     }
 
     clear() {
-        const dateOffset = 24 * 60 * 60 * 1000 * 7;
-        this.from_date.setTime(this.minDate.getTime() - dateOffset);
+        this.dateFilter(7);
 
         this.submitForm.patchValue({
             customer_id: 'all',
@@ -220,15 +226,14 @@ export class SearchPurchaseOrderPage implements OnInit {
             search_type: 'all',
         });
 
-        this.submitForm.value.invoice_no = '';
-        this.submitForm.get('customer_ctrl').enable();
         this.submitForm.controls.invoice_no.setErrors(null);
         this.submitForm.controls.invoice_no.markAsTouched();
-
+        debugger;
+        this.search('');
         this._cdr.markForCheck();
     }
 
-    async search() {
+    async search(event) {
         this.purchases$ = this._commonApiService.searchPurchases({
             center_id: this.user_data.center_id,
             vendor_id: this.submitForm.value.vendor_id,
@@ -236,20 +241,38 @@ export class SearchPurchaseOrderPage implements OnInit {
             from_date: this.submitForm.value.from_date,
             to_date: this.submitForm.value.to_date,
             order: this.submitForm.value.order,
+            invoice_no: this.submitForm.value.invoice_no,
+            offset: this.offset,
+            length: this.length,
         });
 
         this.filteredPurchase$ = this.purchases$;
 
         const value = await lastValueFrom(this.filteredPurchase$);
-        this.filteredValues = value.filter((data: any) => data.status === 'C');
+
+        if (event === '') {
+            this.full_count = value.full_count;
+            this.tempListArray = value.result;
+            this.filteredValues = value.result.filter(
+                (data: any) => data.status === 'C'
+            );
+        } else {
+            this.filteredValues = this.tempListArray.concat(
+                value.result.filter((data: any) => data.status === 'C')
+            );
+            this.tempListArray = this.filteredValues;
+
+            event.target.complete();
+            this._cdr.detectChanges();
+        }
 
         // to calculate the count on each status
-        this.draftPurchase$ = this.purchases$.pipe(
-            map((arr: any) => arr.filter((f) => f.status === 'D'))
-        );
-        this.fullfilledPurchase$ = this.purchases$.pipe(
-            map((arr: any) => arr.filter((f) => f.status === 'C'))
-        );
+        // this.draftPurchase$ = this.purchases$.pipe(
+        //     map((arr: any) => arr.filter((f) => f.status === 'D'))
+        // );
+        // this.fullfilledPurchase$ = this.purchases$.pipe(
+        //     map((arr: any) => arr.filter((f) => f.status === 'C'))
+        // );
         this.calculateSumTotals();
         this.tabIndex = 0;
         this._cdr.markForCheck();
@@ -393,23 +416,14 @@ export class SearchPurchaseOrderPage implements OnInit {
         // patch it up with from & to date, via patch value
         console.log(this.submitForm.value);
 
-        this.search();
-    }
-
-    statusFilterChanged(item: any) {
-        this.submitForm.patchValue({
-            status: item.detail.value,
-            invoice_no: '',
-        });
-        this._cdr.markForCheck();
-        this.search();
+        this.search('');
     }
 
     reset() {
+        this.offset = 0;
         // this.customerSearchReset();
         // this.child.clearCustomerInput();
         this.clear();
-        this.search();
     }
 
     opsFromDateEvent(event) {
@@ -434,10 +448,10 @@ export class SearchPurchaseOrderPage implements OnInit {
         this.submitForm.patchValue({
             from_date: this.from_date,
         });
-
+        this.offset = 0;
         this._cdr.detectChanges();
 
-        this.search();
+        this.search('');
     }
 
     customDateFilter() {
@@ -620,7 +634,7 @@ export class SearchPurchaseOrderPage implements OnInit {
 
         const dialogRef = this._dialog1.open(SearchInvoiceNoComponent, {
             width: '250px',
-            data: { invoice_no: '' },
+            data: { invoice_no: '', label: 'PO #' },
 
             position: { left: `${rect.left}px`, top: `${rect.bottom - 50}px` },
         });
@@ -631,7 +645,8 @@ export class SearchPurchaseOrderPage implements OnInit {
             this.submitForm.patchValue({
                 invoice_no: result,
             });
-            this.search();
+            this.offset = 0;
+            this.search('');
         });
     }
 
@@ -648,7 +663,7 @@ export class SearchPurchaseOrderPage implements OnInit {
             });
             this.orderDefaultFlag = 'desc';
         }
-        this.search();
+        this.search('');
     }
 
     sortInvoice_no() {
@@ -664,6 +679,14 @@ export class SearchPurchaseOrderPage implements OnInit {
             });
             this.orderDefaultFlag = 'desc';
         }
-        this.search();
+        this.search('');
+    }
+
+    doInfinite(ev: any) {
+        console.log('scrolled down!!', ev);
+
+        this.offset += 20;
+
+        this.search(ev);
     }
 }

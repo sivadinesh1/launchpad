@@ -48,7 +48,6 @@ export class ProductAddDialogComponent implements OnInit {
     temp_product_code: any;
     user_data$: Observable<User>;
     user_data: any;
-    response_message: any;
 
     uom = [
         { key: 'Nos', viewValue: 'Nos' },
@@ -67,6 +66,7 @@ export class ProductAddDialogComponent implements OnInit {
     productType = [
         { name: 'Product', id: 'P', checked: true },
         { name: 'Service', id: 'S', checked: false },
+        { name: 'Consumable', id: 'C', checked: false },
     ];
 
     constructor(
@@ -79,7 +79,7 @@ export class ProductAddDialogComponent implements OnInit {
         private _authService: AuthenticationService
     ) {
         this.submitForm = this._formBuilder.group({
-            product_type: [],
+            product_type: ['P'],
             center_id: [],
             product_code: ['', Validators.required],
             product_description: ['', Validators.required],
@@ -136,7 +136,11 @@ export class ProductAddDialogComponent implements OnInit {
         this.submitForm.markAllAsTouched();
 
         if (!this.submitForm.valid) {
-            this.response_message = 'Missing required field(s).';
+            this._loadingService.openSnackBar(
+                'Missing required field(s).',
+                '',
+                'mat-warn'
+            );
             this._cdr.markForCheck();
             return false;
         } else {
@@ -158,8 +162,12 @@ export class ProductAddDialogComponent implements OnInit {
                 .subscribe((data2: any) => {
                     if (data2.status === 'true') {
                         this.product_exists = true;
-                        //    this.temp_product_code = data[0].product_code;
-                        this.response_message = 'Duplicate Product Code';
+
+                        this._loadingService.openSnackBar(
+                            'Duplicate Product Code',
+                            '',
+                            'mat-warn'
+                        );
                     } else {
                         this.addProduct();
                         this.product_exists = false;

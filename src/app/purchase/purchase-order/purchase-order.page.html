@@ -6,7 +6,7 @@
     <form [formGroup]="submitForm" *ngIf="submitForm">
         <div class="vendor">
             <div style="display: grid">
-                <div class="screen-header">
+                <div class="purchase-screen-header">
                     <span style="font-size: 18px; color: #4e53b7"
                         >{{bread_menu}}</span
                     >
@@ -426,11 +426,7 @@
                                     </div>
 
                                     <div
-                                        class="
-                                            item4
-                                            txt-right-align
-                                            num-format-cell-style
-                                        "
+                                        class="item4 txt-right-align num-format-cell-style"
                                     >
                                         {{item.mrp}}
                                     </div>
@@ -471,21 +467,13 @@
                                     </div>
 
                                     <div
-                                        class="
-                                            item4
-                                            txt-right-align
-                                            num-format-cell-style
-                                        "
+                                        class="item4 txt-right-align num-format-cell-style"
                                     >
                                         {{item.tax}}
                                     </div>
 
                                     <div
-                                        class="
-                                            item4
-                                            txt-right-align
-                                            num-format-cell-style
-                                        "
+                                        class="item4 txt-right-align num-format-cell-style"
                                     >
                                         {{item.total_value}}
                                     </div>
@@ -832,11 +820,7 @@
                                 </div>
                                 <div
                                     style="text-align: right; font-size: 22px"
-                                    class="
-                                        align-self-center
-                                        left-pad20
-                                        fweight500
-                                    "
+                                    class="align-self-center left-pad20 fweight500"
                                 >
                                     {{this.total | number:'1.2-2'}}
                                 </div>

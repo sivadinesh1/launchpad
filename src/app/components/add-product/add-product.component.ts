@@ -15,14 +15,13 @@ import { IonSearchbar, ModalController } from '@ionic/angular';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddProductComponent implements OnInit {
+    @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
     resultList: any;
     noMatch: any;
 
     customer_id;
     center_id;
     order_date;
-
-    @ViewChild('mySearchbar', { static: true }) searchbar: IonSearchbar;
 
     constructor(
         private _commonApiService: CommonApiService,

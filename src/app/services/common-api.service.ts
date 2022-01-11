@@ -455,7 +455,7 @@ export class CommonApiService {
 
     searchPurchases(submitForm): Observable<Purchase[]> {
         return this.httpClient
-            .post<Purchase[]>(
+            .post<any>(
                 `${this.restApiUrl}/v1/api/stock/search-purchase`,
                 submitForm
             )

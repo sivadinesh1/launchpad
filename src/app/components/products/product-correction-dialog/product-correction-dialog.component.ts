@@ -100,9 +100,11 @@ export class ProductCorrectionDialogComponent implements OnInit {
 
     deactivate(item) {
         this._commonApiService
-            .deleteProductFromStock(item.product_id, item.mrp, 'I')
+            .deleteProductFromStock(item.product_id, item.mrp, 'N')
             .subscribe((data: any) => {
-                this.dialogRef.close('success');
+                if (data.result.count > 0) {
+                    this.dialogRef.close('success');
+                }
             });
     }
 
@@ -110,7 +112,9 @@ export class ProductCorrectionDialogComponent implements OnInit {
         this._commonApiService
             .deleteProductFromStock(item.product_id, item.mrp, 'A')
             .subscribe((data: any) => {
-                this.dialogRef.close('success');
+                if (data.result.count > 0) {
+                    this.dialogRef.close('success');
+                }
             });
     }
 

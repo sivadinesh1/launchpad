@@ -241,4 +241,5 @@ export class InvoiceSuccessComponent implements OnInit, AfterViewInit {
 
 export interface DialogData {
     invoice_no: string;
+    label: string;
 }

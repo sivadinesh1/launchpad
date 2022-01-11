@@ -70,7 +70,6 @@ export class ViewProductsPage implements OnInit {
     tempListArray: any[] = [];
     offset = 0;
     length = 50;
-    direction = '';
 
     array = [];
     sum = 100;
@@ -122,6 +121,7 @@ export class ViewProductsPage implements OnInit {
     }
 
     openDialog(filterValue: any): void {
+        this.offset = 0;
         const search_text =
             filterValue.target === undefined
                 ? filterValue
@@ -467,7 +467,5 @@ export class ViewProductsPage implements OnInit {
 
         this.offset += 50;
         this.getData('', this.offset, this.length, ev);
-
-        this.direction = 'scroll down';
     }
 }

@@ -1,5 +1,5 @@
 <ion-content>
-    <div class="search-purchase-header" style="padding: 1rem">
+    <div class="search-purchase-header sticky" style="padding: 1rem">
         <div>All Purchase Orders</div>
 
         <div class="full-download" style="align-self: center">
@@ -11,15 +11,16 @@
                 [throttleTime]="500"
                 mat-flat-button
                 type="button"
-                color="primary"
+                mat-stroked-button
                 tabindex="-1"
                 (click)="exportCompletedPurchaseToExcel()"
             >
-                Download
+                <mat-icon>cloud_download</mat-icon>
+                &nbsp;Download
             </button>
         </div>
     </div>
-    <div class="search-bar">
+    <div class="search-bar-purchase sticky1">
         <div>
             <img
                 src="/assets/images/svg/refresh.svg"
@@ -50,6 +51,21 @@
             (customerOutput)="customerInfoPage($event)"
             (customerSearchResetOutput)="customerSearchReset()"
         ></app-search-customers> -->
+
+        <div
+            style="
+                display: flex;
+                align-self: center;
+                font-style: italic;
+                font-size: 13px;
+            "
+        >
+            Showing&nbsp;
+            <span style="font-weight: 600">{{this.filteredValues?.length}}</span
+            >&nbsp;of&nbsp;<span style="font-weight: 600"
+                >{{this.full_count}}</span
+            >
+        </div>
 
         <div
             class="filter_date_range"
@@ -121,7 +137,7 @@
         </div>
     </div>
 
-    <div class="header header-style">
+    <div class="header header-style sticky2">
         <div class="column-item">#</div>
 
         <div
@@ -136,16 +152,13 @@
             <app-ascending *ngIf="this.orderDefaultFlag === 'asc'">
             </app-ascending>
         </div>
-
-        <div class="column-item">Vendor Name</div>
         <div class="column-item">PO #</div>
+        <div class="column-item">Vendor Name</div>
 
-        <div class="column-item txt-right-align">LR #</div>
+        <div class="column-item txt-left-align">LR #</div>
 
         <div class="column-item txt-right-align">Items</div>
         <div class="column-item txt-right-align">Net Total</div>
-
-        <div class="column-item txt-center-align">Revision</div>
     </div>
     <div *ngIf="filteredValues?.length === 0" class="no-records-found">
         No records found
@@ -155,22 +168,24 @@
 
         <div class="item">{{item.received_date | date:'d-M-yyyy' }}</div>
 
-        <div class="item">{{item.vendor_name}}</div>
-
-        <div class="item link-it" (click)="openDialog(item)">
+        <div
+            class="item link-it"
+            style="padding-right: 10px"
+            (click)="openDialog(item)"
+        >
             {{item.invoice_no}}
         </div>
 
-        <div class="item" style="text-align: right">{{item.lr_no}}</div>
+        <div class="item">{{item.vendor_name}}</div>
+
+        <div class="item" style="text-align: left; padding-left: 10px">
+            {{item.lr_no}}
+        </div>
 
         <div class="item" style="text-align: right">{{item.no_of_items}}</div>
 
         <div class="item" style="text-align: right">
             {{item.net_total.toLocaleString('en-IN')}}
-        </div>
-
-        <div class="txt-center-align">
-            <span *ngIf="item.status === 'C'">{{item.revision}}</span>
         </div>
     </div>
 
@@ -197,7 +212,15 @@
 
     <mat-menu #menuN="matMenu">
         <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
-            Search By Invoice #
+            By Purchase Invoice #
         </div>
     </mat-menu>
+
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Loading more data..."
+        >
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
 </ion-content>

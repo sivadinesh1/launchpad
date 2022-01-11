@@ -33,13 +33,34 @@
                 class="example-radio-group"
             >
                 <mat-radio-button
-                    style="padding-top: 10px"
+                    style="padding-top: 10px; padding-right: 10px"
                     value="{{ op.id }}"
                     *ngFor="let op of productType"
                     [checked]="op.checked"
                     >{{ op.name }}</mat-radio-button
                 >
             </mat-radio-group>
+        </div>
+        <hr />
+        <div>
+            <span
+                *ngIf="this.submitForm.value.product_type === 'P'"
+                class="product_type"
+                >Storable products are physical items for which you manage the
+                inventory level.</span
+            >
+            <span
+                *ngIf="this.submitForm.value.product_type === 'S'"
+                class="product_type"
+                >Work done in return of cash.
+            </span>
+            <span
+                *ngIf="this.submitForm.value.product_type === 'C'"
+                class="product_type"
+            >
+                Consumables are physical products for which you don't manage the
+                inventory level: they are always available.</span
+            >
         </div>
         <div class="code">
             <mat-form-field
@@ -253,9 +274,6 @@
             </div>
         </div>
 
-        <div style="text-align: center" class="error" style="padding: 16px 0px">
-            {{ response_message }}
-        </div>
         <div style="text-align: center">
             <button
                 mat-raised-button

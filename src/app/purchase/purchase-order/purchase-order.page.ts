@@ -230,7 +230,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             this.raw_purchase_data[0].id !== 0
         ) {
             this.spinner.show();
-            this.bread_menu = 'Edit Purchase #' + this.raw_purchase_data[0].id;
+            this.bread_menu = 'Edit Purchase #';
 
             this.submitForm.patchValue({
                 purchase_id: this.raw_purchase_data[0].id,

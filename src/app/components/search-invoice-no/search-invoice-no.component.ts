@@ -10,11 +10,14 @@ import { DialogData } from '../invoice-success/invoice-success.component';
 })
 export class SearchInvoiceNoComponent {
     invoice_no: any;
+    label: any;
+
     constructor(
         public dialogRef: MatDialogRef<SearchInvoiceNoComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData
     ) {
         this.invoice_no = data.invoice_no;
+        this.label = data.label;
     }
 
     onNoClick(): void {
