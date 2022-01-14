@@ -336,9 +336,6 @@ export class AddReceivablesPage implements OnInit {
 
         const ex_amount = +this.balance_due - +latest_payments;
 
-        console.log('dinesh' + +this.balance_due);
-        console.log('dinesh' + +latest_payments);
-
         this.submitForm.patchValue({
             invoice_split: this.invoice_split_Arr,
             customer: this.customer,
@@ -347,7 +344,7 @@ export class AddReceivablesPage implements OnInit {
         });
 
         console.log(JSON.stringify(this.submitForm.value));
-        debugger;
+
         this._commonApiService
             .addBulkPaymentReceived(this.submitForm.value)
             .subscribe((data: any) => {

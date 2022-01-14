@@ -134,6 +134,7 @@ import { DescendingComponent } from './components/util/descending/descending.com
 import { PrintReceivablesComponent } from './components/receivables/print-receivables/print-receivables.component';
 import { ApplyNowComponent } from './components/receivables/apply-now/apply-now.component';
 import { DeletePaymentDialogComponent } from './components/delete-payments-dialog/delete-payments-dialog.component';
+import { SearchVendorsComponent } from './components/search-vendors/search-vendors.component';
 
 const components = [
     NullToQuotePipe,
@@ -237,6 +238,7 @@ const components = [
     MessagesComponent,
     ShowStatementComponent,
     ShowVendorStatementComponent,
+    SearchVendorsComponent,
 ];
 
 const matcomponents = [

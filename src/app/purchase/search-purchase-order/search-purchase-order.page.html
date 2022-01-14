@@ -47,10 +47,10 @@
             />
         </div>
 
-        <!-- <app-search-customers
-            (customerOutput)="customerInfoPage($event)"
-            (customerSearchResetOutput)="customerSearchReset()"
-        ></app-search-customers> -->
+        <app-search-vendors
+            (vendorOutput)="vendorInfoPage($event)"
+            (vendorSearchResetOutput)="vendorSearchReset()"
+        ></app-search-vendors>
 
         <div
             style="
@@ -210,11 +210,17 @@
         </div>
     </mat-menu>
 
-    <mat-menu #menuN="matMenu">
+    <mat-menu #menuN="matMenu" [overlapTrigger]="false" class="myMenu">
+        <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
+            <span>By PO Invoice #</span>
+        </div>
+    </mat-menu>
+
+    <!-- <mat-menu #menuN="matMenu" [overlapTrigger]="false" class="myMenu">
         <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
             By Purchase Invoice #
         </div>
-    </mat-menu>
+    </mat-menu> -->
 
     <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
         <ion-infinite-scroll-content

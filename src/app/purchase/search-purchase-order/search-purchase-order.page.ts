@@ -30,6 +30,7 @@ import * as moment from 'moment';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { SearchCustomersComponent } from 'src/app/components/search-customers/search-customers.component';
 import { SearchInvoiceNoComponent } from 'src/app/components/search-invoice-no/search-invoice-no.component';
+import { SearchVendorsComponent } from 'src/app/components/search-vendors/search-vendors.component';
 
 @Component({
     selector: 'app-search-purchase-order',
@@ -42,7 +43,7 @@ export class SearchPurchaseOrderPage implements OnInit {
     @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
     @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
-    @ViewChild(SearchCustomersComponent) child: SearchCustomersComponent;
+    @ViewChild(SearchVendorsComponent) child: SearchVendorsComponent;
 
     purchases$: Observable<any>;
     vendor$: Observable<Vendor[]>;
@@ -209,8 +210,9 @@ export class SearchPurchaseOrderPage implements OnInit {
     clearInput() {
         this.submitForm.patchValue({
             vendor_id: 'all',
-            vendor_ctrl: '',
+            vendor_ctrl: ['All Vendors'],
         });
+        this.search('');
         this._cdr.markForCheck();
     }
 
@@ -218,17 +220,17 @@ export class SearchPurchaseOrderPage implements OnInit {
         this.dateFilter(7);
 
         this.submitForm.patchValue({
-            customer_id: 'all',
-            customer_ctrl: 'All Customers',
             from_date: this.from_date,
             to_date: new Date(),
             invoice_no: '',
             search_type: 'all',
+            vendor_id: 'all',
+            vendor_ctrl: ['All Vendors'],
         });
 
         this.submitForm.controls.invoice_no.setErrors(null);
         this.submitForm.controls.invoice_no.markAsTouched();
-        debugger;
+
         this.search('');
         this._cdr.markForCheck();
     }
@@ -421,8 +423,8 @@ export class SearchPurchaseOrderPage implements OnInit {
 
     reset() {
         this.offset = 0;
-        // this.customerSearchReset();
-        // this.child.clearCustomerInput();
+        this.vendorSearchReset();
+        this.child.clearVendorInput();
         this.clear();
     }
 
@@ -688,5 +690,16 @@ export class SearchPurchaseOrderPage implements OnInit {
         this.offset += 20;
 
         this.search(ev);
+    }
+
+    vendorInfoPage(item) {
+        this.submitForm.patchValue({
+            vendor_id: item.id,
+        });
+        this.search('');
+    }
+
+    vendorSearchReset() {
+        this.clearInput();
     }
 }

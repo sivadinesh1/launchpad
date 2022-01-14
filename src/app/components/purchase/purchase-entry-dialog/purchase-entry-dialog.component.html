@@ -1,34 +1,26 @@
 <ion-content>
-    <div class="screen-header">
-        <div>&nbsp;</div>
+    <div class="pe-screen-header">
+        <div style="font-size: 20px; align-self: center">Purchase Order</div>
 
-        <div style="align-items: center">
-            <img
-                class="cursor"
-                src="/assets/images/svg/close.svg"
-                (click)="close()"
-                width="16px"
-                height="16px"
-            />
-        </div>
-    </div>
-
-    <div class="action-row">
-        <div>Purchase Order</div>
         <div>
-            <span class="item" style="text-align: center; padding-right: 1rem">
-                <mat-icon
-                    #tooltip="matTooltip"
-                    matTooltip="Edit"
-                    matTooltipClass="tooltip"
-                    (mousedown)="tooltip.hide()"
-                    [ngStyle]="{ color: '#6d78d2', cursor: 'pointer' }"
-                    (click)="goPurchaseEditScreen()"
-                    >edit
-                </mat-icon>
-            </span>
-
             <span class="full-download" style="align-self: center">
+                <button
+                    style="border-radius: 0px"
+                    appPreventDoubleClick
+                    class="cursor"
+                    type="button"
+                    [throttleTime]="500"
+                    mat-stroked-button
+                    type="button"
+                    tabindex="-1"
+                    (click)="exportToExcel()"
+                >
+                    <mat-icon>cloud_download</mat-icon>
+                    Download
+                </button>
+            </span>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="item" style="text-align: center; padding-right: 1rem">
                 <button
                     style="border-radius: 0px"
                     appPreventDoubleClick
@@ -39,49 +31,67 @@
                     type="button"
                     color="primary"
                     tabindex="-1"
-                    (click)="exportToExcel()"
+                    (click)="goPurchaseEditScreen()"
                 >
-                    Download
+                    <mat-icon
+                        #tooltip="matTooltip"
+                        matTooltip="Edit"
+                        matTooltipClass="tooltip"
+                        (mousedown)="tooltip.hide()"
+                        [ngStyle]="{ color: '#fff', cursor: 'pointer' }"
+                        >edit
+                    </mat-icon>
+                    Edit
                 </button>
             </span>
 
             <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+            <img
+                class="cursor"
+                src="/assets/images/svg/close.svg"
+                (click)="close()"
+                width="16px"
+                height="16px"
+            />
         </div>
     </div>
+    <!-- 
+    <div class="action-row">
+        <div>&nbsp;</div>
+        
+    </div> -->
 
     <div class="customer-info">
         <div>
             <div style="padding: 5px">
-                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
-                    Invoice #
-                </div>
-                <div style="font-size: 14px; font-weight: 400">
-                    {{ this.purchase_master_data?.invoice_no }}
+                <div>
+                    <span
+                        style="font-size: 14px; font-weight: 400; opacity: 0.6"
+                    >
+                        PO Invoice # :
+                    </span>
+
+                    <span style="font-size: 14px; font-weight: 400">
+                        {{ this.purchase_master_data?.invoice_no }}
+                    </span>
                 </div>
             </div>
 
             <div style="padding: 5px">
-                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
-                    Invoice Date
-                </div>
-                <div style="font-size: 14px; font-weight: 400">
-                    {{
-                        this.purchase_master_data?.invoice_date
-                            | date: "dd-MMM-yyyy"
-                    }}
-                </div>
-            </div>
+                <div>
+                    <span
+                        style="font-size: 14px; font-weight: 400; opacity: 0.6"
+                    >
+                        Received Date :
+                    </span>
 
-            <div style="padding: 5px">
-                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
-                    Status
-                </div>
-                <div style="font-size: 14px; font-weight: 400">
-                    {{
-                        this.purchase_master_data?.status === "C"
-                            ? "Completed"
-                            : ""
-                    }}
+                    <span style="font-size: 14px; font-weight: 400">
+                        {{
+                            this.purchase_master_data?.received_date
+                                | date: "dd-MMM-yyyy"
+                        }}
+                    </span>
                 </div>
             </div>
         </div>
@@ -143,7 +153,14 @@
         </table>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 200px 100px">
+    <div
+        style="
+            display: grid;
+            grid-template-columns: 1fr 200px 100px;
+            background-color: azure;
+            gap: 2px;
+        "
+    >
         <div>&nbsp;</div>
         <div
             style="

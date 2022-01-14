@@ -12,33 +12,34 @@ import { Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { empty, Observable } from 'rxjs';
 import { debounceTime, tap, switchMap, filter } from 'rxjs/operators';
-import { Customer } from 'src/app/models/Customer';
+
 import { User } from 'src/app/models/User';
+import { Vendor } from 'src/app/models/Vendor';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CommonApiService } from 'src/app/services/common-api.service';
 
 @Component({
-    selector: 'app-search-customers',
-    templateUrl: './search-customers.component.html',
-    styleUrls: ['./search-customers.component.scss'],
+    selector: 'app-search-vendors',
+    templateUrl: './search-vendors.component.html',
+    styleUrls: ['./search-vendors.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchCustomersComponent implements OnInit {
+export class SearchVendorsComponent implements OnInit {
     @Output()
-    customerOutput = new EventEmitter<any>();
+    vendorOutput = new EventEmitter<any>();
 
     @Output()
-    customerSearchResetOutput = new EventEmitter<any>();
+    vendorSearchResetOutput = new EventEmitter<any>();
 
-    customer_data: any;
+    vendor_data: any;
 
     submitForm: FormGroup;
 
-    customer_name = '';
+    vendor_name = '';
 
     isLoading = false;
-    isCLoading = false;
-    customer_lis: Customer[];
+    isVLoading = false;
+    vendor_lis: Vendor[];
 
     constructor(
         private _authService: AuthenticationService,
@@ -47,33 +48,33 @@ export class SearchCustomersComponent implements OnInit {
         private _commonApiService: CommonApiService,
         private _fb: FormBuilder
     ) {
-        console.log('search-customers component');
+        console.log('search-vendors component');
 
         this._cdr.markForCheck();
 
         this.submitForm = this._fb.group({
-            customer_ctrl: [null],
+            vendor_ctrl: [null],
         });
     }
 
     ngOnInit() {
-        console.log('search-customers component');
-        this.searchCustomers();
+        console.log('search-vendors component');
+        this.searchVendors();
     }
 
-    // check hardcoded customer data and empty
-    searchCustomers() {
-        this.submitForm.controls.customer_ctrl.valueChanges
+    // check hardcoded vendor data and empty
+    searchVendors() {
+        this.submitForm.controls.vendor_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
-                tap(() => (this.isCLoading = true)),
+                tap(() => (this.isVLoading = true)),
                 switchMap((id: any) => {
                     if (
                         id != null &&
                         id.length !== undefined &&
                         id.length >= 2
                     ) {
-                        return this._commonApiService.getCustomerInfo({
+                        return this._commonApiService.getVendorInfo({
                             search_text: id,
                         });
                     } else {
@@ -83,37 +84,37 @@ export class SearchCustomersComponent implements OnInit {
             )
 
             .subscribe((data: any) => {
-                this.isCLoading = false;
-                this.customer_lis = data.body;
+                this.isVLoading = false;
+                this.vendor_lis = data.body;
 
                 this._cdr.markForCheck();
             });
     }
 
     displayFn(obj: any): string | undefined {
-        return obj && obj.name ? obj.name : undefined;
+        return obj && obj.vendor_name ? obj.vendor_name : undefined;
     }
 
-    clearCustomerInput() {
+    clearVendorInput() {
         this.submitForm.patchValue({
-            customer_ctrl: null,
+            vendor_ctrl: null,
         });
-        this.customer_lis = null;
+        this.vendor_lis = null;
 
-        this.customerSearchResetOutput.emit();
+        this.vendorSearchResetOutput.emit();
 
         this._cdr.markForCheck();
     }
 
-    setCustomerInfo(event, from) {
+    setVendorInfo(event, from) {
         if (event !== undefined) {
             if (from === 'tab') {
-                this.customer_data = event;
-                this.customerOutput.emit(this.customer_data);
+                this.vendor_data = event;
+                this.vendorOutput.emit(this.vendor_data);
                 this._cdr.detectChanges();
             } else {
-                this.customer_data = event.option.value;
-                this.customerOutput.emit(this.customer_data);
+                this.vendor_data = event.option.value;
+                this.vendorOutput.emit(this.vendor_data);
                 this._cdr.detectChanges();
             }
         }

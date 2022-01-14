@@ -356,7 +356,7 @@ export class ViewCustomerPage {
         const fileName = 'customer_list.xlsx';
 
         const reportData = this.resultArray;
-        debugger;
+
         reportData.forEach((e) => {
             e['Customer Name'] = e.customer_name;
             delete e.vendor_name;
