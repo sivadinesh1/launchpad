@@ -150,8 +150,9 @@
                         <mat-form-field
                             class="mat-input-wrapper"
                             *ngIf="vendor_selected"
+                            style="width: 300px"
                         >
-                            <mat-label>Invoice #</mat-label>
+                            <mat-label>Purchase Invoice #</mat-label>
                             <input
                                 matInput
                                 type="text"
@@ -313,7 +314,7 @@
                     </div>
 
                     <div class="left">
-                        <div class="row1">
+                        <div class="po-row1">
                             <div class="item1 headstyl-left txt-center-align">
                                 #
                             </div>
@@ -324,7 +325,7 @@
                             <div class="item2 headstyl-left">
                                 Item Description
                             </div>
-                            <div class="item2 headstyl-right">HSN Code</div>
+                            <div class="item2 headstyl-left">HSN Code</div>
                             <div class="item3 headstyl-right">Qty</div>
                             <div class="item3 headstyl-right">MRP</div>
                             <div class="item3 headstyl-right">
@@ -363,7 +364,7 @@
                                 <div
                                     *ngFor="let item of listArr ? listArr : []; 
 							let idx = index; trackBy:identify"
-                                    class="list-item"
+                                    class="po-list-item"
                                 >
                                     <div>{{idx + 1}}</div>
                                     <div class="txt-align">
@@ -386,7 +387,7 @@
                                     <div class="item2">
                                         {{item.product_description}}
                                     </div>
-                                    <div style="text-align: right">
+                                    <div style="text-align: left">
                                         {{item.hsn_code}}
                                     </div>
 
@@ -426,7 +427,7 @@
                                     </div>
 
                                     <div
-                                        class="item4 txt-right-align num-format-cell-style"
+                                        class="txt-right-align num-format-cell-style"
                                     >
                                         {{item.mrp}}
                                     </div>

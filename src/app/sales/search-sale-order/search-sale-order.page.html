@@ -1,5 +1,5 @@
 <ion-content>
-    <div class="search-sale-header" style="padding: 1rem">
+    <div class="search-sale-header sticky" style="padding: 1rem">
         <div>All Sale Orders</div>
 
         <div class="full-download" style="align-self: center">
@@ -11,15 +11,16 @@
                 [throttleTime]="500"
                 mat-flat-button
                 type="button"
-                color="primary"
+                mat-stroked-button
                 tabindex="-1"
                 (click)="exportCompletedSalesToExcel()"
             >
-                Download
+                <mat-icon>cloud_download</mat-icon>
+                &nbsp;Download
             </button>
         </div>
     </div>
-    <div class="search-bar">
+    <div class="search-bar-sales sticky1">
         <div>
             <img
                 src="/assets/images/svg/refresh.svg"
@@ -50,7 +51,20 @@
             (customerOutput)="customerInfoPage($event)"
             (customerSearchResetOutput)="customerSearchReset()"
         ></app-search-customers>
-
+        <div
+            style="
+                display: flex;
+                align-self: center;
+                font-style: italic;
+                font-size: 13px;
+            "
+        >
+            Showing&nbsp;
+            <span style="font-weight: 600">{{this.filteredValues?.length}}</span
+            >&nbsp;of&nbsp;<span style="font-weight: 600"
+                >{{this.full_count}}</span
+            >
+        </div>
         <div class="toggle_search_status">
             <ion-segment
                 mode="ios"
@@ -140,7 +154,7 @@
         </div>
     </div>
 
-    <div class="header header-style">
+    <div class="header header-style sticky2">
         <div class="column-item" style="padding-left: 0.5rem">#</div>
 
         <div
@@ -155,8 +169,6 @@
             <app-ascending *ngIf="this.orderDefaultFlag === 'asc'">
             </app-ascending>
         </div>
-
-        <div class="column-item">Customer Name</div>
         <div
             class="column-item"
             [ngClass]="isSelectedColumn('Invoice')"
@@ -164,6 +176,7 @@
         >
             Invoice #
         </div>
+        <div class="column-item">Customer Name</div>
 
         <div class="column-item txt-right-align">Items</div>
         <div class="column-item txt-right-align">Total Value</div>
@@ -179,10 +192,10 @@
     <div *ngFor="let item of filteredValues; let idx = index" class="listItem">
         <div style="padding-left: 0.5rem">{{idx + 1}}</div>
         <div class="item">{{item.invoice_date | date:'d-M-yyyy' }}</div>
-        <div class="item">{{item.customer_name}}</div>
         <div class="item link-it" (click)="openDialog(item)">
             {{item.invoice_no}}
         </div>
+        <div class="item">{{item.customer_name}}</div>
 
         <div class="item" style="text-align: right">{{item.no_of_items}}</div>
         <div class="item" style="text-align: right">
@@ -286,6 +299,14 @@ DnD - sample vertical menu
             Search By Invoice #
         </div>
     </mat-menu>
+
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Loading more data..."
+        >
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
 </ion-content>
 <!-- 
 DnD - sample vertical menu

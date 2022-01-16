@@ -34,17 +34,18 @@
 
     .left {
         display: grid;
-        grid-template-rows: 40px 1fr;
+        grid-template-rows: auto 1fr;
         padding: 10px 10px 50px;
 
-        .row1 {
+        .po-row1 {
             display: grid;
-            grid-template-columns: 30px 40px 130px minmax(150px, 450px) 80px 80px 80px 80px 80px 80px;
+            grid-template-columns: 30px 40px 130px minmax(250px, 450px) 80px 80px 80px 80px 80px 80px;
             gap: 10px;
             align-items: center;
             color: "#a5a5a6";
             background-color: #f5f5f5;
             border-bottom: 2px solid rgb(173, 173, 173);
+            padding: 3px 6px 10px;
         }
 
         .row2 {
@@ -52,13 +53,13 @@
             // overflow-y: auto;
             // overflow-x: hidden;
             // max-height: 500px;
-            .list-item {
+            .po-list-item {
                 display: grid;
                 grid-template-columns: 30px 40px 130px minmax(250px, 450px) 80px 80px 80px 80px 80px 80px;
                 gap: 10px;
                 align-items: end;
                 align-self: center;
-                padding: 5px 5px 10px;
+                padding: 5px 6px 10px;
                 font-size: 13px;
                 border-bottom: 1px solid #e0d9d9;
             }
@@ -151,7 +152,6 @@
 
 .num-format-cell-style {
     align-self: center;
-    padding-right: 10px;
 }
 
 .desc {

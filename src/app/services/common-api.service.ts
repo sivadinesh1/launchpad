@@ -462,9 +462,9 @@ export class CommonApiService {
             .pipe(shareReplay());
     }
 
-    searchSales(submitForm): Observable<Sale[]> {
+    searchSales(submitForm): Observable<any> {
         return this.httpClient
-            .post<Sale[]>(
+            .post<any>(
                 `${this.restApiUrl}/v1/api/stock/search-sales`,
                 submitForm
             )

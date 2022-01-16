@@ -25,9 +25,16 @@
 .listItem,
 .headerRow {
     display: grid;
-    grid-template-columns: 40px 100px 240px 120px 100px 130px 140px 50px;
+    grid-template-columns: 40px 100px 120px 240px 100px 130px 140px 50px;
     align-items: center;
-    padding: 5px;
+    padding: 8px 1rem;
+    width: 96%;
+    margin: 0 auto;
+}
+
+.listItem:hover {
+    background-color: #f5f5f5;
+    opacity: 1;
 }
 
 .main-box {
@@ -39,12 +46,13 @@
 }
 
 .header-style {
-    padding: 0.2rem 0rem;
+    padding: 8px 1rem;
     color: #333;
     color: #606060;
     font-weight: 600;
     font-size: 15px;
     border-bottom: 1px solid var(--lp-line-divider);
+    background-color: azure;
 }
 
 .listItem {
@@ -136,13 +144,15 @@
     margin-bottom: -1rem;
 }
 
-.search-bar {
+.search-bar-sales {
     background-color: #fff;
     display: flex;
     padding: 16px;
     align-items: center;
-    border-top: 1px solid var(--lp-line-divider);
+    width: 96%;
+    margin: 0 auto;
     border-bottom: 1px solid var(--lp-line-divider);
+    border-top: 0px solid var(--lp-line-divider);
 }
 
 .toggle_search_status {
@@ -162,14 +172,13 @@
     font-size: 1.5rem;
     letter-spacing: 1px;
     font-weight: 500;
+    background-color: #fff;
+    width: 96%;
+    margin: 0 auto;
 }
 
 .column-item {
     align-items: center;
-}
-
-.column-item:hover {
-    background-color: #f2f2f2;
 }
 
 .sorted_column {
@@ -188,4 +197,18 @@
 .link-it {
     color: blue;
     cursor: pointer;
+}
+
+.sticky {
+    position: sticky;
+    top: -10px;
+}
+
+.sticky1 {
+    position: sticky;
+    top: 45px;
+}
+.sticky2 {
+    position: sticky;
+    top: 95px;
 }

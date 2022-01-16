@@ -459,7 +459,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                     if (id != null && id.length >= 2) {
                         return this._commonApiService.getVendorInfo({
                             center_id: this.user_data.center_id,
-                            product_search_text: id,
+                            search_text: id,
                         });
                     } else {
                         return EMPTY;
@@ -504,7 +504,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
 
             .subscribe((data: any) => {
                 this.isLoading = false;
-                this.product_lis = data.body;
+                this.product_lis = data.body.result;
 
                 this._cdr.markForCheck();
             });
@@ -631,7 +631,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             product_id:
                 temp.product !== undefined
                     ? temp.product.product_id
-                    : temp.product_id,
+                    : new NullToQuotePipe().transform(temp.product_id),
 
             product_code:
                 temp.product !== undefined
@@ -1587,10 +1587,10 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             this.lineItemData.mrp_change_flag = 'N';
         }
 
-        this.itemAdd(this.lineItemData);
+        this.itemAdd();
     }
 
-    itemAdd(lineItemData) {
+    itemAdd() {
         this.processItems(this.lineItemData, 'loading-now');
 
         this.submitForm.patchValue({

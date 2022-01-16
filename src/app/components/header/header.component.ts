@@ -97,7 +97,7 @@ export class HeaderComponent implements OnInit {
                     if (id != null && id.length >= 1) {
                         return this._commonApiService.getProductInfo({
                             center_id: this.user_data.center_id,
-                            product_search_text: id,
+                            search_text: id,
                         });
                     } else {
                         return EMPTY;

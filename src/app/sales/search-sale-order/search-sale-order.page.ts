@@ -52,12 +52,12 @@ export class SearchSaleOrderPage implements OnInit {
 
     @ViewChild(SearchCustomersComponent) child: SearchCustomersComponent;
 
-    sales$: Observable<Sale[]>;
+    sales$: Observable<any>;
 
     draftSales$: Observable<Sale[]>;
     full_filled_sales$: Observable<Sale[]>;
 
-    filteredSales$: Observable<Sale[]>;
+    filteredSales$: Observable<any>;
 
     filteredValues: any;
     tabIndex = 1;
@@ -79,7 +79,7 @@ export class SearchSaleOrderPage implements OnInit {
     from_date = new Date();
     to_date = new Date();
 
-    filteredCustomer: Observable<any[]>;
+    filteredCustomer: Observable<any>;
     customer_lis: Customer[];
 
     user_data: any;
@@ -130,6 +130,11 @@ export class SearchSaleOrderPage implements OnInit {
     dateFrom: any = new Date();
     dateTo: any = new Date();
 
+    tempListArray: any[] = [];
+    full_count = 0;
+    offset = 0;
+    length = 20;
+
     constructor(
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService,
@@ -154,7 +159,7 @@ export class SearchSaleOrderPage implements OnInit {
             status: new FormControl('all'),
             sale_type: new FormControl('all'),
             invoice_no: [''],
-            search_type: ['all'],
+
             order: ['desc'],
         });
 
@@ -197,7 +202,7 @@ export class SearchSaleOrderPage implements OnInit {
     async init() {
         this.searchCustomers();
         this.isSelectedColumn('Date');
-        this.search();
+        this.search('');
         this._cdr.markForCheck();
     }
 
@@ -232,25 +237,13 @@ export class SearchSaleOrderPage implements OnInit {
             });
     }
 
-    radioClickHandle() {
-        if (this.submitForm.value.search_type === 'inv_only') {
-            this.submitForm.get('customer_ctrl').disable();
-        } else {
-            this.submitForm.value.invoice_no = '';
-            this.submitForm.get('customer_ctrl').enable();
-            this.submitForm.controls.invoice_no.setErrors(null);
-            this.submitForm.controls.invoice_no.markAsTouched();
-        }
-    }
-    // this.yourFormName.controls.formFieldName.enable();
-
     clearInput() {
         this.submitForm.patchValue({
             customer_id: 'all',
             customer_ctrl: '',
         });
         this._cdr.markForCheck();
-        this.search();
+        this.search('');
     }
 
     clear() {
@@ -263,7 +256,6 @@ export class SearchSaleOrderPage implements OnInit {
             from_date: this.from_date,
             to_date: new Date(),
             invoice_no: '',
-            search_type: 'all',
         });
 
         this.submitForm.value.invoice_no = '';
@@ -317,24 +309,14 @@ export class SearchSaleOrderPage implements OnInit {
 
         this._cdr.detectChanges();
 
-        this.search();
+        this.search('');
     }
 
     customDateFilter() {
         this.isCustomDateFilter = !this.isCustomDateFilter;
     }
 
-    async search() {
-        if (
-            this.submitForm.value.search_type !== 'all' &&
-            this.submitForm.value.invoice_no.trim().length === 0
-        ) {
-            console.log('invoice number is mandatory');
-            this.submitForm.controls.invoice_no.setErrors({ required: true });
-            this.submitForm.controls.invoice_no.markAsTouched();
-            return false;
-        }
-
+    async search(event) {
         this.sales$ = this._commonApiService.searchSales({
             center_id: this.user_data.center_id,
             customer_id: this.submitForm.value.customer_id,
@@ -342,16 +324,34 @@ export class SearchSaleOrderPage implements OnInit {
             from_date: this.submitForm.value.from_date,
             to_date: this.submitForm.value.to_date,
             invoice_type: 'GI',
-            search_type: this.submitForm.value.search_type,
+
             invoice_no: this.submitForm.value.invoice_no,
             order: this.submitForm.value.order,
+            offset: this.offset,
+            length: this.length,
         });
 
         this.filteredSales$ = this.sales$;
 
         const value = await lastValueFrom(this.filteredSales$);
 
-        this.filteredValues = value;
+        if (event === '') {
+            this.full_count = value.full_count;
+            this.tempListArray = value.result;
+            this.filteredValues = value.result.filter(
+                (data: any) => data.status === 'C'
+            );
+        } else {
+            this.filteredValues = this.tempListArray.concat(
+                value.result.filter((data: any) => data.status === 'C')
+            );
+            this.tempListArray = this.filteredValues;
+
+            event.target.complete();
+            this._cdr.detectChanges();
+        }
+
+        //  this.filteredValues = value;
 
         this.calculateSumTotals();
         this.tabIndex = 1;
@@ -381,7 +381,7 @@ export class SearchSaleOrderPage implements OnInit {
 
         // dialogRef.afterClosed();
         dialogRef.afterClosed().subscribe((result) => {
-            this.search();
+            this.search('');
         });
     }
 
@@ -398,7 +398,7 @@ export class SearchSaleOrderPage implements OnInit {
             });
             this.orderDefaultFlag = 'desc';
         }
-        this.search();
+        this.search('');
     }
 
     sortInvoiceDate() {
@@ -414,7 +414,7 @@ export class SearchSaleOrderPage implements OnInit {
             });
             this.orderDefaultFlag = 'desc';
         }
-        this.search();
+        this.search('');
     }
 
     goPrintEnquiry(row) {
@@ -533,7 +533,7 @@ export class SearchSaleOrderPage implements OnInit {
             invoice_no: '',
         });
         this._cdr.markForCheck();
-        this.search();
+        this.search('');
     }
 
     openDialog(row): void {
@@ -598,7 +598,7 @@ export class SearchSaleOrderPage implements OnInit {
         // patch it up with from & to date, via patch value
         console.log(this.submitForm.value);
 
-        this.search();
+        this.search('');
     }
 
     async exportCompletedSalesToExcel() {
@@ -790,7 +790,7 @@ export class SearchSaleOrderPage implements OnInit {
             this.submitForm.patchValue({
                 invoice_no: result,
             });
-            this.search();
+            this.search('');
         });
     }
 
@@ -798,7 +798,7 @@ export class SearchSaleOrderPage implements OnInit {
         this.submitForm.patchValue({
             customer_id: item.id,
         });
-        this.search();
+        this.search('');
     }
 
     customerSearchReset() {
@@ -809,7 +809,7 @@ export class SearchSaleOrderPage implements OnInit {
         this.customerSearchReset();
         this.child.clearCustomerInput();
         this.clear();
-        this.search();
+        this.search('');
     }
 
     isSelectedColumn(param) {
@@ -826,5 +826,13 @@ export class SearchSaleOrderPage implements OnInit {
         } else {
             return 'draft';
         }
+    }
+
+    doInfinite(ev: any) {
+        console.log('scrolled down!!', ev);
+
+        this.offset += 20;
+
+        this.search(ev);
     }
 }
