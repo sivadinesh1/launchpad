@@ -188,7 +188,10 @@
     <div *ngIf="filteredValues?.length === 0" class="no-records-found">
         No records found
     </div>
-    <div *ngFor="let item of filteredValues; let idx = index" class="listItem">
+    <div
+        *ngFor="let item of filteredValues; let idx = index"
+        class="sso-listItem"
+    >
         <div style="padding-left: 0.5rem">{{idx + 1}}</div>
         <div class="item">{{item.invoice_date | date:'d-M-yyyy' }}</div>
         <div class="item link-it" (click)="openDialog(item)">
@@ -247,6 +250,22 @@
                 [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
                 (click)="presentAlertConfirm(item)"
                 >delete_outline
+            </mat-icon>
+        </div>
+
+        <div
+            class="more a-link"
+            style="margin-left: 16px"
+            (click)="goSalesEditScreen(item)"
+        >
+            <mat-icon
+                #tooltip="matTooltip"
+                matTooltip="Edit"
+                matTooltipClass="tooltip"
+                color="primary"
+                (mousedown)="tooltip.hide()"
+                [ngStyle]="{ cursor: 'pointer' }"
+                >edit
             </mat-icon>
         </div>
     </div>
