@@ -211,14 +211,17 @@
 .sticky {
     position: sticky;
     top: -10px;
+    z-index: 1;
 }
 
 .sticky1 {
     position: sticky;
     top: 45px;
     padding: 0px !important;
+    z-index: 1;
 }
 .sticky2 {
     position: sticky;
     top: 85px;
+    z-index: 1;
 }

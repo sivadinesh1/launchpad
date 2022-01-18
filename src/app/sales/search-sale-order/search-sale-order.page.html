@@ -9,7 +9,6 @@
                 class="cursor"
                 type="button"
                 [throttleTime]="500"
-                mat-flat-button
                 type="button"
                 mat-stroked-button
                 tabindex="-1"
@@ -299,6 +298,69 @@ DnD - sample vertical menu
             Search By Invoice #
         </div>
     </mat-menu>
+
+    <ng-container *ngIf="!is_loaded">
+        <ion-item *ngFor="let fake of _helperUtilsService.generateFake(20)">
+            <div
+                style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 100px 100px;
+                    width: 100%;
+                    gap: 10px;
+                    padding: 10px;
+                "
+            >
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 150px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 100px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 150px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 100px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+            </div>
+        </ion-item>
+    </ng-container>
 
     <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
         <ion-infinite-scroll-content

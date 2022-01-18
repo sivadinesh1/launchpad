@@ -33,6 +33,7 @@ import { SearchInvoiceNoComponent } from 'src/app/components/search-invoice-no/s
 
 import { Customer } from 'src/app/models/Customer';
 import { User } from 'src/app/models/User';
+import { HelperUtilsService } from 'src/app/services/helper-utils.service';
 import * as xlsx from 'xlsx';
 import { Sale } from '../../models/Sale';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -134,6 +135,7 @@ export class SearchSaleOrderPage implements OnInit {
     full_count = 0;
     offset = 0;
     length = 20;
+    is_loaded = false;
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -145,7 +147,8 @@ export class SearchSaleOrderPage implements OnInit {
         public _dialog: MatDialog,
         public _dialog1: MatDialog,
         private _snackBar: MatSnackBar,
-        private _authService: AuthenticationService
+        private _authService: AuthenticationService,
+        public _helperUtilsService: HelperUtilsService
     ) {
         this.submitForm = this._fb.group({
             customer_id: 'all',
@@ -200,8 +203,10 @@ export class SearchSaleOrderPage implements OnInit {
     }
 
     async init() {
+        this.offset = 0;
         this.searchCustomers();
         this.isSelectedColumn('Date');
+        this.is_loaded = false;
         this.search('');
         this._cdr.markForCheck();
     }
@@ -243,6 +248,8 @@ export class SearchSaleOrderPage implements OnInit {
             customer_ctrl: '',
         });
         this._cdr.markForCheck();
+        this.is_loaded = false;
+        this.offset = 0;
         this.search('');
     }
 
@@ -277,7 +284,7 @@ export class SearchSaleOrderPage implements OnInit {
         });
 
         this.tabIndex = 1;
-        //	this.search();
+
         this._cdr.markForCheck();
     }
 
@@ -308,7 +315,7 @@ export class SearchSaleOrderPage implements OnInit {
         });
 
         this._cdr.detectChanges();
-
+        this.is_loaded = false;
         this.search('');
     }
 
@@ -351,7 +358,7 @@ export class SearchSaleOrderPage implements OnInit {
             this._cdr.detectChanges();
         }
 
-        //  this.filteredValues = value;
+        this.is_loaded = true;
 
         this.calculateSumTotals();
         this.tabIndex = 1;
@@ -381,6 +388,7 @@ export class SearchSaleOrderPage implements OnInit {
 
         // dialogRef.afterClosed();
         dialogRef.afterClosed().subscribe((result) => {
+            this.is_loaded = false;
             this.search('');
         });
     }
@@ -398,6 +406,7 @@ export class SearchSaleOrderPage implements OnInit {
             });
             this.orderDefaultFlag = 'desc';
         }
+        this.is_loaded = false;
         this.search('');
     }
 
@@ -414,6 +423,7 @@ export class SearchSaleOrderPage implements OnInit {
             });
             this.orderDefaultFlag = 'desc';
         }
+        this.is_loaded = false;
         this.search('');
     }
 
@@ -440,14 +450,14 @@ export class SearchSaleOrderPage implements OnInit {
     to_dateSelected($event) {
         this.to_date = $event.target.value;
         this.tabIndex = 1;
-        //	this.search();
+
         this._cdr.markForCheck();
     }
 
     from_dateSelected($event) {
         this.from_date = $event.target.value;
         this.tabIndex = 1;
-        //this.search();
+
         this._cdr.markForCheck();
     }
 
@@ -533,6 +543,7 @@ export class SearchSaleOrderPage implements OnInit {
             invoice_no: '',
         });
         this._cdr.markForCheck();
+        this.is_loaded = false;
         this.search('');
     }
 
@@ -596,8 +607,8 @@ export class SearchSaleOrderPage implements OnInit {
 
     reloadSearch() {
         // patch it up with from & to date, via patch value
-        console.log(this.submitForm.value);
 
+        this.is_loaded = false;
         this.search('');
     }
 
@@ -790,6 +801,7 @@ export class SearchSaleOrderPage implements OnInit {
             this.submitForm.patchValue({
                 invoice_no: result,
             });
+            this.is_loaded = false;
             this.search('');
         });
     }
@@ -798,6 +810,7 @@ export class SearchSaleOrderPage implements OnInit {
         this.submitForm.patchValue({
             customer_id: item.id,
         });
+        this.is_loaded = false;
         this.search('');
     }
 
@@ -809,6 +822,7 @@ export class SearchSaleOrderPage implements OnInit {
         this.customerSearchReset();
         this.child.clearCustomerInput();
         this.clear();
+        this.is_loaded = false;
         this.search('');
     }
 
@@ -832,7 +846,7 @@ export class SearchSaleOrderPage implements OnInit {
         console.log('scrolled down!!', ev);
 
         this.offset += 20;
-
+        this.is_loaded = false;
         this.search(ev);
     }
 }

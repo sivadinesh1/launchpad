@@ -16,13 +16,15 @@
     justify-self: center;
 }
 
-.header {
+.customers-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: #222;
     font-size: 20px;
-    padding-bottom: 1rem;
+
+    background-color: #fff;
+    padding-bottom: 1rem !important;
 }
 
 .center-message {
@@ -166,16 +168,57 @@ td.mat-column-actions {
 }
 
 .table-header,
-.listItem {
+.customers-listItem {
     display: grid;
     grid-template-columns: 40px 320px 420px 100px 100px;
     border-bottom: rgba(0, 0, 0, 0.12) solid 1px;
     border-top: rgba(0, 0, 0, 0.12) solid 1px;
     padding: 10px 0;
+    background-color: #fff;
+}
+
+.customers-listItem:hover {
+    background-color: #f5f5f5;
+}
+
+.table-header {
+    background-color: azure;
 }
 
 .head {
     display: flex;
     justify-content: space-between;
     padding-bottom: 1rem;
+    background-color: #fff;
+}
+
+.sticky {
+    position: sticky;
+    top: -16px;
+    z-index: 1;
+}
+
+.sticky1 {
+    position: sticky;
+    top: 36px;
+    padding: 0px !important;
+    z-index: 1;
+}
+.sticky2 {
+    position: sticky;
+    top: 90px;
+    z-index: 1;
+}
+
+.label-head {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+    opacity: 0.7;
+    align-self: center;
+    padding-left: 1rem;
+}
+
+.search_box {
+    display: flex;
 }

@@ -15,15 +15,6 @@
     justify-self: center;
 }
 
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #222;
-    font-size: 20px;
-    padding-bottom: 1rem;
-}
-
 .center-message {
     padding-top: 20px;
     padding-bottom: 20px;
@@ -47,6 +38,7 @@
     font-size: 15px;
     border-bottom: 1px solid var(--lp-line-divider);
     border-top: 1px solid var(--lp-line-divider);
+    background-color: azure;
 }
 
 .listItem {
@@ -63,6 +55,7 @@
     display: flex;
     justify-content: space-between;
     padding-bottom: 1rem;
+    background-color: #fff;
 }
 
 .vendor-view-listItem:hover {
@@ -84,4 +77,46 @@
 .vendor-view-listItem {
     background-color: #fff;
     border-bottom: 1px solid #e8e6e6;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #222;
+    font-size: 20px;
+
+    background-color: #fff;
+    padding-bottom: 1rem !important;
+}
+
+.sticky {
+    position: sticky;
+    top: -16px;
+    z-index: 1;
+}
+
+.sticky1 {
+    position: sticky;
+    top: 36px;
+    padding: 0px !important;
+    z-index: 1;
+}
+.sticky2 {
+    position: sticky;
+    top: 90px;
+    z-index: 1;
+}
+
+.label-head {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+    opacity: 0.7;
+    align-self: center;
+    padding-left: 1rem;
+}
+
+.search_box {
+    display: flex;
 }

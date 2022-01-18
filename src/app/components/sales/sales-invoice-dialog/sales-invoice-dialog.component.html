@@ -21,43 +21,42 @@
             >
         </div>
         <div>
-            <span>
-                <img
-                    *ngIf="
-                        this.data.payment_status === 'F' ||
-                        this.data.payment_status === 'P'
-                    "
-                    src="/assets/images/svg/lock.svg"
-                    width="22px"
-                    height="22px"
-                    style="cursor: pointer"
-                    matTooltip="Payments Associated"
-                    matTooltipClass="tooltip"
-                />
-
-                <mat-icon
-                    *ngIf="
-                        this.data.payment_status === 'N' ||
-                        this.data.payment_status === null
-                    "
-                    #tooltip="matTooltip"
-                    matTooltip="Edit"
-                    matTooltipClass="tooltip"
-                    (mousedown)="tooltip.hide()"
-                    [ngStyle]="{ color: '#6d78d2', cursor: 'pointer' }"
-                    (click)="goSalesEditScreen()"
-                    >edit
-                </mat-icon>
-            </span>
-            <span
-                *ngIf="this.data.status === 'C'"
-                (click)="salesReturn()"
-                class="link_text"
-            >
-                SALES RETURN
+            <span style="padding: 0px 6px" *ngIf="this.data.status === 'C'">
+                <button
+                    style="border-radius: 0px"
+                    appPreventDoubleClick
+                    class="cursor"
+                    type="button"
+                    [throttleTime]="500"
+                    mat-stroked-button
+                    type="button"
+                    tabindex="-1"
+                    (click)="salesReturn()"
+                >
+                    <mat-icon>cloud_download</mat-icon>
+                    &nbsp; Sales Return
+                </button>
             </span>
 
             <span style="padding: 0px 6px">
+                <button
+                    style="border-radius: 0px"
+                    appPreventDoubleClick
+                    class="cursor"
+                    type="button"
+                    [throttleTime]="500"
+                    mat-stroked-button
+                    type="button"
+                    tabindex="-1"
+                    (click)="exportToExcel()"
+                >
+                    <mat-icon>cloud_download</mat-icon>
+                    &nbsp; Download
+                </button>
+            </span>
+
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="item" style="text-align: center; padding-right: 1rem">
                 <button
                     style="border-radius: 0px"
                     appPreventDoubleClick
@@ -68,13 +67,19 @@
                     type="button"
                     color="primary"
                     tabindex="-1"
-                    (click)="exportToExcel()"
+                    (click)="goSalesEditScreen()"
                 >
-                    Download
+                    <mat-icon
+                        #tooltip="matTooltip"
+                        matTooltip="Edit"
+                        matTooltipClass="tooltip"
+                        (mousedown)="tooltip.hide()"
+                        [ngStyle]="{ color: '#fff', cursor: 'pointer' }"
+                        >edit
+                    </mat-icon>
+                    Edit
                 </button>
             </span>
-
-            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         </div>
     </div>
 

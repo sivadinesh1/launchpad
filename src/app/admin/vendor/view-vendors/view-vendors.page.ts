@@ -32,6 +32,7 @@ import { VendorAddDialogComponent } from 'src/app/components/vendors/vendor-add-
 import * as xlsx from 'xlsx';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 import { DeleteVendorDialogComponent } from 'src/app/components/delete-vendor-dialog/delete-vendor-dialog.component';
+import { HelperUtilsService } from 'src/app/services/helper-utils.service';
 
 @Component({
     selector: 'app-view-vendors',
@@ -52,8 +53,6 @@ export class ViewVendorsPage implements OnInit {
 
     user_data$: Observable<User>;
 
-    ready = 0; // flag check - center_id (local storage) & customer id (param)
-
     displayedColumns: string[] = [
         'name',
         'address1',
@@ -63,7 +62,15 @@ export class ViewVendorsPage implements OnInit {
     ];
     dataSource = new MatTableDataSource<Vendor>();
 
-    resultArray: any = [];
+    listArray = [];
+    tempListArray = [];
+
+    full_count = 0;
+    offset = 0;
+    length = 50;
+    is_loaded = false;
+
+    all_caught_up = '';
 
     constructor(
         private _authService: AuthenticationService,
@@ -72,19 +79,23 @@ export class ViewVendorsPage implements OnInit {
         private _dialog: MatDialog,
         private _snackBar: MatSnackBar,
         private _route: ActivatedRoute,
-        private _router: Router
+        private _router: Router,
+        public _helperUtilsService: HelperUtilsService
     ) {
         this.user_data$ = this._authService.currentUser;
         this.user_data$
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
                 this.center_id = data.center_id;
-                this.ready = 1;
-                this.reloadVendors();
+                this.is_loaded = false;
+                this.offset = 0;
+                this.all_caught_up = '';
+                this.reloadVendors('');
                 this._cdr.markForCheck();
             });
 
         this._route.params.subscribe((params) => {
+            this.offset = 0;
             this.init();
         });
     }
@@ -94,17 +105,35 @@ export class ViewVendorsPage implements OnInit {
     }
 
     init() {
-        if (this.ready === 1) {
-            // ready = 1 only after user_data observable returns
-            this.reloadVendors();
-        }
+        this.offset = 0;
+        this.is_loaded = false;
+        this.reloadVendors('');
     }
 
-    reloadVendors() {
-        this._commonApiService.getAllActiveVendors().subscribe((data: any) => {
-            this.resultArray = data;
-            this._cdr.markForCheck();
-        });
+    reloadVendors(event) {
+        this._commonApiService
+            .getAllActiveVendorsPost({
+                offset: this.offset,
+                length: this.length,
+            })
+            .subscribe((data: any) => {
+                this.is_loaded = true;
+                if (event === '') {
+                    this.full_count = data.body.full_count;
+                    this.tempListArray = data.body.result;
+                    this.listArray = data.body.result;
+                    this._cdr.detectChanges();
+                } else {
+                    this.full_count = data.body.full_count;
+                    this.listArray = this.tempListArray.concat(
+                        data.body.result
+                    );
+                    this.tempListArray = this.listArray;
+
+                    event.target.complete();
+                    this._cdr.detectChanges();
+                }
+            });
     }
 
     addVendor() {
@@ -130,7 +159,8 @@ export class ViewVendorsPage implements OnInit {
             .pipe(
                 filter((val) => !!val),
                 tap(() => {
-                    this.reloadVendors();
+                    this.is_loaded = false;
+                    this.reloadVendors('');
                     this._cdr.markForCheck();
                 })
             )
@@ -156,7 +186,8 @@ export class ViewVendorsPage implements OnInit {
             .pipe(
                 filter((val) => !!val),
                 tap(() => {
-                    this.reloadVendors();
+                    this.is_loaded = false;
+                    this.reloadVendors('');
                     this._cdr.markForCheck();
                 })
             )
@@ -171,7 +202,7 @@ export class ViewVendorsPage implements OnInit {
         filterValue = filterValue.target.value.trim(); // Remove whitespace
         filterValue = filterValue.target.value.toLowerCase(); // Data source defaults to lowercase matches
 
-        this.resultArray = filterValue;
+        this.listArray = filterValue;
 
         if (this.dataSource.filteredData.length > 0) {
             this.isTableHasData = true;
@@ -198,7 +229,7 @@ export class ViewVendorsPage implements OnInit {
             .pipe(
                 filter((val) => !!val),
                 tap(() => {
-                    this.reloadVendors();
+                    this.reloadVendors('');
                     this._cdr.markForCheck();
                 })
             )
@@ -206,7 +237,7 @@ export class ViewVendorsPage implements OnInit {
                 if (data === 'success') {
                     this.openSnackBar('Vendor deleted successfully', '');
 
-                    this.reloadVendors();
+                    this.reloadVendors('');
                 }
             });
     }
@@ -229,7 +260,7 @@ export class ViewVendorsPage implements OnInit {
     async exportVendorDataToExcel() {
         const fileName = 'vendor_list.xlsx';
 
-        const reportData = this.resultArray;
+        const reportData = this.listArray;
 
         reportData.forEach((e) => {
             e['Vendor Name'] = e.vendor_name;
@@ -329,5 +360,20 @@ export class ViewVendorsPage implements OnInit {
         });
 
         xlsx.writeFile(wb1, fileName);
+    }
+
+    doInfinite(ev: any) {
+        console.log('scrolled down!!', ev);
+
+        this.offset += 50;
+
+        if (this.full_count > this.listArray.length) {
+            this.is_loaded = false;
+            this.reloadVendors(ev);
+        } else {
+            this.all_caught_up = 'You have reached the end of the list';
+            ev.target.complete();
+            this._cdr.detectChanges();
+        }
     }
 }

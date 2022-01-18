@@ -28,6 +28,7 @@ import * as xlsx from 'xlsx';
 import { SuccessMessageDialogComponent } from 'src/app/components/success-message-dialog/success-message-dialog.component';
 import { DeleteBrandDialogComponent } from '../../../components/delete-brand-dialog/delete-brand-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { HelperUtilsService } from 'src/app/services/helper-utils.service';
 
 @Component({
     selector: 'app-view-brands',
@@ -52,9 +53,15 @@ export class ViewBrandsPage implements OnInit {
 
     user_data$: Observable<User>;
 
-    ready = 0; // flag check - center_id (local storage) & customer id (param)
+    listArray = [];
+    tempListArray = [];
 
-    resultArray: any = [];
+    full_count = 0;
+    offset = 0;
+    length = 50;
+    is_loaded = false;
+
+    all_caught_up = '';
 
     constructor(
         private _authService: AuthenticationService,
@@ -63,19 +70,22 @@ export class ViewBrandsPage implements OnInit {
         private _dialog: MatDialog,
         private _snackBar: MatSnackBar,
         private _route: ActivatedRoute,
-        private _router: Router
+        private _router: Router,
+        public _helperUtilsService: HelperUtilsService
     ) {
         this.user_data$ = this._authService.currentUser;
         this.user_data$
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
                 this.center_id = data.center_id;
-                this.ready = 1;
-                this.reloadBrands();
+
                 this._cdr.markForCheck();
             });
 
         this._route.params.subscribe((params) => {
+            this.offset = 0;
+            this.all_caught_up = '';
+            this.reloadBrands('');
             this.init();
         });
     }
@@ -85,28 +95,33 @@ export class ViewBrandsPage implements OnInit {
     }
 
     init() {
-        if (this.ready === 1) {
-            // ready = 1 only after user_data observable returns
-            this.reloadBrands();
-        }
+        this.is_loaded = false;
+        this.reloadBrands('');
     }
 
-    reloadBrands() {
+    reloadBrands(event) {
         this._commonApiService
-            .getAllActiveBrands('A')
+            .getAllActiveBrandsPost({
+                offset: this.offset,
+                length: this.length,
+            })
             .subscribe((data: any) => {
-                this.resultArray = data;
-                this._cdr.markForCheck();
+                this.is_loaded = true;
+                if (event === '') {
+                    this.full_count = data.body.full_count;
+                    this.tempListArray = data.body.result;
+                    this.listArray = data.body.result;
+                    this._cdr.detectChanges();
+                } else {
+                    this.full_count = data.body.full_count;
+                    this.listArray = this.tempListArray.concat(
+                        data.body.result
+                    );
+                    this.tempListArray = this.listArray;
 
-                // // DnD - code to add a "key/Value" in every object of array
-                // this.dataSource.data = data.map((el) => {
-                //     const o = Object.assign({}, el);
-                //     o.isExpanded = false;
-                //     return o;
-                // });
-
-                // this.dataSource.sort = this.sort;
-                // this.pageLength = data.length;
+                    event.target.complete();
+                    this._cdr.detectChanges();
+                }
             });
     }
 
@@ -132,15 +147,16 @@ export class ViewBrandsPage implements OnInit {
             .pipe(
                 filter((val) => !!val),
                 tap(() => {
-                    this.reloadBrands();
+                    this.is_loaded = false;
+                    this.reloadBrands('');
                     this._cdr.markForCheck();
                 })
             )
             .subscribe((data: any) => {
                 if (data === 'success') {
                     this.openSnackBar('Brand deleted successfully', '');
-
-                    this.reloadBrands();
+                    this.is_loaded = false;
+                    this.reloadBrands('');
                 }
             });
     }
@@ -163,7 +179,8 @@ export class ViewBrandsPage implements OnInit {
             .pipe(
                 filter((val) => !!val),
                 tap(() => {
-                    this.reloadBrands();
+                    this.is_loaded = false;
+                    this.reloadBrands('');
                     this._cdr.markForCheck();
                 })
             )
@@ -192,7 +209,8 @@ export class ViewBrandsPage implements OnInit {
                 filter((val) => !!val),
                 tap(() => {
                     console.log('calling add close..');
-                    this.reloadBrands();
+                    this.is_loaded = false;
+                    this.reloadBrands('');
                     this._cdr.markForCheck();
                 })
             )
@@ -233,5 +251,20 @@ export class ViewBrandsPage implements OnInit {
         // const wb: xlsx.WorkBook = xlsx.utils.book_new();
         // xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
         // xlsx.writeFile(wb, 'epltable.xlsx');
+    }
+
+    doInfinite(ev: any) {
+        console.log('scrolled down!!', ev);
+
+        this.offset += 50;
+
+        if (this.full_count > this.listArray.length) {
+            this.is_loaded = false;
+            this.reloadBrands(ev);
+        } else {
+            this.all_caught_up = 'You have reached the end of the list';
+            ev.target.complete();
+            this._cdr.detectChanges();
+        }
     }
 }

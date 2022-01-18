@@ -127,9 +127,25 @@ export class CommonApiService {
             .pipe(catchError((err) => of([])));
     }
 
+    getAllActiveVendorsPost(submitObject) {
+        return this.httpClient.post(
+            this.restApiUrl + '/v1/api/all-active-vendors',
+            submitObject,
+            { observe: 'response' }
+        );
+    }
+
     getAllActiveBrands(status): Observable<Brand[]> {
         return this.httpClient.get<Brand[]>(
             `${this.restApiUrl}/v1/api/all-active-brands/${status}`
+        );
+    }
+
+    getAllActiveBrandsPost(submitObject) {
+        return this.httpClient.post(
+            this.restApiUrl + '/v1/api/all-active-brands',
+            submitObject,
+            { observe: 'response' }
         );
     }
 
@@ -142,6 +158,14 @@ export class CommonApiService {
     getAllActiveCustomers() {
         return this.httpClient.get(
             this.restApiUrl + '/v1/api/all-active-customers'
+        );
+    }
+
+    getAllActiveCustomersPost(submitObject) {
+        return this.httpClient.post(
+            this.restApiUrl + '/v1/api/all-active-customers',
+            submitObject,
+            { observe: 'response' }
         );
     }
 

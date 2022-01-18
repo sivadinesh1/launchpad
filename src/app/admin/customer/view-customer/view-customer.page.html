@@ -1,341 +1,202 @@
-<ion-content>
-    <div class="content">
-        <div class="header">
-            <div>
-                <div>Customers Profile</div>
-            </div>
-            <div>
-                <div class="btn-grad-no-margin add-btn" (click)="add()">
-                    <mat-icon class="add-icon">add</mat-icon>
-                    <span class="add-icon-label">Add Customer</span>
-                </div>
+<ion-content [fullscreen]="true" class="ion-padding">
+    <div class="customers-header sticky">
+        <div class="label-head">Customers Profile</div>
+
+        <div
+            class="btn-grad add-btn"
+            style="padding-right: 1rem"
+            (click)="add()"
+        >
+            <mat-icon class="add-icon">add</mat-icon>
+            <span style="padding: 5px">Add Customer</span>
+        </div>
+    </div>
+
+    <div class="head sticky1">
+        <div style="display: flex">
+            <ion-searchbar
+                autofocus
+                debounce="400"
+                placeholder="Search..."
+                style="width: 500px !important"
+                #mySearchbar
+                show-cancel-button="focus"
+                (ionClear)="reset()"
+                (ionChange)="openDialog($event)"
+            ></ion-searchbar>
+            <div
+                style="
+                    display: flex;
+                    align-self: center;
+                    font-style: italic;
+                    font-size: 13px;
+                "
+            >
+                Showing&nbsp;
+                <span style="font-weight: 600">{{this.listArray?.length}}</span
+                >&nbsp;of&nbsp;<span style="font-weight: 600"
+                    >{{this.full_count}}</span
+                >
             </div>
         </div>
 
-        <div class="head">
-            <div class="search_box">
-                <ion-searchbar
-                    style="width: 300px"
-                    autofocus
-                    debounce="400"
-                    placeholder="Search..."
-                    #mySearchbar
-                    show-cancel-button="focus"
-                    (ionClear)="reset()"
-                    (ionChange)="openDialog($event)"
-                ></ion-searchbar>
+        <div class="full-download" style="align-self: center">
+            <button
+                style="border-radius: 0px"
+                appPreventDoubleClick
+                class="cursor"
+                type="button"
+                [throttleTime]="500"
+                mat-stroked-button
+                type="button"
+                tabindex="-1"
+                (click)="exportCustomerDataToExcel()"
+            >
+                <mat-icon>cloud_download</mat-icon>
+                &nbsp; Download
+            </button>
+        </div>
+    </div>
+
+    <ng-container>
+        <div class="table-header sticky2">
+            <div class="col-headers" style="padding-left: 10px">#</div>
+            <div class="col-headers">Name</div>
+            <div class="col-headers">Address</div>
+            <div class="col-headers">&nbsp;</div>
+            <div class="col-headers">&nbsp;</div>
+        </div>
+
+        <div
+            *ngFor="let item of listArray; let idx = index"
+            class="customers-listItem"
+        >
+            <div style="padding-left: 10px">{{idx + 1}}</div>
+            <div class="item">
+                <div>{{item.name}}</div>
             </div>
 
-            <div class="full-download" style="align-self: center">
+            <div class="item">
+                <div>{{item.address1}}</div>
+                <div>{{item.address2}}</div>
+                <div>{{item.district}}</div>
+            </div>
+            <div
+                class="item"
+                style="color: blue; cursor: pointer"
+                (click)="goCustomerFinancial(item)"
+            >
+                Accounts
+            </div>
+
+            <div>
                 <button
-                    style="border-radius: 0px"
-                    appPreventDoubleClick
-                    class="cursor"
-                    type="button"
-                    [throttleTime]="500"
-                    mat-flat-button
-                    type="button"
-                    color="primary"
-                    tabindex="-1"
-                    (click)="exportCustomerDataToExcel()"
+                    mat-button
+                    [matMenuTriggerFor]="menu"
+                    [matMenuTriggerData]="{element: item}"
+                    style="color: blue; font-size: 18px; font-weight: 400"
                 >
-                    Download
+                    <img
+                        src="/assets/images/svg/ellipsis-horizontal.svg"
+                        width="24px"
+                        height="24px"
+                        alt=""
+                    />
                 </button>
             </div>
         </div>
 
-        <ng-container>
-            <div class="table-header">
-                <div class="col-headers">#</div>
-                <div class="col-headers">Name</div>
-                <div class="col-headers">Address</div>
-                <div class="col-headers">&nbsp;</div>
-                <div class="col-headers">&nbsp;</div>
-            </div>
+        <div *ngIf="this.listArray?.length === 0">
+            <div class="no-matching-records-1">NO MATCHES FOUND</div>
+            <div class="no-matching-records-2">Please try another search</div>
+        </div>
 
+        <mat-menu #menu="matMenu">
+            <ng-template matMenuContent let-element="element">
+                <button mat-menu-item (click)="edit(element)">
+                    <span> Primary Contact Info</span>
+                </button>
+                <button mat-menu-item (click)="editShippingAddress(element)">
+                    <span> Shipping Address(s)</span>
+                </button>
+
+                <button mat-menu-item (click)="manageBrandDiscounts(element)">
+                    <span> Discounts Settings</span>
+                </button>
+            </ng-template>
+        </mat-menu>
+    </ng-container>
+
+    <ng-container *ngIf="!is_loaded">
+        <ion-item *ngFor="let fake of _helperUtilsService.generateFake(20)">
             <div
-                *ngFor="let item of resultArray; let idx = index"
-                class="listItem"
+                style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 100px 100px;
+                    width: 100%;
+                    gap: 10px;
+                    padding: 10px;
+                "
             >
-                <div>{{idx + 1}}</div>
-                <div class="item">
-                    <div>{{item.name}}</div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 150px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 100px"
+                        ></ion-skeleton-text>
+                    </ion-label>
                 </div>
-
-                <div class="item">
-                    <div>{{item.address1}}</div>
-                    <div>{{item.address2}}</div>
-                    <div>{{item.district}}</div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 150px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 100px"
+                        ></ion-skeleton-text>
+                    </ion-label>
                 </div>
-                <div
-                    class="item"
-                    style="color: blue; cursor: pointer"
-                    (click)="goCustomerFinancial(item)"
-                >
-                    Accounts
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                    </ion-label>
                 </div>
-
-                <div class="item">
-                    <button
-                        mat-button
-                        [matMenuTriggerFor]="menu"
-                        [matMenuTriggerData]="{element: item}"
-                        style="color: blue; font-size: 18px; font-weight: 400"
-                    >
-                        <img
-                            src="/assets/images/svg/ellipsis-horizontal.svg"
-                            width="24px"
-                            height="24px"
-                            alt=""
-                        />
-                    </button>
-                </div>
-            </div>
-
-            <mat-menu #menu="matMenu">
-                <ng-template matMenuContent let-element="element">
-                    <button mat-menu-item (click)="edit(element)">
-                        <span> Primary Contact Info</span>
-                    </button>
-                    <button
-                        mat-menu-item
-                        (click)="editShippingAddress(element)"
-                    >
-                        <span> Shipping Address(s)</span>
-                    </button>
-
-                    <button
-                        mat-menu-item
-                        (click)="manageBrandDiscounts(element)"
-                    >
-                        <span> Discounts Settings</span>
-                    </button>
-                </ng-template>
-            </mat-menu>
-        </ng-container>
-
-        <!-- 
-        <ng-container>
-            <div class="example-container mat-elevation-z8">
-                <mat-paginator
-                    [pageSizeOptions]="[50, 100]"
-                    showFirstLastButtons
-                ></mat-paginator>
-                <div class="example-table-container">
-                    <table
-                        mat-table
-                        [dataSource]="dataSource"
-                        multiTemplateDataRows
-                        [class.mat-elevation-z0]="isactive"
-                    >
-                        <ng-container matColumnDef="name">
-                            <th mat-header-cell *matHeaderCellDef>
-                                <span style="font-size: 18px; font-weight: 300"
-                                    >Name</span
-                                >
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let element"
-                                class="m-card-title"
-                                style="
-                                    padding: 8px 8px 8px 24px;
-                                    font-size: 15px;
-                                "
-                                data-label="Name"
-                            >
-                                <div style="padding: 3px; font-weight: 400">
-                                    {{element.name}}
-                                </div>
-                              
-                                <div style="padding: 3px; color: red">
-                                    Last Payment Received:&nbsp;
-                                    {{element.last_paid_date | nulldash }}
-                                </div>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="address1">
-                            <th mat-header-cell *matHeaderCellDef>
-                                <span style="font-size: 18px; font-weight: 300">
-                                    Registered Address
-                                </span>
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let element"
-                                class="m-card-sub-title"
-                                style="font-size: 15px"
-                                data-label="Form type"
-                            >
-                                <div style="padding: 3px">
-                                    {{element.address1}}
-                                </div>
-                                <div style="padding: 3px">
-                                    {{element.address2 | nullna}}
-                                </div>
-                                <div style="padding: 3px">
-                                    {{element.district | nullna}}
-                                </div>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="credit">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                                style="text-align: left"
-                            >
-                                &nbsp;
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let element"
-                                class="m-card-sub-title"
-                                data-label="Form type"
-                            >
-                                <div
-                                    style="text-align: left; cursor: pointer"
-                                    (click)="goCustomerFinancial(element)"
-                                >
-                                    <div>
-                                        <span
-                                            style="
-                                                color: blue;
-                                                font-size: 18px;
-                                                font-weight: 400;
-                                            "
-                                        >
-                                            Accounts
-                                        </span>
-                                    </div>
-                                </div>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="actions">
-                            <th mat-header-cell *matHeaderCellDef>&nbsp;</th>
-                            <td mat-cell *matCellDef="let element">
-                                <button
-                                    mat-button
-                                    [matMenuTriggerFor]="menu"
-                                    [matMenuTriggerData]="{element: element}"
-                                    style="
-                                        color: blue;
-                                        font-size: 18px;
-                                        font-weight: 400;
-                                    "
-                                >
-                                    More
-                                    <img
-                                        src="/assets/images/svg/down-arrow.svg"
-                                        width="12px"
-                                        height="12px"
-                                        alt=""
-                                    />
-                                </button>
-                            </td>
-                        </ng-container>
-
-                        <tr
-                            mat-header-row
-                            *matHeaderRowDef="displayedColumns; sticky: true"
-                        ></tr>
-
-                        <tr
-                            class="example-element-row"
-                            mat-row
-                            *matRowDef="let row; columns: displayedColumns;"
-                        ></tr>
-                    </table>
-                    <div [hidden]="isTableHasData" class="center-message">
-                        No Data available.
-                    </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                    </ion-label>
                 </div>
             </div>
-            <mat-menu #menu="matMenu">
-                <ng-template matMenuContent let-element="element">
-                    <button mat-menu-item (click)="edit(element)">
-                        <span> Primary Contact Info</span>
-                    </button>
-                    <button
-                        mat-menu-item
-                        (click)="editShippingAddress(element)"
-                    >
-                        <span> Shipping Address(s)</span>
-                    </button>
-
-                    <button
-                        mat-menu-item
-                        (click)="manageBrandDiscounts(element)"
-                    >
-                        <span> Discounts Settings</span>
-                    </button>
-                </ng-template>
-            </mat-menu>
-        </ng-container> -->
-
-        <ng-container *ngIf="!is_loaded">
-            <ion-item *ngFor="let fake of _helperUtilsService.generateFake(20)">
-                <div
-                    style="
-                        display: grid;
-                        grid-template-columns: 1fr 1fr 100px 100px;
-                        width: 100%;
-                        gap: 10px;
-                        padding: 10px;
-                    "
-                >
-                    <div>
-                        <ion-label text-wrap>
-                            <ion-skeleton-text
-                                animated
-                                style="width: 120px"
-                            ></ion-skeleton-text>
-                            <ion-skeleton-text
-                                animated
-                                style="width: 150px"
-                            ></ion-skeleton-text>
-                            <ion-skeleton-text
-                                animated
-                                style="width: 100px"
-                            ></ion-skeleton-text>
-                        </ion-label>
-                    </div>
-                    <div>
-                        <ion-label text-wrap>
-                            <ion-skeleton-text
-                                animated
-                                style="width: 120px"
-                            ></ion-skeleton-text>
-                            <ion-skeleton-text
-                                animated
-                                style="width: 150px"
-                            ></ion-skeleton-text>
-                            <ion-skeleton-text
-                                animated
-                                style="width: 100px"
-                            ></ion-skeleton-text>
-                        </ion-label>
-                    </div>
-                    <div>
-                        <ion-label text-wrap>
-                            <ion-skeleton-text
-                                animated
-                                style="width: 120px"
-                            ></ion-skeleton-text>
-                        </ion-label>
-                    </div>
-                    <div>
-                        <ion-label text-wrap>
-                            <ion-skeleton-text
-                                animated
-                                style="width: 120px"
-                            ></ion-skeleton-text>
-                        </ion-label>
-                    </div>
-                </div>
-            </ion-item>
-        </ng-container>
-    </div>
+        </ion-item>
+    </ng-container>
+    <ng-container *ngIf="this.all_caught_up !== '' ">
+        <span class="all_caught_up"> {{this.all_caught_up}} </span>
+    </ng-container>
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Loading more data..."
+        >
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
 </ion-content>

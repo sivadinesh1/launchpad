@@ -31,6 +31,7 @@ import * as xlsx from 'xlsx';
 import * as moment from 'moment';
 import { ProductCorrectionDialogComponent } from 'src/app/components/products/product-correction-dialog/product-correction-dialog.component';
 import { InventoryReportsDialogComponent } from 'src/app/components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
+import { HelperUtilsService } from 'src/app/services/helper-utils.service';
 
 @Component({
     selector: 'app-view-products',
@@ -76,6 +77,8 @@ export class ViewProductsPage implements OnInit {
     throttle = 300;
 
     full_count = 0;
+    is_loaded = false;
+    all_caught_up = '';
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -85,7 +88,8 @@ export class ViewProductsPage implements OnInit {
         private _dialog: MatDialog,
         private _router: Router,
         private _authService: AuthenticationService,
-        private _modalController: ModalController
+        private _modalController: ModalController,
+        public _helperUtilsService: HelperUtilsService
     ) {
         this.user_data$ = this._authService.currentUser;
         this.user_data$
@@ -99,6 +103,7 @@ export class ViewProductsPage implements OnInit {
 
         this._route.params.subscribe((params) => {
             this.temp_product_search_text = '';
+            this.all_caught_up = '';
             if (this.user_data !== undefined) {
                 this.reset();
             }
@@ -106,7 +111,10 @@ export class ViewProductsPage implements OnInit {
     }
 
     ngOnInit() {
+        this.offset = 0;
+        this.all_caught_up = '';
         this.dataSource.paginator = this.paginator;
+        this.is_loaded = false;
         this.getData('', this.offset, this.length, '');
     }
 
@@ -126,7 +134,7 @@ export class ViewProductsPage implements OnInit {
             filterValue.target === undefined
                 ? filterValue
                 : filterValue.target.value;
-
+        this.is_loaded = false;
         this.getData(search_text, this.offset, this.length, '');
     }
 
@@ -140,7 +148,7 @@ export class ViewProductsPage implements OnInit {
             })
             .subscribe((data: any) => {
                 this.temp_product_search_text = search_text.trim();
-
+                this.is_loaded = true;
                 if (event === '') {
                     this.full_count = data.body.full_count;
                     this.tempListArray = data.body.result;
@@ -466,6 +474,14 @@ export class ViewProductsPage implements OnInit {
         console.log('scrolled down!!', ev);
 
         this.offset += 50;
-        this.getData('', this.offset, this.length, ev);
+
+        if (this.full_count > this.listArray.length) {
+            this.is_loaded = false;
+            this.getData('', this.offset, this.length, ev);
+        } else {
+            this.all_caught_up = 'You have reached the end of the list';
+            ev.target.complete();
+            this._cdr.detectChanges();
+        }
     }
 }

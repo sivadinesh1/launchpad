@@ -10,17 +10,7 @@
             z-index: 1;
         "
     >
-        <div
-            style="
-                font-size: 1.5rem;
-                letter-spacing: 1px;
-                font-weight: 500;
-                align-self: center;
-                padding-left: 1rem;
-            "
-        >
-            Products & Stock Management
-        </div>
+        <div class="label-head">Products & Stock Management</div>
 
         <div
             class="btn-grad add-btn"
@@ -28,7 +18,7 @@
             (click)="add()"
         >
             <mat-icon class="add-icon">add</mat-icon>
-            <span style="padding-left: 10px">Add Product</span>
+            <span style="padding: 5px">Add Product</span>
         </div>
     </div>
 
@@ -68,22 +58,22 @@
                 class="cursor"
                 type="button"
                 [throttleTime]="500"
-                mat-flat-button
+                mat-stroked-button
                 type="button"
-                color="primary"
                 tabindex="-1"
             >
-                Download
+                <mat-icon>cloud_download</mat-icon>
+                &nbsp;Download
             </button>
             <button
-                mat-flat-button
+                mat-stroked-button
                 color="primary"
                 tabindex="-1"
                 #ddTrigger="matMenuTrigger"
                 [matMenuTriggerFor]="beforeMenu"
                 style="border-radius: 0px; border-left: 1px solid grey"
             >
-                <mat-icon style="color: white">arrow_drop_down</mat-icon>
+                <mat-icon>arrow_drop_down</mat-icon>
             </button>
         </div>
     </div>
@@ -185,27 +175,84 @@
         >
         </ion-infinite-scroll-content>
     </ion-infinite-scroll>
+
+    <ng-container *ngIf="!is_loaded">
+        <ion-item *ngFor="let fake of _helperUtilsService.generateFake(20)">
+            <div
+                style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 100px 100px;
+                    width: 100%;
+                    gap: 10px;
+                    padding: 10px;
+                "
+            >
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 150px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 100px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 150px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 100px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+            </div>
+        </ion-item>
+    </ng-container>
 </ion-content>
 
 <mat-menu #beforeMenu="matMenu" [overlapTrigger]="false" xPosition="before">
     <mat-option>
-        <button
-            mat-button
+        <div
             type="button"
             tabindex="-1"
             (click)="exportCompletedSalesToExcel()"
         >
             Stock Summary
-        </button>
+        </div>
     </mat-option>
     <mat-option>
-        <button
-            mat-button
-            type="button"
-            tabindex="-1"
-            (change)="checked($event)"
-        >
+        <div type="button" tabindex="-1" (change)="checked($event)">
             MRP Split
-        </button>
+        </div>
     </mat-option>
 </mat-menu>

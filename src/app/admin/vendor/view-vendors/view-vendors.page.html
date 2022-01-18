@@ -1,113 +1,197 @@
-<ion-content>
-    <div class="content">
-        <div class="header">
-            <div>
-                <div>Vendors Profile</div>
-            </div>
-            <div>
-                <div class="btn-grad-no-margin add-btn" (click)="add()">
-                    <mat-icon class="add-icon">add</mat-icon>
-                    <span class="add-icon-label">Add Vendor</span>
-                </div>
-            </div>
+<ion-content [fullscreen]="true" class="ion-padding">
+    <div class="header sticky">
+        <div class="label-head">Vendors Profile</div>
+
+        <div
+            class="btn-grad add-btn"
+            style="padding-right: 1rem"
+            (click)="add()"
+        >
+            <mat-icon class="add-icon">add</mat-icon>
+            <span style="padding: 5px">Add Vendor</span>
         </div>
-
-        <div class="head">
-            <div class="search_box">
-                <ion-searchbar
-                    style="width: 300px"
-                    autofocus
-                    debounce="400"
-                    placeholder="Search..."
-                    #mySearchbar
-                    show-cancel-button="focus"
-                    (ionClear)="reset()"
-                    (ionChange)="applyFilter($event)"
-                ></ion-searchbar>
-            </div>
-
-            <div class="full-download" style="align-self: center">
-                <button
-                    style="border-radius: 0px"
-                    appPreventDoubleClick
-                    class="cursor"
-                    type="button"
-                    [throttleTime]="500"
-                    mat-flat-button
-                    type="button"
-                    color="primary"
-                    tabindex="-1"
-                    (click)="exportVendorDataToExcel()"
-                >
-                    Download
-                </button>
-            </div>
-        </div>
-
-        <ng-container *ngIf="isTableHasData">
-            <div style="width: 100%; display: grid; margin: 0 auto">
-                <div class="table_header lp-table-header">
-                    <div class="column-item">#</div>
-                    <div class="column-item">Name</div>
-                    <div class="column-item">Additional Info</div>
-                    <div class="column-item">Contacts</div>
-                    <div class="column-item">&nbsp;</div>
-                    <div class="column-item">&nbsp;</div>
-                </div>
-
-                <div
-                    *ngFor="let item of resultArray; let idx = index"
-                    class="vendor-view-listItem"
-                >
-                    <div>{{idx + 1}}</div>
-                    <div class="item">
-                        <div
-                            style="padding: 3px"
-                            (click)="edit(item)"
-                            style="
-                                cursor: pointer;
-                                color: #4a4ccf;
-                                font-size: 16px;
-                                font-weight: 600;
-                            "
-                        >
-                            {{item.vendor_name}}
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <div style="padding: 3px">{{item.name}}</div>
-                        <div style="padding: 3px">{{item.address1}}</div>
-                        <div style="padding: 3px">
-                            {{item.address2 | nullna}}
-                        </div>
-                        <div style="padding: 3px">
-                            {{item.address3 | nullna}}
-                        </div>
-                        <div style="padding: 3px">{{item.state | nullna}}</div>
-                    </div>
-                    <div class="item">
-                        <div style="padding: 3px">{{item.mobile | nullna}}</div>
-                    </div>
-                    <div
-                        style="text-align: center; cursor: pointer"
-                        (click)="goVendorFinancials(item)"
-                    >
-                        <div>
-                            <span style="color: blue"> Accounts </span>
-                        </div>
-                    </div>
-
-                    <div class="delete-me">
-                        <img
-                            src="/assets/images/svg/trash.svg"
-                            width="18px"
-                            height="18px"
-                            (click)="delete(item)"
-                        />
-                    </div>
-                </div>
-            </div>
-        </ng-container>
     </div>
+
+    <div class="head sticky1">
+        <div class="search_box">
+            <ion-searchbar
+                style="width: 500px !important"
+                autofocus
+                debounce="400"
+                placeholder="Search..."
+                #mySearchbar
+                show-cancel-button="focus"
+                (ionClear)="reset()"
+                (ionChange)="applyFilter($event)"
+            ></ion-searchbar>
+            <div
+                style="
+                    display: flex;
+                    align-self: center;
+                    font-style: italic;
+                    font-size: 13px;
+                "
+            >
+                Showing&nbsp;
+                <span style="font-weight: 600">{{this.listArray?.length}}</span
+                >&nbsp;of&nbsp;<span style="font-weight: 600"
+                    >{{this.full_count}}</span
+                >
+            </div>
+        </div>
+
+        <div class="full-download" style="align-self: center">
+            <button
+                style="border-radius: 0px"
+                appPreventDoubleClick
+                class="cursor"
+                type="button"
+                [throttleTime]="500"
+                mat-stroked-button
+                type="button"
+                tabindex="-1"
+                (click)="exportVendorDataToExcel()"
+            >
+                <mat-icon>cloud_download</mat-icon>
+                &nbsp; Download
+            </button>
+        </div>
+    </div>
+
+    <ng-container *ngIf="isTableHasData">
+        <div style="width: 100%; display: grid; margin: 0 auto">
+            <div class="table_header lp-table-header sticky2">
+                <div class="column-item">#</div>
+                <div class="column-item">Name</div>
+                <div class="column-item">Additional Info</div>
+                <div class="column-item">Contacts</div>
+                <div class="column-item">&nbsp;</div>
+                <div class="column-item">&nbsp;</div>
+            </div>
+
+            <div
+                *ngFor="let item of listArray; let idx = index"
+                class="vendor-view-listItem"
+            >
+                <div>{{idx + 1}}</div>
+                <div class="item">
+                    <div
+                        style="padding: 3px"
+                        (click)="edit(item)"
+                        style="
+                            cursor: pointer;
+                            color: #4a4ccf;
+                            font-size: 16px;
+                            font-weight: 600;
+                        "
+                    >
+                        {{item.vendor_name}}
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div style="padding: 3px">{{item.name}}</div>
+                    <div style="padding: 3px">{{item.address1}}</div>
+                    <div style="padding: 3px">{{item.address2 | nullna}}</div>
+                    <div style="padding: 3px">{{item.address3 | nullna}}</div>
+                    <div style="padding: 3px">{{item.state | nullna}}</div>
+                </div>
+                <div class="item">
+                    <div style="padding: 3px">{{item.mobile | nullna}}</div>
+                </div>
+                <div
+                    style="text-align: center; cursor: pointer"
+                    (click)="goVendorFinancials(item)"
+                >
+                    <div>
+                        <span style="color: blue"> Accounts </span>
+                    </div>
+                </div>
+
+                <div class="delete-me">
+                    <img
+                        src="/assets/images/svg/trash.svg"
+                        width="18px"
+                        height="18px"
+                        (click)="delete(item)"
+                    />
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="!is_loaded">
+        <ion-item *ngFor="let fake of _helperUtilsService.generateFake(20)">
+            <div
+                style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 100px 100px;
+                    width: 100%;
+                    gap: 10px;
+                    padding: 10px;
+                "
+            >
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 150px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 100px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 150px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 100px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+            </div>
+        </ion-item>
+    </ng-container>
+
+    <ng-container *ngIf="this.all_caught_up !== '' ">
+        <span class="all_caught_up"> {{this.all_caught_up}} </span>
+    </ng-container>
+
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Loading more data..."
+        >
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
 </ion-content>

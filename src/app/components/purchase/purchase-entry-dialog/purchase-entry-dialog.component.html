@@ -16,7 +16,7 @@
                     (click)="exportToExcel()"
                 >
                     <mat-icon>cloud_download</mat-icon>
-                    Download
+                    &nbsp;Download
                 </button>
             </span>
             <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -113,16 +113,19 @@
         <table style="width: 100%">
             <thead>
                 <tr class="header">
-                    <th style="text-align: left">SNo</th>
+                    <th style="text-align: left; padding-left: 10px">SNo</th>
                     <th style="text-align: left">CODE</th>
                     <th style="text-align: left">DESCRIPTION</th>
+                    <th style="text-align: left">HSN</th>
                     <th style="text-align: right">QTY</th>
 
                     <th style="text-align: right">MRP</th>
 
                     <th style="text-align: right">TAX</th>
 
-                    <th style="text-align: right">NET AMT</th>
+                    <th style="text-align: right; padding-right: 10px">
+                        NET AMT
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -133,19 +136,21 @@
                             : [];
                         let idx = index
                     "
-                    class="list-item row-color"
+                    class="pe-list-item"
                 >
-                    <td style="text-align: left">{{ idx + 1 }}</td>
+                    <td style="text-align: left; padding-left: 10px">
+                        {{ idx + 1 }}
+                    </td>
                     <td>{{ item.product_code }}</td>
                     <td>{{ item.product_description }}</td>
-
+                    <td>{{ item.hsn_code }}</td>
                     <td style="text-align: right">{{ item?.quantity }}</td>
                     <td style="text-align: right">
                         {{ (+item?.mrp).toFixed(2) }}
                     </td>
 
                     <td style="text-align: right">{{ item?.tax_rate }}</td>
-                    <td style="text-align: right">
+                    <td style="text-align: right; padding-right: 10px">
                         {{ (+item?.total_value).toFixed(2) }}
                     </td>
                 </tr>
@@ -153,14 +158,7 @@
         </table>
     </div>
 
-    <div
-        style="
-            display: grid;
-            grid-template-columns: 1fr 200px 100px;
-            background-color: azure;
-            gap: 2px;
-        "
-    >
+    <div class="final-row">
         <div>&nbsp;</div>
         <div
             style="
@@ -201,7 +199,7 @@
             style="
                 text-align: right;
                 font-size: 15px;
-                padding: 2px 6px;
+                padding: 2px 10px;
                 font-weight: 500;
             "
         >

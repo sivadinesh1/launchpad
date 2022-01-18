@@ -46,7 +46,7 @@ export class ViewCustomerPage {
     user_data$: Observable<User>;
     user_data: any;
     isTableHasData = true;
-    arr: Array<any>;
+    // arr: Array<any>;
 
     ready = 0;
     pcount: any;
@@ -63,7 +63,14 @@ export class ViewCustomerPage {
 
     errorMessage: string;
 
-    resultArray = [];
+    listArray = [];
+    tempListArray = [];
+
+    full_count = 0;
+    offset = 0;
+    length = 50;
+
+    all_caught_up = '';
 
     constructor(
         private _authService: AuthenticationService,
@@ -81,8 +88,10 @@ export class ViewCustomerPage {
         this.user_data$
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
+                this.is_loaded = false;
+                this.offset = 0;
                 this.center_id = data.center_id;
-
+                this.all_caught_up = '';
                 this._cdr.markForCheck();
             });
 
@@ -92,27 +101,38 @@ export class ViewCustomerPage {
     }
 
     init() {
-        this.reloadCustomers();
+        this.offset = 0;
+        this.reloadCustomers('');
     }
 
-    //   of([1,2,3]).subscribe({
-    //     next: (v) => console.log(v),
-    //     error: (e) => console.error(e),
-    //     complete: () => console.info('complete')
-    // })
-
-    reloadCustomers() {
+    reloadCustomers(event) {
         this.is_loaded = false;
-        this._commonApiService.getAllActiveCustomers().subscribe({
-            next: (data: any) => {
-                this.arr = data;
-                this.is_loaded = true;
-                this.resultArray = data;
-                this._cdr.markForCheck();
-            },
-            error: (e) => console.error(e),
-            complete: () => {},
-        });
+        this._commonApiService
+            .getAllActiveCustomersPost({
+                offset: this.offset,
+                length: this.length,
+            })
+            .subscribe({
+                next: (data: any) => {
+                    this.is_loaded = true;
+
+                    if (event === '') {
+                        this.full_count = data.body.full_count;
+                        this.tempListArray = data.body.result;
+                        this.listArray = data.body.result;
+                        this._cdr.detectChanges();
+                    } else {
+                        this.full_count = data.body.full_count;
+                        this.listArray = this.tempListArray.concat(
+                            data.body.result
+                        );
+                        this.tempListArray = this.listArray;
+
+                        event.target.complete();
+                        this._cdr.detectChanges();
+                    }
+                },
+            });
     }
 
     add() {
@@ -332,9 +352,9 @@ export class ViewCustomerPage {
             })
             .subscribe((data: any) => {
                 this.is_loaded = true;
-                this.resultArray = data;
+                this.listArray = data;
 
-                this.resultArray = data.body;
+                this.listArray = data.body;
                 this.pageLength = data.body.length;
 
                 if (data.body.length === 0) {
@@ -355,7 +375,7 @@ export class ViewCustomerPage {
     async exportCustomerDataToExcel() {
         const fileName = 'customer_list.xlsx';
 
-        const reportData = this.resultArray;
+        const reportData = this.listArray;
 
         reportData.forEach((e) => {
             e['Customer Name'] = e.customer_name;
@@ -453,25 +473,19 @@ export class ViewCustomerPage {
 
         xlsx.writeFile(wb1, fileName);
     }
-}
 
-// address1: "3, Maniakarampalayam, Sengalipalayam Post "
-// address2: "Idikarai Village "
-// balance_amt: 0
-// center_id: 2
-// code: "33"
-// credit_amt: 0
-// description: "TAMIL NADU"
-// district: "Coimbatore "
-// email: ""
-// gst: "33AACCA7524Q1ZF"
-// id: 540
-// is_active: "A"
-// last_paid_date: "11-Aug-2021"
-// mobile: "9600917128"
-// mobile2: ""
-// name: " APM Auto Parts Private Limited"
-// phone: ""
-// pin: "641022"
-// state_id: 26
-// whatsapp: ""
+    doInfinite(ev: any) {
+        console.log('scrolled down!!', ev);
+
+        this.offset += 50;
+
+        if (this.full_count > this.listArray.length) {
+            this.is_loaded = false;
+            this.reloadCustomers(ev);
+        } else {
+            this.all_caught_up = 'You have reached the end of the list';
+            ev.target.complete();
+            this._cdr.detectChanges();
+        }
+    }
+}
