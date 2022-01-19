@@ -62,12 +62,12 @@
         
     </div> -->
 
-    <div class="customer-info">
+    <div class="customer-info sticky1">
         <div>
             <div style="padding: 5px">
                 <div>
                     <span
-                        style="font-size: 14px; font-weight: 400; opacity: 0.6"
+                        style="font-size: 15px; font-weight: 600; opacity: 0.8"
                     >
                         PO Invoice # :
                     </span>
@@ -81,7 +81,7 @@
             <div style="padding: 5px">
                 <div>
                     <span
-                        style="font-size: 14px; font-weight: 400; opacity: 0.6"
+                        style="font-size: 15px; font-weight: 600; opacity: 0.8"
                     >
                         Received Date :
                     </span>
@@ -97,13 +97,19 @@
         </div>
         <div>
             <div style="padding: 5px">
-                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
-                    Vendor Name
-                </div>
-                <div style="padding: 5px 0px">
-                    <div style="font-size: 14px; font-weight: 400">
+                <div style="font-size: 15px; font-weight: 600; opacity: 0.8">
+                    <span> Vendor Name :&nbsp; </span>
+
+                    <span style="font-size: 14px; font-weight: 400">
                         {{ this.data?.vendor_name }}
-                    </div>
+                    </span>
+                </div>
+                <div style="font-size: 15px; font-weight: 600; opacity: 0.8">
+                    <span> # of Boxes :&nbsp; </span>
+
+                    <span style="font-size: 14px; font-weight: 400">
+                        {{ this.purchase_master_data?.no_of_boxes }}
+                    </span>
                 </div>
             </div>
         </div>
@@ -111,15 +117,16 @@
 
     <div>
         <table style="width: 100%">
-            <thead>
-                <tr class="pur-header">
+            <div class="sticky2">
+                <tr class="pur-header sticky2">
                     <th style="text-align: left; padding-left: 10px">SNo</th>
                     <th style="text-align: left">CODE</th>
                     <th style="text-align: left">DESCRIPTION</th>
                     <th style="text-align: left">HSN</th>
+                    <th style="text-align: right">MRP</th>
                     <th style="text-align: right">QTY</th>
 
-                    <th style="text-align: right">MRP</th>
+                    <th style="text-align: right">P.Price</th>
 
                     <th style="text-align: right">TAX</th>
 
@@ -127,7 +134,7 @@
                         NET AMT
                     </th>
                 </tr>
-            </thead>
+            </div>
             <tbody>
                 <tr
                     *ngFor="
@@ -144,10 +151,11 @@
                     <td>{{ item.product_code }}</td>
                     <td>{{ item.product_description }}</td>
                     <td>{{ item.hsn_code }}</td>
-                    <td style="text-align: right">{{ item?.quantity }}</td>
                     <td style="text-align: right">
                         {{ (+item?.mrp).toFixed(2) }}
                     </td>
+                    <td style="text-align: right">{{ item?.quantity }}</td>
+                    <td style="text-align: right">{{ item.purchase_price }}</td>
 
                     <td style="text-align: right">{{ item?.tax_rate }}</td>
                     <td style="text-align: right; padding-right: 10px">

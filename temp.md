@@ -2,455 +2,897 @@ import {
 Component,
 OnInit,
 ChangeDetectorRef,
+ViewChild,
 ChangeDetectionStrategy,
-Inject,
+ElementRef,
 } from '@angular/core';
+import { CommonApiService } from '../../services/common-api.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import _ as moment from 'moment';
 import {
-FormControl,
 FormGroup,
-FormBuilder,
-FormArray,
+FormControl,
 Validators,
+FormBuilder,
 } from '@angular/forms';
-
+import { Router, ActivatedRoute } from '@angular/router';
+import { Observable, lastValueFrom, of, empty } from 'rxjs';
+import { Sale } from '../../models/Sale';
+import { Customer } from 'src/app/models/Customer';
+import { AlertController } from '@ionic/angular';
+import {
+debounceTime,
+filter,
+map,
+startWith,
+switchMap,
+tap,
+} from 'rxjs/operators';
+import { User } from 'src/app/models/User';
 import {
 MatDialog,
-MatDialogRef,
-MAT_DIALOG_DATA,
+MatDialogConfig,
+DialogPosition,
 } from '@angular/material/dialog';
-import { ModalController } from '@ionic/angular';
-import { Router, ActivatedRoute } from '@angular/router';
-import { CommonApiService } from 'src/app/services/common-api.service';
-import { CurrencyPadComponent } from 'src/app/components/currency-pad/currency-pad.component';
-import { AuthenticationService } from 'src/app/services/authentication.service';
-import { Observable } from 'rxjs';
-import { User } from 'src/app/models/User';
-import { filter, startWith, map, distinctUntilChanged } from 'rxjs/operators';
-import { Customer } from 'src/app/models/Customer';
-import { CurrencyPipe } from '@angular/common';
-import { LoadingService } from 'src/app/services/loading.service';
+import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
+import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
+import { SalesReturnDialogComponent } from 'src/app/components/sales/sales-return-dialog/sales-return-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { EnquiryPrintComponent } from 'src/app/components/enquiry-print/enquiry-print.component';
+import _ as xlsx from 'xlsx';
+import { ConvertToSaleDialogComponent } from 'src/app/components/convert-to-sale-dialog/convert-to-sale-dialog.component';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { SearchCustomersComponent } from 'src/app/components/search-customers/search-customers.component';
+import { SearchInvoiceNoComponent } from 'src/app/components/search-invoice-no/search-invoice-no.component';
 
 @Component({
-selector: 'app-accounts-receivables',
-templateUrl: './accounts-receivables.component.html',
-styleUrls: ['./accounts-receivables.component.scss'],
-
-    changeDetection: ChangeDetectionStrategy.OnPush,
-
+selector: 'app-search-stock-issues',
+templateUrl: './search-stock-issues.page.html',
+styleUrls: ['./search-stock-issues.page.scss'],
+changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountsReceivablesComponent implements OnInit {
-customerAdded = false;
-submitForm: FormGroup;
+export class SearchStockIssuesPage implements OnInit {
+@ViewChild('menuTriggerN', { static: true }) menuTriggerN: any;
+@ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
+@ViewChild('auto') matAutocomplete: MatAutocomplete;
 
-    removeRowArr = [];
-    showDelIcon = false;
+    @ViewChild(SearchCustomersComponent) child: SearchCustomersComponent;
 
+    sales$: Observable<Sale[]>;
+
+    stockIssueSales$: Observable<Sale[]>;
+
+    filteredSales$: Observable<Sale[]>;
+
+    filteredValues: any;
+    tabIndex = 0;
+
+    resultList: any;
+
+    statusFlag = 'D';
+    selectedCust = 'all';
+
+    saletypeFlag = 'all';
+
+    orderDefaultFlag = 'desc';
+
+    today = new Date();
+    submitForm: FormGroup;
     maxDate = new Date();
-
-    pymtmodes$: Observable<any>;
-    userdata: any;
-
-    userdata$: Observable<User>;
-
-    customer: Customer;
-    invoice: any;
-    summed = 0;
-
-    errmsg: any;
-    balancedue: any;
+    minDate = new Date();
+    dobMaxDate = new Date();
 
     filteredCustomer: Observable<any[]>;
     customer_lis: Customer[];
-    tabIndex = 0;
 
-    iscustomerselected = false;
-    invoicesdata: any;
+    user_data: any;
 
-    customerUnpaidInvoices: any;
-    origCustomerUnpaidInvoices: any;
-    invoiceamount = 0;
-    paidamount = 0;
-    distributeBalance = 0;
+    user_data$: Observable<User>;
 
-    invoicesplitArr = [];
-    advanceCreditUsed = 0;
+    statusList = [
+        { id: 'all', value: 'All' },
+        { id: 'D', value: 'Draft' },
+        { id: 'C', value: 'Fulfilled' },
+    ];
 
-    bankList: any;
-    iswarning = false;
+    orderList = [
+        { id: 'desc', value: 'Recent Orders First' },
+        { id: 'asc', value: 'Old Orders First' },
+    ];
 
+    search_type = [
+        { name: 'All', id: 'all', checked: true },
+        { name: 'Invoice Only', id: 'inv_only', checked: false },
+    ];
+
+    sumTotalValue = 0.0;
+    sumNumItems = 0;
+
+    permissions_data = [];
+    permissions$: Observable<any>;
+
+    deleteAccess;
+
+    arr: Array<any>;
+
+    color = 'accent';
+
+    from_date = new Date();
+    to_date = new Date();
+
+    searchByDays = 7;
+    isCLoading = false;
+    customer_data: any;
+
+    name: string;
+    clickedColumn: string;
+
+    isCustomDateFilter = false;
+
+    filter_from_date: any;
+    filter_to_date: any;
+
+    dateFrom: any = new Date();
+    dateTo: any = new Date();
+
+    // new FormControl({value: '', disabled: true});
     constructor(
-        private _fb: FormBuilder,
-        public dialog: MatDialog,
-        private currencyPipe: CurrencyPipe,
-        private dialogRef: MatDialogRef<AccountsReceivablesComponent>,
-        private _authservice: AuthenticationService,
-        @Inject(MAT_DIALOG_DATA) data: any,
-        private _modalcontroller: ModalController,
-        private _router: Router,
-        private _route: ActivatedRoute,
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService,
-        private _loadingService: LoadingService
+        private _fb: FormBuilder,
+        private _router: Router,
+        private _route: ActivatedRoute,
+        public alertController: AlertController,
+        public _dialog: MatDialog,
+        public _dialog1: MatDialog,
+        private _snackBar: MatSnackBar,
+        private _authService: AuthenticationService
     ) {
-        this.invoicesdata = data.invoicesdata;
-        debugger;
-        this.userdata$ = this._authservice.currentUser;
+        this.submitForm = this._fb.group({
+            customer_id: ['all'],
+            customer_ctrl: new FormControl({
+                value: 'All Customers',
+                disabled: false,
+            }),
 
-        this.userdata$
+            to_date: [this.to_date, Validators.required],
+            from_date: [this.from_date, Validators.required],
+            status: new FormControl('all'),
+            invoice_type: new FormControl('SI'),
+            invoice_no: [''],
+            search_type: ['all'],
+            order: ['desc'],
+        });
+
+        this.user_data$ = this._authService.currentUser;
+
+        this.user_data$
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
-                this.userdata = data;
-
+                this._authService.setCurrentMenu('Stock Issue');
+                this.user_data = data;
                 this.init();
                 this._cdr.markForCheck();
             });
 
+        const dateOffset = 24 * 60 * 60 * 1000 * 90;
+        this.from_date.setTime(this.minDate.getTime() - dateOffset);
+
         this._route.params.subscribe((params) => {
-            if (this.userdata !== undefined) {
+            if (this.user_data !== undefined) {
                 this.init();
             }
         });
-    }
 
-    async init() {
-        // onload list all active customers in the dropdown
-        this._commonApiService
-            .getAllActiveCustomers()
+        this.permissions$ = this._authService.currentPermission;
+
+        this.permissions$
+            .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
-                this.customer_lis = data;
+                this.permissions_data = data;
 
-                this.filteredCustomer = this.submitForm.controls[
-                    'customer'
-                ].valueChanges.pipe(
-                    startWith(''),
-                    map((customer) =>
-                        customer
-                            ? this.filtercustomer(customer)
-                            : this.customer_lis.slice()
-                    )
-                );
-            });
-
-        // fetch all payment mode list
-        this.pymtmodes$ = this._commonApiService.getAllActivePaymentModes('A');
-
-        this.reloadBankDetails();
-    }
-
-    // filter customers as we type
-    filtercustomer(value: any) {
-        if (typeof value == 'object') {
-            return this.customer_lis.filter((customer) =>
-                customer.name.toLowerCase().match(value.name.toLowerCase())
-            );
-        } else if (typeof value == 'string') {
-            return this.customer_lis.filter((customer) =>
-                customer.name.toLowerCase().match(value.toLowerCase())
-            );
-        }
-    }
-
-    ngOnInit() {
-        // init form values
-        this.submitForm = this._fb.group({
-            customer: ['', Validators.required],
-            centerid: [this.userdata.center_id, Validators.required],
-            accountarr: this._fb.array([]),
-            invoicesplit: [],
-            balancedue: [],
-            appliedamount: [],
-            creditsused: 'NO',
-            creditusedamount: 0,
-            bank_id: '',
-            bank_name: '',
-            createdby: this.userdata.userid,
-        });
-
-        this.dialogRef.keydownEvents().subscribe((event) => {
-            if (event.key === 'Escape') {
-                this.close();
-            }
-        });
-
-        this.dialogRef.backdropClick().subscribe((event) => {
-            this.close();
-        });
-    }
-
-    reloadBankDetails() {
-        this._commonApiService.getBanks().subscribe((data: any) => {
-            this.bankList = data.result;
-
-            this._cdr.markForCheck();
-        });
-    }
-
-    handleChange(event) {
-        if (event.value === '0') {
-            this.submitForm.patchValue({
-                bank_name: '',
-                bank_id: 0,
-            });
-        } else {
-            this.submitForm.patchValue({
-                bank_name: event.value.bankname,
-                bank_id: event.value.id,
-            });
-        }
-    }
-
-    // on blur of received amount
-    blurFn() {
-        this.checkTotalSum();
-        // this._cdr.detectChanges();
-    }
-
-    // initialize the values
-    initAccount() {
-        return this._fb.group({
-            checkbox: [false],
-
-            receivedamount: ['', [Validators.required, Validators.min(1)]],
-            appliedamount: [''],
-            receiveddate: ['', Validators.required],
-            pymtmode: ['', Validators.required],
-            bankref: [''],
-            pymtref: [''],
-        });
-    }
-
-    get accountarr(): FormGroup {
-        return this.submitForm.get('accountarr') as FormGroup;
-    }
-
-    // adds one line item for payment
-    addAccount() {
-        const control = <FormArray>this.submitForm.controls['accountarr'];
-        control.push(this.initAccount());
-
-        this.getBalanceDue();
-        this._cdr.markForCheck();
-    }
-
-    // method to calculate total payed now and balance due
-    checkTotalSum() {
-        this.summed = 0;
-        this.invoicesplitArr = [];
-
-        // deep  copy to new value
-        this.origCustomerUnpaidInvoices = JSON.parse(
-            JSON.stringify(this.customerUnpaidInvoices)
-        );
-
-        const ctrl = <FormArray>this.submitForm.controls['accountarr'];
-
-        let init = 0;
-
-        // iterate each object in the form array
-        ctrl.controls.forEach((x) => {
-            // get the itemmt value and need to parse the input to number
-
-            let parsed = parseFloat(
-                x.get('receivedamount').value === '' ||
-                    x.get('receivedamount').value === null
-                    ? 0
-                    : x.get('receivedamount').value
-            );
-            // add to total
-
-            this.summed += parsed;
-            this.getBalanceDue();
-
-            init++;
-        });
-
-        // after iterating all the line items (in this case, there will be only one row) distribute the amount paid (customer credit if any) to all invoices
-        if (init == ctrl.controls.length) {
-            this.distributeBalance = +(
-                this.summed + this.customer.credit_amt
-            ).toFixed(2);
-
-            this.origCustomerUnpaidInvoices.map((e) => {
-                if (this.distributeBalance > 0) {
-                    if (
-                        e.bal_amount > 0 &&
-                        +(e.bal_amount - this.distributeBalance).toFixed(2) <= 0
-                    ) {
-                        //excess distribution
-                        e.paid_amount = e.bal_amount;
-                        this.distributeBalance = +(
-                            this.distributeBalance - e.bal_amount
-                        ).toFixed(2);
-                        e.bal_amount = 0;
-                        this.invoicesplitArr.push({
-                            id: e.sale_id,
-                            applied_amount: e.paid_amount,
-                        });
-                    } else if (
-                        e.bal_amount > 0 &&
-                        +(e.bal_amount - this.distributeBalance).toFixed(2) > 0
-                    ) {
-                        //shortage distribution
-                        e.paid_amount = this.distributeBalance;
-                        e.bal_amount = +(
-                            e.bal_amount - this.distributeBalance
-                        ).toFixed(2);
-                        this.distributeBalance = 0;
-                        this.invoicesplitArr.push({
-                            id: e.sale_id,
-                            applied_amount: e.paid_amount,
-                        });
-                    }
+                if (Array.isArray(this.permissions_data)) {
+                    this.deleteAccess = this.permissions_data.filter(
+                        (f) => f.resource === 'SALE' && f.operation === 'DELETE'
+                    )[0].is_access;
                 }
 
                 this._cdr.markForCheck();
             });
-        }
-
-        return true;
     }
 
-    getBalanceDue() {
-        this.balancedue = (
-            +this.invoiceamount -
-            (+this.paidamount + this.customer.credit_amt + this.summed)
-        ).toFixed(2);
+    async init() {
+        this.searchCustomers();
 
-        if (+this.balancedue < 0) {
-            this.errmsg =
-                'Amount paid is more than invoice outstanding. Excess amount will be moved to customer credit.';
-            this._cdr.markForCheck();
-        } else {
-            this.errmsg = '';
-            this._cdr.markForCheck();
-        }
-    }
-
-    onSubmit() {
-        if (this.checkTotalSum()) {
-            let form = {
-                centerid: this.userdata.center_id,
-                bankref: this.submitForm.value.accountarr[0].bankref,
-                customerid: this.customer.id,
-            };
-
-            this._commonApiService
-                .getPaymentBankRef(form)
-                .subscribe((data: any) => {
-                    if (data.body.result[0].count > 0) {
-                        // warning
-                        this.iswarning = true;
-                        this._cdr.markForCheck();
-                    } else if (data.body.result1.length === 1) {
-                        // check if the last paid amount is the same is current paid amount and if yes throw a warning.
-                        if (
-                            data.body.result1[0].payment_now_amt ===
-                            this.submitForm.value.accountarr[0].receivedamount
-                        ) {
-                            this.iswarning = true;
-                            this._cdr.markForCheck();
-                        } else {
-                            this.finalSubmit();
-                        }
-                    } else {
-                        this.finalSubmit();
-                    }
-                });
-        }
-    }
-
-    cancel() {
-        this.iswarning = false;
-    }
-
-    finalSubmit() {
-        if (this.checkTotalSum()) {
-            this.submitForm.patchValue({
-                invoicesplit: this.invoicesplitArr,
-                customer: this.customer,
-                balancedue: this.balancedue,
-            });
-
-            if (this.customer.credit_amt > 0) {
-                this.submitForm.patchValue({
-                    creditsused: 'YES',
-                    creditusedamount: this.customer.credit_amt,
-                });
-            }
-
-            this._commonApiService
-                .addBulkPaymentReceived(this.submitForm.value)
-                .subscribe((data: any) => {
-                    if (data.body === 'success') {
-                        this.submitForm.reset();
-                        this.dialogRef.close('close');
-                        this._loadingService.openSnackBar(
-                            'Payments Recorded Successfully',
-                            ''
-                        );
-                    } else {
-                        // todo nothing as of now
-                    }
-                    this._cdr.markForCheck();
-                });
-        }
-    }
-
-    close() {
-        this.dialogRef.close();
-    }
-
-    getPosts(event) {
-        debugger;
-        const control = <FormArray>this.submitForm.controls['accountarr'];
-        control.removeAt(0);
-
-        this.submitForm.patchValue({
-            customerid: event.option.value.id,
-            customer: event.option.value.name,
-        });
-        debugger;
-        this.customer = event.option.value;
-
-        // get all unpaid invoices for a customer
-
-        this.customerUnpaidInvoices = this.invoicesdata
-            .filter((e) => e.customer_id === event.option.value.id)
-            .filter((e1) => e1.payment_status != 'PAID');
-        debugger;
-        this.origCustomerUnpaidInvoices = JSON.parse(
-            JSON.stringify(this.customerUnpaidInvoices)
-        );
-
-        this.invoiceamount = this.customerUnpaidInvoices
-            // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-            .reduce(function (acc, curr) {
-                return acc + curr.invoice_amt;
-            }, 0)
-            .toFixed(2);
-
-        this.paidamount = this.customerUnpaidInvoices
-            // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-            .reduce(function (acc, curr) {
-                return acc + curr.paid_amount;
-            }, 0)
-            .toFixed(2);
-
-        this.iscustomerselected = true;
-
-        this.addAccount();
-
+        this.search();
         this._cdr.markForCheck();
+    }
+
+    searchCustomers() {
+        this.submitForm.controls.customer_ctrl.valueChanges
+            .pipe(
+                debounceTime(300),
+                tap(() => (this.isCLoading = true)),
+                switchMap((id: any) => {
+                    if (
+                        id != null &&
+                        id.length !== undefined &&
+                        id.length >= 2
+                    ) {
+                        return this._commonApiService.getCustomerInfo({
+                            center_id: this.user_data.center_id,
+                            search_text: id,
+                        });
+                    } else {
+                        return empty();
+                    }
+                })
+            )
+
+            .subscribe((data: any) => {
+                this.isCLoading = false;
+                this.customer_lis = data.body;
+
+                this._cdr.markForCheck();
+            });
+    }
+
+    ngOnInit() {}
+
+    sortInvoiceDate() {
+        this.clickedColumn = 'Date';
+        if (this.orderDefaultFlag === 'desc') {
+            this.submitForm.patchValue({
+                order: 'asc',
+            });
+            this.orderDefaultFlag = 'asc';
+        } else {
+            this.submitForm.patchValue({
+                order: 'desc',
+            });
+            this.orderDefaultFlag = 'desc';
+        }
+        this.search();
+    }
+
+    sortInvoice_no() {
+        this.clickedColumn = 'Invoice';
+        if (this.orderDefaultFlag === 'desc') {
+            this.submitForm.patchValue({
+                order: 'asc',
+            });
+            this.orderDefaultFlag = 'asc';
+        } else {
+            this.submitForm.patchValue({
+                order: 'desc',
+            });
+            this.orderDefaultFlag = 'desc';
+        }
+        this.search();
+    }
+
+    isSelectedColumn(param) {
+        if (this.clickedColumn === param) {
+            return 'sorted_column';
+        } else {
+            return 'none';
+        }
+    }
+
+    isCompleted(status: string) {
+        if (status === 'C') {
+            return 'completed';
+        } else {
+            return 'draft';
+        }
+    }
+
+    radioClickHandle() {
+        if (this.submitForm.value.search_type === 'inv_only') {
+            this.submitForm.get('customer_ctrl').disable();
+        } else {
+            this.submitForm.value.invoice_no = '';
+            this.submitForm.get('customer_ctrl').enable();
+            this.submitForm.controls.invoice_no.setErrors(null);
+            this.submitForm.controls.invoice_no.markAsTouched();
+        }
+    }
+
+    customerInfoPage(item) {
+        this.submitForm.patchValue({
+            customer_id: item.id,
+        });
+        this.search();
+    }
+
+    opsFromDateEvent(event) {
+        this.submitForm.patchValue({
+            from_date: moment(event.target.value).format('YYYY-MM-DD'),
+        });
+        this.reloadSearch();
+    }
+
+    opsToDateEvent(event) {
+        this.submitForm.patchValue({
+            to_date: moment(event.target.value).format('YYYY-MM-DD'),
+        });
+
+        this.reloadSearch();
+    }
+
+    reloadSearch() {
+        // patch it up with from & to date, via patch value
+        console.log(this.submitForm.value);
+
+        this.search();
+    }
+
+    statusFilterChanged(item: any) {
+        this.submitForm.patchValue({
+            status: item.detail.value,
+            invoice_no: '',
+        });
+        this._cdr.markForCheck();
+        this.search();
     }
 
     clearInput() {
         this.submitForm.patchValue({
-            customerid: 'all',
-            customer: '',
+            customer_id: 'all',
+            customer_ctrl: '',
         });
-        this.initAccount();
-        this.iscustomerselected = false;
         this._cdr.markForCheck();
+        this.search();
+    }
+
+    getPosts(event) {
+        this.submitForm.patchValue({
+            customer_id: event.option.value.id,
+            customer_ctrl: event.option.value.name,
+        });
+
+        this.tabIndex = 0;
+        this._cdr.markForCheck();
+
+        this.search();
+    }
+
+    async search() {
+        if (
+            this.submitForm.value.search_type !== 'all' &&
+            this.submitForm.value.invoice_no.trim().length === 0
+        ) {
+            console.log('invoice number is mandatory');
+            this.submitForm.controls.invoice_no.setErrors({ required: true });
+            this.submitForm.controls.invoice_no.markAsTouched();
+            return false;
+        }
+
+        this.sales$ = this._commonApiService.searchSales({
+            center_id: this.user_data.center_id,
+            customer_id: this.submitForm.value.customer_id,
+            status: this.submitForm.value.status,
+            from_date: this.submitForm.value.from_date,
+            to_date: this.submitForm.value.to_date,
+            invoice_type: this.submitForm.value.invoice_type,
+            search_type: this.submitForm.value.search_type,
+            invoice_no: this.submitForm.value.invoice_no,
+            order: this.submitForm.value.order,
+        });
+
+        this.filteredSales$ = this.sales$;
+
+        const value = await lastValueFrom(this.filteredSales$);
+
+        this.stockIssueSales$ = this.sales$.pipe(
+            map((arr: any) =>
+                arr.filter(
+                    (f) => f.status === 'D' && f.invoice_type === 'stockIssue'
+                )
+            )
+        );
+
+        this.filteredValues = value.filter(
+            (data: any) =>
+                data.status === 'D' && data.invoice_type === 'stockIssue'
+        );
+
+        this.calculateSumTotals();
+        this.tabIndex = 0;
+        this._cdr.markForCheck();
+    }
+
+    goSalesEditScreen(item) {
+        this._router.navigateByUrl(`/home/sales/edit/${item.id}/SI`);
+    }
+
+    goPrintInvoice(row) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '400px';
+
+        dialogConfig.data = row.id;
+
+        const dialogRef = this._dialog.open(
+            InvoiceSuccessComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed();
+    }
+
+    goPrintEnquiry(row) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '600px';
+
+        dialogConfig.data = row;
+
+        const dialogRef = this._dialog.open(
+            EnquiryPrintComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed();
+    }
+
+    goStockIssueAddScreen() {
+        this._router.navigateByUrl(`/home/sales/edit/0/SI`);
+    }
+
+    toDateSelected($event) {
+        this.to_date = $event.target.value;
+        this.tabIndex = 0;
+        this.search();
+        this._cdr.markForCheck();
+    }
+
+    fromDateSelected($event) {
+        this.from_date = $event.target.value;
+        this.tabIndex = 0;
+        this.search();
+        this._cdr.markForCheck();
+    }
+
+    // two types of delete, (i) Sale Details line item, (ii) Sale Master both
+    // are different scenarios, just recording it. Only 'DRAFT(D)' or 'STOCK ISSUE(D)' STATUS ARE DELETED
+    // first delete sale details(update audit) then delete sale master
+    delete(item) {
+        this._commonApiService
+            .deleteSaleData(item.id)
+            .subscribe((data: any) => {
+                if (data.result === 'success') {
+                    this._commonApiService
+                        .deleteSaleMaster(item.id)
+                        .subscribe((data1: any) => {
+                            //  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
+                            this._commonApiService
+                                .deleteItemHistory(item.id)
+                                .subscribe((data2: any) => {
+                                    this.openSnackBar(
+                                        'Deleted Successfully',
+                                        ''
+                                    );
+                                    this.init();
+                                });
+                        });
+                }
+            });
+    }
+
+    async presentAlertConfirm(item) {
+        const alert = await this.alertController.create({
+            header: 'Confirm!',
+            message: 'Permanently removes sale. Are you sure to Delete?',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: (blah) => {
+                        console.log('Confirm Cancel: blah');
+                    },
+                },
+                {
+                    text: 'Okay',
+                    handler: () => {
+                        console.log('Confirm Okay');
+                        this.delete(item);
+                    },
+                },
+            ],
+        });
+
+        await alert.present();
+    }
+
+    async tabClick($event) {
+        const value = await lastValueFrom(this.filteredSales$);
+
+        this.filteredValues = value.filter(
+            (data: any) =>
+                data.status === 'D' && data.invoice_type === 'stockIssue'
+        );
+
+        this.calculateSumTotals();
+        this._cdr.markForCheck();
+    }
+
+    calculateSumTotals() {
+        this.sumTotalValue = 0.0;
+        this.sumNumItems = 0;
+
+        this.sumTotalValue = this.filteredValues
+            .map((item) => item.net_total)
+            .reduce(
+                (accumulator, currentValue) => accumulator + currentValue,
+                0
+            )
+            .toFixed(2);
+
+        this.sumNumItems = this.filteredValues
+            .map((item) => item.no_of_items)
+            .reduce(
+                (accumulator, currentValue) => accumulator + currentValue,
+                0
+            );
+    }
+
+    openDialog1(): void {
+        const rect = this.menuTriggerN.nativeElement.getBoundingClientRect();
+        console.log('zzz' + rect.left);
+
+        const dialogRef = this._dialog1.open(SearchInvoiceNoComponent, {
+            width: '250px',
+            data: { invoice_no: '' },
+
+            position: { left: `${rect.left}px`, top: `${rect.bottom - 50}px` },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log('The dialog was closed');
+
+            this.submitForm.patchValue({
+                invoice_no: result,
+            });
+            this.search();
+        });
+    }
+
+    openDialog(row): void {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = false;
+        dialogConfig.width = '50%';
+        dialogConfig.height = '100%';
+        dialogConfig.data = row;
+        dialogConfig.position = { top: '0', right: '0' };
+
+        const dialogRef = this._dialog.open(
+            SalesInvoiceDialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log('The dialog was closed');
+        });
+    }
+
+    async presentAlert(msg: string) {
+        const alert = await this.alertController.create({
+            header: 'Message',
+
+            message: msg,
+            buttons: ['OK'],
+        });
+
+        await alert.present();
+        setTimeout(() => {
+            this.init();
+        }, 1000);
+    }
+
+    openSnackBar(message: string, action: string) {
+        this._snackBar.open(message, action, {
+            duration: 2000,
+            panelClass: ['mat-toolbar', 'mat-primary'],
+        });
+    }
+
+    async presentConvertSaleConfirm(item) {
+        const alert = await this.alertController.create({
+            header: 'Confirm!',
+            message: 'This change cannot be rolled back. Are you sure?',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: (blah) => {
+                        console.log('Confirm Cancel: blah');
+                    },
+                },
+                {
+                    text: 'Convert to sale',
+                    handler: () => {
+                        console.log('Confirm Okay');
+
+                        this.convertToSale(item);
+                    },
+                },
+            ],
+        });
+
+        await alert.present();
+    }
+
+    convertToSale(item) {
+        // pass sale id and call backend
+        // refresh the page with latest values (invoice # and inv type)
+
+        this._commonApiService
+            .convertToSale({
+                center_id: this.user_data.center_id,
+                sales_id: item.id,
+                old_invoice_no: item.invoice_no,
+                old_stock_issued_date: item.invoice_date,
+                customer_id: item.customer_id,
+                net_total: item.net_total,
+            })
+            .subscribe((data: any) => {
+                if (data.body.result === 'success') {
+                    this.convertToInvoiceSuccess(
+                        data.body.invoice_no,
+                        moment().format('DD-MM-YYYY')
+                    );
+                }
+            });
+    }
+
+    convertToInvoiceSuccess(invoice_no, invoice_date) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '400px';
+
+        dialogConfig.data = {
+            invoice_no,
+            invoice_date,
+        };
+
+        const dialogRef = this._dialog.open(
+            ConvertToSaleDialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe((data) => {
+            console.log('The dialog was closed');
+            this.init();
+            //this._router.navigateByUrl('/home/search-stock-issues');
+        });
+    }
+
+    customDateFilter() {
+        this.isCustomDateFilter = !this.isCustomDateFilter;
+    }
+
+    clear() {
+        const dateOffset = 24 * 60 * 60 * 1000 * 7;
+        this.from_date.setTime(this.minDate.getTime() - dateOffset);
+
+        this.submitForm.patchValue({
+            customer_id: 'all',
+            customer_ctrl: 'All Customers',
+            from_date: this.from_date,
+            to_date: new Date(),
+            invoice_no: '',
+            search_type: 'all',
+        });
+
+        this.submitForm.value.invoice_no = '';
+        this.submitForm.get('customer_ctrl').enable();
+        this.submitForm.controls.invoice_no.setErrors(null);
+        this.submitForm.controls.invoice_no.markAsTouched();
+
+        this._cdr.markForCheck();
+    }
+
+    customerSearchReset() {
+        this.clearInput();
+    }
+
+    reset() {
+        this.customerSearchReset();
+        this.child.clearCustomerInput();
+        this.clear();
+        this.search();
+    }
+
+    async exportCompletedSalesToExcel() {
+        const fileName = 'Sale_Order_Reports.xlsx';
+
+        const reportData = JSON.parse(JSON.stringify(this.filteredValues));
+
+        reportData.forEach((e) => {
+            delete e.retail_customer_phone;
+            delete e.inv_gen_mode;
+            delete e.createdAt;
+            delete e.created_by;
+
+            e['Customer Name'] = e.customer_name;
+            delete e.customer_name;
+
+            e['Invoice #'] = e.invoice_no;
+            delete e.invoice_no;
+
+            e['Invoice Date'] = moment(e.invoice_date).format('DD-MM-YYYY');
+            delete e.invoice_date;
+
+            delete e.invoice_type;
+
+            e['Total Qty'] = e.total_quantity;
+            delete e.total_quantity;
+
+            e['# Items'] = e.no_of_items;
+            delete e.no_of_items;
+
+            e['Taxable Value'] = e.after_tax_value;
+            delete e.after_tax_value;
+
+            e['Updated By'] = e.updated_by;
+            delete e.updated_by;
+
+            e['Print Count'] = e.print_count;
+            delete e.print_count;
+
+            e['Updated At'] = moment(e.updatedAt).format('DD-MM-YYYY HH:mm:ss');
+            delete e.updatedAt;
+
+            e.CGST = e.cgs_t;
+            delete e.cgs_t;
+
+            e.SGST = e.sgs_t;
+            delete e.sgs_t;
+
+            e.IGST = e.igs_t;
+            delete e.igs_t;
+
+            e.igs_t = e.igs_t;
+            delete e.igs_t;
+
+            e['Total Value'] = e.total_value;
+            delete e.total_value;
+
+            e['Net Total'] = e.net_total;
+            delete e.net_total;
+
+            e['Sale Date Time'] = moment(e.sale_date_time).format(
+                'DD-MM-YYYY HH:mm:ss'
+            );
+            delete e.sale_date_time;
+
+            e.Status = e.status === 'C' ? 'Invoiced' : 'Draft';
+            delete e.status;
+
+            delete e.id;
+            delete e.center_id;
+            delete e.customer_id;
+            delete e.lr_no;
+            delete e.lr_date;
+            delete e.received_date;
+            delete e.order_no;
+            delete e.order_date;
+            delete e.transport_charges;
+
+            delete e.unloading_charges;
+            delete e.misc_charges;
+
+            delete e.revision;
+            delete e.tax_applicable;
+            delete e.stock_issue_ref;
+            delete e.stock_issue_date_ref;
+            delete e.round_off;
+            delete e.retail_customer_name;
+            delete e.retail_customer_address;
+            delete e.no_of_boxes;
+        });
+
+        const wb1: xlsx.WorkBook = xlsx.utils.book_new();
+
+        const ws1: xlsx.WorkSheet = xlsx.utils.json_to_sheet([]);
+
+        ws1['!cols'] = [
+            { width: 16 },
+            { width: 16 },
+            { width: 32 },
+            { width: 14 },
+            { width: 8 },
+            { width: 8 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 13 },
+            { width: 19 },
+            { width: 12 },
+            { width: 16 },
+            { width: 19 },
+        ];
+
+        const wsrows = [
+            { hpt: 30 }, // row 1 sets to the height of 12 in points
+            { hpx: 30 }, // row 2 sets to the height of 16 in pixels
+        ];
+
+        ws1['!rows'] = wsrows; // ws - worksheet
+
+        const merge = [{ s: { c: 0, r: 0 }, e: { c: 1, r: 0 } }];
+
+        ws1['!merges'] = merge;
+
+        xlsx.utils.book_append_sheet(wb1, ws1, 'sheet1');
+
+        //then add ur Title txt
+        xlsx.utils.sheet_add_json(
+            wb1.Sheets.sheet1,
+            [
+                {
+                    header: 'Completed Sale Reports',
+                    from_date: `From: ${moment(
+                        this.submitForm.value.from_date
+                    ).format('DD/MM/YYYY')}`,
+                    to_date: `To: ${moment(
+                        this.submitForm.value.to_date
+                    ).format('DD/MM/YYYY')}`,
+                },
+            ],
+            {
+                skipHeader: true,
+                origin: 'A1',
+            }
+        );
+
+        //start frm A2 here
+        xlsx.utils.sheet_add_json(wb1.Sheets.sheet1, reportData, {
+            skipHeader: false,
+            origin: 'A2',
+            header: [
+                'Invoice #',
+                'Invoice Date',
+                'Customer Name',
+                'Status',
+                'Total Qty',
+                '# Items',
+                'CGST',
+                'SGST',
+                'IGST',
+                'Taxable Value',
+                'Total Value',
+                'Net Total',
+                'Sale Date Time',
+                'Print Count',
+                'Updated By',
+                'Updated At',
+            ],
+        });
+
+        xlsx.writeFile(wb1, fileName);
+    }
+
+    dateFilter(value: number) {
+        this.searchByDays = value;
+        const dateOffset = 24 * 60 * 60 * 1000 * this.searchByDays;
+        this.from_date = new Date(this.minDate.getTime() - dateOffset);
+        this.submitForm.patchValue({
+            from_date: this.from_date,
+        });
+
+        this._cdr.detectChanges();
+
+        this.search();
     }
 
 }

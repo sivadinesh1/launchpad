@@ -1,49 +1,44 @@
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import {
-    Component,
-    OnInit,
-    ChangeDetectorRef,
-    ViewChild,
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
     ElementRef,
+    EventEmitter,
+    OnInit,
+    Output,
+    ViewChild,
+    ViewEncapsulation,
 } from '@angular/core';
-import { CommonApiService } from '../../services/common-api.service';
-import { AuthenticationService } from '../../services/authentication.service';
-import * as moment from 'moment';
 import {
-    FormGroup,
-    FormControl,
-    Validators,
     FormBuilder,
+    FormControl,
+    FormGroup,
+    Validators,
 } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Observable, lastValueFrom, of, empty } from 'rxjs';
-import { Sale } from '../../models/Sale';
-import { Customer } from 'src/app/models/Customer';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import {
-    debounceTime,
-    filter,
-    map,
-    startWith,
-    switchMap,
-    tap,
-} from 'rxjs/operators';
-import { User } from 'src/app/models/User';
-import {
-    MatDialog,
-    MatDialogConfig,
-    DialogPosition,
-} from '@angular/material/dialog';
+import * as moment from 'moment';
+import { empty, lastValueFrom, Observable } from 'rxjs';
+import { debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
+import { ConvertToSaleDialogComponent } from 'src/app/components/convert-to-sale-dialog/convert-to-sale-dialog.component';
+import { EnquiryPrintComponent } from 'src/app/components/enquiry-print/enquiry-print.component';
 import { InvoiceSuccessComponent } from 'src/app/components/invoice-success/invoice-success.component';
 import { SalesInvoiceDialogComponent } from 'src/app/components/sales/sales-invoice-dialog/sales-invoice-dialog.component';
 import { SalesReturnDialogComponent } from 'src/app/components/sales/sales-return-dialog/sales-return-dialog.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { EnquiryPrintComponent } from 'src/app/components/enquiry-print/enquiry-print.component';
-import * as xlsx from 'xlsx';
-import { ConvertToSaleDialogComponent } from 'src/app/components/convert-to-sale-dialog/convert-to-sale-dialog.component';
-import { MatAutocomplete } from '@angular/material/autocomplete';
 import { SearchCustomersComponent } from 'src/app/components/search-customers/search-customers.component';
 import { SearchInvoiceNoComponent } from 'src/app/components/search-invoice-no/search-invoice-no.component';
+
+import { Customer } from 'src/app/models/Customer';
+import { User } from 'src/app/models/User';
+import { HelperUtilsService } from 'src/app/services/helper-utils.service';
+import * as xlsx from 'xlsx';
+import { Sale } from '../../models/Sale';
+import { AuthenticationService } from '../../services/authentication.service';
+import { CommonApiService } from '../../services/common-api.service';
 
 @Component({
     selector: 'app-search-stock-issues',
@@ -58,21 +53,21 @@ export class SearchStockIssuesPage implements OnInit {
 
     @ViewChild(SearchCustomersComponent) child: SearchCustomersComponent;
 
-    sales$: Observable<Sale[]>;
+    sales$: Observable<any>;
 
-    stockIssueSales$: Observable<Sale[]>;
+    draftSales$: Observable<Sale[]>;
+    full_filled_sales$: Observable<Sale[]>;
 
-    filteredSales$: Observable<Sale[]>;
+    filteredSales$: Observable<any>;
 
     filteredValues: any;
-    tabIndex = 0;
+    tabIndex = 1;
 
     resultList: any;
 
     statusFlag = 'D';
-    selectedCust = 'all';
 
-    saletypeFlag = 'all';
+    sale_typeFlag = 'all';
 
     orderDefaultFlag = 'desc';
 
@@ -82,27 +77,24 @@ export class SearchStockIssuesPage implements OnInit {
     minDate = new Date();
     dobMaxDate = new Date();
 
-    filteredCustomer: Observable<any[]>;
+    from_date = new Date();
+    to_date = new Date();
+
+    filteredCustomer: Observable<any>;
     customer_lis: Customer[];
 
     user_data: any;
 
     user_data$: Observable<User>;
 
-    statusList = [
-        { id: 'all', value: 'All' },
-        { id: 'D', value: 'Draft' },
-        { id: 'C', value: 'Fulfilled' },
-    ];
-
     orderList = [
         { id: 'desc', value: 'Recent Orders First' },
         { id: 'asc', value: 'Old Orders First' },
     ];
 
-    search_type = [
-        { name: 'All', id: 'all', checked: true },
-        { name: 'Invoice Only', id: 'inv_only', checked: false },
+    sale_typeList = [
+        { id: 'all', value: 'All' },
+        { id: 'GI', value: 'Invoice' },
     ];
 
     sumTotalValue = 0.0;
@@ -115,10 +107,14 @@ export class SearchStockIssuesPage implements OnInit {
 
     arr: Array<any>;
 
-    color = 'accent';
-
-    from_date = new Date();
-    to_date = new Date();
+    visible = true;
+    selectable = true;
+    removable = true;
+    separatorKeysCodes: number[] = [ENTER, COMMA];
+    fruitCtrl = new FormControl();
+    filteredFruits: Observable<string[]>;
+    fruits: string[] = ['Lemon'];
+    allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
 
     searchByDays = 7;
     isCLoading = false;
@@ -135,7 +131,13 @@ export class SearchStockIssuesPage implements OnInit {
     dateFrom: any = new Date();
     dateTo: any = new Date();
 
-    // new FormControl({value: '', disabled: true});
+    tempListArray: any[] = [];
+    full_count = 0;
+    offset = 0;
+    length = 20;
+    is_loaded = false;
+    all_caught_up = '';
+
     constructor(
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService,
@@ -146,21 +148,22 @@ export class SearchStockIssuesPage implements OnInit {
         public _dialog: MatDialog,
         public _dialog1: MatDialog,
         private _snackBar: MatSnackBar,
-        private _authService: AuthenticationService
+        private _authService: AuthenticationService,
+        public _helperUtilsService: HelperUtilsService
     ) {
         this.submitForm = this._fb.group({
-            customer_id: ['all'],
+            customer_id: 'all',
             customer_ctrl: new FormControl({
-                value: 'All Customers',
+                value: '',
                 disabled: false,
             }),
-
+            //customer_ctrl: [{ value: 'All Customers', disabled: false }],
             to_date: [this.to_date, Validators.required],
             from_date: [this.from_date, Validators.required],
             status: new FormControl('all'),
-            invoice_type: new FormControl('SI'),
+            sale_type: new FormControl('all'),
             invoice_no: [''],
-            search_type: ['all'],
+            invoice_type: new FormControl('SI'),
             order: ['desc'],
         });
 
@@ -169,13 +172,12 @@ export class SearchStockIssuesPage implements OnInit {
         this.user_data$
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
-                this._authService.setCurrentMenu('Stock Issue');
                 this.user_data = data;
                 this.init();
                 this._cdr.markForCheck();
             });
 
-        const dateOffset = 24 * 60 * 60 * 1000 * 90;
+        const dateOffset = 24 * 60 * 60 * 1000 * 7;
         this.from_date.setTime(this.minDate.getTime() - dateOffset);
 
         this._route.params.subscribe((params) => {
@@ -202,11 +204,16 @@ export class SearchStockIssuesPage implements OnInit {
     }
 
     async init() {
+        this.all_caught_up = '';
+        this.offset = 0;
         this.searchCustomers();
-
-        this.search();
+        this.isSelectedColumn('Date');
+        this.is_loaded = false;
+        this.search('');
         this._cdr.markForCheck();
     }
+
+    ngOnInit() {}
 
     searchCustomers() {
         this.submitForm.controls.customer_ctrl.valueChanges
@@ -237,22 +244,166 @@ export class SearchStockIssuesPage implements OnInit {
             });
     }
 
-    ngOnInit() {}
+    clearInput() {
+        this.submitForm.patchValue({
+            customer_id: 'all',
+            customer_ctrl: '',
+        });
+        this._cdr.markForCheck();
+        this.is_loaded = false;
+        this.offset = 0;
+        this.search('');
+    }
 
-    sortInvoiceDate() {
-        this.clickedColumn = 'Date';
-        if (this.orderDefaultFlag === 'desc') {
-            this.submitForm.patchValue({
-                order: 'asc',
-            });
-            this.orderDefaultFlag = 'asc';
-        } else {
-            this.submitForm.patchValue({
-                order: 'desc',
-            });
-            this.orderDefaultFlag = 'desc';
+    clear() {
+        const dateOffset = 24 * 60 * 60 * 1000 * 7;
+        this.from_date.setTime(this.minDate.getTime() - dateOffset);
+
+        this.submitForm.patchValue({
+            customer_id: 'all',
+            customer_ctrl: 'All Customers',
+            from_date: this.from_date,
+            to_date: new Date(),
+            invoice_no: '',
+        });
+
+        this.submitForm.value.invoice_no = '';
+        this.submitForm.get('customer_ctrl').enable();
+        this.submitForm.controls.invoice_no.setErrors(null);
+        this.submitForm.controls.invoice_no.markAsTouched();
+
+        this._cdr.markForCheck();
+    }
+
+    async handleCustomerChange() {
+        this.clearInput();
+    }
+
+    getPosts(event) {
+        this.submitForm.patchValue({
+            customer_id: event.option.value.id,
+            customer_ctrl: event.option.value.name,
+        });
+
+        this.tabIndex = 1;
+
+        this._cdr.markForCheck();
+    }
+
+    setCustomerInfo(event, from) {
+        if (event !== undefined) {
+            if (from === 'tab') {
+                this.customer_data = event;
+
+                this._cdr.detectChanges();
+            } else {
+                this.customer_data = event.option.value;
+
+                this._cdr.detectChanges();
+            }
         }
-        this.search();
+    }
+
+    displayFn(obj: any): string | undefined {
+        return obj && obj.name ? obj.name : undefined;
+    }
+
+    dateFilter(value: number) {
+        this.searchByDays = value;
+        const dateOffset = 24 * 60 * 60 * 1000 * this.searchByDays;
+        this.from_date = new Date(this.minDate.getTime() - dateOffset);
+        this.submitForm.patchValue({
+            from_date: this.from_date,
+        });
+
+        this._cdr.detectChanges();
+        this.is_loaded = false;
+        this.search('');
+    }
+
+    customDateFilter() {
+        this.isCustomDateFilter = !this.isCustomDateFilter;
+    }
+
+    async search(event) {
+        this.sales$ = this._commonApiService.searchSales({
+            center_id: this.user_data.center_id,
+            customer_id: this.submitForm.value.customer_id,
+            status: this.submitForm.value.status,
+            from_date: this.submitForm.value.from_date,
+            to_date: this.submitForm.value.to_date,
+            invoice_type: this.submitForm.value.invoice_type,
+
+            invoice_no: this.submitForm.value.invoice_no,
+            order: this.submitForm.value.order,
+            offset: this.offset,
+            length: this.length,
+        });
+
+        this.filteredSales$ = this.sales$;
+
+        const value = await lastValueFrom(this.filteredSales$);
+
+        if (event === '') {
+            this.full_count = value.full_count;
+            this.tempListArray = value.result;
+            if (this.submitForm.value.status === 'C') {
+                this.filteredValues = value.result.filter(
+                    (data: any) => data.status === 'C'
+                );
+            } else if (this.submitForm.value.status === 'D') {
+                this.filteredValues = value.result.filter(
+                    (data: any) => data.status === 'D'
+                );
+            } else {
+                this.filteredValues = value.result;
+            }
+        } else {
+            this.full_count = value.full_count;
+
+            if (this.submitForm.value.status === 'C') {
+                this.filteredValues = this.tempListArray.concat(
+                    value.result.filter((data: any) => data.status === 'C')
+                );
+            } else if (this.submitForm.value.status === 'D') {
+                this.filteredValues = this.tempListArray.concat(
+                    value.result.filter((data: any) => data.status === 'D')
+                );
+            } else {
+                this.filteredValues = this.tempListArray.concat(value.result);
+            }
+
+            this.tempListArray = this.filteredValues;
+
+            event.target.complete();
+            this._cdr.detectChanges();
+        }
+
+        this.is_loaded = true;
+
+        this.calculateSumTotals();
+        this.tabIndex = 1;
+        this._cdr.markForCheck();
+    }
+
+    goPrintInvoice(row) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '600px';
+
+        dialogConfig.data = row;
+
+        const dialogRef = this._dialog.open(
+            InvoiceSuccessComponent,
+            dialogConfig
+        );
+
+        // dialogRef.afterClosed();
+        dialogRef.afterClosed().subscribe((result) => {
+            this.is_loaded = false;
+            this.search('');
+        });
     }
 
     sortInvoice_no() {
@@ -268,158 +419,25 @@ export class SearchStockIssuesPage implements OnInit {
             });
             this.orderDefaultFlag = 'desc';
         }
-        this.search();
+        this.is_loaded = false;
+        this.search('');
     }
 
-    isSelectedColumn(param) {
-        if (this.clickedColumn === param) {
-            return 'sorted_column';
+    sortInvoiceDate() {
+        this.clickedColumn = 'Date';
+        if (this.orderDefaultFlag === 'desc') {
+            this.submitForm.patchValue({
+                order: 'asc',
+            });
+            this.orderDefaultFlag = 'asc';
         } else {
-            return 'none';
+            this.submitForm.patchValue({
+                order: 'desc',
+            });
+            this.orderDefaultFlag = 'desc';
         }
-    }
-
-    isCompleted(status: string) {
-        if (status === 'C') {
-            return 'completed';
-        } else {
-            return 'draft';
-        }
-    }
-
-    radioClickHandle() {
-        if (this.submitForm.value.search_type === 'inv_only') {
-            this.submitForm.get('customer_ctrl').disable();
-        } else {
-            this.submitForm.value.invoice_no = '';
-            this.submitForm.get('customer_ctrl').enable();
-            this.submitForm.controls.invoice_no.setErrors(null);
-            this.submitForm.controls.invoice_no.markAsTouched();
-        }
-    }
-
-    customerInfoPage(item) {
-        this.submitForm.patchValue({
-            customer_id: item.id,
-        });
-        this.search();
-    }
-
-    opsFromDateEvent(event) {
-        this.submitForm.patchValue({
-            from_date: moment(event.target.value).format('YYYY-MM-DD'),
-        });
-        this.reloadSearch();
-    }
-
-    opsToDateEvent(event) {
-        this.submitForm.patchValue({
-            to_date: moment(event.target.value).format('YYYY-MM-DD'),
-        });
-
-        this.reloadSearch();
-    }
-
-    reloadSearch() {
-        // patch it up with from & to date, via patch value
-        console.log(this.submitForm.value);
-
-        this.search();
-    }
-
-    statusFilterChanged(item: any) {
-        this.submitForm.patchValue({
-            status: item.detail.value,
-            invoice_no: '',
-        });
-        this._cdr.markForCheck();
-        this.search();
-    }
-
-    clearInput() {
-        this.submitForm.patchValue({
-            customer_id: 'all',
-            customer_ctrl: '',
-        });
-        this._cdr.markForCheck();
-        this.search();
-    }
-
-    getPosts(event) {
-        this.submitForm.patchValue({
-            customer_id: event.option.value.id,
-            customer_ctrl: event.option.value.name,
-        });
-
-        this.tabIndex = 0;
-        this._cdr.markForCheck();
-
-        this.search();
-    }
-
-    async search() {
-        if (
-            this.submitForm.value.search_type !== 'all' &&
-            this.submitForm.value.invoice_no.trim().length === 0
-        ) {
-            console.log('invoice number is mandatory');
-            this.submitForm.controls.invoice_no.setErrors({ required: true });
-            this.submitForm.controls.invoice_no.markAsTouched();
-            return false;
-        }
-
-        this.sales$ = this._commonApiService.searchSales({
-            center_id: this.user_data.center_id,
-            customer_id: this.submitForm.value.customer_id,
-            status: this.submitForm.value.status,
-            from_date: this.submitForm.value.from_date,
-            to_date: this.submitForm.value.to_date,
-            invoice_type: this.submitForm.value.invoice_type,
-            search_type: this.submitForm.value.search_type,
-            invoice_no: this.submitForm.value.invoice_no,
-            order: this.submitForm.value.order,
-        });
-
-        this.filteredSales$ = this.sales$;
-
-        const value = await lastValueFrom(this.filteredSales$);
-
-        this.stockIssueSales$ = this.sales$.pipe(
-            map((arr: any) =>
-                arr.filter(
-                    (f) => f.status === 'D' && f.invoice_type === 'stockIssue'
-                )
-            )
-        );
-
-        this.filteredValues = value.filter(
-            (data: any) =>
-                data.status === 'D' && data.invoice_type === 'stockIssue'
-        );
-
-        this.calculateSumTotals();
-        this.tabIndex = 0;
-        this._cdr.markForCheck();
-    }
-
-    goSalesEditScreen(item) {
-        this._router.navigateByUrl(`/home/sales/edit/${item.id}/SI`);
-    }
-
-    goPrintInvoice(row) {
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.disableClose = true;
-        dialogConfig.autoFocus = true;
-        dialogConfig.width = '400px';
-
-        dialogConfig.data = row.id;
-
-        const dialogRef = this._dialog.open(
-            InvoiceSuccessComponent,
-            dialogConfig
-        );
-
-        dialogRef.afterClosed();
+        this.is_loaded = false;
+        this.search('');
     }
 
     goPrintEnquiry(row) {
@@ -428,7 +446,7 @@ export class SearchStockIssuesPage implements OnInit {
         dialogConfig.autoFocus = true;
         dialogConfig.width = '600px';
 
-        dialogConfig.data = row;
+        dialogConfig.data = row.id;
 
         const dialogRef = this._dialog.open(
             EnquiryPrintComponent,
@@ -438,25 +456,25 @@ export class SearchStockIssuesPage implements OnInit {
         dialogRef.afterClosed();
     }
 
-    goStockIssueAddScreen() {
-        this._router.navigateByUrl(`/home/sales/edit/0/SI`);
+    goSalesAddScreen() {
+        this._router.navigateByUrl(`/home/sales/edit/0/TI`);
     }
 
-    toDateSelected($event) {
+    to_dateSelected($event) {
         this.to_date = $event.target.value;
-        this.tabIndex = 0;
-        this.search();
+        this.tabIndex = 1;
+
         this._cdr.markForCheck();
     }
 
-    fromDateSelected($event) {
+    from_dateSelected($event) {
         this.from_date = $event.target.value;
-        this.tabIndex = 0;
-        this.search();
+        this.tabIndex = 1;
+
         this._cdr.markForCheck();
     }
 
-    // two types of delete, (i) Sale Details line item, (ii) Sale Master both
+    // two types of delete, (i) Sale Details lineItem, (ii) Sale Master both
     // are different scenarios, just recording it. Only 'DRAFT(D)' or 'STOCK ISSUE(D)' STATUS ARE DELETED
     // first delete sale details(update audit) then delete sale master
     delete(item) {
@@ -508,18 +526,6 @@ export class SearchStockIssuesPage implements OnInit {
         await alert.present();
     }
 
-    async tabClick($event) {
-        const value = await lastValueFrom(this.filteredSales$);
-
-        this.filteredValues = value.filter(
-            (data: any) =>
-                data.status === 'D' && data.invoice_type === 'stockIssue'
-        );
-
-        this.calculateSumTotals();
-        this._cdr.markForCheck();
-    }
-
     calculateSumTotals() {
         this.sumTotalValue = 0.0;
         this.sumNumItems = 0;
@@ -540,32 +546,26 @@ export class SearchStockIssuesPage implements OnInit {
             );
     }
 
-    openDialog1(): void {
-        const rect = this.menuTriggerN.nativeElement.getBoundingClientRect();
-        console.log('zzz' + rect.left);
+    async editCompletedSalesConfirm(item) {
+        this._router.navigateByUrl(`/home/sales/edit/${item.id}/TI`);
+    }
 
-        const dialogRef = this._dialog1.open(SearchInvoiceNoComponent, {
-            width: '250px',
-            data: { invoice_no: '' },
-
-            position: { left: `${rect.left}px`, top: `${rect.bottom - 50}px` },
+    statusFilterChanged(status) {
+        this.submitForm.patchValue({
+            status,
+            invoice_no: '',
         });
-
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log('The dialog was closed');
-
-            this.submitForm.patchValue({
-                invoice_no: result,
-            });
-            this.search();
-        });
+        this._cdr.markForCheck();
+        this.is_loaded = false;
+        this.offset = 0;
+        this.search('');
     }
 
     openDialog(row): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = false;
-        dialogConfig.width = '50%';
+        dialogConfig.width = '70%';
         dialogConfig.height = '100%';
         dialogConfig.data = row;
         dialogConfig.position = { top: '0', right: '0' };
@@ -600,114 +600,30 @@ export class SearchStockIssuesPage implements OnInit {
             panelClass: ['mat-toolbar', 'mat-primary'],
         });
     }
-
-    async presentConvertSaleConfirm(item) {
-        const alert = await this.alertController.create({
-            header: 'Confirm!',
-            message: 'This change cannot be rolled back. Are you sure?',
-            buttons: [
-                {
-                    text: 'Cancel',
-                    role: 'cancel',
-                    cssClass: 'secondary',
-                    handler: (blah) => {
-                        console.log('Confirm Cancel: blah');
-                    },
-                },
-                {
-                    text: 'Convert to sale',
-                    handler: () => {
-                        console.log('Confirm Okay');
-
-                        this.convertToSale(item);
-                    },
-                },
-            ],
-        });
-
-        await alert.present();
+    goSalesReturns() {
+        this._router.navigateByUrl(`/home/search-return-sales`);
     }
 
-    convertToSale(item) {
-        // pass sale id and call backend
-        // refresh the page with latest values (invoice # and inv type)
-
-        this._commonApiService
-            .convertToSale({
-                center_id: this.user_data.center_id,
-                sales_id: item.id,
-                old_invoice_no: item.invoice_no,
-                old_stock_issued_date: item.invoice_date,
-                customer_id: item.customer_id,
-                net_total: item.net_total,
-            })
-            .subscribe((data: any) => {
-                if (data.body.result === 'success') {
-                    this.convertToInvoiceSuccess(
-                        data.body.invoice_no,
-                        moment().format('DD-MM-YYYY')
-                    );
-                }
-            });
-    }
-
-    convertToInvoiceSuccess(invoice_no, invoice_date) {
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.disableClose = true;
-        dialogConfig.autoFocus = true;
-        dialogConfig.width = '400px';
-
-        dialogConfig.data = {
-            invoice_no,
-            invoice_date,
-        };
-
-        const dialogRef = this._dialog.open(
-            ConvertToSaleDialogComponent,
-            dialogConfig
-        );
-
-        dialogRef.afterClosed().subscribe((data) => {
-            console.log('The dialog was closed');
-            this.init();
-            //this._router.navigateByUrl('/home/search-stock-issues');
-        });
-    }
-
-    customDateFilter() {
-        this.isCustomDateFilter = !this.isCustomDateFilter;
-    }
-
-    clear() {
-        const dateOffset = 24 * 60 * 60 * 1000 * 7;
-        this.from_date.setTime(this.minDate.getTime() - dateOffset);
-
+    opsFromDateEvent(event) {
         this.submitForm.patchValue({
-            customer_id: 'all',
-            customer_ctrl: 'All Customers',
-            from_date: this.from_date,
-            to_date: new Date(),
-            invoice_no: '',
-            search_type: 'all',
+            from_date: moment(event.target.value).format('YYYY-MM-DD'),
+        });
+        this.reloadSearch();
+    }
+
+    opsToDateEvent(event) {
+        this.submitForm.patchValue({
+            to_date: moment(event.target.value).format('YYYY-MM-DD'),
         });
 
-        this.submitForm.value.invoice_no = '';
-        this.submitForm.get('customer_ctrl').enable();
-        this.submitForm.controls.invoice_no.setErrors(null);
-        this.submitForm.controls.invoice_no.markAsTouched();
-
-        this._cdr.markForCheck();
+        this.reloadSearch();
     }
 
-    customerSearchReset() {
-        this.clearInput();
-    }
+    reloadSearch() {
+        // patch it up with from & to date, via patch value
 
-    reset() {
-        this.customerSearchReset();
-        this.child.clearCustomerInput();
-        this.clear();
-        this.search();
+        this.is_loaded = false;
+        this.search('');
     }
 
     async exportCompletedSalesToExcel() {
@@ -882,16 +798,162 @@ export class SearchStockIssuesPage implements OnInit {
         xlsx.writeFile(wb1, fileName);
     }
 
-    dateFilter(value: number) {
-        this.searchByDays = value;
-        const dateOffset = 24 * 60 * 60 * 1000 * this.searchByDays;
-        this.from_date = new Date(this.minDate.getTime() - dateOffset);
-        this.submitForm.patchValue({
-            from_date: this.from_date,
+    openDialog1(): void {
+        const rect = this.menuTriggerN.nativeElement.getBoundingClientRect();
+        console.log('zzz' + rect.left);
+
+        const dialogRef = this._dialog1.open(SearchInvoiceNoComponent, {
+            width: '250px',
+            data: { invoice_no: '' },
+
+            position: { left: `${rect.left}px`, top: `${rect.bottom - 50}px` },
         });
 
-        this._cdr.detectChanges();
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log('The dialog was closed');
 
-        this.search();
+            this.submitForm.patchValue({
+                invoice_no: result,
+            });
+            this.is_loaded = false;
+            this.search('');
+        });
+    }
+
+    customerInfoPage(item) {
+        this.submitForm.patchValue({
+            customer_id: item.id,
+        });
+        this.is_loaded = false;
+        this.search('');
+    }
+
+    customerSearchReset() {
+        this.clearInput();
+    }
+
+    reset() {
+        this.customerSearchReset();
+        this.child.clearCustomerInput();
+        this.clear();
+        this.is_loaded = false;
+        this.search('');
+    }
+
+    isSelectedColumn(param) {
+        if (this.clickedColumn === param) {
+            return 'sorted_column';
+        } else {
+            return 'none';
+        }
+    }
+
+    isCompleted(status: string) {
+        if (status === 'C') {
+            return 'completed';
+        } else {
+            return 'draft';
+        }
+    }
+
+    // doInfinite(ev: any) {
+    //     console.log('scrolled down!!', ev);
+
+    //     this.offset += 20;
+    //     this.is_loaded = false;
+    //     this.search(ev);
+    // }
+
+    doInfinite(ev: any) {
+        console.log('scrolled down!!', ev);
+
+        this.offset += 20;
+
+        if (this.full_count > this.filteredValues.length) {
+            this.is_loaded = false;
+            this.search(ev);
+        } else {
+            this.all_caught_up = 'You have reached the end of the list';
+            ev.target.complete();
+            this._cdr.detectChanges();
+        }
+    }
+
+    async presentConvertSaleConfirm(item) {
+        const alert = await this.alertController.create({
+            header: 'Convert to Invoice!',
+            message: 'Converting to Sale Invoice. Are you sure?',
+            cssClass: 'alertLogCss',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: (blah) => {
+                        console.log('Confirm Cancel: blah');
+                    },
+                },
+                {
+                    text: 'Convert to sale',
+                    handler: () => {
+                        console.log('Confirm Okay');
+
+                        this.convertToSale(item);
+                    },
+                },
+            ],
+        });
+
+        await alert.present();
+    }
+
+    convertToSale(item) {
+        // pass sale id and call backend
+        // refresh the page with latest values (invoice # and inv type)
+
+        this._commonApiService
+            .convertToSale({
+                center_id: this.user_data.center_id,
+                sales_id: item.id,
+                old_invoice_no: item.invoice_no,
+                old_stock_issued_date: item.invoice_date,
+                customer_id: item.customer_id,
+                net_total: item.net_total,
+            })
+            .subscribe((data: any) => {
+                if (data.body.result === 'success') {
+                    this.convertToInvoiceSuccess(
+                        data.body.invoice_no,
+                        moment().format('DD-MM-YYYY')
+                    );
+                }
+            });
+    }
+
+    convertToInvoiceSuccess(invoice_no, invoice_date) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '400px';
+
+        dialogConfig.data = {
+            invoice_no,
+            invoice_date,
+        };
+
+        const dialogRef = this._dialog.open(
+            ConvertToSaleDialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe((data) => {
+            console.log('The dialog was closed');
+            this.init();
+            //this._router.navigateByUrl('/home/search-stock-issues');
+        });
+    }
+
+    goSalesEditScreen(item) {
+        this._router.navigateByUrl(`/home/sales/edit/${item.id}/SI`);
     }
 }

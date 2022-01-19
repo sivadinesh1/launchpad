@@ -239,7 +239,16 @@
 
         <ng-container *ngIf="!vendor_selected">
             <div style="display: grid; place-items: center; padding: 2rem 2rem">
-                <div style="color: #333333"><h4>Vendor not selected</h4></div>
+                <div>
+                    <span
+                        style="
+                            color: #666666;
+                            font-size: 21px;
+                            font-weight: 600;
+                        "
+                        >Vendor not selected</span
+                    >
+                </div>
                 <div style="color: #666666">
                     Select vendor & start adding items to purchase cart
                 </div>
@@ -255,7 +264,7 @@
         <mat-tab-group
             mat-align-tabs="start"
             animationDuration="0ms"
-            style="width: 96%; margin: 0 auto"
+            style="width: 98%; margin: 0 auto"
         >
             <mat-tab label="Add Items" *ngIf="vendor_selected">
                 <div class="purchase-wrap" [hidden]="!vendor_selected">
@@ -328,9 +337,7 @@
                             <div class="item2 headstyl-left">HSN Code</div>
                             <div class="item3 headstyl-right">Qty</div>
                             <div class="item3 headstyl-right">MRP</div>
-                            <div class="item3 headstyl-right">
-                                Purchase Price
-                            </div>
+                            <div class="item3 headstyl-right">P. Price</div>
                             <div class="item4 headstyl-right">Tax %</div>
                             <div class="item4 headstyl-right">Net Value</div>
                         </div>
@@ -861,7 +868,7 @@
                             SHIPPING COST
                         </div>
                         <div>
-                            <mat-form-field style="width: 125px">
+                            <mat-form-field style="width: 200px">
                                 <mat-label>Order #</mat-label>
                                 <input
                                     matInput
@@ -880,7 +887,7 @@
                             </mat-form-field>
                         </div>
                         <div>
-                            <mat-form-field style="width: 125px">
+                            <mat-form-field style="width: 180px">
                                 <mat-label>Order date</mat-label>
                                 <input
                                     matInput
@@ -903,7 +910,7 @@
                             </mat-form-field>
                         </div>
                         <div>
-                            <mat-form-field style="width: 125px">
+                            <mat-form-field style="width: 200px">
                                 <mat-label>Lr #</mat-label>
                                 <input
                                     matInput
@@ -922,7 +929,7 @@
                             </mat-form-field>
                         </div>
                         <div>
-                            <mat-form-field style="width: 125px">
+                            <mat-form-field style="width: 180px">
                                 <mat-label>Lr date</mat-label>
                                 <input
                                     matInput
@@ -966,7 +973,7 @@
                             OTHER COST(S)
                         </div>
                         <div>
-                            <mat-form-field style="width: 125px">
+                            <mat-form-field style="width: 180px">
                                 <mat-label># of Boxes</mat-label>
                                 <input
                                     matInput
@@ -979,7 +986,7 @@
                             </mat-form-field>
                         </div>
                         <div>
-                            <mat-form-field style="width: 125px">
+                            <mat-form-field style="width: 180px">
                                 <mat-label>Transportation Cost</mat-label>
                                 <input
                                     matInput
@@ -991,7 +998,7 @@
                             </mat-form-field>
                         </div>
                         <div>
-                            <mat-form-field style="width: 125px">
+                            <mat-form-field style="width: 180px">
                                 <mat-label>Unloading Cost</mat-label>
                                 <input
                                     matInput
@@ -1003,7 +1010,7 @@
                         </div>
 
                         <div>
-                            <mat-form-field style="width: 125px">
+                            <mat-form-field style="width: 180px">
                                 <mat-label>TDS</mat-label>
                                 <input
                                     matInput

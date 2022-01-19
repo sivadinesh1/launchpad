@@ -22,12 +22,20 @@
 }
 
 .header,
-.listItem,
+.sso-listItem,
 .headerRow {
     display: grid;
-    grid-template-columns: 40px 100px 240px 120px 180px 100px 130px 90px 90px 50px 50px;
+    grid-template-columns: 40px 100px 120px 240px 100px 130px 200px 80px 80px 80px;
     align-items: center;
-    padding: 5px;
+    padding: 8px 1rem;
+    width: 96%;
+    margin: 0 auto;
+}
+
+.more {
+    background-color: #fff;
+    display: none;
+    text-align: center;
 }
 
 .main-box {
@@ -39,17 +47,26 @@
 }
 
 .header-style {
-    padding: 0.2rem 1rem;
+    padding: 8px 1rem;
     color: #333;
     color: #606060;
     font-weight: 600;
     font-size: 15px;
     border-bottom: 1px solid var(--lp-line-divider);
+    background-color: azure;
 }
 
-.listItem {
+.sso-listItem {
     background-color: #fff;
     border-bottom: 1px solid #f2f2f2;
+}
+
+.sso-listItem:hover {
+    background-color: #f5f5f5 !important;
+}
+
+.sso-listItem:hover .more {
+    display: block;
 }
 
 .title-row {
@@ -136,13 +153,15 @@
     margin-bottom: -1rem;
 }
 
-.search-bar {
+.search-bar-sales {
     background-color: #fff;
     display: flex;
     padding: 16px;
     align-items: center;
-    border-top: 1px solid var(--lp-line-divider);
+    width: 96%;
+    margin: 0 auto;
     border-bottom: 1px solid var(--lp-line-divider);
+    border-top: 0px solid var(--lp-line-divider);
 }
 
 .toggle_search_status {
@@ -156,19 +175,19 @@
 }
 
 .search-sale-header {
+    display: flex;
+    justify-content: space-between;
     padding: 1rem;
     font-size: 1.5rem;
     letter-spacing: 1px;
     font-weight: 500;
+    background-color: #fff;
+    width: 96%;
+    margin: 0 auto;
 }
 
 .column-item {
-    display: flex;
     align-items: center;
-}
-
-.column-item:hover {
-    background-color: #f2f2f2;
 }
 
 .sorted_column {
@@ -182,4 +201,30 @@
     padding: 0 16px 0 28px;
     margin-left: auto;
     cursor: pointer;
+}
+
+.link-it {
+    color: blue;
+    cursor: pointer;
+}
+
+.sticky {
+    position: sticky;
+    top: -10px;
+    z-index: 1;
+}
+
+.sticky1 {
+    position: sticky;
+    top: 45px;
+    z-index: 1;
+}
+.sticky2 {
+    position: sticky;
+    top: 100px;
+    z-index: 1;
+}
+
+.alert-title.sc-ion-alert-md {
+    text-align: center;
 }

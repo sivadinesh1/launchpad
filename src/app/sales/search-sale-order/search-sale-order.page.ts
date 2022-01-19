@@ -136,6 +136,7 @@ export class SearchSaleOrderPage implements OnInit {
     offset = 0;
     length = 20;
     is_loaded = false;
+    all_caught_up = '';
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -203,6 +204,7 @@ export class SearchSaleOrderPage implements OnInit {
     }
 
     async init() {
+        this.all_caught_up = '';
         this.offset = 0;
         this.searchCustomers();
         this.isSelectedColumn('Date');
@@ -345,13 +347,32 @@ export class SearchSaleOrderPage implements OnInit {
         if (event === '') {
             this.full_count = value.full_count;
             this.tempListArray = value.result;
-            this.filteredValues = value.result.filter(
-                (data: any) => data.status === 'C'
-            );
+            if (this.submitForm.value.status === 'C') {
+                this.filteredValues = value.result.filter(
+                    (data: any) => data.status === 'C'
+                );
+            } else if (this.submitForm.value.status === 'D') {
+                this.filteredValues = value.result.filter(
+                    (data: any) => data.status === 'D'
+                );
+            } else {
+                this.filteredValues = value.result;
+            }
         } else {
-            this.filteredValues = this.tempListArray.concat(
-                value.result.filter((data: any) => data.status === 'C')
-            );
+            this.full_count = value.full_count;
+
+            if (this.submitForm.value.status === 'C') {
+                this.filteredValues = this.tempListArray.concat(
+                    value.result.filter((data: any) => data.status === 'C')
+                );
+            } else if (this.submitForm.value.status === 'D') {
+                this.filteredValues = this.tempListArray.concat(
+                    value.result.filter((data: any) => data.status === 'D')
+                );
+            } else {
+                this.filteredValues = this.tempListArray.concat(value.result);
+            }
+
             this.tempListArray = this.filteredValues;
 
             event.target.complete();
@@ -537,13 +558,14 @@ export class SearchSaleOrderPage implements OnInit {
         this._router.navigateByUrl(`/home/sales/edit/${item.id}/TI`);
     }
 
-    statusFilterChanged(item: any) {
+    statusFilterChanged(status) {
         this.submitForm.patchValue({
-            status: item.detail.value,
+            status,
             invoice_no: '',
         });
         this._cdr.markForCheck();
         this.is_loaded = false;
+        this.offset = 0;
         this.search('');
     }
 
@@ -842,11 +864,26 @@ export class SearchSaleOrderPage implements OnInit {
         }
     }
 
+    // doInfinite(ev: any) {
+    //     console.log('scrolled down!!', ev);
+
+    //     this.offset += 20;
+    //     this.is_loaded = false;
+    //     this.search(ev);
+    // }
+
     doInfinite(ev: any) {
         console.log('scrolled down!!', ev);
 
         this.offset += 20;
-        this.is_loaded = false;
-        this.search(ev);
+
+        if (this.full_count > this.filteredValues.length) {
+            this.is_loaded = false;
+            this.search(ev);
+        } else {
+            this.all_caught_up = 'You have reached the end of the list';
+            ev.target.complete();
+            this._cdr.detectChanges();
+        }
     }
 }

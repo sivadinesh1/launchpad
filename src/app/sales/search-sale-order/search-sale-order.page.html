@@ -64,7 +64,7 @@
                 >{{this.full_count}}</span
             >
         </div>
-        <div class="toggle_search_status">
+        <!-- <div class="toggle_search_status">
             <ion-segment
                 mode="ios"
                 value="all"
@@ -81,7 +81,7 @@
                     <ion-label>Invoiced</ion-label>
                 </ion-segment-button>
             </ion-segment>
-        </div>
+        </div> -->
 
         <div
             class="filter_date_range"
@@ -218,7 +218,7 @@
         </div> -->
 
         <div
-            class="item"
+            class="item more a-link"
             style="text-align: center"
             *ngIf="item.invoice_type === 'gstInvoice' && item.status !== 'D'"
         >
@@ -238,7 +238,7 @@
         </div>
 
         <div
-            class="item"
+            class="item more a-link"
             *ngIf="item.status === 'D'"
             style="text-align: center"
         >
@@ -313,6 +313,27 @@ DnD - sample vertical menu
     </mat-menu>
 
     <mat-menu #menuN="matMenu">
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="statusFilterChanged('all')"
+        >
+            All
+        </div>
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="statusFilterChanged('D')"
+        >
+            Draft Invoices
+        </div>
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="statusFilterChanged('C')"
+        >
+            Invoiced
+        </div>
         <div mat-menu-item class="mat-menu-line-height" (click)="openDialog1()">
             Search By Invoice #
         </div>
@@ -379,6 +400,10 @@ DnD - sample vertical menu
                 </div>
             </div>
         </ion-item>
+    </ng-container>
+
+    <ng-container *ngIf="this.all_caught_up !== '' ">
+        <span class="all_caught_up"> {{this.all_caught_up}} </span>
     </ng-container>
 
     <ion-infinite-scroll (ionInfinite)="doInfinite($event)">

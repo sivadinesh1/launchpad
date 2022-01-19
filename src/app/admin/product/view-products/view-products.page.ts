@@ -102,17 +102,18 @@ export class ViewProductsPage implements OnInit {
             });
 
         this._route.params.subscribe((params) => {
-            this.temp_product_search_text = '';
-            this.all_caught_up = '';
-            if (this.user_data !== undefined) {
-                this.reset();
-            }
+            this.init();
         });
     }
 
     ngOnInit() {
+        this.init();
+    }
+
+    init() {
         this.offset = 0;
         this.all_caught_up = '';
+        this.temp_product_search_text = '';
         this.dataSource.paginator = this.paginator;
         this.is_loaded = false;
         this.getData('', this.offset, this.length, '');
@@ -183,9 +184,9 @@ export class ViewProductsPage implements OnInit {
     }
 
     reset() {
-        this.dataSource.data = [];
-        this.pageLength = 0;
-        this.isTableHasData = false;
+        // this.dataSource.data = [];
+        // this.pageLength = 0;
+        // this.isTableHasData = false;
     }
 
     add() {
@@ -294,22 +295,57 @@ export class ViewProductsPage implements OnInit {
             });
     }
 
+    // async showInventoryReportsDialog(element) {
+    //     const modal = await this._modalController.create({
+    //         component: InventoryReportsDialogComponent,
+    //         componentProps: {
+    //             center_id: this.center_id,
+    //             product_code: element.product_code,
+    //             product_id: element.product_id,
+    //         },
+    //         cssClass: 'select-modal',
+    //     });
+
+    //     modal.onDidDismiss().then((result) => {
+    //         this._cdr.markForCheck();
+    //     });
+
+    //     await modal.present();
+    // }
+
     async showInventoryReportsDialog(element) {
-        const modal = await this._modalController.create({
-            component: InventoryReportsDialogComponent,
-            componentProps: {
-                center_id: this.center_id,
-                product_code: element.product_code,
-                product_id: element.product_id,
-            },
-            cssClass: 'select-modal',
-        });
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '1000px';
+        dialogConfig.height = '100%';
+        dialogConfig.data = {
+            center_id: this.center_id,
+            product_code: element.product_code,
+            product_id: element.product_id,
+        };
+        dialogConfig.position = { top: '0', right: '0' };
 
-        modal.onDidDismiss().then((result) => {
-            this._cdr.markForCheck();
-        });
+        const dialogRef = this._dialog.open(
+            InventoryReportsDialogComponent,
+            dialogConfig
+        );
 
-        await modal.present();
+        dialogRef
+            .afterClosed()
+            .pipe(
+                filter((val) => !!val),
+                tap(() => {
+                    // do nothing
+                    this.openDialog(this.temp_product_search_text);
+                    this._cdr.markForCheck();
+                })
+            )
+            .subscribe((data: any) => {
+                if (data === 'success') {
+                    this.openSnackBar('Product Corrected successfully', '');
+                }
+            });
     }
 
     async exportCompletedSalesToExcel() {

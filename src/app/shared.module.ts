@@ -338,7 +338,7 @@ const matcomponents = [
         SaleReturnReceiveComponent,
         SearchDialogComponent,
         SettingsDialogComponent,
-        InventoryReportsDialogComponent,
+
         ShowStatementComponent,
         ShowVendorStatementComponent,
 

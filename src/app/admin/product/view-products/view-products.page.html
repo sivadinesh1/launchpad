@@ -30,6 +30,7 @@
                 debounce="400"
                 placeholder="Search stocks..."
                 #mySearchbar
+                [value]="this.temp_product_search_text"
                 class="search"
                 show-cancel-button="focus"
                 (ionClear)="reset()"
@@ -107,7 +108,7 @@
                 </div>
             </div>
 
-            <div class="header header-style sticky2">
+            <div class="vp-header header-style sticky2">
                 <div class="column-item">#</div>
                 <div class="column-item">Code</div>
                 <div class="column-item" style="padding-left: 16px">

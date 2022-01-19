@@ -577,13 +577,13 @@
                                 </div>
 
                                 <div
-                                    class=" item4 txt-right-align num-format-cell-style"
+                                    class="item4 txt-right-align num-format-cell-style"
                                 >
                                     {{item.tax}}
                                 </div>
 
                                 <div
-                                    class=" item4 txt-right-align num-format-cell-style"
+                                    class="item4 txt-right-align num-format-cell-style"
                                 >
                                     <span [ngClass]="marginCheck(item.margin)">
                                         {{item.total_value }}
@@ -937,7 +937,7 @@
                                 </div>
                                 <div
                                     style="text-align: right; font-size: 22px"
-                                    class=" align-self-center left-pad20 fweight500"
+                                    class="align-self-center left-pad20 fweight500"
                                 >
                                     {{this.total | number:'1.2-2'}}
                                 </div>
@@ -1189,7 +1189,7 @@
                     </button>
 
                     <button
-                        *ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stock_issue')) "
+                        *ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stockIssue')) "
                         style="border-radius: 0px"
                         appPreventDoubleClick
                         class="cursor"
@@ -1206,7 +1206,7 @@
                     </button>
 
                     <button
-                        *ngIf="((submitForm.get('status').value !== 'C') && (selInvType !== 'stock_issue')) "
+                        *ngIf="((submitForm.get('status').value !== 'C') && (selInvType !== 'stockIssue')) "
                         style="border-radius: 0px"
                         appPreventDoubleClick
                         class="cursor"
@@ -1223,7 +1223,7 @@
                     </button>
                     <!-- (click)="actionMethod(); btn.disabled = true;" -->
                     <button
-                        *ngIf="((submitForm.get('status').value === 'C') && (selInvType !== 'stock_issue')) "
+                        *ngIf="((submitForm.get('status').value === 'C') && (selInvType !== 'stockIssue')) "
                         style="border-radius: 0px"
                         appPreventDoubleClick
                         class="cursor"
@@ -1242,7 +1242,7 @@
                     &nbsp;
 
                     <!-- <button
-						*ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stock_issue')) "
+						*ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stockIssue')) "
 						style="border-radius: 0px"
 						appPreventDoubleClick
 						class="cursor"

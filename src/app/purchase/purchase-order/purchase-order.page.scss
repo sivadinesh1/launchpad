@@ -223,6 +223,7 @@
 
     .left {
         display: grid;
+        width: 100%;
         grid-gap: 10px;
         grid-template-columns: 1fr 80px minmax(80px, 100px) minmax(80px, 100px) 100px;
         align-items: center;

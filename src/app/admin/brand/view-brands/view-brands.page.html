@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true" class="ion-padding">
-    <div class="header sticky">
+    <div class="vb-header sticky">
         <div class="label-head">Brands Profile</div>
 
         <div
@@ -61,7 +61,7 @@
     <ng-container>
         <div>
             <div class="table-header sticky2">
-                <div class="column-item">#</div>
+                <div class="column-item" style="padding-left: 10px">#</div>
                 <div class="column-item">Name</div>
 
                 <div class="column-item" style="padding-left: 16px">Action</div>
@@ -71,7 +71,7 @@
                 *ngFor="let item of listArray; let idx = index"
                 class="brand-view-listItem"
             >
-                <div>{{idx + 1}}</div>
+                <div style="padding-left: 10px">{{idx + 1}}</div>
                 <div class="item">{{item.brand_name}}</div>
 
                 <div>
