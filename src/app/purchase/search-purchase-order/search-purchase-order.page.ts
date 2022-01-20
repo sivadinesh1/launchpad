@@ -31,6 +31,9 @@ import { MatAutocomplete } from '@angular/material/autocomplete';
 import { SearchCustomersComponent } from 'src/app/components/search-customers/search-customers.component';
 import { SearchInvoiceNoComponent } from 'src/app/components/search-invoice-no/search-invoice-no.component';
 import { SearchVendorsComponent } from 'src/app/components/search-vendors/search-vendors.component';
+import { HelperUtilsService } from 'src/app/services/helper-utils.service';
+import { IonContent } from '@ionic/angular';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
     selector: 'app-search-purchase-order',
@@ -42,7 +45,7 @@ export class SearchPurchaseOrderPage implements OnInit {
     @ViewChild('menuTriggerN', { static: true }) menuTriggerN: any;
     @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
     @ViewChild('auto') matAutocomplete: MatAutocomplete;
-
+    @ViewChild(IonContent, { static: false }) content: IonContent;
     @ViewChild(SearchVendorsComponent) child: SearchVendorsComponent;
 
     purchases$: Observable<any>;
@@ -103,6 +106,8 @@ export class SearchPurchaseOrderPage implements OnInit {
 
     offset = 0;
     length = 20;
+    all_caught_up = '';
+    is_loaded = false;
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -113,7 +118,9 @@ export class SearchPurchaseOrderPage implements OnInit {
         public alertController: AlertController,
         private _dialog: MatDialog,
         public _dialog1: MatDialog,
-        private _authService: AuthenticationService
+        private _authService: AuthenticationService,
+        public _helperUtilsService: HelperUtilsService,
+        public _loadingService: LoadingService
     ) {
         const dateOffset = 24 * 60 * 60 * 1000 * 7;
         this.from_date.setTime(this.minDate.getTime() - dateOffset);
@@ -134,21 +141,25 @@ export class SearchPurchaseOrderPage implements OnInit {
             .pipe(filter((data) => data !== null))
             .subscribe((data: any) => {
                 this.user_data = data;
-                this.offset = 0;
-                this.init();
                 this._cdr.markForCheck();
             });
 
         this._route.params.subscribe((params) => {
-            if (this.user_data !== undefined) {
-                this.init();
-            }
+            this.init();
         });
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.init();
+    }
 
     async init() {
+        this.all_caught_up = '';
+        this.offset = 0;
+        this.is_loaded = false;
+        this.isCustomDateFilter = false;
+        this.dateFilter(7);
+
         this._commonApiService.getAllActiveVendors().subscribe((data: any) => {
             this.vendor_lis = data;
 
@@ -192,6 +203,7 @@ export class SearchPurchaseOrderPage implements OnInit {
         });
 
         this.tabIndex = 0;
+        this.is_loaded = false;
         this.search('');
         this._cdr.markForCheck();
     }
@@ -212,6 +224,7 @@ export class SearchPurchaseOrderPage implements OnInit {
             vendor_id: 'all',
             vendor_ctrl: ['All Vendors'],
         });
+        this.is_loaded = false;
         this.search('');
         this._cdr.markForCheck();
     }
@@ -230,54 +243,57 @@ export class SearchPurchaseOrderPage implements OnInit {
 
         this.submitForm.controls.invoice_no.setErrors(null);
         this.submitForm.controls.invoice_no.markAsTouched();
-
+        this.is_loaded = false;
         this.search('');
         this._cdr.markForCheck();
     }
 
     async search(event) {
-        this.purchases$ = this._commonApiService.searchPurchases({
-            center_id: this.user_data.center_id,
-            vendor_id: this.submitForm.value.vendor_id,
-            status: this.submitForm.value.status,
-            from_date: this.submitForm.value.from_date,
-            to_date: this.submitForm.value.to_date,
-            order: this.submitForm.value.order,
-            invoice_no: this.submitForm.value.invoice_no,
-            offset: this.offset,
-            length: this.length,
-        });
+        try {
+            this.purchases$ = this._commonApiService.searchPurchases({
+                vendor_id: this.submitForm.value.vendor_id,
+                status: this.submitForm.value.status,
+                from_date: this.submitForm.value.from_date,
+                to_date: this.submitForm.value.to_date,
+                order: this.submitForm.value.order,
+                invoice_no: this.submitForm.value.invoice_no,
+                offset: this.offset,
+                length: this.length,
+            });
 
-        this.filteredPurchase$ = this.purchases$;
+            this.filteredPurchase$ = this.purchases$;
 
-        const value = await lastValueFrom(this.filteredPurchase$);
+            const value = await lastValueFrom(this.filteredPurchase$);
 
-        if (event === '') {
-            this.full_count = value.full_count;
-            this.tempListArray = value.result;
-            this.filteredValues = value.result.filter(
-                (data: any) => data.status === 'C'
+            if (event === '') {
+                this.full_count = value.full_count;
+                this.tempListArray = value.result;
+                this.filteredValues = value.result.filter(
+                    (data: any) => data.status === 'C'
+                );
+            } else {
+                this.filteredValues = this.tempListArray.concat(
+                    value.result.filter((data: any) => data.status === 'C')
+                );
+                this.tempListArray = this.filteredValues;
+
+                event.target.complete();
+                this._cdr.detectChanges();
+            }
+            this.is_loaded = true;
+
+            this.calculateSumTotals();
+            this.tabIndex = 0;
+            this._cdr.markForCheck();
+        } catch (error) {
+            this.is_loaded = true;
+            this.offset = 0;
+            this._loadingService.openSnackBar(
+                'Unexpected error occurred. Please try again later',
+                '',
+                'mat-warn'
             );
-        } else {
-            this.filteredValues = this.tempListArray.concat(
-                value.result.filter((data: any) => data.status === 'C')
-            );
-            this.tempListArray = this.filteredValues;
-
-            event.target.complete();
-            this._cdr.detectChanges();
         }
-
-        // to calculate the count on each status
-        // this.draftPurchase$ = this.purchases$.pipe(
-        //     map((arr: any) => arr.filter((f) => f.status === 'D'))
-        // );
-        // this.fullfilledPurchase$ = this.purchases$.pipe(
-        //     map((arr: any) => arr.filter((f) => f.status === 'C'))
-        // );
-        this.calculateSumTotals();
-        this.tabIndex = 0;
-        this._cdr.markForCheck();
     }
 
     goPurchaseEditScreen(item) {
@@ -417,7 +433,8 @@ export class SearchPurchaseOrderPage implements OnInit {
     reloadSearch() {
         // patch it up with from & to date, via patch value
         console.log(this.submitForm.value);
-
+        this.offset = 0;
+        this.is_loaded = false;
         this.search('');
     }
 
@@ -432,6 +449,7 @@ export class SearchPurchaseOrderPage implements OnInit {
         this.submitForm.patchValue({
             from_date: moment(event.target.value).format('YYYY-MM-DD'),
         });
+
         this.reloadSearch();
     }
 
@@ -444,6 +462,7 @@ export class SearchPurchaseOrderPage implements OnInit {
     }
 
     dateFilter(value: number) {
+        this.ScrollToTop();
         this.searchByDays = value;
         const dateOffset = 24 * 60 * 60 * 1000 * this.searchByDays;
         this.from_date = new Date(this.minDate.getTime() - dateOffset);
@@ -451,13 +470,18 @@ export class SearchPurchaseOrderPage implements OnInit {
             from_date: this.from_date,
         });
         this.offset = 0;
-        this._cdr.detectChanges();
 
+        this.is_loaded = false;
         this.search('');
+        this._cdr.detectChanges();
     }
 
     customDateFilter() {
         this.isCustomDateFilter = !this.isCustomDateFilter;
+
+        if (!this.isCustomDateFilter) {
+            this.dateFilter(7);
+        }
     }
 
     async exportCompletedPurchaseToExcel() {
@@ -648,6 +672,7 @@ export class SearchPurchaseOrderPage implements OnInit {
                 invoice_no: result,
             });
             this.offset = 0;
+            this.is_loaded = false;
             this.search('');
         });
     }
@@ -665,6 +690,7 @@ export class SearchPurchaseOrderPage implements OnInit {
             });
             this.orderDefaultFlag = 'desc';
         }
+        this.is_loaded = false;
         this.search('');
     }
 
@@ -681,15 +707,35 @@ export class SearchPurchaseOrderPage implements OnInit {
             });
             this.orderDefaultFlag = 'desc';
         }
+        this.is_loaded = false;
         this.search('');
     }
+
+    // doInfinite(ev: any) {
+    //     console.log('scrolled down!!', ev);
+
+    //     this.offset += 20;
+
+    //     this.search(ev);
+    // }
 
     doInfinite(ev: any) {
         console.log('scrolled down!!', ev);
 
         this.offset += 20;
 
-        this.search(ev);
+        if (
+            this.full_count !== undefined &&
+            this.filteredValues !== undefined &&
+            this.full_count > this.filteredValues.length
+        ) {
+            this.is_loaded = false;
+            this.search(ev);
+        } else {
+            this.all_caught_up = 'You have reached the end of the list';
+            ev.target.complete();
+            this._cdr.detectChanges();
+        }
     }
 
     vendorInfoPage(item) {
@@ -701,5 +747,15 @@ export class SearchPurchaseOrderPage implements OnInit {
 
     vendorSearchReset() {
         this.clearInput();
+    }
+
+    ScrollToTop() {
+        if (this.content !== undefined) {
+            this.content.scrollToTop(500);
+        }
+    }
+
+    logScrolling(event) {
+        // do nothing
     }
 }

@@ -108,7 +108,7 @@ export class HeaderComponent implements OnInit {
             .subscribe((data: any) => {
                 this.isLoading = false;
 
-                this.product_lis = data.body;
+                this.product_lis = data.body.result;
 
                 this._cdr.markForCheck();
             });

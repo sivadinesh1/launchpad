@@ -53,6 +53,7 @@ import { User } from '../../models/User';
 
 import { ChangeDetectionStrategy } from '@angular/core';
 import { InventoryReportsDialogComponent } from '../../components/reports/inventory-reports-dialog/inventory-reports-dialog.component';
+import { LoadingService } from 'src/app/services/loading.service';
 @Component({
     selector: 'app-purchase-order',
     templateUrl: './purchase-order.page.html',
@@ -68,6 +69,8 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
     @ViewChild('newRow', { static: true }) new_row: any;
     @ViewChild('Qty', { static: true }) quantity: any;
     @ViewChild('invNo', { static: false }) inputEl: ElementRef;
+    @ViewChild('noOfBoxes', { static: false }) noOfBoxesEl: ElementRef;
+
     @ViewChild('typeHead1', { read: MatAutocompleteTrigger })
     autoTrigger1: MatAutocompleteTrigger;
     @ViewChild('order_no', { static: false }) order_noEl: ElementRef;
@@ -166,7 +169,8 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         private _commonApiService: CommonApiService,
         private _fb: FormBuilder,
         private spinner: NgxSpinnerService,
-        private _cdr: ChangeDetectorRef
+        private _cdr: ChangeDetectorRef,
+        private _loadingService: LoadingService
     ) {
         this.user_data$ = this._authService.currentUser;
         this.user_data$
@@ -347,9 +351,9 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             invoice_date: new FormControl(null, Validators.required),
             order_no: new FormControl(''),
             order_date: new FormControl(''),
-            lr_no: new FormControl(''),
-            lr_date: new FormControl(''),
-            no_of_boxes: new FormControl(0),
+            lr_no: new FormControl('', Validators.required),
+            lr_date: new FormControl(null, Validators.required),
+            no_of_boxes: new FormControl('', Validators.required),
             received_date: new FormControl(''),
             no_of_items: new FormControl(0),
             total_quantity: new FormControl(0),
@@ -428,7 +432,10 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             this.v_list && this.v_list.nativeElement.focus();
 
-            if (this.raw_purchase_data[0] !== undefined) {
+            if (
+                this.raw_purchase_data !== undefined &&
+                this.raw_purchase_data[0] !== undefined
+            ) {
                 if (this.raw_purchase_data[0].id !== 0) {
                     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                     this.plist && this.plist.nativeElement.focus();
@@ -881,12 +888,21 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
     validateForms() {
         if (this.submitForm.value.invoice_no === null) {
             this.inputEl.nativeElement.focus();
-            this.presentAlert('Enter Invoice number!');
+
+            this._loadingService.openSnackBar(
+                'Enter Invoice number!',
+                '',
+                'mat-warn'
+            );
             return false;
         }
 
         if (this.submitForm.value.invoice_date == null) {
-            this.presentAlert('Enter Invoice Date!');
+            this._loadingService.openSnackBar(
+                'Enter Invoice Date!',
+                '',
+                'mat-warn'
+            );
             return false;
         }
 
@@ -894,7 +910,11 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             this.submitForm.value.received_date === '' ||
             this.submitForm.value.received_date === null
         ) {
-            this.presentAlert('Enter Received Date!');
+            this._loadingService.openSnackBar(
+                'Enter Received Date!',
+                '',
+                'mat-warn'
+            );
             return false;
         }
 
@@ -905,7 +925,12 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
         ) {
             if (this.submitForm.value.order_no === '') {
                 this.order_noEl.nativeElement.focus();
-                this.presentAlert('Order Date without Order # not allowed');
+
+                this._loadingService.openSnackBar(
+                    'Order Date without Order # not allowed',
+                    '',
+                    'mat-warn'
+                );
                 return false;
             }
 
@@ -913,9 +938,12 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                 this.submitForm.value.order_date >
                 this.submitForm.value.invoice_date
             ) {
-                this.presentAlert(
-                    'Order date cannot be less than Invoice date'
+                this._loadingService.openSnackBar(
+                    'Order date cannot be less than Invoice date',
+                    '',
+                    'mat-warn'
                 );
+
                 return false;
             }
         }
@@ -925,16 +953,38 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             this.submitForm.value.lr_date !== ''
         ) {
             if (this.submitForm.value.lr_no === '') {
-                this.presentAlert('Lr Date without Lr # not allowed');
+                this._loadingService.openSnackBar(
+                    'Lr Date without Lr # not allowed',
+                    '',
+                    'mat-warn'
+                );
                 return false;
             }
             if (
                 this.submitForm.value.lr_date <
                 this.submitForm.value.invoice_date
             ) {
-                this.presentAlert('Lr date should be after Invoice date');
+                this._loadingService.openSnackBar(
+                    'Lr date should be after Invoice date',
+                    '',
+                    'mat-warn'
+                );
                 return false;
             }
+        }
+
+        if (
+            this.submitForm.value.no_of_boxes === '' ||
+            this.submitForm.value.no_of_boxes === null
+        ) {
+            this.noOfBoxesEl.nativeElement.focus();
+
+            this._loadingService.openSnackBar(
+                '# of boxes is required',
+                '',
+                'mat-warn'
+            );
+            return false;
         }
 
         return true;
@@ -958,16 +1008,31 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
 
     onSubmit(action) {
         if (this.listArr.length === 0) {
-            return this.presentAlert('No products added to save!');
+            this._loadingService.openSnackBar(
+                'No products added to save!',
+                '',
+                'mat-warn'
+            );
+            return false;
         }
 
         if (this.listArr.length > 0) {
             if (this.checkErrors()) {
-                return this.presentAlert('Fix errors in products quantity !');
+                this._loadingService.openSnackBar(
+                    'Fix errors in products quantity !',
+                    '',
+                    'mat-warn'
+                );
+                return false;
             }
 
             if (this.check_pp_errors()) {
-                return this.presentAlert('Fix errors in purchase price !');
+                this._loadingService.openSnackBar(
+                    'Fix errors in purchase price !',
+                    '',
+                    'mat-warn'
+                );
+                return false;
             }
 
             if (this.validateForms()) {

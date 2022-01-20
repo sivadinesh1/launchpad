@@ -38,6 +38,7 @@ import * as xlsx from 'xlsx';
 import { Sale } from '../../models/Sale';
 import { AuthenticationService } from '../../services/authentication.service';
 import { CommonApiService } from '../../services/common-api.service';
+import { IonContent } from '@ionic/angular';
 
 @Component({
     selector: 'app-search-sale-order',
@@ -50,6 +51,7 @@ export class SearchSaleOrderPage implements OnInit {
     @ViewChild('menuTriggerN', { static: true }) menuTriggerN: any;
     @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
     @ViewChild('auto') matAutocomplete: MatAutocomplete;
+    @ViewChild(IonContent, { static: false }) content: IonContent;
 
     @ViewChild(SearchCustomersComponent) child: SearchCustomersComponent;
 
@@ -125,8 +127,8 @@ export class SearchSaleOrderPage implements OnInit {
 
     isCustomDateFilter = false;
 
-    filter_from_date: any;
-    filter_to_date: any;
+    // filter_from_date: any;
+    // filter_to_date: any;
 
     dateFrom: any = new Date();
     dateTo: any = new Date();
@@ -208,6 +210,8 @@ export class SearchSaleOrderPage implements OnInit {
         this.offset = 0;
         this.searchCustomers();
         this.isSelectedColumn('Date');
+        this.isCustomDateFilter = false;
+        this.dateFilter(7);
         this.is_loaded = false;
         this.search('');
         this._cdr.markForCheck();
@@ -309,81 +313,95 @@ export class SearchSaleOrderPage implements OnInit {
     }
 
     dateFilter(value: number) {
+        this.ScrollToTop();
         this.searchByDays = value;
         const dateOffset = 24 * 60 * 60 * 1000 * this.searchByDays;
         this.from_date = new Date(this.minDate.getTime() - dateOffset);
         this.submitForm.patchValue({
             from_date: this.from_date,
         });
-
-        this._cdr.detectChanges();
+        this.offset = 0;
         this.is_loaded = false;
+        this._cdr.detectChanges();
         this.search('');
     }
 
     customDateFilter() {
         this.isCustomDateFilter = !this.isCustomDateFilter;
+
+        if (!this.isCustomDateFilter) {
+            this.dateFilter(7);
+        }
     }
 
     async search(event) {
-        this.sales$ = this._commonApiService.searchSales({
-            center_id: this.user_data.center_id,
-            customer_id: this.submitForm.value.customer_id,
-            status: this.submitForm.value.status,
-            from_date: this.submitForm.value.from_date,
-            to_date: this.submitForm.value.to_date,
-            invoice_type: 'GI',
+        try {
+            this.sales$ = this._commonApiService.searchSales({
+                center_id: this.user_data.center_id,
+                customer_id: this.submitForm.value.customer_id,
+                status: this.submitForm.value.status,
+                from_date: this.submitForm.value.from_date,
+                to_date: this.submitForm.value.to_date,
+                invoice_type: 'GI',
 
-            invoice_no: this.submitForm.value.invoice_no,
-            order: this.submitForm.value.order,
-            offset: this.offset,
-            length: this.length,
-        });
+                invoice_no: this.submitForm.value.invoice_no,
+                order: this.submitForm.value.order,
+                offset: this.offset,
+                length: this.length,
+            });
 
-        this.filteredSales$ = this.sales$;
+            this.filteredSales$ = this.sales$;
 
-        const value = await lastValueFrom(this.filteredSales$);
+            const value = await lastValueFrom(this.filteredSales$);
 
-        if (event === '') {
-            this.full_count = value.full_count;
-            this.tempListArray = value.result;
-            if (this.submitForm.value.status === 'C') {
-                this.filteredValues = value.result.filter(
-                    (data: any) => data.status === 'C'
-                );
-            } else if (this.submitForm.value.status === 'D') {
-                this.filteredValues = value.result.filter(
-                    (data: any) => data.status === 'D'
-                );
+            if (event === '') {
+                this.full_count = value.full_count;
+                this.tempListArray = value.result;
+                if (this.submitForm.value.status === 'C') {
+                    this.filteredValues = value.result.filter(
+                        (data: any) => data.status === 'C'
+                    );
+                } else if (this.submitForm.value.status === 'D') {
+                    this.full_count = value.full_count;
+                    this.filteredValues = value.result.filter(
+                        (data: any) => data.status === 'D'
+                    );
+                } else {
+                    this.filteredValues = value.result;
+                }
             } else {
-                this.filteredValues = value.result;
+                this.full_count = value.full_count;
+
+                if (this.submitForm.value.status === 'C') {
+                    this.filteredValues = this.tempListArray.concat(
+                        value.result.filter((data: any) => data.status === 'C')
+                    );
+                } else if (this.submitForm.value.status === 'D') {
+                    this.filteredValues = this.tempListArray.concat(
+                        value.result.filter((data: any) => data.status === 'D')
+                    );
+                } else {
+                    this.filteredValues = this.tempListArray.concat(
+                        value.result
+                    );
+                }
+
+                this.tempListArray = this.filteredValues;
+
+                event.target.complete();
+                this._cdr.detectChanges();
             }
-        } else {
-            this.full_count = value.full_count;
 
-            if (this.submitForm.value.status === 'C') {
-                this.filteredValues = this.tempListArray.concat(
-                    value.result.filter((data: any) => data.status === 'C')
-                );
-            } else if (this.submitForm.value.status === 'D') {
-                this.filteredValues = this.tempListArray.concat(
-                    value.result.filter((data: any) => data.status === 'D')
-                );
-            } else {
-                this.filteredValues = this.tempListArray.concat(value.result);
-            }
+            this.is_loaded = true;
 
-            this.tempListArray = this.filteredValues;
-
-            event.target.complete();
-            this._cdr.detectChanges();
+            this.calculateSumTotals();
+            this.tabIndex = 1;
+            this._cdr.markForCheck();
+        } catch (error) {
+            throw new Error(
+                `error :: addPurchase purchase.repo.js ` + error.message
+            );
         }
-
-        this.is_loaded = true;
-
-        this.calculateSumTotals();
-        this.tabIndex = 1;
-        this._cdr.markForCheck();
     }
 
     goSalesEditScreen(item) {
@@ -630,6 +648,7 @@ export class SearchSaleOrderPage implements OnInit {
     reloadSearch() {
         // patch it up with from & to date, via patch value
 
+        this.offset = 0;
         this.is_loaded = false;
         this.search('');
     }
@@ -864,6 +883,10 @@ export class SearchSaleOrderPage implements OnInit {
         }
     }
 
+    logScrolling(event) {
+        // do nothing
+    }
+
     // doInfinite(ev: any) {
     //     console.log('scrolled down!!', ev);
 
@@ -884,6 +907,12 @@ export class SearchSaleOrderPage implements OnInit {
             this.all_caught_up = 'You have reached the end of the list';
             ev.target.complete();
             this._cdr.detectChanges();
+        }
+    }
+
+    ScrollToTop() {
+        if (this.content !== undefined) {
+            this.content.scrollToTop(500);
         }
     }
 }

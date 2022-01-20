@@ -233,6 +233,76 @@
                             ></mat-datepicker>
                         </mat-form-field>
                     </div>
+                    <div>
+                        <mat-form-field
+                            *ngIf="vendor_selected"
+                            style="width: 300px"
+                        >
+                            <mat-label>Lr #</mat-label>
+                            <input
+                                matInput
+                                type="text"
+                                tabindex="10"
+                                required
+                                formControlName="lr_no"
+                                appSelectOnFocus
+                                autocomplete="off"
+                            />
+
+                            <mat-error
+                                *ngIf="(submitForm.get('lr_no').hasError('required') || submitForm.get('lr_no').hasError('patternInvalid'))  && submitForm.get('lr_no').touched"
+                            >
+                                Invalid (or) Missing entry
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <mat-form-field
+                            *ngIf="vendor_selected"
+                            style="width: 148px"
+                        >
+                            <mat-label>Lr date</mat-label>
+                            <input
+                                matInput
+                                readonly
+                                required
+                                tabindex="11"
+                                [matDatepicker]="picker_lr"
+                                (focus)="picker_lr.open()"
+                                formControlName="lr_date"
+                                [max]="maxDate"
+                                autocomplete="off"
+                            />
+                            <mat-datepicker-toggle
+                                tabindex="-1"
+                                matSuffix
+                                [for]="picker_lr"
+                            ></mat-datepicker-toggle>
+                            <mat-datepicker
+                                tabindex="-1"
+                                #picker_lr
+                            ></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <mat-form-field
+                            *ngIf="vendor_selected"
+                            style="width: 148px"
+                        >
+                            <mat-label># of Boxes</mat-label>
+                            <input
+                                matInput
+                                required
+                                #noOfBoxes
+                                tabindex="12"
+                                type="number"
+                                formControlName="no_of_boxes"
+                                appSelectOnFocus
+                                autocomplete="off"
+                                autocomplete="off"
+                            />
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
         </div>
@@ -839,7 +909,7 @@
                     <div class="purchase-wrap1"></div>
                 </div>
             </mat-tab>
-            <mat-tab label="Additional Cost" *ngIf="vendor_selected">
+            <mat-tab label="Additional Info" *ngIf="vendor_selected">
                 <div
                     style="
                         display: grid;
@@ -909,48 +979,8 @@
                                 ></mat-datepicker>
                             </mat-form-field>
                         </div>
-                        <div>
-                            <mat-form-field style="width: 200px">
-                                <mat-label>Lr #</mat-label>
-                                <input
-                                    matInput
-                                    type="text"
-                                    tabindex="11"
-                                    formControlName="lr_no"
-                                    appSelectOnFocus
-                                    autocomplete="off"
-                                />
-
-                                <mat-error
-                                    *ngIf="(submitForm.get('lr_no').hasError('required') || submitForm.get('lr_no').hasError('patternInvalid'))  && submitForm.get('lr_no').touched"
-                                >
-                                    Invalid (or) Missing entry
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
-                        <div>
-                            <mat-form-field style="width: 180px">
-                                <mat-label>Lr date</mat-label>
-                                <input
-                                    matInput
-                                    readonly
-                                    [matDatepicker]="picker_lr"
-                                    (focus)="picker_lr.open()"
-                                    formControlName="lr_date"
-                                    [max]="maxDate"
-                                    autocomplete="off"
-                                />
-                                <mat-datepicker-toggle
-                                    tabindex="-1"
-                                    matSuffix
-                                    [for]="picker_lr"
-                                ></mat-datepicker-toggle>
-                                <mat-datepicker
-                                    tabindex="-1"
-                                    #picker_lr
-                                ></mat-datepicker>
-                            </mat-form-field>
-                        </div>
+                        <div></div>
+                        <div></div>
                     </div>
 
                     <div
@@ -972,19 +1002,7 @@
                         >
                             OTHER COST(S)
                         </div>
-                        <div>
-                            <mat-form-field style="width: 180px">
-                                <mat-label># of Boxes</mat-label>
-                                <input
-                                    matInput
-                                    type="number"
-                                    formControlName="no_of_boxes"
-                                    appSelectOnFocus
-                                    autocomplete="off"
-                                    autocomplete="off"
-                                />
-                            </mat-form-field>
-                        </div>
+                        <div>&nbsp;</div>
                         <div>
                             <mat-form-field style="width: 180px">
                                 <mat-label>Transportation Cost</mat-label>

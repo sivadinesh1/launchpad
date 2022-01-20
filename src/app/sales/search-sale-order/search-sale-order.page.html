@@ -1,8 +1,8 @@
-<ion-content>
-    <div class="search-sale-header sticky" style="padding: 1rem">
-        <div>All Sale Orders</div>
+<ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
+    <div class="search-sale-header sso-sticky" style="padding: 1rem">
+        <div>SALE ORDERS</div>
 
-        <div class="full-download" style="align-self: center">
+        <div class="full-download" style="display: flex; align-self: center">
             <button
                 style="border-radius: 0px"
                 appPreventDoubleClick
@@ -17,9 +17,17 @@
                 <mat-icon>cloud_download</mat-icon>
                 &nbsp;Download
             </button>
+            <span
+                class="btn-grad add-btn"
+                style="padding-right: 1rem; margin-left: 1rem"
+                (click)="goSalesAddScreen()"
+            >
+                <mat-icon class="add-icon">add</mat-icon>
+                <span style="padding: 5px">Add Sale</span>
+            </span>
         </div>
     </div>
-    <div class="search-bar-sales sticky1">
+    <div class="search-bar-sales sso-sticky1">
         <div>
             <img
                 src="/assets/images/svg/refresh.svg"
@@ -153,7 +161,7 @@
         </div>
     </div>
 
-    <div class="header header-style sticky2">
+    <div class="header header-style sso-sticky2">
         <div class="column-item" style="padding-left: 0.5rem">#</div>
 
         <div
@@ -194,7 +202,11 @@
     >
         <div style="padding-left: 0.5rem">{{idx + 1}}</div>
         <div class="item">{{item.invoice_date | date:'d-M-yyyy' }}</div>
-        <div class="item link-it" (click)="openDialog(item)">
+        <div
+            class="item link-it"
+            style="cursor: pointer; color: blue"
+            (click)="openDialog(item)"
+        >
             {{item.invoice_no}}
         </div>
         <div class="item">{{item.customer_name}}</div>
@@ -302,6 +314,9 @@ DnD - sample vertical menu
             (click)="dateFilter(14)"
         >
             <span>Last 14 days</span>
+        </div>
+        <div mat-menu-item class="mat-menu-line-height" (click)="dateFilter(0)">
+            <span>Today</span>
         </div>
         <div
             mat-menu-item

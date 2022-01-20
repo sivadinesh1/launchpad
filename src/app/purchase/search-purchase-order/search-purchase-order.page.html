@@ -1,8 +1,8 @@
-<ion-content>
+<ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
     <div class="search-purchase-header sticky" style="padding: 1rem">
-        <div>All Purchase Orders</div>
+        <div>PURCHASE ORDERS</div>
 
-        <div class="full-download" style="align-self: center">
+        <div class="full-download" style="display: flex; align-self: center">
             <button
                 style="border-radius: 0px"
                 appPreventDoubleClick
@@ -18,6 +18,15 @@
                 <mat-icon>cloud_download</mat-icon>
                 &nbsp;Download
             </button>
+
+            <span
+                class="btn-grad add-btn"
+                style="padding-right: 1rem; margin-left: 1rem"
+                (click)="goPurchaseAddScreen()"
+            >
+                <mat-icon class="add-icon">add</mat-icon>
+                <span style="padding: 5px">Add Purchase</span>
+            </span>
         </div>
     </div>
     <div class="search-bar-purchase sticky1">
@@ -153,17 +162,21 @@
             </app-ascending>
         </div>
         <div class="column-item">PO #</div>
-        <div class="column-item">Vendor Name</div>
+        <div class="column-item" style="padding-left: 10px">Vendor Name</div>
 
         <div class="column-item txt-left-align">LR #</div>
-
+        <div class="column-item txt-right-align"># Boxes</div>
         <div class="column-item txt-right-align">Items</div>
         <div class="column-item txt-right-align">Net Total</div>
+        <div>&nbsp;</div>
     </div>
     <div *ngIf="filteredValues?.length === 0" class="no-records-found">
         No records found
     </div>
-    <div *ngFor="let item of filteredValues; let idx = index" class="listItem">
+    <div
+        *ngFor="let item of filteredValues; let idx = index"
+        class="spo-listItem"
+    >
         <div>{{idx + 1}}</div>
 
         <div class="item">{{item.received_date | date:'d-M-yyyy' }}</div>
@@ -176,16 +189,31 @@
             {{item.invoice_no}}
         </div>
 
-        <div class="item">{{item.vendor_name}}</div>
+        <div class="item" style="padding-left: 10px">{{item.vendor_name}}</div>
 
         <div class="item" style="text-align: left; padding-left: 10px">
             {{item.lr_no}}
         </div>
-
+        <div class="item" style="text-align: right">{{item.no_of_boxes}}</div>
         <div class="item" style="text-align: right">{{item.no_of_items}}</div>
 
         <div class="item" style="text-align: right">
             {{item.net_total.toLocaleString('en-IN')}}
+        </div>
+        <div
+            class="more a-link"
+            style="margin-left: 16px"
+            (click)="goPurchaseEditScreen(item)"
+        >
+            <mat-icon
+                #tooltip="matTooltip"
+                matTooltip="Edit"
+                matTooltipClass="tooltip"
+                color="primary"
+                (mousedown)="tooltip.hide()"
+                [ngStyle]="{ cursor: 'pointer' }"
+                >edit
+            </mat-icon>
         </div>
     </div>
 
@@ -200,6 +228,9 @@
             (click)="dateFilter(14)"
         >
             <span>Last 14 days</span>
+        </div>
+        <div mat-menu-item class="mat-menu-line-height" (click)="dateFilter(0)">
+            <span>Today</span>
         </div>
         <div
             mat-menu-item
@@ -221,6 +252,73 @@
             By Purchase Invoice #
         </div>
     </mat-menu> -->
+
+    <ng-container *ngIf="!is_loaded">
+        <ion-item *ngFor="let fake of _helperUtilsService.generateFake(20)">
+            <div
+                style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 100px 100px;
+                    width: 100%;
+                    gap: 10px;
+                    padding: 10px;
+                "
+            >
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 150px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 100px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 150px"
+                        ></ion-skeleton-text>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 100px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+                <div>
+                    <ion-label text-wrap>
+                        <ion-skeleton-text
+                            animated
+                            style="width: 120px"
+                        ></ion-skeleton-text>
+                    </ion-label>
+                </div>
+            </div>
+        </ion-item>
+    </ng-container>
+
+    <ng-container *ngIf="this.all_caught_up !== '' ">
+        <span class="all_caught_up"> {{this.all_caught_up}} </span>
+    </ng-container>
 
     <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
         <ion-infinite-scroll-content

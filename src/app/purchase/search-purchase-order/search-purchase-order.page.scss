@@ -22,17 +22,17 @@
 }
 
 .header,
-.listItem,
+.spo-listItem,
 .headerRow {
     display: grid;
-    grid-template-columns: 30px 100px 180px 240px 160px 70px 110px;
+    grid-template-columns: 30px 100px 180px 260px 160px 70px 70px 110px 80px;
     align-items: center;
     padding: 8px 1rem;
     width: 96%;
     margin: 0 auto;
 }
 
-.listItem:hover {
+.spo-listItem:hover {
     background-color: #f5f5f5;
     opacity: 1;
 }
@@ -56,9 +56,19 @@
     height: 42px;
 }
 
-.listItem {
+.spo-listItem {
     background-color: #fff;
     border-bottom: 1px solid #f2f2f2;
+}
+
+.spo-listItem:hover .more {
+    display: block;
+}
+
+.more {
+    background-color: #fff;
+    display: none;
+    text-align: center;
 }
 
 .title-row {
@@ -184,8 +194,7 @@
 }
 
 .filter_date_range {
-    width: 210px !important;
-
+    width: 240px;
     display: flex;
     justify-content: space-between;
     padding: 0 16px 0 28px;
@@ -201,10 +210,10 @@
 .search-purchase-header {
     display: flex;
     justify-content: space-between;
-    padding: 1rem;
-    font-size: 1.5rem;
+    padding: 1rem 1rem 2rem 1rem !important;
+    font-size: 1.2rem;
     letter-spacing: 1px;
-    font-weight: 500;
+    font-weight: 600;
     background-color: #fff;
 }
 

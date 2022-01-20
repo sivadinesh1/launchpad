@@ -66,11 +66,7 @@ export class LeftMenuComponent {
                     link: '/home/view-customers',
                     icon: '/assets/images/svg/money.svg',
                 },
-                {
-                    name: 'Receivables',
-                    link: '/home/payments',
-                    icon: '/assets/images/svg/money.svg',
-                },
+
                 {
                     name: 'Statements',
                     link: '/home/customer-accounts-statement',

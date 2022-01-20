@@ -142,7 +142,6 @@ export class ViewProductsPage implements OnInit {
     getData(search_text, offset, length, event) {
         this._commonApiService
             .getProductInfo({
-                center_id: this.center_id,
                 search_text: search_text.trim(),
                 offset,
                 length,

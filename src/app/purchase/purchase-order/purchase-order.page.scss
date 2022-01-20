@@ -280,3 +280,15 @@
 .example-item {
     height: 50px;
 }
+
+.po-sticky {
+    // position: sticky;
+    // top: 0px;
+    // z-index: 1;
+    position: -webkit-sticky !important; // for safari
+    position: sticky !important;
+    top: 0;
+    align-self: flex-start;
+    height: auto;
+    z-index: 1;
+}

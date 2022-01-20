@@ -178,9 +178,9 @@
     display: flex;
     justify-content: space-between;
     padding: 1rem;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     letter-spacing: 1px;
-    font-weight: 500;
+    font-weight: 600;
     background-color: #fff;
     width: 96%;
     margin: 0 auto;
@@ -208,18 +208,18 @@
     cursor: pointer;
 }
 
-.sticky {
+.sso-sticky {
     position: sticky;
     top: -10px;
     z-index: 1;
 }
 
-.sticky1 {
+.sso-sticky1 {
     position: sticky;
     top: 45px;
     z-index: 1;
 }
-.sticky2 {
+.sso-sticky2 {
     position: sticky;
     top: 100px;
     z-index: 1;
