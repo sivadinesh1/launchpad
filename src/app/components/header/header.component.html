@@ -110,7 +110,7 @@
                                 <mat-option
                                     *ngIf="isLoading"
                                     class="is-loading"
-                                    style="width: 380px"
+                                    style="width: 550px"
                                 >
                                     <mat-spinner diameter="20"></mat-spinner>
                                 </mat-option>
@@ -142,12 +142,17 @@
                                                 <div
                                                     style="
                                                         font-size: 15px;
-                                                        padding: 2px;
+                                                        padding: 4px 2px;
                                                         line-height: 1em;
                                                     "
                                                 >
-                                                    {{ product.product_code }}
-                                                    &nbsp;&nbsp;
+                                                    <span>
+                                                        {{
+                                                            product.product_code
+                                                        }}
+                                                        &nbsp;&nbsp;
+                                                    </span>
+
                                                     <span
                                                         style="font-weight: 600"
                                                     >

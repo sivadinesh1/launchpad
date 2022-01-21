@@ -6,128 +6,243 @@
 </div> -->
 
 <div
-	style="
-		width: 500px;
-		background-color: #fff;
-		box-shadow: 0px 0px 9px -5px rgb(0 0 0 / 70%);
-		display: flex;
-		position: fixed;
-		justify-content: space-between;
-		align-items: center;
-		z-index: 2;
-		top: -1px;
-		padding: 1rem;
-		font-weight: 500;
-	"
+    style="
+        width: 500px;
+        background-color: #fff;
+        box-shadow: 0px 0px 9px -5px rgb(0 0 0 / 70%);
+        display: flex;
+        position: fixed;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 2;
+        top: -1px;
+        padding: 1rem;
+        font-weight: 500;
+    "
 >
-	<div style="font-weight: 600; font-size: 16px">Edit Customer Details</div>
-	<div>
-		<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="16px" height="16px" />
-	</div>
+    <div style="font-weight: 600; font-size: 16px">Edit Customer Details</div>
+    <div>
+        <img
+            class="cursor"
+            src="/assets/images/svg/close.svg"
+            (click)="close()"
+            width="16px"
+            height="16px"
+        />
+    </div>
 </div>
 
 <div class="content">
-	<form class="myForm" [formGroup]="submitForm">
-		<div class="customer-info">
-			<div style="padding: 0px 6px">
-				<mat-form-field class="mat-width-ext">
-					<mat-label>Name</mat-label>
-					<input matInput (blur)="isCustomerExists()" formControlName="name" required autocomplete="off" />
-					<mat-error>This field is required</mat-error>
-					<mat-hint *ngIf="cexists" class="error">Already Exists</mat-hint>
-				</mat-form-field>
-				<!-- <div *ngIf="cexists" class="error">Already Exists</div> -->
-			</div>
+    <form class="myForm" *ngIf="submitForm" [formGroup]="submitForm">
+        <div class="customer-info">
+            <div style="padding: 0px 6px">
+                <mat-form-field class="mat-width-ext">
+                    <mat-label>Name</mat-label>
+                    <input
+                        matInput
+                        (blur)="isCustomerExists()"
+                        formControlName="name"
+                        required
+                        autocomplete="off"
+                    />
+                    <mat-error>This field is required</mat-error>
+                    <mat-hint *ngIf="cexists" class="error"
+                        >Already Exists</mat-hint
+                    >
+                </mat-form-field>
+                <!-- <div *ngIf="cexists" class="error">Already Exists</div> -->
+            </div>
 
-			<div style="padding: 0px 6px">
-				<mat-form-field class="mat-width-ext">
-					<mat-label>GST (Optional)</mat-label>
-					<input type="text" matInput formControlName="gst" autocomplete="off" />
-				</mat-form-field>
-			</div>
-			<div>
-				<div style="background-color: aliceblue; padding: 6px">BILLING ADDRESS</div>
-				<div class="address1" style="padding-top: 10px; padding-left: 6px">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Address Line 1</mat-label>
-						<input matInput formControlName="address1" required autocomplete="off" />
-					</mat-form-field>
-				</div>
-				<div class="address2" style="padding: 0px 6px">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Address Line 2</mat-label>
-						<input matInput formControlName="address2" required autocomplete="off" />
-					</mat-form-field>
-				</div>
+            <div style="padding: 0px 6px">
+                <mat-form-field class="mat-width-ext">
+                    <mat-label>GST (Optional)</mat-label>
+                    <input
+                        type="text"
+                        matInput
+                        formControlName="gst"
+                        autocomplete="off"
+                    />
+                </mat-form-field>
+            </div>
+            <div>
+                <div style="background-color: aliceblue; padding: 6px">
+                    BILLING ADDRESS
+                </div>
+                <div
+                    class="address1"
+                    style="padding-top: 10px; padding-left: 6px"
+                >
+                    <mat-form-field class="mat-width-ext">
+                        <mat-label>Address Line 1</mat-label>
+                        <input
+                            matInput
+                            formControlName="address1"
+                            required
+                            autocomplete="off"
+                        />
+                    </mat-form-field>
+                </div>
+                <div class="address2" style="padding: 0px 6px">
+                    <mat-form-field class="mat-width-ext">
+                        <mat-label>Address Line 2</mat-label>
+                        <input
+                            matInput
+                            formControlName="address2"
+                            required
+                            autocomplete="off"
+                        />
+                    </mat-form-field>
+                </div>
 
-				<div class="district" style="padding: 0px 6px">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>District</mat-label>
-						<input matInput formControlName="district" required autocomplete="off" />
-					</mat-form-field>
-				</div>
-				<div style="display: grid; grid-gap: 16px; grid-template-columns: 1fr 1fr; padding: 0px 6px">
-					<div class="state">
-						<mat-form-field class="mat-width-ext">
-							<mat-label>State</mat-label>
-							<mat-select formControlName="state_id" required>
-								<mat-option *ngFor="let item of statesdata" [value]="item.id">
-									{{ item.description }}
-								</mat-option>
-							</mat-select>
-						</mat-form-field>
-					</div>
+                <div class="district" style="padding: 0px 6px">
+                    <mat-form-field class="mat-width-ext">
+                        <mat-label>District</mat-label>
+                        <input
+                            matInput
+                            formControlName="district"
+                            required
+                            autocomplete="off"
+                        />
+                    </mat-form-field>
+                </div>
+                <div
+                    style="
+                        display: grid;
+                        grid-gap: 16px;
+                        grid-template-columns: 1fr 1fr;
+                        padding: 0px 6px;
+                    "
+                >
+                    <div class="state">
+                        <mat-form-field class="mat-width-ext">
+                            <mat-label>State</mat-label>
+                            <mat-select formControlName="state_id">
+                                <mat-option
+                                    *ngFor="let item of statesdata$ | async"
+                                    [value]="item.id"
+                                >
+                                    {{ item.description }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
 
-					<div class="pin">
-						<mat-form-field class="mat-width-ext">
-							<mat-label>Pin</mat-label>
-							<input matInput formControlName="pin" required autocomplete="off" />
-						</mat-form-field>
-					</div>
-				</div>
-			</div>
+                        <!-- <mat-form-field class="mat-width-ext">
+                            <mat-label>State</mat-label>
+                            <mat-select formControlName="state_id" required>
+                                <mat-option
+                                    *ngFor="let item of statesdata$ | async"
+                                    [value]="item.id"
+                                >
+                                    {{ item.description }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field> -->
+                    </div>
 
-			<div>
-				<div style="background-color: aliceblue; padding: 6px">CONTACT INFO</div>
-				<div style="display: grid; grid-gap: 16px; grid-template-columns: 1fr 1fr; padding: 0px 6px">
-					<div style="padding-top: 10px">
-						<mat-form-field class="mat-width-ext">
-							<mat-label>Primary contact</mat-label>
-							<input type="number" matInput formControlName="mobile" required autocomplete="off" />
-						</mat-form-field>
-					</div>
+                    <div class="pin">
+                        <mat-form-field class="mat-width-ext">
+                            <mat-label>Pin</mat-label>
+                            <input
+                                matInput
+                                formControlName="pin"
+                                required
+                                autocomplete="off"
+                            />
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
 
-					<div style="padding-top: 10px">
-						<mat-form-field class="mat-width-ext">
-							<mat-label>Sec. Contact (Optional)</mat-label>
-							<input type="number" matInput formControlName="mobile2" autocomplete="off" />
-						</mat-form-field>
-					</div>
-				</div>
-				<div style="display: grid; grid-gap: 16px; grid-template-columns: 1fr 1fr; padding: 0px 6px">
-					<div>
-						<mat-form-field class="mat-width-ext">
-							<mat-label>Whatsapp (Optional)</mat-label>
-							<input type="number" matInput formControlName="whatsapp" autocomplete="off" />
-						</mat-form-field>
-					</div>
-					<div>
-						<mat-form-field class="mat-width-ext">
-							<mat-label>Landline (Optional)</mat-label>
-							<input type="number" matInput formControlName="phone" autocomplete="off" />
-						</mat-form-field>
-					</div>
-				</div>
-				<div style="padding: 0px 6px">
-					<mat-form-field class="mat-width-ext">
-						<mat-label>Email (Optional)</mat-label>
-						<input type="text" matInput formControlName="email" autocomplete="off" />
-					</mat-form-field>
-				</div>
-			</div>
-		</div>
-		<div style="text-align: center">
-			<button mat-raised-button color="primary" (click)="onSubmit()" type="button">Update Customer</button>
-		</div>
-	</form>
+            <div>
+                <div style="background-color: aliceblue; padding: 6px">
+                    CONTACT INFO
+                </div>
+                <div
+                    style="
+                        display: grid;
+                        grid-gap: 16px;
+                        grid-template-columns: 1fr 1fr;
+                        padding: 0px 6px;
+                    "
+                >
+                    <div style="padding-top: 10px">
+                        <mat-form-field class="mat-width-ext">
+                            <mat-label>Primary contact</mat-label>
+                            <input
+                                type="number"
+                                matInput
+                                formControlName="mobile"
+                                required
+                                autocomplete="off"
+                            />
+                        </mat-form-field>
+                    </div>
+
+                    <div style="padding-top: 10px">
+                        <mat-form-field class="mat-width-ext">
+                            <mat-label>Sec. Contact (Optional)</mat-label>
+                            <input
+                                type="number"
+                                matInput
+                                formControlName="mobile2"
+                                autocomplete="off"
+                            />
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div
+                    style="
+                        display: grid;
+                        grid-gap: 16px;
+                        grid-template-columns: 1fr 1fr;
+                        padding: 0px 6px;
+                    "
+                >
+                    <div>
+                        <mat-form-field class="mat-width-ext">
+                            <mat-label>Whatsapp (Optional)</mat-label>
+                            <input
+                                type="number"
+                                matInput
+                                formControlName="whatsapp"
+                                autocomplete="off"
+                            />
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <mat-form-field class="mat-width-ext">
+                            <mat-label>Landline (Optional)</mat-label>
+                            <input
+                                type="number"
+                                matInput
+                                formControlName="phone"
+                                autocomplete="off"
+                            />
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div style="padding: 0px 6px">
+                    <mat-form-field class="mat-width-ext">
+                        <mat-label>Email (Optional)</mat-label>
+                        <input
+                            type="text"
+                            matInput
+                            formControlName="email"
+                            autocomplete="off"
+                        />
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center">
+            <button
+                mat-raised-button
+                color="primary"
+                (click)="onSubmit()"
+                type="button"
+            >
+                Update Customer
+            </button>
+        </div>
+    </form>
 </div>

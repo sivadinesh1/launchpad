@@ -74,7 +74,6 @@ export class VendorAddDialogComponent implements OnInit {
             mobile: [
                 '',
                 Validators.compose([
-                    Validators.required,
                     PhoneValidator.invalidCountryPhone(country),
                 ]),
             ],

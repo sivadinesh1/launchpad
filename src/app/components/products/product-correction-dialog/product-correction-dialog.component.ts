@@ -38,7 +38,7 @@ export class ProductCorrectionDialogComponent implements OnInit {
 
     brands$: Observable<any>;
 
-    data: IProduct;
+    data: any;
 
     submitForm: FormGroup;
 
@@ -90,7 +90,7 @@ export class ProductCorrectionDialogComponent implements OnInit {
         });
 
         this._commonApiService
-            .getProductStockWithAllMRP(this.data.id)
+            .getProductStockWithAllMRP(this.data.product_id)
             .subscribe((data: any) => {
                 this.stock_list_array = data;
 

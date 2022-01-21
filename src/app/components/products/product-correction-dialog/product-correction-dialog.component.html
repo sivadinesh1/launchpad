@@ -1,5 +1,14 @@
-<div class="screenheader">
-    <div>Stock Adjustments</div>
+<div class="pcd-screen-header">
+    <div
+        style="
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #000;
+        "
+    >
+        STOCK ADJUSTMENT
+    </div>
     <div>
         <img
             class="cursor"
@@ -13,13 +22,34 @@
 
 <div class="content">
     <div style="padding: 0 0 1rem 0">
-        <div style="font-size: 13px; color: grey">Product Code</div>
-        <div style="font-size: 16px">
-            {{ this.data.product_code }}
+        <div>
+            <span style="font-size: 15px; font-weight: 600; color: #000">
+                Product Code :
+            </span>
+            <span
+                style="
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: rgba(0, 0, 0, 0.53);
+                "
+            >
+                {{ this.data.product_code }}
+            </span>
         </div>
-        <div style="font-size: 13px; color: grey">Item Description</div>
-        <div style="font-size: 16px">
-            {{ this.data.product_description }}
+
+        <div>
+            <span style="font-size: 15px; font-weight: 600; color: #000">
+                Item Description :
+            </span>
+            <span
+                style="
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: rgba(0, 0, 0, 0.53);
+                "
+            >
+                {{ this.data.product_description }}
+            </span>
         </div>
     </div>
     <div>

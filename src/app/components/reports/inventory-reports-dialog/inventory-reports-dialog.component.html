@@ -53,10 +53,11 @@
                 <tr class="ir-header">
                     <th style="text-align: left">Ref #</th>
                     <th style="text-align: left">Txn Date</th>
-                    <!-- <th style="text-align: left">Ref Date</th> -->
+
                     <th style="text-align: left">Customer/Vendor</th>
 
                     <th style="text-align: left">Txn Type</th>
+                    <th style="text-align: right">Mrp</th>
                     <th style="text-align: right">Txn Qty</th>
 
                     <th style="text-align: right">In Stock</th>
@@ -228,6 +229,13 @@
                         style="text-align: left"
                     >
                         Sale Return
+                    </td>
+
+                    <!-- cell 5 [[TXN  QTY]] -->
+                    <td style="text-align: right">
+                        <span>
+                            {{ item?.ih_mrp }}
+                        </span>
                     </td>
 
                     <!-- cell 5 [[TXN  QTY]] -->

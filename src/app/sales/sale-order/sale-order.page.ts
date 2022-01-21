@@ -86,6 +86,8 @@ import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
 })
 export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
     @ViewChild('orderNo', { static: false }) orderNoEl: ElementRef;
+    @ViewChild('selItemCode', { static: false }) selItemCode: ElementRef;
+
     @ViewChild('newRow', { static: true }) newRow: any;
     @ViewChildren('myCheckbox') myCheckboxes: QueryList<any>;
 
@@ -214,7 +216,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
         private spinner: NgxSpinnerService,
         private _cdr: ChangeDetectorRef
     ) {
-        this.basicInit();
+        // this.basicInit();
         this.user_data$ = this._authService.currentUser;
         this.user_data$
             .pipe(filter((data) => data !== null))
@@ -231,6 +233,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                 });
                 // param change
                 this._route.params.subscribe((params) => {
+                    this.basicInit();
                     this.submitForm.patchValue({
                         center_id: this.user_data.center_id,
                     });
@@ -2058,6 +2061,10 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                 if (this.p_list) {
                     this.p_list.nativeElement.focus();
                 }
+            }
+
+            if (this.selItemCode !== undefined) {
+                this.selItemCode.nativeElement.focus();
             }
         }
     }

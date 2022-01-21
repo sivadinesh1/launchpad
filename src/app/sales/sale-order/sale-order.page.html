@@ -19,9 +19,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr">
                 <div *ngIf="is_customer_selected">
                     <div style="height: 70px">
-                        <div *ngIf="this.sale_type !== 'SI'" class="label-text">
-                            Invoice #
-                        </div>
+                        <div *ngIf="this.sale_type !== 'SI'">Invoice #</div>
                         <div
                             *ngIf="this.sale_type !== 'SI'"
                             style="font-size: 18px; font-weight: 500"
@@ -41,7 +39,6 @@
                         </div>
                         <div
                             *ngIf="this.sale_type === 'SI' && this.mode === 'edit' && this.id !== '0' "
-                            class="label-text"
                         >
                             Stock Issue #
                         </div>
@@ -56,7 +53,7 @@
                         *ngIf="mode === 'enquiry' && this.submitForm?.value?.order_date !== '' "
                     >
                         <mat-form-field>
-                            <mat-label class="label-text">Enquiry #</mat-label>
+                            <mat-label>Enquiry #</mat-label>
                             <input
                                 matInput
                                 #orderNo
@@ -251,6 +248,15 @@
                             >
                         </mat-hint>
                     </mat-form-field>
+
+                    <div *ngIf="is_customer_selected">
+                        <span style="font-size: 10px">
+                            {{customer_data.address1}},
+                            {{customer_data.address2}},
+                            {{customer_data.district}}- {{customer_data.pin}}
+                            (M){{customer_data.mobile}}
+                        </span>
+                    </div>
 
                     <div *ngIf="isRetailCustomer === 'Y' ">
                         <div>
@@ -606,6 +612,7 @@
                                             formControlName="product_ctrl"
                                             #typehead2
                                             #p_list
+                                            #selItemCode
                                             autofocus
                                             matTooltipPosition="after"
                                             tabindex="2"
@@ -1172,7 +1179,7 @@
                     </button>
                     &nbsp;
                     <button
-                        *ngIf="((submitForm?.get('status').value === '') && (selInvType === 'stock_issue')) "
+                        *ngIf="((submitForm?.get('status').value === '') && (selInvType === 'stockIssue')) "
                         style="border-radius: 0px"
                         appPreventDoubleClick
                         class="cursor"

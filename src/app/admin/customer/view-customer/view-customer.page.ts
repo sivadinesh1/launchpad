@@ -164,6 +164,7 @@ export class ViewCustomerPage {
                         'Customer added successfully',
                         ''
                     );
+                    this.reloadCustomers('');
                 }
             });
     }
@@ -201,10 +202,15 @@ export class ViewCustomerPage {
                     dialogConfigSuccess.height = '25%';
                     dialogConfigSuccess.data = 'Customer updated successfully';
 
-                    this._dialog.open(
-                        SuccessMessageDialogComponent,
-                        dialogConfigSuccess
+                    this._loadingService.openSnackBar(
+                        'Customer updated successfully',
+                        ''
                     );
+                    this.reloadCustomers('');
+                    // this._dialog.open(
+                    //     SuccessMessageDialogComponent,
+                    //     dialogConfigSuccess
+                    // );
                 }
             });
     }
@@ -240,10 +246,15 @@ export class ViewCustomerPage {
                     dialogConfigSuccess.height = '25%';
                     dialogConfigSuccess.data = 'Customer updated successfully';
 
-                    this._dialog.open(
-                        SuccessMessageDialogComponent,
-                        dialogConfigSuccess
+                    this._loadingService.openSnackBar(
+                        'Customer updated successfully',
+                        ''
                     );
+                    this.reloadCustomers('');
+                    // this._dialog.open(
+                    //     SuccessMessageDialogComponent,
+                    //     dialogConfigSuccess
+                    // );
                 }
             });
     }

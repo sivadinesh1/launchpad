@@ -21,6 +21,7 @@ import { PhoneValidator } from 'src/app/util/validators/phone.validator';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Customer } from 'src/app/models/Customer';
 import { LoadingService } from '../../loading/loading.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-customer-edit-dialog',
@@ -37,7 +38,7 @@ export class CustomerEditDialogComponent implements OnInit {
 
     isLinear = true;
     customer: Customer;
-    statesdata: any;
+    statesdata$: Observable<any>;
     cexists = false;
     responseMsg: any;
 
@@ -66,7 +67,10 @@ export class CustomerEditDialogComponent implements OnInit {
             address3: [this.customer.address3],
 
             district: [this.customer.district],
-            state_id: [this.customer.state_id, Validators.required],
+            state_id: [
+                customer !== undefined ? customer?.state_id.toString() : 0,
+                Validators.required,
+            ],
             pin: [this.customer.pin, [patternValidator(PIN_CODE_REGEX)]],
 
             gst: [this.customer.gst, [patternValidator(GST_N_REGEX)]],
@@ -100,10 +104,12 @@ export class CustomerEditDialogComponent implements OnInit {
             email: [this.customer.email, [patternValidator(EMAIL_REGEX)]],
         });
 
-        this._commonApiService.getStates().subscribe((data: any) => {
-            this.statesdata = data;
-            this._cdr.markForCheck();
-        });
+        // this._commonApiService.getStates().subscribe((data: any) => {
+        //     this.statesdata = data;
+        //     this._cdr.markForCheck();
+        // });
+
+        this.statesdata$ = this._commonApiService.getStates();
     }
 
     ngOnInit() {

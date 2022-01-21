@@ -58,7 +58,7 @@ export class LeftMenuComponent {
         },
         {
             name: 'Customers',
-            link: '',
+            link: '/home/view-customers',
             icon: '/assets/images/svg/customers.svg',
             children: [
                 {
@@ -98,7 +98,7 @@ export class LeftMenuComponent {
 
         {
             name: 'Vendors',
-            link: '',
+            link: '/home/view-vendors',
             icon: '/assets/images/svg/vendors.svg',
             children: [
                 {
@@ -240,14 +240,16 @@ export class LeftMenuComponent {
             this._router.navigateByUrl('/home/admin-dashboard');
         } else if (name === 'Settings') {
             this.openSettings();
-        } else if (name === 'Vendors' || name === 'Customers') {
-            // do nothing just expand / collapse
         } else {
             this._router.navigateByUrl(url);
         }
 
         this._cdr.markForCheck();
     }
+
+    // } else if (name === 'Vendors' || name === 'Customers') {
+    //     // do nothing just expand / collapse
+    // }
 
     async openSettings() {
         const modal = await this._modalcontroller.create({
