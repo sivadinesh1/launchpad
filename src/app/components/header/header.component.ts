@@ -5,6 +5,7 @@ import {
     EventEmitter,
     OnInit,
     Output,
+    ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -21,6 +22,8 @@ import { CommonApiService } from 'src/app/services/common-api.service';
 import { User } from '../../models/User';
 import { InventoryReportsDialogComponent } from '../reports/inventory-reports-dialog/inventory-reports-dialog.component';
 import { SearchDialogComponent } from '../search/search-dialog/search-dialog.component';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 @Component({
     selector: 'app-header',
@@ -31,6 +34,8 @@ import { SearchDialogComponent } from '../search/search-dialog/search-dialog.com
 export class HeaderComponent implements OnInit {
     @Output()
     hbMenuClick = new EventEmitter<any>();
+    @ViewChild('typehead2', { read: MatAutocompleteTrigger })
+    prodCtrlTrigger: MatAutocompleteTrigger;
 
     user_data: any;
     center_id: any;
@@ -58,6 +63,7 @@ export class HeaderComponent implements OnInit {
     constructor(
         private _authService: AuthenticationService,
         private _modalController: ModalController,
+        private _dialog: MatDialog,
         private _cdr: ChangeDetectorRef,
         private _router: Router,
         private _commonApiService: CommonApiService,
@@ -142,31 +148,43 @@ export class HeaderComponent implements OnInit {
 
     async showTransactions(event, from) {
         if (from === 'tab') {
-            this.showInventoryReportsDialog(event.product_code, event.id);
+            this.showInventoryReportsDialog(
+                event.product_code,
+                event.product_id
+            );
         } else {
             this.showInventoryReportsDialog(
                 event.option.value.product_code,
-                event.option.value.id
+                event.option.value.product_id
             );
         }
     }
 
     async showInventoryReportsDialog(product_code, product_id) {
-        const modal = await this._modalController.create({
-            component: InventoryReportsDialogComponent,
-            componentProps: {
-                center_id: this.user_data.center_id,
-                product_code,
-                product_id,
-            },
-            cssClass: 'select-modal',
-        });
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = '1000px';
+        dialogConfig.height = '100%';
+        dialogConfig.data = {
+            center_id: this.user_data.center_id,
+            product_code,
+            product_id,
+        };
+        dialogConfig.position = { top: '0', right: '0' };
 
-        modal.onDidDismiss().then((result) => {
+        const dialogRef = this._dialog.open(
+            InventoryReportsDialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            this.clearProdInput();
+            if (this.prodCtrlTrigger && this.prodCtrlTrigger.panelOpen) {
+                this.prodCtrlTrigger.closePanel();
+            }
             this._cdr.markForCheck();
         });
-
-        await modal.present();
     }
 
     showNewEnquiry() {

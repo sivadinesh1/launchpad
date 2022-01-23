@@ -163,7 +163,18 @@
                     class="more a-link"
                     (click)="showInventoryReportsDialog(item)"
                 >
-                    Audit
+                    Transaction
+                </div>
+                <div class="more a-link" (click)="edit(item)">
+                    <mat-icon
+                        #tooltip="matTooltip"
+                        matTooltip="Edit"
+                        matTooltipClass="tooltip"
+                        color="primary"
+                        (mousedown)="tooltip.hide()"
+                        [ngStyle]="{ cursor: 'pointer' }"
+                        >edit
+                    </mat-icon>
                 </div>
             </div>
         </div>

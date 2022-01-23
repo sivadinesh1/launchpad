@@ -1643,6 +1643,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                 mrp: elem.mrp,
             })
             .subscribe((data: any) => {
+                debugger;
                 if (data.body.result === 'success') {
                     console.log('object >>> execute delete product ...');
                 } else {

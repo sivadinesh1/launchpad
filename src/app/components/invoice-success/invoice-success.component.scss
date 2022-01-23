@@ -1,26 +1,27 @@
 /** @format */
 
 .content {
-	display: grid;
+    display: grid;
 }
 
-.header {
-	display: flex;
-	justify-content: space-between;
-	height: 20px;
+.is-header {
+    display: flex;
+    justify-content: space-between;
+    height: 20px;
+    width: 100%;
 }
 
 .invoice-details {
-	display: flex;
-	justify-content: space-evenly;
+    display: flex;
+    justify-content: space-evenly;
 }
 
 .example-radio-group {
-	display: flex;
-	flex-direction: column;
-	margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
 }
 
 .example-radio-button {
-	margin: 5px;
+    margin: 5px;
 }

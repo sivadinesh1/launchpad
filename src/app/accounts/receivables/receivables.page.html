@@ -16,13 +16,19 @@
                         background-color: blue;
                         opacity: 0.8;
                     "
+                    class="btn-grad add-btn"
                 >
                     Pending Invoices
                 </span>
             </span>
-            <span class="btn-grad-no-margin add-btn" (click)="addReceivables()">
+
+            <span
+                class="btn-grad add-btn"
+                style="padding-right: 1rem; margin-left: 1rem"
+                (click)="addReceivables()"
+            >
                 <mat-icon class="add-icon">add</mat-icon>
-                <span class="add-icon-label">Add Payment</span>
+                <span style="padding: 5px">Add Payment</span>
             </span>
         </div>
     </div>
@@ -66,13 +72,13 @@
                 class="cursor"
                 type="button"
                 [throttleTime]="500"
-                mat-flat-button
                 type="button"
-                color="primary"
+                mat-stroked-button
                 tabindex="-1"
                 (click)="exportPaymentsReceived()"
             >
-                Download
+                <mat-icon>cloud_download</mat-icon>
+                &nbsp;Download
             </button>
         </div>
 

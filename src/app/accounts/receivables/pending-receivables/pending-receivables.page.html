@@ -44,13 +44,13 @@
                 class="cursor"
                 type="button"
                 [throttleTime]="500"
-                mat-flat-button
                 type="button"
-                color="primary"
+                mat-stroked-button
                 tabindex="-1"
                 (click)="exportPaymentsReceived()"
             >
-                Download
+                <mat-icon>cloud_download</mat-icon>
+                &nbsp;Download
             </button>
         </div>
 

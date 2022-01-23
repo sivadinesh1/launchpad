@@ -481,20 +481,25 @@ export class SearchStockIssuesPage implements OnInit {
         this._commonApiService
             .deleteSaleData(item.id)
             .subscribe((data: any) => {
-                if (data.result === 'success') {
+                if (data.status === 'success') {
                     this._commonApiService
-                        .deleteSaleMaster(item.id)
+                        .deleteSaleMaster(data.id)
                         .subscribe((data1: any) => {
-                            //  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
-                            this._commonApiService
-                                .deleteItemHistory(item.id)
-                                .subscribe((data2: any) => {
-                                    this.openSnackBar(
-                                        'Deleted Successfully',
-                                        ''
-                                    );
-                                    this.init();
-                                });
+                            this.openSnackBar(
+                                'Stock Issue Deleted Successfully',
+                                ''
+                            );
+                            this.init();
+                            // //  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
+                            // this._commonApiService
+                            //     .deleteItemHistory(item.id)
+                            //     .subscribe((data2: any) => {
+                            //         this.openSnackBar(
+                            //             'Deleted Successfully',
+                            //             ''
+                            //         );
+                            //         this.init();
+                            //     });
                         });
                 }
             });
@@ -855,14 +860,6 @@ export class SearchStockIssuesPage implements OnInit {
             return 'draft';
         }
     }
-
-    // doInfinite(ev: any) {
-    //     console.log('scrolled down!!', ev);
-
-    //     this.offset += 20;
-    //     this.is_loaded = false;
-    //     this.search(ev);
-    // }
 
     doInfinite(ev: any) {
         console.log('scrolled down!!', ev);

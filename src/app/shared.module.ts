@@ -343,6 +343,7 @@ const matcomponents = [
         ShowVendorStatementComponent,
 
         ApplyNowComponent,
+        HeaderComponent,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

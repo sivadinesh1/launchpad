@@ -1,7 +1,10 @@
 <ion-content>
     <div class="ir-screen-header">
         <div style="font-size: 16px; font-weight: 600; letter-spacing: 1px">
-            TRANSACTION DETAILS
+            <div>TRANSACTION DETAILS</div>
+            <div style="font-size: 12px; color: blue; font-style: italic">
+                Items in draft are not listed here
+            </div>
         </div>
 
         <div style="align-items: center">
@@ -48,7 +51,7 @@
         </div>
     </div>
     <div>
-        <table>
+        <table style="width: 100%">
             <thead>
                 <tr class="ir-header">
                     <th style="text-align: left">Ref #</th>
@@ -135,6 +138,14 @@
                         <!-- </span> -->
                     </td>
 
+                    <td
+                        *ngIf="item.module.startsWith('Stock Correction')"
+                        style="text-align: left; color: blue; cursor: pointer"
+                    >
+                        &nbsp;
+                        <!-- </span> -->
+                    </td>
+
                     <!-- cell 3.1 [[TXN DATE]] -->
                     <td style="text-align: left">
                         {{ item?.txn_date | date: "d-M-yyyy" }}
@@ -193,6 +204,14 @@
                         {{ "MRP edit / Product" }}
                     </td>
 
+                    <td
+                        *ngIf="item.module.startsWith('Stock Correction')"
+                        style="text-align: left; color: blue; cursor: pointer"
+                    >
+                        &nbsp;
+                        <!-- </span> -->
+                    </td>
+
                     <!-- cell 4 [[TXN TYPE]] -->
                     <td
                         *ngIf="item.module.startsWith('Purchase')"
@@ -203,27 +222,27 @@
                             >({{ item?.action_type }})</span
                         >
 
-                        <span
-                            *ngIf="
-                                item?.action_type.startsWith('Deleted MRP -')
-                            "
-                        >
+                        <span *ngIf="item?.action_type.startsWith('Deleted')">
                             - ({{ item?.action_type }})</span
                         >
                     </td>
                     <td *ngIf="item.module === 'Sale'" style="text-align: left">
                         Sale
-                        <span
-                            *ngIf="
-                                item?.action_type.startsWith('Deleted MRP -')
-                            "
-                        >
+                        <span *ngIf="item?.action_type.startsWith('Deleted')">
                             - ({{ item?.action_type }})</span
                         >
                         <span *ngIf="item?.action_type.startsWith('Edited')">
                             - ({{ item?.action_type }})</span
                         >
                     </td>
+
+                    <td
+                        *ngIf="item.module === 'Stock Correction'"
+                        style="text-align: left"
+                    >
+                        {{ item?.action_type }}
+                    </td>
+
                     <td
                         *ngIf="item.module === 'SaleReturn'"
                         style="text-align: left"
@@ -304,6 +323,14 @@
                         style="text-align: right"
                     >
                         {{ item?.stock_level }}
+                    </td>
+
+                    <td
+                        *ngIf="item.module.startsWith('Stock Correction')"
+                        style="text-align: right"
+                    >
+                        {{ item?.stock_level }}
+                        <!-- </span> -->
                     </td>
                 </tr>
 

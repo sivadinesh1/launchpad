@@ -565,7 +565,7 @@ export class CommonApiService {
 
     deletePurchaseDetails(submitForm) {
         return this.httpClient.post<any>(
-            this.restApiUrl + '/v1/api/stock/delete-purchase-details',
+            this.restApiUrl + '/v1/api/purchase/delete-purchase-details',
             submitForm,
             { observe: 'response' }
         );

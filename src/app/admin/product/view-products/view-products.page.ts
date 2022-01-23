@@ -294,24 +294,6 @@ export class ViewProductsPage implements OnInit {
             });
     }
 
-    // async showInventoryReportsDialog(element) {
-    //     const modal = await this._modalController.create({
-    //         component: InventoryReportsDialogComponent,
-    //         componentProps: {
-    //             center_id: this.center_id,
-    //             product_code: element.product_code,
-    //             product_id: element.product_id,
-    //         },
-    //         cssClass: 'select-modal',
-    //     });
-
-    //     modal.onDidDismiss().then((result) => {
-    //         this._cdr.markForCheck();
-    //     });
-
-    //     await modal.present();
-    // }
-
     async showInventoryReportsDialog(element) {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;

@@ -70,6 +70,9 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
     @ViewChild('Qty', { static: true }) quantity: any;
     @ViewChild('invNo', { static: false }) inputEl: ElementRef;
     @ViewChild('noOfBoxes', { static: false }) noOfBoxesEl: ElementRef;
+    @ViewChild('QtyFocus', { static: false }) QtyFocus: ElementRef;
+    @ViewChild('ProductInputFocus', { static: false })
+    ProductInputFocus: ElementRef;
 
     @ViewChild('typeHead1', { read: MatAutocompleteTrigger })
     autoTrigger1: MatAutocompleteTrigger;
@@ -575,7 +578,7 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             this.orig_mrp = event.mrp;
             this.submitForm.patchValue({
                 temp_desc: event.description,
-                temp_quantity: event.quantity === 0 ? 1 : event.quantity,
+                temp_quantity: event.packet_size === 0 ? 1 : event.packet_size,
                 temp_mrp: event.mrp,
                 temp_purchase_price:
                     event.purchase_price === 'null'
@@ -592,9 +595,9 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             this.submitForm.patchValue({
                 temp_desc: event.option.value.product_description,
                 temp_quantity:
-                    event.option.value.quantity === undefined
+                    event.option.value.packet_size === undefined
                         ? 1
-                        : event.option.value.quantity,
+                        : event.option.value.packet_size,
                 temp_mrp: event.option.value.mrp,
                 temp_purchase_price:
                     event.option.value.purchase_price === 'null'
@@ -606,11 +609,13 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             this.lineItemData = event.option.value;
             this.selected_description = event.option.value.product_description;
             this.selected_mrp = event.option.value.mrp;
-
+            console.log('dinesh KKK ' + JSON.stringify(this.submitForm.value));
             setTimeout(() => {
                 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                 this.quantity && this.quantity.nativeElement.focus();
                 // this.quantity && this.quantity.nativeElement.select();
+
+                this.QtyFocus.nativeElement.focus();
             }, 10);
         }
     }
@@ -659,7 +664,8 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             unit_price: temp.purchase_price,
             purchase_price: temp.purchase_price,
             mrp: temp.mrp,
-            mrp_change_flag: temp.mrp_change_flag,
+            mrp_change_flag:
+                temp.mrp_change_flag === undefined ? 'N' : temp.mrp_change_flag,
 
             tax_value: (
                 temp.purchase_price *
@@ -768,6 +774,10 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                 this._cdr.detectChanges();
                 this._cdr.markForCheck();
             }
+        }
+
+        if (this.ProductInputFocus !== undefined) {
+            this.ProductInputFocus.nativeElement.focus();
         }
     }
 

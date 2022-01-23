@@ -35,7 +35,7 @@ export class ProductEditDialogComponent implements OnInit {
 
     brands$: Observable<any>;
 
-    product: IProduct;
+    product: any;
 
     submitForm: FormGroup;
 
@@ -89,7 +89,7 @@ export class ProductEditDialogComponent implements OnInit {
         }
 
         this.submitForm = this._formBuilder.group({
-            id: [this.product.id],
+            id: [this.product.product_id],
             center_id: [this.center_id],
             product_type: [this.product.product_type],
             product_code: [this.product.product_code, Validators.required],

@@ -9,7 +9,7 @@
     background-color: #6ee0cb4d;
 }
 
-.purchase-wrap {
+.so-purchase-wrap {
     display: grid;
     width: 100%;
     height: auto;
@@ -33,7 +33,7 @@
         .row2 {
             align-items: center;
 
-            .list-item {
+            .so-list-item {
                 display: grid;
                 grid-template-columns: 30px 40px 260px 100px 100px 100px 100px 100px 100px 60px;
                 gap: 10px;
@@ -50,15 +50,16 @@
                 color: red;
             }
 
-            .list-item:hover .extra {
+            .so-list-item:hover .extra {
                 display: flex;
                 align-items: baseline;
             }
 
-            .list-item:hover {
+            .so-list-item:hover {
                 font-weight: 500;
                 border-top: 1px solid #e2e2e2;
                 border-bottom: 1px solid #e2e2e2;
+                background-color: #f5f5f5;
             }
         }
     }

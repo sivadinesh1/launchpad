@@ -711,14 +711,6 @@ export class SearchPurchaseOrderPage implements OnInit {
         this.search('');
     }
 
-    // doInfinite(ev: any) {
-    //     console.log('scrolled down!!', ev);
-
-    //     this.offset += 20;
-
-    //     this.search(ev);
-    // }
-
     doInfinite(ev: any) {
         console.log('scrolled down!!', ev);
 

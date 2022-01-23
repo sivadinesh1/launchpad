@@ -30,7 +30,7 @@
         <div>
             <mat-radio-group
                 formControlName="product_type"
-                class="example-radio-group"
+                class="pa-radio-group"
             >
                 <mat-radio-button
                     style="padding-top: 10px; padding-right: 10px"
@@ -135,6 +135,7 @@
                         matInput
                         type="number"
                         formControlName="packet_size"
+                        appSelectOnFocus
                         required
                         numeric
                         autocomplete="off"
@@ -216,6 +217,7 @@
                         type="number"
                         formControlName="minimum_quantity"
                         required
+                        appSelectOnFocus
                         numeric
                         autocomplete="off"
                     />
@@ -232,6 +234,7 @@
                         type="number"
                         formControlName="mrp"
                         required
+                        appSelectOnFocus
                         numeric
                         autocomplete="off"
                     />
@@ -255,6 +258,7 @@
                         type="number"
                         formControlName="purchase_price"
                         required
+                        appSelectOnFocus
                         numeric
                         autocomplete="off"
                     />

@@ -115,7 +115,11 @@
                 <div>
                     <mat-form-field
                         class="example-full-width"
-                        style="padding-right: 10px; font-size: 16px"
+                        style="
+                            padding-right: 10px;
+                            font-size: 16px;
+                            max-width: 500px;
+                        "
                     >
                         <mat-label class="label-text"
                             >Select Customer</mat-label
@@ -249,7 +253,9 @@
                         </mat-hint>
                     </mat-form-field>
 
-                    <div *ngIf="is_customer_selected">
+                    <div
+                        *ngIf="is_customer_selected && isRetailCustomer === 'N'"
+                    >
                         <span style="font-size: 10px">
                             {{customer_data.address1}},
                             {{customer_data.address2}},
@@ -259,7 +265,7 @@
                     </div>
 
                     <div *ngIf="isRetailCustomer === 'Y' ">
-                        <div>
+                        <div style="display: flex">
                             <mat-form-field class="mat-input-wrapper cursor">
                                 <mat-label>Customer Name</mat-label>
                                 <input
@@ -269,8 +275,7 @@
                                     autocomplete="off"
                                 />
                             </mat-form-field>
-                        </div>
-                        <div>
+                            &nbsp;&nbsp;
                             <mat-form-field class="mat-input-wrapper cursor">
                                 <mat-label>Customer Address</mat-label>
                                 <input
@@ -280,8 +285,7 @@
                                     autocomplete="off"
                                 />
                             </mat-form-field>
-                        </div>
-                        <div>
+                            &nbsp;&nbsp;
                             <mat-form-field class="mat-input-wrapper cursor">
                                 <mat-label>Customer Phone</mat-label>
                                 <input
@@ -370,7 +374,7 @@
             style="width: 96%; margin: 0 auto"
         >
             <mat-tab label="Add Items" *ngIf="is_customer_selected">
-                <div class="purchase-wrap" [hidden]="!is_customer_selected">
+                <div class="so-purchase-wrap" [hidden]="!is_customer_selected">
                     <!-- main-box ribbon -->
                     <div class="wrap">
                         <div class="acton-btns">
@@ -465,7 +469,7 @@
 
                             <div
                                 *ngFor="let item of listArr ? listArr : []; let idx = index"
-                                class="list-item"
+                                class="so-list-item"
                             >
                                 <div>{{idx + 1}}</div>
 

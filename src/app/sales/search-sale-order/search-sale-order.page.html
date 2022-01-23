@@ -72,24 +72,6 @@
                 >{{this.full_count}}</span
             >
         </div>
-        <!-- <div class="toggle_search_status">
-            <ion-segment
-                mode="ios"
-                value="all"
-                class="toggle_btn"
-                (ionChange)="statusFilterChanged($event)"
-            >
-                <ion-segment-button value="all">
-                    <ion-label>All</ion-label>
-                </ion-segment-button>
-                <ion-segment-button value="D">
-                    <ion-label>Draft</ion-label>
-                </ion-segment-button>
-                <ion-segment-button value="C">
-                    <ion-label>Invoiced</ion-label>
-                </ion-segment-button>
-            </ion-segment>
-        </div> -->
 
         <div
             class="filter_date_range"
@@ -222,13 +204,6 @@
             </div>
         </div>
 
-        <!-- <div class="item" style="text-align: right">
-            <span [ngClass]="isCompleted(item.payment_status)">
-                {{item.payment_status === 'F' ? 'Paid' : item.payment_status ===
-                'P' ? 'Partially Paid' : 'Unpaid'}}
-            </span>
-        </div> -->
-
         <div
             class="item more a-link"
             style="text-align: center"
@@ -281,27 +256,6 @@
             </mat-icon>
         </div>
     </div>
-
-    <!-- 
-DnD - sample vertical menu
-<mat-icon
-    #tooltip="matTooltip"
-    matTooltip="More Menu Options"
-    matTooltipClass="tooltip"
-    (mousedown)="tooltip.hide()"
-    [matMenuTriggerFor]="menu"
-    [matMenuTriggerData]="{item: item}"
-    style="cursor: pointer"
->more_vert</mat-icon
->
-<mat-menu #menu="matMenu">
-    <ng-template matMenuContent let-aliasMenuItems="item">
-        <button mat-menu-item (click)="salesReturn(aliasMenuItems)">
-            <mat-icon>keyboard_return</mat-icon>
-            <span>Sales Return</span>
-        </button>
-    </ng-template>
-</mat-menu> -->
 
     <mat-menu #admin="matMenu" [overlapTrigger]="false" class="myMenu">
         <div mat-menu-item class="mat-menu-line-height" (click)="dateFilter(7)">
@@ -429,23 +383,3 @@ DnD - sample vertical menu
         </ion-infinite-scroll-content>
     </ion-infinite-scroll>
 </ion-content>
-<!-- 
-DnD - sample vertical menu
-<mat-icon
-	#tooltip="matTooltip"
-	matTooltip="More Menu Options"
-	matTooltipClass="tooltip"
-	(mousedown)="tooltip.hide()"
-	[matMenuTriggerFor]="menu"
-	[matMenuTriggerData]="{item: item}"
-	style="cursor: pointer"
->more_vert</mat-icon
->
-<mat-menu #menu="matMenu">
-	<ng-template matMenuContent let-aliasMenuItems="item">
-		<button mat-menu-item (click)="salesReturn(aliasMenuItems)">
-			<mat-icon>keyboard_return</mat-icon>
-			<span>Sales Return</span>
-		</button>
-	</ng-template>
-</mat-menu> -->
