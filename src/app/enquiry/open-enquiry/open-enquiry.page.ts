@@ -3,6 +3,7 @@ import {
     OnInit,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
+    ViewChild,
 } from '@angular/core';
 import { CommonApiService } from 'src/app/services/common-api.service';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
@@ -27,6 +28,8 @@ import { DeleteEnquiryDialogComponent } from 'src/app/components/delete-enquiry-
 import { EnquiryViewDialogComponent } from '../../components/enquiry/enquiry-view-dialog/enquiry-view-dialog.component';
 import { User } from 'src/app/models/User';
 import * as moment from 'moment';
+import { IonContent } from '@ionic/angular';
+import { SearchCustomersComponent } from 'src/app/components/search-customers/search-customers.component';
 
 @Component({
     selector: 'app-open-enquiry',
@@ -35,6 +38,9 @@ import * as moment from 'moment';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OpenEnquiryPage implements OnInit {
+    @ViewChild(IonContent, { static: false }) content: IonContent;
+    @ViewChild(SearchCustomersComponent) child: SearchCustomersComponent;
+
     openenq: any;
     tabIndex = 0;
 
@@ -53,8 +59,8 @@ export class OpenEnquiryPage implements OnInit {
     maxDate = new Date();
     minDate = new Date();
 
-    fromdate = new Date();
-    todate = new Date();
+    from_date = new Date();
+    to_date = new Date();
 
     filteredValues: any;
     backorderValues: any;
@@ -82,6 +88,16 @@ export class OpenEnquiryPage implements OnInit {
     status: any;
     back_order_lst: any;
 
+    isCustomDateFilter = false;
+
+    searchByDays = 7;
+    tempListArray: any[] = [];
+    full_count = 0;
+    offset = 0;
+    length = 20;
+    is_loaded = false;
+    all_caught_up = '';
+
     constructor(
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService,
@@ -96,19 +112,21 @@ export class OpenEnquiryPage implements OnInit {
         const monthOffset = 24 * 60 * 60 * 1000 * 30;
         const yearOffset = 24 * 60 * 60 * 1000 * 365;
 
-        this.user_data$ = this._authService.currentUser;
-
-        const dateOffset = 24 * 60 * 60 * 1000 * 14;
-        this.fromdate.setTime(this.minDate.getTime() - dateOffset);
-
         this.submitForm = this._fb.group({
-            customerid: ['all'],
-            customerctrl: ['All Customers'],
-            todate: [this.todate, Validators.required],
-            fromdate: [this.fromdate, Validators.required],
+            customer_id: 'all',
+            customer_ctrl: new FormControl({
+                value: '',
+                disabled: false,
+            }),
+            //customer_ctrl: [{ value: 'All Customers', disabled: false }],
+            to_date: [this.to_date, Validators.required],
+            from_date: [this.from_date, Validators.required],
             status: new FormControl('all'),
+
             order: ['desc'],
         });
+
+        this.user_data$ = this._authService.currentUser;
 
         this._route.params.subscribe((params) => {
             this.user_data$
@@ -118,48 +136,6 @@ export class OpenEnquiryPage implements OnInit {
                     this.init();
                     this.status = params.status;
                     this.timeline = params.timeline;
-
-                    if (this.timeline === 'today') {
-                        this.fromdate.setTime(new Date().getTime());
-                        this.todate.setTime(new Date().getTime());
-                    } else if (this.timeline === 'weekly') {
-                        //this.fromdate.setTime(this.minDate.getTime() - weekOffset);
-                        // this.fromdate.setTime(
-                        // 	moment().startOf('isoWeek').toDate().getTime()
-                        // );
-                        const dateOffset = 24 * 60 * 60 * 1000 * 14;
-                        this.fromdate.setTime(
-                            this.minDate.getTime() - dateOffset
-                        );
-
-                        this.todate.setTime(new Date().getTime());
-                    } else if (this.timeline === 'monthly') {
-                        //this.fromdate.setTime(this.minDate.getTime() - monthOffset);
-                        this.fromdate.setTime(
-                            moment().startOf('month').toDate().getTime()
-                        );
-                        this.todate.setTime(new Date().getTime());
-                    } else if (this.timeline === 'yearly') {
-                        //this.fromdate.setTime(this.minDate.getTime() - yearOffset);
-                        this.fromdate.setTime(moment().toDate().getTime());
-                        this.todate.setTime(new Date().getTime());
-                    }
-
-                    this.todate.setTime(new Date().getTime());
-
-                    if (this.status === 'O' || this.status === 'D') {
-                        this.tabClick(0);
-                        this.tabIndex = 0;
-                        this.search('O');
-                    } else if (this.status === 'P') {
-                        this.tabClick(1);
-                        this.tabIndex = 1;
-                        this.search('P');
-                    } else if (this.status === 'E' || this.status === 'X') {
-                        this.tabClick(2);
-                        this.tabIndex = 2;
-                        this.search('E');
-                    }
 
                     this._cdr.markForCheck();
                 });
@@ -272,16 +248,6 @@ export class OpenEnquiryPage implements OnInit {
         this._cdr.markForCheck();
     }
 
-    fromDateSelected($event) {
-        this.fromdate = $event.target.value;
-        this.tabIndex = 0;
-    }
-
-    toDateSelected($event) {
-        this.todate = $event.target.value;
-        this.tabIndex = 0;
-    }
-
     populateBackOrders() {
         this._commonApiService.getBackOder().subscribe((data: any) => {
             this.back_order_lst = data;
@@ -374,7 +340,7 @@ export class OpenEnquiryPage implements OnInit {
                     dialogConfigSuccess.data =
                         'Inquiry deleted and moved to cancelled status';
 
-                    const dialogRef = this._dialog.open(
+                    const dialogRef1 = this._dialog.open(
                         SuccessMessageDialogComponent,
                         dialogConfigSuccess
                     );
@@ -401,6 +367,110 @@ export class OpenEnquiryPage implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             console.log('The dialog was closed');
         });
+    }
+
+    logScrolling(event) {
+        // do nothing
+    }
+
+    customerInfoPage(item) {
+        this.submitForm.patchValue({
+            customer_id: item.id,
+        });
+        this.is_loaded = false;
+        this.search('');
+    }
+
+    customDateFilter() {
+        this.isCustomDateFilter = !this.isCustomDateFilter;
+
+        if (!this.isCustomDateFilter) {
+            this.dateFilter(7);
+        }
+    }
+
+    dateFilter(value: number) {
+        this.ScrollToTop();
+        this.searchByDays = value;
+        const dateOffset = 24 * 60 * 60 * 1000 * this.searchByDays;
+        this.from_date = new Date(this.minDate.getTime() - dateOffset);
+        this.submitForm.patchValue({
+            from_date: this.from_date,
+        });
+        this.offset = 0;
+        this.is_loaded = false;
+        this._cdr.detectChanges();
+        this.search('');
+    }
+
+    ScrollToTop() {
+        if (this.content !== undefined) {
+            this.content.scrollToTop(500);
+        }
+    }
+
+    opsFromDateEvent(event) {
+        this.submitForm.patchValue({
+            from_date: moment(event.target.value).format('YYYY-MM-DD'),
+        });
+        this.reloadSearch();
+    }
+
+    opsToDateEvent(event) {
+        this.submitForm.patchValue({
+            to_date: moment(event.target.value).format('YYYY-MM-DD'),
+        });
+
+        this.reloadSearch();
+    }
+
+    reloadSearch() {
+        // patch it up with from & to date, via patch value
+
+        this.offset = 0;
+        this.is_loaded = false;
+        this.search('');
+    }
+    customerSearchReset() {
+        this.clearInput();
+    }
+    reset() {
+        this.customerSearchReset();
+        this.child.clearCustomerInput();
+        this.clear();
+        this.is_loaded = false;
+        this.search('');
+    }
+
+    clear() {
+        const dateOffset = 24 * 60 * 60 * 1000 * 7;
+        this.from_date.setTime(this.minDate.getTime() - dateOffset);
+
+        this.submitForm.patchValue({
+            customer_id: 'all',
+            customer_ctrl: 'All Customers',
+            from_date: this.from_date,
+            to_date: new Date(),
+            invoice_no: '',
+        });
+
+        this.submitForm.value.invoice_no = '';
+        this.submitForm.get('customer_ctrl').enable();
+        this.submitForm.controls.invoice_no.setErrors(null);
+        this.submitForm.controls.invoice_no.markAsTouched();
+
+        this._cdr.markForCheck();
+    }
+
+    statusFilterChanged(status) {
+        this.submitForm.patchValue({
+            status,
+            invoice_no: '',
+        });
+        this._cdr.markForCheck();
+        this.is_loaded = false;
+        this.offset = 0;
+        this.search('');
     }
 }
 

@@ -1,180 +1,224 @@
-.content {
-	display: grid;
-	width: 100%;
+.search-enquiry-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+    background-color: #fff;
+    width: 96%;
+    margin: 0 auto;
 }
 
 .header {
-	padding: 10px;
-	color: #333;
-	color: '#a5a5a6';
-	background-color: #f5f5f5;
-	border-bottom: 2px solid #adadad;
+    padding: 10px;
+    color: #333;
+    color: "#a5a5a6";
+    background-color: #f5f5f5;
+    border-bottom: 2px solid #adadad;
 }
 
 .header,
 .listItem {
-	display: grid;
-	grid-template-columns: 60px 200px 1fr 100px 300px 1fr;
+    display: grid;
+    grid-template-columns: 60px 200px 1fr 100px 300px 1fr;
 
-	align-items: center;
-	width: 100%;
-	height: auto;
-	margin: 0 auto;
-	font-size: 14px;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    font-size: 14px;
 }
 
 .icon-style {
-	width: 32px;
-	padding: 5px 10px;
-	color: blue;
-	cursor: pointer;
+    width: 32px;
+    padding: 5px 10px;
+    color: blue;
+    cursor: pointer;
 }
 
 .header-style {
-	color: #333;
-	font-weight: 500;
-	background-color: #757575;
+    color: #333;
+    font-weight: 500;
+    background-color: #757575;
 }
 
 .o-enq-details {
-	display: grid;
-	grid-template-rows: 1fr 1fr;
-	padding: 10px;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    padding: 10px;
 }
 
 .edate {
-	color: #222;
-	font-size: 14px;
+    color: #222;
+    font-size: 14px;
 }
 
 .items {
-	align-self: center;
-	color: #333;
-	font-size: 14px;
+    align-self: center;
+    color: #333;
+    font-size: 14px;
 }
 
 .custname {
-	color: black;
-	font-size: 16px;
+    color: black;
+    font-size: 16px;
 }
 
 .new-enq {
-	display: flex;
-	justify-content: space-between;
-	padding-bottom: 5px;
-	text-align: right;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 5px;
+    text-align: right;
 }
 
 .idx {
-	padding: 10px;
-	text-align: center;
+    padding: 10px;
+    text-align: center;
 }
 
 .form-wrap {
-	display: grid;
-	grid-template-columns: 1.5fr 300px 160px 160px 200px;
-	// background-color: #f6f6ff;
+    display: grid;
+    grid-template-columns: 1.5fr 300px 160px 160px 200px;
+    // background-color: #f6f6ff;
 
-	gap: 10px;
+    gap: 10px;
 }
 
 .title {
-	color: #fff;
-	font-size: 24px;
-	line-height: 73px;
-	text-align: center;
-	background-color: #6b82b5;
-	opacity: 0.6;
+    color: #fff;
+    font-size: 24px;
+    line-height: 73px;
+    text-align: center;
+    background-color: #6b82b5;
+    opacity: 0.6;
 }
 
 .title:hover {
-	background-color: #6b82b5;
-	opacity: 1;
-	transition: 0.3s;
+    background-color: #6b82b5;
+    opacity: 1;
+    transition: 0.3s;
 }
 
 .search-btn {
-	padding: 0 20px;
+    padding: 0 20px;
 }
 
 .listItem {
-	align-items: center;
-	background-color: #fff;
-	border-bottom: 1px solid #f2f2f2;
+    align-items: center;
+    background-color: #fff;
+    border-bottom: 1px solid #f2f2f2;
 }
 
 .title-row {
-	display: flex;
-	justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
 }
 
 .width {
-	width: 280px !important;
+    width: 280px !important;
 }
 
 .mat-input-wrapper {
-	width: 160px;
+    width: 160px;
 }
 
 .highlight:hover {
-	background-color: #f1efef;
+    background-color: #f1efef;
 }
 
 ::ng-deep.mat-tab-label-content {
-	font-weight: 500;
-	font-size: 16px;
+    font-weight: 500;
+    font-size: 16px;
 }
 
 .table-header {
-	display: grid;
-	grid-template-columns: 120px 1fr 1fr 80px 1fr 80px 80px 200px;
-	padding: 10px;
-	background-color: rgb(233, 233, 233);
+    display: grid;
+    grid-template-columns: 120px 1fr 1fr 80px 1fr 80px 80px 200px;
+    padding: 10px;
+    background-color: rgb(233, 233, 233);
 }
 
 .tbl-detail {
-	display: grid;
-	grid-template-columns: 120px 1fr 1fr 80px 1fr 80px 80px 200px;
-	padding: 10px;
-	font-size: 14px;
+    display: grid;
+    grid-template-columns: 120px 1fr 1fr 80px 1fr 80px 80px 200px;
+    padding: 10px;
+    font-size: 14px;
 }
 
 .tc2 {
-	display: grid;
-	grid-template-rows: 1fr 1fr;
-	font-size: 14px;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    font-size: 14px;
 }
 
 .det_wrap {
-	padding: 10px;
+    padding: 10px;
 }
 
 .heading {
-	padding: 10px;
-	color: #222;
-	font-size: 18px;
+    padding: 10px;
+    color: #222;
+    font-size: 18px;
 }
 
 .tbl-detail:hover {
-	background-color: #e9e8f1;
-	opacity: 1;
+    background-color: #e9e8f1;
+    opacity: 1;
 }
 
 .invoice {
-	margin: 5px 16px;
-	padding: 10px 20px;
-	color: #fff;
-	background-color: royalblue;
-	border-radius: 61px;
-	cursor: pointer;
+    margin: 5px 16px;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: royalblue;
+    border-radius: 61px;
+    cursor: pointer;
 }
 
 .stock {
-	margin: 5px 16px;
-	padding: 10px 20px;
-	color: royalblue;
-	border: 1px solid royalblue;
+    margin: 5px 16px;
+    padding: 10px 20px;
+    color: royalblue;
+    border: 1px solid royalblue;
 
-	border-radius: 61px;
-	cursor: pointer;
+    border-radius: 61px;
+    cursor: pointer;
+}
+
+.oe-sticky {
+    position: sticky;
+    top: -10px;
+    z-index: 1;
+}
+
+.oe-sticky1 {
+    position: sticky;
+    top: 45px;
+    z-index: 1;
+}
+.oe-sticky2 {
+    position: sticky;
+    top: 100px;
+    z-index: 1;
+}
+
+.search-bar-enquiry {
+    background-color: #fff;
+    display: flex;
+    padding: 16px;
+    align-items: center;
+    width: 96%;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--lp-line-divider);
+    border-top: 0px solid var(--lp-line-divider);
+}
+
+.filter_date_range_enq {
+    width: 240px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 16px 0 28px;
+    margin-left: auto;
+    cursor: pointer;
 }

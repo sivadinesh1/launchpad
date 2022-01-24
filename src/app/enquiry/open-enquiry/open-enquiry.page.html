@@ -1,284 +1,330 @@
-<ion-content>
-	<div class="content">
-		<form [formGroup]="submitForm">
-			<div class="form-wrap">
-				<div class="btn-grad" (click)="goEnquiryScreen()">
-					<mat-icon class="add-icon"
-						
-						>add</mat-icon
-					>
-					<span class="add-icon-label">Add Enquiry</span>
-				</div>
-				<div class="customers" style="padding-top: 20px; text-align: right">
-					<mat-form-field class="width">
-						<mat-label>Search</mat-label>
-						<input
-							matInput
-							[matAutocomplete]="auto"
-							formControlName="customerctrl"
-							required
-							matTooltip="Type to filter the Customer list"
-							matTooltipPosition="after"
-						/>
-						<button
-							mat-button
-							matSuffix
-							mat-icon-button
-							aria-label="Clear"
-							type="button"
-							(click)="clearInput()"
-						>
-							<mat-icon>close</mat-icon>
-						</button>
-						<mat-autocomplete
-							#auto="matAutocomplete"
-							(optionSelected)="getPosts($event)"
-						>
-							<mat-option
-								*ngFor="let customer of filteredCustomer | async"
-								[value]="customer"
-							>
-								<span>{{ customer.name }} </span>
-							</mat-option>
-						</mat-autocomplete>
-					</mat-form-field>
-				</div>
-				<div style="padding-top: 20px">
-					<mat-form-field class="mat-input-wrapper">
-						<mat-label>From</mat-label>
-						<input
-							matInput
-							readonly
-							required
-							[max]="maxDate"
-							[matDatepicker]="fromdate"
-							formControlName="fromdate"
-							(focus)="fromdate.open()"
-							(dateChange)="fromDateSelected($event)"
-						/>
-						<mat-datepicker-toggle
-							matSuffix
-							[for]="fromdate"
-						></mat-datepicker-toggle>
-						<mat-datepicker #fromdate></mat-datepicker>
-					</mat-form-field>
-				</div>
-				<div style="padding-top: 20px">
-					<mat-form-field class="mat-input-wrapper">
-						<mat-label>To</mat-label>
-						<input
-							matInput
-							readonly
-							[matDatepicker]="todate"
-							[max]="maxDate"
-							formControlName="todate"
-							(focus)="todate.open()"
-							required
-							(dateChange)="toDateSelected($event)"
-						/>
-						<mat-datepicker-toggle
-							matSuffix
-							[for]="todate"
-						></mat-datepicker-toggle>
-						<mat-datepicker #todate></mat-datepicker>
-					</mat-form-field>
-				</div>
+<!-- Main Enquiry search page -->
+<ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
+    <div class="search-enquiry-header oe-sticky" style="padding: 1rem">
+        <div>ENQUIRIES</div>
 
-				<div class="search-btn" style="padding-top: 20px">
-					<button
-						mat-stroked-button
-						[disabled]="!submitForm.valid"
-						color="primary"
-						style="font-size: 1rem"
-						(click)="search('O')"
-					>
-						Search
-					</button>
-				</div>
-			</div>
-		</form>
+        <div class="full-download" style="display: flex; align-self: center">
+            <span
+                class="btn-grad add-btn"
+                style="padding-right: 1rem; margin-left: 1rem"
+                (click)="goEnquiryScreen()"
+            >
+                <mat-icon class="add-icon">add</mat-icon>
+                <span style="padding: 5px">Add Enquiry</span>
+            </span>
+        </div>
+    </div>
 
-		<div
-			style="
-				width: 94%;
-				margin: 0 auto;
-				padding: 36px 0px 100px 0px;
-				position: relative;
-				display: grid;
-			"
-			[@.disabled]="true"
-		>
-			<div>
-				<mat-tab-group
-					color="primary"
-					[(selectedIndex)]="tabIndex"
-					(selectedTabChange)="tabClick($event)"
-				>
-					<mat-tab
-						class="tab-label"
-						label="Order Queue ({{(newEnquiries$| async)?.length }})"
-					>
-						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-					</mat-tab>
+    <div class="search-bar-enquiry sso-sticky1">
+        <div>
+            <img
+                src="/assets/images/svg/refresh.svg"
+                width="22px"
+                height="22px"
+                style="cursor: pointer"
+                matTooltip="Reset Search Filter"
+                matTooltipClass="tooltip"
+                (click)="reset()"
+            />
+        </div>
+        <div
+            [matMenuTriggerFor]="menuN"
+            #menuTriggerN
+            style="flex: 0 0 70px; padding: 0 16px"
+        >
+            <img
+                src="/assets/images/svg/filter-results-button.svg"
+                width="22px"
+                height="22px"
+                style="cursor: pointer"
+                matTooltip="Advance Filter"
+                matTooltipClass="tooltip"
+            />
+        </div>
 
-					<mat-tab
-						label="To Invoice ({{(invoiceReadyEnquiries$| async)?.length }})"
-					>
-						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-					</mat-tab>
+        <app-search-customers
+            (customerOutput)="customerInfoPage($event)"
+            (customerSearchResetOutput)="customerSearchReset()"
+        ></app-search-customers>
+        <div
+            style="
+                display: flex;
+                align-self: center;
+                font-style: italic;
+                font-size: 13px;
+            "
+        >
+            Showing&nbsp;
+            <span style="font-weight: 600">{{this.filteredValues?.length}}</span
+            >&nbsp;of&nbsp;<span style="font-weight: 600"
+                >{{this.full_count}}</span
+            >
+        </div>
 
-					<mat-tab
-						label="Closed/Cancelled ({{(fullfilledEnquiries$| async)?.length }})"
-					>
-						<ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
-						<ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
-					</mat-tab>
-					<mat-tab label="Backorders">
-						<!-- <ng-template [ngTemplateOutlet]="MsgRef"></ng-template> -->
-						<ng-template [ngTemplateOutlet]="BackorderHeader"></ng-template>
-						<ng-template [ngTemplateOutlet]="BackorderList"></ng-template>
-					</mat-tab>
-				</mat-tab-group>
-			</div>
+        <div
+            class="filter_date_range_enq"
+            *ngIf="!isCustomDateFilter"
+            [matMenuTriggerFor]="admin"
+        >
+            <div>
+                <div>
+                    {{this.from_date | date:'MMM dd'}} - {{this.to_date |
+                    date:'dd, yyyy'}}
+                </div>
 
-			<div
-				style="
-					position: absolute;
-					justify-self: flex-end;
-					top: 38px;
-					z-index: 1;
-				"
-			>
-				<form [formGroup]="submitForm">
-					<mat-form-field class="readonly-wrapper">
-						<mat-label>Show</mat-label>
-						<mat-select
-							formControlName="order"
-							(selectionChange)="search('O')"
-							value="{orderDefaultFlag}"
-							[disableControl]="this.submitForm.value.searchtype !== 'all'"
-						>
-							<mat-option *ngFor="let item of orderList" [value]="item.id">
-								{{item.value}}
-							</mat-option>
-						</mat-select>
-					</mat-form-field>
-				</form>
-			</div>
-		</div>
-	</div>
+                <div style="font-weight: 600">
+                    Last {{this.searchByDays}} days
+                </div>
+            </div>
+            <div style="position: relative; top: 4px">
+                <img
+                    src="/assets/images/svg/down-arrow.svg"
+                    width="14px"
+                    height="14px"
+                />
+            </div>
+        </div>
 
-	<ng-template #BackorderHeader>
-		<div class="heading">
-			Past 30 days missed items - <i>{{back_order_lst?.length}} rows</i>
-		</div>
-		<div class="table-header">
-			<div class="th1">Enquiry Date</div>
-			<div class="th1">Customer Name</div>
-			<div class="th1">Product Info</div>
-			<div class="th1">Avl Qty</div>
-			<div class="th2">Notes</div>
-			<div class="th3">Ask Qty</div>
-			<div class="th4">Given Qty</div>
-			<div class="th5">Reason</div>
-		</div>
-	</ng-template>
-	<ng-template #BackorderList>
-		<div
-			*ngFor="let item of back_order_lst;let idx = index; let isOdd = odd; let isEven = even;"
-		>
-			<div class="tbl-detail" [class.odd]="isOdd" [class.even]="isEven">
-				<div class="tc1">{{item.order_date}}</div>
-				<div class="tc1">{{item.customer_name}}</div>
-				<div class="tc2" style="cursor: pointer; color: blue">
-					<div class="pcode">{{item.product_code}}</div>
-					<div class="pdesc">{{item.description}}</div>
-				</div>
-				<div class="tc2">{{item.available_stock}}</div>
-				<div class="tc2">{{item.notes}}</div>
-				<div class="tc3">{{item.askqty}}</div>
-				<div class="tc4">{{item.giveqty}}</div>
-				<div class="tc5">{{item.reason}}</div>
-			</div>
-		</div>
-	</ng-template>
+        <ng-container *ngIf="isCustomDateFilter">
+            <div class="filter_date_range">
+                <div>
+                    <mat-form-field style="margin-bottom: -1.25em">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input
+                                matStartDate
+                                matInput
+                                readonly
+                                placeholder="Start date"
+                                [ngModel]="this.from_date"
+                                (dateChange)="opsFromDateEvent($event)"
+                            />
+                            <input
+                                matEndDate
+                                matInput
+                                readonly
+                                placeholder="End date"
+                                [ngModel]="this.to_date"
+                                (dateChange)="opsToDateEvent($event)"
+                            />
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="picker"
+                        ></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+            </div>
+        </ng-container>
+        <div
+            style="padding: 0px 0px 0px 10px"
+            *ngIf="isCustomDateFilter"
+            (click)="customDateFilter()"
+        >
+            <img
+                class="cursor"
+                src="/assets/images/svg/close.svg"
+                width="20px"
+                height="20px"
+            />
+        </div>
+    </div>
 
-	<ng-template #MsgRef>
-		<div class="header">
-			<div>#</div>
+    <div
+        style="
+            width: 94%;
+            margin: 0 auto;
+            padding: 36px 0px 100px 0px;
+            position: relative;
+            display: grid;
+        "
+        [@.disabled]="true"
+    >
+        <div>
+            <mat-tab-group
+                color="primary"
+                [(selectedIndex)]="tabIndex"
+                (selectedTabChange)="tabClick($event)"
+            >
+                <mat-tab
+                    class="tab-label"
+                    label="Order Queue ({{(newEnquiries$| async)?.length }})"
+                >
+                    <ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+                    <ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+                </mat-tab>
 
-			<div>CUSTOMER</div>
-			<div>INQUIRED ON</div>
-			<div>ITEMS</div>
-			<div>&nbsp;</div>
+                <mat-tab
+                    label="To Invoice ({{(invoiceReadyEnquiries$| async)?.length }})"
+                >
+                    <ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+                    <ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+                </mat-tab>
 
-			<div>&nbsp;</div>
-		</div>
-	</ng-template>
+                <mat-tab
+                    label="Closed/Cancelled ({{(fullfilledEnquiries$| async)?.length }})"
+                >
+                    <ng-template [ngTemplateOutlet]="MsgRef"></ng-template>
+                    <ng-template [ngTemplateOutlet]="MsgRef1"></ng-template>
+                </mat-tab>
+                <mat-tab label="Backorders">
+                    <!-- <ng-template [ngTemplateOutlet]="MsgRef"></ng-template> -->
+                    <ng-template
+                        [ngTemplateOutlet]="BackorderHeader"
+                    ></ng-template>
+                    <ng-template
+                        [ngTemplateOutlet]="BackorderList"
+                    ></ng-template>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
 
-	<ng-template #MsgRef1>
-		<div *ngFor="let item of filteredValues let idx = index;" class="listItem">
-			<div style="padding-left: 10px">{{idx + 1}}</div>
+        <div
+            style="
+                position: absolute;
+                justify-self: flex-end;
+                top: 38px;
+                z-index: 1;
+            "
+        >
+            <form [formGroup]="submitForm">
+                <mat-form-field class="readonly-wrapper">
+                    <mat-label>Show</mat-label>
+                    <mat-select
+                        formControlName="order"
+                        (selectionChange)="search('O')"
+                        value="{orderDefaultFlag}"
+                        [disableControl]="this.submitForm.value.searchtype !== 'all'"
+                    >
+                        <mat-option
+                            *ngFor="let item of orderList"
+                            [value]="item.id"
+                        >
+                            {{item.value}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </form>
+        </div>
+    </div>
 
-			<div>{{item.customer_name}}</div>
-			<div>{{item.enquiry_date | date: 'dd/MMM/yyyy h:mm a'}}</div>
+    <ng-template #BackorderHeader>
+        <div class="heading">
+            Past 30 days missed items - <i>{{back_order_lst?.length}} rows</i>
+        </div>
+        <div class="table-header">
+            <div class="th1">Enquiry Date</div>
+            <div class="th1">Customer Name</div>
+            <div class="th1">Product Info</div>
+            <div class="th1">Avl Qty</div>
+            <div class="th2">Notes</div>
+            <div class="th3">Ask Qty</div>
+            <div class="th4">Given Qty</div>
+            <div class="th5">Reason</div>
+        </div>
+    </ng-template>
+    <ng-template #BackorderList>
+        <div
+            *ngFor="let item of back_order_lst;let idx = index; let isOdd = odd; let isEven = even;"
+        >
+            <div class="tbl-detail" [class.odd]="isOdd" [class.even]="isEven">
+                <div class="tc1">{{item.order_date}}</div>
+                <div class="tc1">{{item.customer_name}}</div>
+                <div class="tc2" style="cursor: pointer; color: blue">
+                    <div class="pcode">{{item.product_code}}</div>
+                    <div class="pdesc">{{item.description}}</div>
+                </div>
+                <div class="tc2">{{item.available_stock}}</div>
+                <div class="tc2">{{item.notes}}</div>
+                <div class="tc3">{{item.askqty}}</div>
+                <div class="tc4">{{item.giveqty}}</div>
+                <div class="tc5">{{item.reason}}</div>
+            </div>
+        </div>
+    </ng-template>
 
-			<div class="items">{{item.noofitems}}</div>
-			<div>
-				<div *ngIf="item.estatus === 'O' ">New</div>
-				<div *ngIf="item.estatus === 'D' ">Verification in progress</div>
-				<div
-					*ngIf="item.estatus === 'P' "
-					style="display: flex; align-items: center"
-				>
-					<span class="invoice" (click)="moveToSale(item,'TI')">INVOICE</span>
-					<span class="stock" (click)="moveToSale(item, 'SI')"
-						>STOCK ISSUE</span
-					>
-				</div>
-				<div *ngIf="item.estatus === 'E' ">Closed</div>
-				<div
-					*ngIf="item.estatus === 'X' "
-					style="height: 38px; display: flex; align-items: center"
-				>
-					Cancelled
-				</div>
-			</div>
-			<div>
-				<div *ngIf="item.estatus === 'O' || item.estatus === 'D' ">
-					<div style="display: flex; justify-content: space-evenly">
-						<span class="icon-style"
-							><mat-icon
-								#tooltip="matTooltip"
-								matTooltip="Edit/Modify Enquiry"
-								matTooltipClass="tooltip"
-								(mousedown)="tooltip.hide()"
-								(click)="processEnquiry(item)"
-								>edit
-							</mat-icon></span
-						>
-						<span class="icon-style" (click)="openDialog(item)"
-							><mat-icon
-								[ngStyle]="{'color':'#6d78d2'}"
-								matTooltip="View Enquiry"
-								matTooltipClass="tooltip"
-								>remove_red_eye
-							</mat-icon></span
-						>
-						<span class="icon-style" (click)="delete(item)"
-							><mat-icon
-								[ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
-								matTooltip="Delete Enquiry"
-								matTooltipClass="tooltip"
-								>delete_outline
-							</mat-icon></span
-						>
-					</div>
-				</div>
+    <ng-template #MsgRef>
+        <div class="header">
+            <div>#</div>
 
-				<!-- <div *ngIf="item.estatus === 'D' ">
+            <div>CUSTOMER</div>
+            <div>INQUIRED ON</div>
+            <div>ITEMS</div>
+            <div>&nbsp;</div>
+
+            <div>&nbsp;</div>
+        </div>
+    </ng-template>
+
+    <ng-template #MsgRef1>
+        <div
+            *ngFor="let item of filteredValues let idx = index;"
+            class="listItem"
+        >
+            <div style="padding-left: 10px">{{idx + 1}}</div>
+
+            <div>{{item.customer_name}}</div>
+            <div>{{item.enquiry_date | date: 'dd/MMM/yyyy h:mm a'}}</div>
+
+            <div class="items">{{item.noofitems}}</div>
+            <div>
+                <div *ngIf="item.estatus === 'O' ">New</div>
+                <div *ngIf="item.estatus === 'D' ">
+                    Verification in progress
+                </div>
+                <div
+                    *ngIf="item.estatus === 'P' "
+                    style="display: flex; align-items: center"
+                >
+                    <span class="invoice" (click)="moveToSale(item,'TI')"
+                        >INVOICE</span
+                    >
+                    <span class="stock" (click)="moveToSale(item, 'SI')"
+                        >STOCK ISSUE</span
+                    >
+                </div>
+                <div *ngIf="item.estatus === 'E' ">Closed</div>
+                <div
+                    *ngIf="item.estatus === 'X' "
+                    style="height: 38px; display: flex; align-items: center"
+                >
+                    Cancelled
+                </div>
+            </div>
+            <div>
+                <div *ngIf="item.estatus === 'O' || item.estatus === 'D' ">
+                    <div style="display: flex; justify-content: space-evenly">
+                        <span class="icon-style"
+                            ><mat-icon
+                                #tooltip="matTooltip"
+                                matTooltip="Edit/Modify Enquiry"
+                                matTooltipClass="tooltip"
+                                (mousedown)="tooltip.hide()"
+                                (click)="processEnquiry(item)"
+                                >edit
+                            </mat-icon></span
+                        >
+                        <span class="icon-style" (click)="openDialog(item)"
+                            ><mat-icon
+                                [ngStyle]="{'color':'#6d78d2'}"
+                                matTooltip="View Enquiry"
+                                matTooltipClass="tooltip"
+                                >remove_red_eye
+                            </mat-icon></span
+                        >
+                        <span class="icon-style" (click)="delete(item)"
+                            ><mat-icon
+                                [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
+                                matTooltip="Delete Enquiry"
+                                matTooltipClass="tooltip"
+                                >delete_outline
+                            </mat-icon></span
+                        >
+                    </div>
+                </div>
+
+                <!-- <div *ngIf="item.estatus === 'D' ">
 					<div style="display: flex; justify-content: space-evenly">
 						<span class="icon-style" (click)="processEnquiry(item)"
 							><mat-icon>edit </mat-icon></span
@@ -296,72 +342,120 @@
 						>
 					</div>
 				</div> -->
-				<!-- ready to invoice tab -->
-				<div *ngIf="item.estatus === 'P' ">
-					<div style="display: flex; justify-content: space-evenly">
-						<!-- <span class="icon-style" (click)="moveToSale(item)"
+                <!-- ready to invoice tab -->
+                <div *ngIf="item.estatus === 'P' ">
+                    <div style="display: flex; justify-content: space-evenly">
+                        <!-- <span class="icon-style" (click)="moveToSale(item)"
 							><mat-icon>edit </mat-icon></span
 						> -->
-						<span class="icon-style" (click)="openDialog(item)"
-							><mat-icon
-								[ngStyle]="{'color':'#6d78d2'}"
-								matTooltip="View Enquiry"
-								matTooltipClass="tooltip"
-								>remove_red_eye
-							</mat-icon></span
-						>
-						<span class="icon-style" (click)="delete(item)"
-							><mat-icon
-								[ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
-								matTooltip="Delete Enquiry"
-								matTooltipClass="tooltip"
-								>delete_outline
-							</mat-icon></span
-						>
-					</div>
-				</div>
-				<!-- Executed / Cancelled -->
-				<div *ngIf="item.estatus === 'E' ">
-					<div
-						style="
-							display: flex;
-							justify-content: space-evenly;
+                        <span class="icon-style" (click)="openDialog(item)"
+                            ><mat-icon
+                                [ngStyle]="{'color':'#6d78d2'}"
+                                matTooltip="View Enquiry"
+                                matTooltipClass="tooltip"
+                                >remove_red_eye
+                            </mat-icon></span
+                        >
+                        <span class="icon-style" (click)="delete(item)"
+                            ><mat-icon
+                                [ngStyle]="{'color':'#ff8484', 'cursor': 'pointer'}"
+                                matTooltip="Delete Enquiry"
+                                matTooltipClass="tooltip"
+                                >delete_outline
+                            </mat-icon></span
+                        >
+                    </div>
+                </div>
+                <!-- Executed / Cancelled -->
+                <div *ngIf="item.estatus === 'E' ">
+                    <div
+                        style="
+                            display: flex;
+                            justify-content: space-evenly;
 
-							cursor: pointer;
-						"
-						(click)="openDialog(item)"
-					>
-						<span class="icon-style"
-							><mat-icon
-								[ngStyle]="{'color':'#6d78d2'}"
-								matTooltip="View Enquiry"
-								matTooltipClass="tooltip"
-								>remove_red_eye
-							</mat-icon></span
-						>
-					</div>
-				</div>
-			</div>
-		</div>
+                            cursor: pointer;
+                        "
+                        (click)="openDialog(item)"
+                    >
+                        <span class="icon-style"
+                            ><mat-icon
+                                [ngStyle]="{'color':'#6d78d2'}"
+                                matTooltip="View Enquiry"
+                                matTooltipClass="tooltip"
+                                >remove_red_eye
+                            </mat-icon></span
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<div
-			class="no-records"
-			*ngIf="tabIndex === 0 && (newEnquiries$| async)?.length === 0"
-		>
-			No item in status "Order Queue"
-		</div>
+        <div
+            class="no-records"
+            *ngIf="tabIndex === 0 && (newEnquiries$| async)?.length === 0"
+        >
+            No item in status "Order Queue"
+        </div>
 
-		<div
-			class="no-records"
-			*ngIf="tabIndex === 1 && (invoiceReadyEnquiries$| async)?.length === 0"
-		>
-			No item in status "Ready to Invoice"
-		</div>
-		<div
-			class="no-records"
-			*ngIf="tabIndex === 2 && (fullfilledEnquiries$| async)?.length === 0"
-		>
-			No item in status "Closed/Cancelled Enquiry"
-		</div>
-	</ng-template>
+        <div
+            class="no-records"
+            *ngIf="tabIndex === 1 && (invoiceReadyEnquiries$| async)?.length === 0"
+        >
+            No item in status "Ready to Invoice"
+        </div>
+        <div
+            class="no-records"
+            *ngIf="tabIndex === 2 && (fullfilledEnquiries$| async)?.length === 0"
+        >
+            No item in status "Closed/Cancelled Enquiry"
+        </div>
+    </ng-template>
+
+    <mat-menu #admin="matMenu" [overlapTrigger]="false" class="myMenu">
+        <div mat-menu-item class="mat-menu-line-height" (click)="dateFilter(7)">
+            <span>Last 7 days</span>
+        </div>
+
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="dateFilter(14)"
+        >
+            <span>Last 14 days</span>
+        </div>
+        <div mat-menu-item class="mat-menu-line-height" (click)="dateFilter(0)">
+            <span>Today</span>
+        </div>
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="customDateFilter()"
+        >
+            <span>Custom</span>
+        </div>
+    </mat-menu>
+
+    <mat-menu #menuN="matMenu">
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="statusFilterChanged('all')"
+        >
+            All
+        </div>
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="statusFilterChanged('D')"
+        >
+            Draft Invoices
+        </div>
+        <div
+            mat-menu-item
+            class="mat-menu-line-height"
+            (click)="statusFilterChanged('C')"
+        >
+            Invoiced
+        </div>
+    </mat-menu>
 </ion-content>
