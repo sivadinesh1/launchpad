@@ -213,10 +213,11 @@
                     >
                         <div
                             class="list-item"
-                            *ngForOf="let product of product_arr.controls; let idx = index"
+                            *ngFor="let product of this.submitForm.get('product_arr')['controls']; let idx = index"
                         >
                             <ng-container [formGroupName]="idx">
                                 <div>{{idx + 1}}</div>
+
                                 <div class="id">
                                     <mat-checkbox
                                         (change)="checkedRow(idx, $event)"

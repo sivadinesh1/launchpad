@@ -52,7 +52,7 @@ import { InvoiceSuccessComponent } from '../../components/invoice-success/invoic
 
 import { Customer } from 'src/app/models/Customer';
 import { IProduct } from '../../models/Product';
-import { EMPTY, empty } from 'rxjs';
+import { EMPTY } from 'rxjs';
 import { RequireMatch } from '../../util/directives/requireMatch';
 import {
     MatAutocomplete,
@@ -587,7 +587,7 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                             search_text: id,
                         });
                     } else {
-                        return empty();
+                        return EMPTY;
                     }
                 })
             )
@@ -1643,7 +1643,6 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                 mrp: elem.mrp,
             })
             .subscribe((data: any) => {
-                debugger;
                 if (data.body.result === 'success') {
                     console.log('object >>> execute delete product ...');
                 } else {
@@ -1893,10 +1892,10 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
         return obj && obj.product_code ? obj.product_code : undefined;
     }
 
-    getLength() {
-        const control = this.submitForm.controls.product_arr as FormArray;
-        return control.length;
-    }
+    // getLength() {
+    //     const control = this.submitForm.controls.product_arr as FormArray;
+    //     return control.length;
+    // }
 
     searchProducts() {
         let inv_dt = '';

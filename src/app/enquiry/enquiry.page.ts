@@ -23,7 +23,7 @@ import { CommonApiService } from '../services/common-api.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
 
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import {
     filter,
     map,
@@ -306,14 +306,14 @@ export class EnquiryPage implements AfterViewInit {
                             search_text: id,
                         });
                     } else {
-                        return empty();
+                        return EMPTY;
                     }
                 })
             )
 
             .subscribe((data: any) => {
                 this.isLoading = false;
-                this.product_lis = data.body;
+                this.product_lis = data.body.result;
                 this._cdr.markForCheck();
             });
     }
@@ -664,11 +664,11 @@ export class EnquiryPage implements AfterViewInit {
     setItemDesc(event, from) {
         if (from === 'tab') {
             this.submitForm.patchValue({
-                temp_desc: event.description,
+                temp_desc: event.product_description,
             });
         } else {
             this.submitForm.patchValue({
-                temp_desc: event.option.value.description,
+                temp_desc: event.option.value.product_description,
             });
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             this.qty && this.qty.nativeElement.focus();

@@ -9,18 +9,15 @@ import { EnquiryPageRoutingModule } from './enquiry-routing.module';
 import { EnquiryPage } from './enquiry.page';
 import { SharedModule } from '../shared.module';
 
-
 @NgModule({
-  imports: [
-
-
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    ReactiveFormsModule,
-    SharedModule,
-    EnquiryPageRoutingModule
-  ],
-  declarations: [EnquiryPage]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        ReactiveFormsModule,
+        SharedModule,
+        EnquiryPageRoutingModule,
+    ],
+    declarations: [EnquiryPage],
 })
-export class EnquiryPageModule { }
+export class EnquiryPageModule {}
