@@ -1067,23 +1067,7 @@
                         [disabled]="clicked"
                     >
                         Cancel</button
-                    >&nbsp;
-                    <!-- <button
-					*ngIf="(submitForm.get('status').value !== 'C' ) "
-					style="border-radius: 0px"
-					appPreventDoubleClick
-					class="cursor"
-					(throttledClick)="onSave('draft')"
-					type="button"
-					[throttleTime]="500"
-					mat-stroked-button
-					type="button"
-					color="primary"
-					[disabled]="clicked"
-				>
-					Save as Draft
-				</button> -->
-                    &nbsp;
+                    >&nbsp; &nbsp;
                     <button
                         style="border-radius: 0px"
                         appPreventDoubleClick
@@ -1096,12 +1080,7 @@
                         color="primary"
                         [disabled]="clicked"
                     >
-                        <span *ngIf="bread_menu === 'New Purchase'"
-                            >Add to stock</span
-                        >
-                        <span *ngIf="bread_menu !== 'New Purchase'"
-                            >Update to stock</span
-                        >
+                        <span>Update stock</span>
                     </button>
                 </div>
             </div>

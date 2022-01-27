@@ -1046,11 +1046,11 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
             }
 
             if (this.validateForms()) {
-                if (action === 'add') {
-                    this.presentAlertConfirm('add');
-                } else {
-                    this.presentAlertConfirm('draft');
-                }
+                // if (action === 'add') {
+                //     this.presentAlertConfirm('add');
+                // } else {
+                //     this.presentAlertConfirm('draft');
+                // }
 
                 this.submitForm.patchValue({
                     product_arr: this.listArr,
@@ -1091,6 +1091,8 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
                         this.getNetTotal('without-rounding')
                     ).toFixed(2),
                 });
+
+                this.mainSubmit('add', 'stay');
             }
         }
     }
@@ -1251,76 +1253,62 @@ export class PurchaseOrderPage implements OnInit, AfterViewInit {
 
         this._commonApiService
             .savePurchaseOrder(this.submitForm.value)
-            .subscribe(
-                (data: any) => {
-                    this.spinner.hide();
-                    this.clicked = false;
+            .subscribe((data: any) => {
+                this.spinner.hide();
+                this.clicked = false;
 
-                    if (data.body.status === 'success') {
-                        if (navto === 'back') {
-                            this.submitForm.reset();
-                            this.init();
-                            this.vendor_data = null;
-                            this.submitForm.patchValue({
-                                product_arr: [],
-                            });
-                            this.vendor_name = '';
-                            this.vendor_selected = false;
+                if (data.body.status === 'success') {
+                    if (navto === 'back') {
+                        this.submitForm.reset();
+                        this.init();
+                        this.vendor_data = null;
+                        this.submitForm.patchValue({
+                            product_arr: [],
+                        });
+                        this.vendor_name = '';
+                        this.vendor_selected = false;
 
-                            this.listArr = [];
+                        this.listArr = [];
 
-                            this.total = '0.00';
-                            this.igs_tTotal = '0.00';
-                            this.cgs_tTotal = '0.00';
-                            this.sgs_tTotal = '0.00';
+                        this.total = '0.00';
+                        this.igs_tTotal = '0.00';
+                        this.cgs_tTotal = '0.00';
+                        this.sgs_tTotal = '0.00';
 
-                            this.purchaseDashboard();
-                            this._cdr.markForCheck();
-                        }
-
-                        if (action === 'add') {
-                            this.listArr = [];
-
-                            // add to the submitForm purchase_id
-                            // reset listArr,
-                            // call raw_purchase_id
-                            // set mode to edit
-                            this.submitForm.patchValue({
-                                purchase_id: data.body.id,
-                            });
-                            this._commonApiService
-                                .purchaseMasterData(data.body.id)
-                                .subscribe((data1) => {
-                                    this.raw_purchase_data = data1;
-                                    this._cdr.markForCheck();
-                                    this.buildRawPurchaseData();
-                                });
-
-                            this.openSnackBar('Items Added!', '');
-                        } else {
-                            this.openSnackBar('Saved to Draft!', '');
-                        }
-                    } else {
-                        this.presentAlert(
-                            'Error: Something went wrong Contact Admin!'
-                        );
+                        this.purchaseDashboard();
+                        this._cdr.markForCheck();
                     }
 
-                    this._cdr.markForCheck();
-                },
-                (error) => {
-                    this.spinner.hide();
-                    this.clicked = false;
-                    this.clearInput();
-                    this.init();
-                    this.listArr = [];
+                    if (action === 'add') {
+                        this.listArr = [];
 
-                    this._cdr.markForCheck();
+                        // add to the submitForm purchase_id
+                        // reset listArr,
+                        // call raw_purchase_id
+                        // set mode to edit
+                        this.submitForm.patchValue({
+                            purchase_id: data.body.id,
+                        });
+                        this._commonApiService
+                            .purchaseMasterData(data.body.id)
+                            .subscribe((data1) => {
+                                this.raw_purchase_data = data1;
+                                this._cdr.markForCheck();
+                                this.buildRawPurchaseData();
+                            });
+
+                        this.openSnackBar('Items Added!', '');
+                    } else {
+                        this.openSnackBar('Saved to Draft!', '');
+                    }
+                } else {
                     this.presentAlert(
-                        'Error: Something went wrong Contact Admin!!!'
+                        'Error: Something went wrong Contact Admin!'
                     );
                 }
-            );
+
+                this._cdr.markForCheck();
+            });
     }
 
     checkedRow(idx: number) {

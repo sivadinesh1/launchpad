@@ -179,34 +179,6 @@
                 </mat-tab>
             </mat-tab-group>
         </div>
-
-        <div
-            style="
-                position: absolute;
-                justify-self: flex-end;
-                top: 38px;
-                z-index: 1;
-            "
-        >
-            <form [formGroup]="submitForm">
-                <mat-form-field class="readonly-wrapper">
-                    <mat-label>Show</mat-label>
-                    <mat-select
-                        formControlName="order"
-                        (selectionChange)="search('O')"
-                        value="{orderDefaultFlag}"
-                        [disableControl]="this.submitForm.value.searchtype !== 'all'"
-                    >
-                        <mat-option
-                            *ngFor="let item of orderList"
-                            [value]="item.id"
-                        >
-                            {{item.value}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </form>
-        </div>
     </div>
 
     <ng-template #BackorderHeader>
@@ -229,7 +201,7 @@
             *ngFor="let item of back_order_lst;let idx = index; let isOdd = odd; let isEven = even;"
         >
             <div class="tbl-detail" [class.odd]="isOdd" [class.even]="isEven">
-                <div class="tc1">{{item.order_date}}</div>
+                <div class="tc1">{{item.order_date | date:'dd-MMM-yyyy'}}</div>
                 <div class="tc1">{{item.customer_name}}</div>
                 <div class="tc2" style="cursor: pointer; color: blue">
                     <div class="pcode">{{item.product_code}}</div>
@@ -269,12 +241,12 @@
 
             <div class="items">{{item.noofitems}}</div>
             <div>
-                <div *ngIf="item.estatus === 'O' ">New</div>
-                <div *ngIf="item.estatus === 'D' ">
+                <div *ngIf="item.e_status === 'O' ">New</div>
+                <div *ngIf="item.e_status === 'D' ">
                     Verification in progress
                 </div>
                 <div
-                    *ngIf="item.estatus === 'P' "
+                    *ngIf="item.e_status === 'P' "
                     style="display: flex; align-items: center"
                 >
                     <span class="invoice" (click)="moveToSale(item,'TI')"
@@ -284,16 +256,16 @@
                         >STOCK ISSUE</span
                     >
                 </div>
-                <div *ngIf="item.estatus === 'E' ">Closed</div>
+                <div *ngIf="item.e_status === 'E' ">Closed</div>
                 <div
-                    *ngIf="item.estatus === 'X' "
+                    *ngIf="item.e_status === 'X' "
                     style="height: 38px; display: flex; align-items: center"
                 >
                     Cancelled
                 </div>
             </div>
             <div>
-                <div *ngIf="item.estatus === 'O' || item.estatus === 'D' ">
+                <div *ngIf="item.e_status === 'O' || item.e_status === 'D' ">
                     <div style="display: flex; justify-content: space-evenly">
                         <span class="icon-style"
                             ><mat-icon
@@ -324,7 +296,7 @@
                     </div>
                 </div>
 
-                <!-- <div *ngIf="item.estatus === 'D' ">
+                <!-- <div *ngIf="item.e_status === 'D' ">
 					<div style="display: flex; justify-content: space-evenly">
 						<span class="icon-style" (click)="processEnquiry(item)"
 							><mat-icon>edit </mat-icon></span
@@ -343,7 +315,7 @@
 					</div>
 				</div> -->
                 <!-- ready to invoice tab -->
-                <div *ngIf="item.estatus === 'P' ">
+                <div *ngIf="item.e_status === 'P' ">
                     <div style="display: flex; justify-content: space-evenly">
                         <!-- <span class="icon-style" (click)="moveToSale(item)"
 							><mat-icon>edit </mat-icon></span
@@ -367,7 +339,7 @@
                     </div>
                 </div>
                 <!-- Executed / Cancelled -->
-                <div *ngIf="item.estatus === 'E' ">
+                <div *ngIf="item.e_status === 'E' ">
                     <div
                         style="
                             display: flex;

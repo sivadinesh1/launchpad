@@ -887,14 +887,6 @@ export class SearchSaleOrderPage implements OnInit {
         // do nothing
     }
 
-    // doInfinite(ev: any) {
-    //     console.log('scrolled down!!', ev);
-
-    //     this.offset += 20;
-    //     this.is_loaded = false;
-    //     this.search(ev);
-    // }
-
     doInfinite(ev: any) {
         console.log('scrolled down!!', ev);
 
