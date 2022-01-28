@@ -1132,7 +1132,7 @@ export class CommonApiService {
         );
     }
 
-    stockCorrection(stock: IStock) {
+    stockCorrection(stock) {
         return this.httpClient.post(
             `${this.restApiUrl}/v1/api/stock/stock-correction`,
             stock,
