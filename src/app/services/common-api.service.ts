@@ -256,7 +256,7 @@ export class CommonApiService {
         );
     }
 
-    updateCustomerDetailsinEnquiry(id: string, enqid: string) {
+    updateCustomerDetailsInEnquiry(id: string, enqid: string) {
         return this.httpClient.get(
             `${this.restApiUrl}/v1/api/enquiry/update-customer/${id}/${enqid}`
         );

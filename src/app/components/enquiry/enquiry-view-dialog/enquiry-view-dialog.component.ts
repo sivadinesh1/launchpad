@@ -30,14 +30,14 @@ import { WhatsappDialogComponent } from '../../social/whatsapp/whatsapp-dialog/w
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnquiryViewDialogComponent implements OnInit {
-    enquirymasterdata: any;
-    enquirydetailsdata = [];
+    @ViewChild('epltable', { static: false }) epltable: ElementRef;
+
+    enquiry_master_data: any;
+    enquiry_details_data = [];
 
     centerdata: any;
 
     data: any;
-
-    @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -57,14 +57,14 @@ export class EnquiryViewDialogComponent implements OnInit {
         this._commonApiService
             .getEnquiryMaster(this.data.id)
             .subscribe((data: any) => {
-                this.enquirymasterdata = data[0];
+                this.enquiry_master_data = data[0];
                 this._cdr.markForCheck();
             });
 
         this._commonApiService
             .getEnquiryDetails(this.data.id)
             .subscribe((data: any) => {
-                this.enquirydetailsdata = data.enquiryDetails;
+                this.enquiry_details_data = data.enquiryDetails;
 
                 this._cdr.markForCheck();
             });
@@ -105,11 +105,13 @@ export class EnquiryViewDialogComponent implements OnInit {
     openShareDialog(): void {
         const dialogRef = this._dialog.open(WhatsappDialogComponent, {
             width: '250px',
-            data: { whatsapp: this.enquirymasterdata.mobile },
+            data: { whatsapp: this.enquiry_master_data.mobile },
         });
 
         dialogRef.afterClosed().subscribe((result) => {
             console.log('The dialog was closed');
         });
     }
+
+    goEnquiryEditScreen() {}
 }

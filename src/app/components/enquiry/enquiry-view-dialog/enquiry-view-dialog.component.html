@@ -1,114 +1,297 @@
 <ion-content>
-	<div class="screen-header">
-		<div>&nbsp;</div>
+    <div class="si-screen-header sticky1">
+        <div style="font-size: 20px; align-self: center">Enquiry View</div>
 
-		<div style="align-items: center">
-			<img class="cursor" src="/assets/images/svg/close.svg" (click)="close()" width="16px" height="16px" />
-		</div>
-	</div>
+        <div style="display: flex; align-items: center">
+            <div>
+                <span style="padding: 0px 6px">
+                    <button
+                        style="border-radius: 0px"
+                        appPreventDoubleClick
+                        class="cursor"
+                        type="button"
+                        [throttleTime]="500"
+                        mat-stroked-button
+                        type="button"
+                        tabindex="-1"
+                        (click)="exportToExcel()"
+                    >
+                        <mat-icon>cloud_download</mat-icon>
+                        &nbsp; Download
+                    </button>
+                </span>
 
-	<div class="action-row">
-		<div>ENQUIRY</div>
-		<div>
-			<span style="padding: 0px 6px"
-				><img
-					matTooltip="Download"
-					matTooltipClass="tooltip"
-					src="/assets/images/svg/direct-download.svg"
-					style="cursor: pointer"
-					width="24px"
-					height="24px"
-					(click)="exportToExcel()"
-			/></span>
-			<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-		</div>
-	</div>
+                <span>&nbsp;&nbsp;&nbsp;</span>
+                <span
+                    class="item"
+                    style="text-align: center; padding-right: 1rem"
+                >
+                    <button
+                        style="border-radius: 0px"
+                        appPreventDoubleClick
+                        class="cursor"
+                        type="button"
+                        [throttleTime]="500"
+                        mat-flat-button
+                        type="button"
+                        color="primary"
+                        tabindex="-1"
+                        (click)="goEnquiryEditScreen()"
+                    >
+                        <mat-icon
+                            #tooltip="matTooltip"
+                            matTooltip="Edit"
+                            matTooltipClass="tooltip"
+                            (mousedown)="tooltip.hide()"
+                            [ngStyle]="{ color: '#fff', cursor: 'pointer' }"
+                            >edit
+                        </mat-icon>
+                        Edit
+                    </button>
+                </span>
+            </div>
 
-	<div class="customer-info">
-		<div>
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Enquiry Date</div>
-				<div style="font-size: 14px; font-weight: 400">{{ this.enquirymasterdata?.enquiry_date | date: 'dd/MMM/yyyy' }}</div>
-			</div>
+            <img
+                class="cursor"
+                src="/assets/images/svg/close.svg"
+                (click)="close()"
+                width="16px"
+                height="16px"
+            />
+        </div>
+    </div>
 
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Status</div>
-				<div style="font-size: 14px; font-weight: 400">
-					{{
-						this.enquirymasterdata?.estatus === 'E'
-							? 'Closed Inquiry'
-							: this.enquirymasterdata?.estatus === 'D'
-							? 'In Progress'
-							: this.enquirymasterdata?.estatus === 'P'
-							? 'Ready to Invoice'
-							: this.enquirymasterdata?.estatus === 'O'
-							? 'New Inquiry'
-							: ''
-					}}
-				</div>
-			</div>
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Processed Date</div>
-				<div style="font-size: 14px; font-weight: 400">{{ this.enquirymasterdata?.processed_date || 'N/A' }}</div>
-			</div>
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Remarks</div>
-				<div style="font-size: 14px; font-weight: 400">{{ this.enquirydetailsdata[0]?.remarks }}</div>
-			</div>
-		</div>
-		<div>
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6">Billing Address</div>
-				<div style="padding: 5px 0px">
-					<div style="font-size: 14px; font-weight: 400">
-						{{ this.enquirymasterdata?.name }}
-					</div>
-					<div style="font-size: 14px; font-weight: 400; padding: 1px 0x">{{ this.enquirymasterdata?.address1 }}</div>
-					<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">{{ this.enquirymasterdata?.address2 }}</div>
-				</div>
-			</div>
-			<div style="padding: 5px">
-				<div style="font-size: 13px; font-weight: 400; opacity: 0.6; padding: 5px 0px 0px 0px">Shipping Address</div>
-				<div style="padding: 5px 0px">
-					<div style="font-size: 14px; font-weight: 400">
-						{{ this.enquirymasterdata?.customer_name }}
-					</div>
-					<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">{{ this.enquirymasterdata?.csa_address1 }}</div>
-					<div style="font-size: 14px; font-weight: 400; padding: 1px 0px">{{ this.enquirymasterdata?.csa_address2 }}</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="customer-info">
+        <div>
+            <div style="padding: 5px">
+                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
+                    Enquiry Date
+                </div>
+                <div style="font-size: 14px; font-weight: 400">
+                    {{
+                        this.enquiry_master_data?.enquiry_date
+                            | date: "dd/MMM/yyyy"
+                    }}
+                </div>
+            </div>
 
-	<div #epltable>
-		<table style="width: 100%">
-			<thead>
-				<tr class="content">
-					<th style="text-align: left; padding-left: 5px; font-weight: 500">SNo</th>
-					<th style="text-align: left; padding-left: 5px; font-weight: 500">Item Code</th>
-					<th style="text-align: left; padding-left: 5px; font-weight: 500">Item Description</th>
-					<th style="text-align: right; padding-right: 5px; font-weight: 500">In Stock</th>
-					<th style="text-align: left; padding-left: 5px; font-weight: 500">Rack #</th>
-					<th style="text-align: right; padding-right: 5px; font-weight: 500">A. Qty</th>
+            <div style="padding: 5px">
+                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
+                    Status
+                </div>
+                <div style="font-size: 14px; font-weight: 400">
+                    {{
+                        this.enquiry_master_data?.e_status === "E"
+                            ? "Closed Inquiry"
+                            : this.enquiry_master_data?.e_status === "D"
+                            ? "In Progress"
+                            : this.enquiry_master_data?.e_status === "P"
+                            ? "Ready to Invoice"
+                            : this.enquiry_master_data?.e_status === "O"
+                            ? "New Inquiry"
+                            : ""
+                    }}
+                </div>
+            </div>
+            <div style="padding: 5px">
+                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
+                    Processed Date
+                </div>
+                <div style="font-size: 14px; font-weight: 400">
+                    {{ this.enquiry_master_data?.processed_date || "N/A" }}
+                </div>
+            </div>
+            <div style="padding: 5px">
+                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
+                    Remarks
+                </div>
+                <div style="font-size: 14px; font-weight: 400">
+                    {{ this.enquiry_details_data[0]?.remarks }}
+                </div>
+            </div>
+        </div>
+        <div>
+            <div style="padding: 5px">
+                <div style="font-size: 13px; font-weight: 400; opacity: 0.6">
+                    Billing Address
+                </div>
+                <div style="padding: 5px 0px">
+                    <div style="font-size: 14px; font-weight: 400">
+                        {{ this.enquiry_master_data?.name }}
+                    </div>
+                    <div
+                        style="
+                            font-size: 14px;
+                            font-weight: 400;
+                            padding: 1px 0x;
+                        "
+                    >
+                        {{ this.enquiry_master_data?.address1 }}
+                    </div>
+                    <div
+                        style="
+                            font-size: 14px;
+                            font-weight: 400;
+                            padding: 1px 0px;
+                        "
+                    >
+                        {{ this.enquiry_master_data?.address2 }}
+                    </div>
+                </div>
+            </div>
+            <div style="padding: 5px">
+                <div
+                    style="
+                        font-size: 13px;
+                        font-weight: 400;
+                        opacity: 0.6;
+                        padding: 5px 0px 0px 0px;
+                    "
+                >
+                    Shipping Address
+                </div>
+                <div style="padding: 5px 0px">
+                    <div style="font-size: 14px; font-weight: 400">
+                        {{ this.enquiry_master_data?.customer_name }}
+                    </div>
+                    <div
+                        style="
+                            font-size: 14px;
+                            font-weight: 400;
+                            padding: 1px 0px;
+                        "
+                    >
+                        {{ this.enquiry_master_data?.csa_address1 }}
+                    </div>
+                    <div
+                        style="
+                            font-size: 14px;
+                            font-weight: 400;
+                            padding: 1px 0px;
+                        "
+                    >
+                        {{ this.enquiry_master_data?.csa_address2 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-					<th style="text-align: left; padding-left: 5px; font-weight: 500">Notes</th>
-					<th style="text-align: right; padding-right: 5px; font-weight: 500">R. Qty</th>
-				</tr>
-			</thead>
+    <div #epltable>
+        <table style="width: 100%">
+            <thead>
+                <tr class="content">
+                    <th
+                        style="
+                            text-align: left;
+                            padding-left: 5px;
+                            font-weight: 500;
+                        "
+                    >
+                        SNo
+                    </th>
+                    <th
+                        style="
+                            text-align: left;
+                            padding-left: 5px;
+                            font-weight: 500;
+                        "
+                    >
+                        Item Code
+                    </th>
+                    <th
+                        style="
+                            text-align: left;
+                            padding-left: 5px;
+                            font-weight: 500;
+                        "
+                    >
+                        Item Description
+                    </th>
+                    <th
+                        style="
+                            text-align: right;
+                            padding-right: 5px;
+                            font-weight: 500;
+                        "
+                    >
+                        In Stock
+                    </th>
+                    <th
+                        style="
+                            text-align: left;
+                            padding-left: 5px;
+                            font-weight: 500;
+                        "
+                    >
+                        Rack #
+                    </th>
+                    <th
+                        style="
+                            text-align: right;
+                            padding-right: 5px;
+                            font-weight: 500;
+                        "
+                    >
+                        A. Qty
+                    </th>
 
-			<tbody>
-				<div *ngFor="let item of enquirydetailsdata ? enquirydetailsdata : []; let idx = index" class="list-item">
-					<div style="text-align: left; padding-left: 5px">{{ idx + 1 }}</div>
-					<div style="text-align: left; padding-left: 5px">{{ item?.pcode }}</div>
-					<div style="text-align: left; padding-left: 5px">{{ item?.pdesc }}</div>
-					<div style="text-align: right; padding-right: 5px">{{ item?.available_stock }}</div>
-					<div style="text-align: left">{{ item?.rackno }}</div>
+                    <th
+                        style="
+                            text-align: left;
+                            padding-left: 5px;
+                            font-weight: 500;
+                        "
+                    >
+                        Notes
+                    </th>
+                    <th
+                        style="
+                            text-align: right;
+                            padding-right: 5px;
+                            font-weight: 500;
+                        "
+                    >
+                        R. Qty
+                    </th>
+                </tr>
+            </thead>
 
-					<div style="text-align: right; padding-right: 5px">{{ item?.giveqty }}</div>
-					<div style="text-align: left; padding-left: 5px">{{ item?.notes }}</div>
-					<div style="text-align: right; padding-right: 5px">{{ item?.askqty }}</div>
-				</div>
-			</tbody>
-		</table>
-	</div>
+            <tbody>
+                <div
+                    *ngFor="
+                        let item of enquiry_details_data
+                            ? enquiry_details_data
+                            : [];
+                        let idx = index
+                    "
+                    class="list-item"
+                >
+                    <div style="text-align: left; padding-left: 5px">
+                        {{ idx + 1 }}
+                    </div>
+                    <div style="text-align: left; padding-left: 5px">
+                        {{ item?.product_code }}
+                    </div>
+                    <div style="text-align: left; padding-left: 5px">
+                        {{ item?.product_description }}
+                    </div>
+                    <div style="text-align: right; padding-right: 5px">
+                        {{ item?.available_stock }}
+                    </div>
+                    <div style="text-align: left">{{ item?.rack }}</div>
+
+                    <div style="text-align: right; padding-right: 5px">
+                        {{ item?.give_quantity }}
+                    </div>
+                    <div style="text-align: left; padding-left: 5px">
+                        {{ item?.notes }}
+                    </div>
+                    <div style="text-align: right; padding-right: 5px">
+                        {{ item?.ask_quantity }}
+                    </div>
+                </div>
+            </tbody>
+        </table>
+    </div>
 </ion-content>

@@ -34,6 +34,7 @@ export class LeftMenuComponent {
     user_data$: Observable<User>;
     user_data: any;
     panelOpenState = false;
+    expanded0 = false; // Enquiry Menu
     expanded = false; // Customers Menu
     expanded1 = false; // Vendors Menu
 
@@ -50,6 +51,18 @@ export class LeftMenuComponent {
             name: 'Enquiry',
             link: '/home/enquiry/open-enquiry/O/weekly',
             icon: '/assets/images/svg/enquiry.svg',
+            children: [
+                {
+                    name: 'List',
+                    link: '/home/enquiry/open-enquiry/O/weekly',
+                    icon: '/assets/images/svg/money.svg',
+                },
+                {
+                    name: 'Back Orders',
+                    link: '/home/back-order',
+                    icon: '/assets/images/svg/money.svg',
+                },
+            ],
         },
         {
             name: 'Sale Orders',
@@ -311,6 +324,8 @@ export class LeftMenuComponent {
             this.expanded1 = !this.expanded1;
         } else if (param === 'customer') {
             this.expanded = !this.expanded;
+        } else if (param === 'enquiry') {
+            this.expanded0 = !this.expanded0;
         }
     }
 }

@@ -218,7 +218,7 @@ export class ProductCorrectionDialogComponent implements OnInit {
         };
 
         const stock = plainToClass(Stock, submitForm);
-        debugger;
+
         if (
             this.inputAryVar[IdxVar].reason === '' ||
             this.inputAryVar[IdxVar].reason === undefined
@@ -231,7 +231,7 @@ export class ProductCorrectionDialogComponent implements OnInit {
             );
             return false;
         }
-        debugger;
+
         this._commonApiService.stockCorrection(stock).subscribe((data: any) => {
             if (data.body.result.count > 0) {
                 this.dialogRef.close('success');

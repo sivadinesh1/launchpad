@@ -2,6 +2,7 @@
     <div style="height: 100%">
         <div class="wrapper">
             <div *ngFor="let page of pages">
+                <!-- horizontal dotted lines -->
                 <hr
                     *ngIf="
                         page.name === 'Enquiry' ||
@@ -14,7 +15,7 @@
                         opacity: 0.5;
                     "
                 />
-
+                <!-- horizontal dotted lines END -->
                 <a
                     class="header-menu-item"
                     (click)="routeTo(page.name, page.link)"
@@ -34,6 +35,14 @@
                         {{ page?.name }}
                     </span>
 
+                    <!-- enquiry menu -->
+                    <span
+                        class="side-menu-lbl"
+                        *ngIf="page.name === 'Enquiry'"
+                        (click)="toggleSubMenu('enquiry')"
+                        >{{ page?.name }}</span
+                    >
+
                     <!-- customer menu -->
                     <span
                         class="side-menu-lbl"
@@ -52,13 +61,33 @@
                     <span
                         class="side-menu-lbl"
                         *ngIf="
+                            page.name !== 'Enquiry' &&
                             page.name !== 'Customers' &&
                             page.name !== 'Vendors' &&
-                            
                             page.name !== 'Sale Orders'
                         "
                         >{{ page?.name }}</span
                     >
+
+                    <span
+                        *ngIf="page.name === 'Enquiry'"
+                        (click)="toggleSubMenu('enquiry')"
+                    >
+                        <img
+                            *ngIf="!expanded0"
+                            src="/assets/images/svg/down-arrow.svg"
+                            width="10px"
+                            height="10px"
+                            alt=""
+                        />
+                        <img
+                            *ngIf="expanded0"
+                            src="/assets/images/svg/up-arrow.svg"
+                            width="10px"
+                            height="10px"
+                            alt=""
+                        />
+                    </span>
 
                     <span
                         *ngIf="page.name === 'Customers'"
@@ -78,16 +107,6 @@
                             height="10px"
                             alt=""
                         />
-                    </span>
-
-                    <span
-                        style="display: contents"
-                        *ngIf="page.name === 'Enquiry'"
-                        (click)="goEnquiryScreen($event)"
-                    >
-                        <mat-icon class="plus" style="padding-left: 38px"
-                            >add</mat-icon
-                        >
                     </span>
 
                     <span
@@ -140,6 +159,27 @@
                         />
                     </span>
                 </a>
+
+                <div *ngIf="page?.name === 'Enquiry'">
+                    <div *ngIf="expanded0">
+                        <div *ngFor="let child of page.children">
+                            <a
+                                class="header-menu-item"
+                                (click)="routeTo(child.name, child.link)"
+                                [ngClass]="{
+                                    selectedMenu: clickedItem === child?.name
+                                }"
+                            >
+                                <span
+                                    class="side-menu-lbl"
+                                    style="padding-left: 50px"
+                                    >{{ child?.name }}</span
+                                >
+                            </a>
+                            <!-- <div class="plus">+</div> -->
+                        </div>
+                    </div>
+                </div>
 
                 <div *ngIf="page?.name === 'Customers'">
                     <div *ngIf="expanded">

@@ -7,6 +7,7 @@ import {
     ElementRef,
     QueryList,
     ViewChildren,
+    AfterViewInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonApiService } from 'src/app/services/common-api.service';
@@ -30,7 +31,7 @@ import * as xlsx from 'xlsx';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { MatSort } from '@angular/material/sort';
-import { Observable, empty, of } from 'rxjs';
+import { Observable, empty, of, EMPTY } from 'rxjs';
 import {
     NgForm,
     FormGroup,
@@ -56,7 +57,22 @@ import { IonContent } from '@ionic/angular';
     styleUrls: ['./process-enquiry.page.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProcessEnquiryPage implements OnInit {
+export class ProcessEnquiryPage implements OnInit, AfterViewInit {
+    @ViewChild('myForm1', { static: true }) myForm1: NgForm;
+
+    // TAB navigation for customer list
+    @ViewChild('typeHead1', { read: MatAutocompleteTrigger })
+    autoTrigger1: MatAutocompleteTrigger;
+
+    @ViewChildren('typeHead', { read: MatAutocompleteTrigger })
+    autoTriggerList: QueryList<MatAutocompleteTrigger>;
+
+    @ViewChildren('typeHead2', { read: MatAutocompleteTrigger })
+    autoTrigger2: QueryList<MatAutocompleteTrigger>;
+
+    @ViewChild('qty', { static: true }) qty: any;
+    @ViewChild(IonContent, { static: false }) content: IonContent;
+    @ViewChild('plist', { static: true }) plist: any;
     submitForm: FormGroup;
     submitForm1: FormGroup;
 
@@ -67,7 +83,7 @@ export class ProcessEnquiryPage implements OnInit {
 
     customer_lis: Customer[];
 
-    enqid: any;
+    enq_id: any;
     selected_description = '';
     selected_mrp = '';
     lineItemData: any;
@@ -77,38 +93,17 @@ export class ProcessEnquiryPage implements OnInit {
 
     isLoading = false;
     isCLoading = false;
-    customername: any;
+    customer_name: any;
     customer_data: any;
 
     searchText = '';
 
     showDelIcon = false;
 
-    iscustomerselected = false;
+    is_customer_selected = false;
     productList$: Observable<any>[] = [];
 
     product_lis: IProduct[];
-
-    @ViewChild('myForm1', { static: true }) myForm1: NgForm;
-
-    @ViewChild('epltable', { static: false }) epltable: ElementRef;
-
-    // TAB navigation for customer list
-    @ViewChild('typehead1', { read: MatAutocompleteTrigger })
-    autoTrigger1: MatAutocompleteTrigger;
-
-    @ViewChildren('typehead', { read: MatAutocompleteTrigger })
-    autoTriggerList: QueryList<MatAutocompleteTrigger>;
-
-    @ViewChildren('typehead2', { read: MatAutocompleteTrigger })
-    autoTrigger2: QueryList<MatAutocompleteTrigger>;
-
-    @ViewChildren(MatAutocompleteTrigger)
-    autocompletes: QueryList<MatAutocompleteTrigger>;
-
-    @ViewChild('qty', { static: true }) qty: any;
-    @ViewChild(IonContent, { static: false }) content: IonContent;
-    @ViewChild('plist', { static: true }) plist: any;
 
     user_data$: Observable<User>;
     user_data: any;
@@ -122,7 +117,7 @@ export class ProcessEnquiryPage implements OnInit {
         private _route: ActivatedRoute,
         private _router: Router,
         private dialog: MatDialog,
-        private _modalcontroller: ModalController,
+
         private _authService: AuthenticationService,
         public alertController: AlertController,
         private _commonApiService: CommonApiService,
@@ -143,10 +138,10 @@ export class ProcessEnquiryPage implements OnInit {
 
                 this._route.params.subscribe((params) => {
                     this.clicked = false;
-                    this.enqid = params.enqid;
+                    this.enq_id = params.enq_id;
 
                     this.submitForm1.patchValue({
-                        enquiry_id: params.enqid,
+                        enquiry_id: params.enq_id,
                         center_id: this.user_data.center_id,
                         created_by: this.user_data.user_id,
                     });
@@ -174,7 +169,7 @@ export class ProcessEnquiryPage implements OnInit {
 
     init() {
         this.submitForm = this._fb.group({
-            customerctrl: [null, [Validators.required, RequireMatch]],
+            customer_ctrl: [null, [Validators.required, RequireMatch]],
             enquiries: this._fb.array([]),
             created_by: [],
         });
@@ -183,12 +178,12 @@ export class ProcessEnquiryPage implements OnInit {
             enquiry_id: ['', Validators.required],
 
             center_id: [''],
-            productctrl: [null, [Validators.required, RequireMatch]],
+            product_ctrl: [null, [Validators.required, RequireMatch]],
             remarks: [''],
 
-            tempdesc: [''],
+            temp_desc: [''],
 
-            tempqty: [
+            temp_quantity: [
                 '1',
                 [
                     Validators.required,
@@ -204,9 +199,25 @@ export class ProcessEnquiryPage implements OnInit {
         this.searchCustomers();
     }
 
+    ngAfterViewInit() {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        this.autoTrigger1 &&
+            this.autoTrigger1.panelClosingActions.subscribe((x) => {
+                if (this.autoTrigger1.activeOption) {
+                    this.submitForm.patchValue({
+                        customer_ctrl: this.autoTrigger1.activeOption.value,
+                    });
+                    this.setCustomerInfo(
+                        this.autoTrigger1.activeOption.value,
+                        'tab'
+                    );
+                }
+            });
+    }
+
     searchProducts() {
         let search = '';
-        this.submitForm1.controls.productctrl.valueChanges
+        this.submitForm1.controls.product_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isLoading = true)),
@@ -214,18 +225,17 @@ export class ProcessEnquiryPage implements OnInit {
                     search = id;
                     if (id != null && id.length >= 0) {
                         return this._commonApiService.getProductInfo({
-                            center_id: this.user_data.center_id,
                             search_text: id,
                         });
                     } else {
-                        return empty();
+                        return EMPTY;
                     }
                 })
             )
 
             .subscribe((data: any) => {
                 this.isLoading = false;
-                this.product_lis = data.body;
+                this.product_lis = data.body.result;
                 this._cdr.markForCheck();
             });
     }
@@ -233,7 +243,7 @@ export class ProcessEnquiryPage implements OnInit {
     reloadEnqDetails(type) {
         this.enqDetailsOrig = [];
         this._commonApiService
-            .getEnquiryDetails(this.enqid)
+            .getEnquiryDetails(this.enq_id)
             .subscribe((data: any) => {
                 this.enqDetailsOrig = data;
 
@@ -241,24 +251,24 @@ export class ProcessEnquiryPage implements OnInit {
                     .getCustomerDetails(
                         this.enqDetailsOrig.customerDetails[0].customer_id
                     )
-                    .subscribe((custData: any) => {
-                        this.customer_data = custData[0];
+                    .subscribe((customerData: any) => {
+                        this.customer_data = customerData[0];
 
                         this.submitForm.patchValue({
-                            customerctrl: custData[0],
+                            customer_ctrl: customerData[0],
                         });
 
-                        this.customername = custData[0].name;
-                        this.iscustomerselected = true;
+                        this.customer_name = customerData[0].name;
+                        this.is_customer_selected = true;
                     });
 
-                this.status = this.enqDetailsOrig.customerDetails[0].estatus;
+                this.status = this.enqDetailsOrig.customerDetails[0].e_status;
 
                 this.populateEnquiry(this.enqDetailsOrig?.enquiryDetails);
 
                 this.spinner.hide();
 
-                if (type === 'loadingnow') {
+                if (type === 'loading_now') {
                     const v1 =
                         220 +
                         this.enqDetailsOrig?.enquiryDetails.length * 70 +
@@ -276,23 +286,26 @@ export class ProcessEnquiryPage implements OnInit {
         this.enquiries.clear();
 
         enqList.forEach((element, index) => {
-            let tmpGiveqty = 0;
+            let tmpGiveQty = 0;
             // status (D) do not manipulate. default entered give qty
             if (element.status === 'D') {
-                tmpGiveqty = element.giveqty === 0 ? 0 : element.giveqty;
+                tmpGiveQty =
+                    element.give_quantity === 0 ? 0 : element.give_quantity;
             } else {
-                // tmpGiveqty = element.askqty;
+                // tmpGiveQty = element.ask_quantity;
                 // When status is Open (O)
                 // if available stock is zero, then defaults value to 0
-                tmpGiveqty = element.available_stock <= 0 ? 0 : element.askqty;
+                tmpGiveQty =
+                    element.available_stock <= 0 ? 0 : element.ask_quantity;
             }
 
             this.enquiries.push(
-                this.addProductGroup(element, tmpGiveqty, index)
+                this.addProductGroup(element, tmpGiveQty, index)
             );
             this._cdr.detectChanges();
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.autoTriggerList &&
             this.autoTriggerList.forEach((e, idx) => {
                 e.panelClosingActions.subscribe((x) => {
@@ -309,23 +322,23 @@ export class ProcessEnquiryPage implements OnInit {
             });
     }
 
-    addProductGroup(element, tmpGiveqty, index) {
+    addProductGroup(element, tmpGiveQty, index) {
         const group = this._fb.group({
             id: element.id,
             enquiry_id: element.enquiry_id,
             notes: element.notes,
-            askqty: element.askqty,
-            giveqty: tmpGiveqty,
+            ask_quantity: element.ask_quantity,
+            give_quantity: tmpGiveQty,
             status: 'P',
-            invoiceno: element.invoiceno,
+            invoice_no: element.invoice_no,
             center_id: this.user_data.center_id,
             customer_id: element.customer_id,
             product_id: element.product_id,
-            product_code: element.pcode,
-            product_desc: element.pdesc,
-            rackno: element.rackno,
-            qty: element.packetsize,
-            packetsize: element.packetsize,
+            product_code: element.product_code,
+            product_desc: element.product_description,
+            rack: element.rack,
+            qty: element.packet_size,
+            packet_size: element.packet_size,
             unit_price: element.unit_price,
             mrp: element.mrp,
             available_stock: element.available_stock,
@@ -349,7 +362,7 @@ export class ProcessEnquiryPage implements OnInit {
 
     searchCustomers() {
         //let search = '';
-        this.submitForm.controls.customerctrl.valueChanges
+        this.submitForm.controls.customer_ctrl.valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => (this.isCLoading = true)),
@@ -385,11 +398,11 @@ export class ProcessEnquiryPage implements OnInit {
 
         if (from === 'tab') {
             this.customer_data = event;
-            this.iscustomerselected = true;
+            this.is_customer_selected = true;
         } else {
             this.customer_data = event.option.value;
 
-            this.iscustomerselected = true;
+            this.is_customer_selected = true;
         }
 
         this._cdr.markForCheck();
@@ -397,10 +410,10 @@ export class ProcessEnquiryPage implements OnInit {
 
     clearInput() {
         this.submitForm.patchValue({
-            customerctrl: null,
+            customer_ctrl: null,
         });
 
-        this.iscustomerselected = false;
+        this.is_customer_selected = false;
 
         this._cdr.markForCheck();
     }
@@ -411,7 +424,7 @@ export class ProcessEnquiryPage implements OnInit {
             product_code: null,
             product_desc: null,
             available_stock: null,
-            giveqty: 0,
+            give_quantity: 0,
         });
 
         this._cdr.markForCheck();
@@ -433,7 +446,7 @@ export class ProcessEnquiryPage implements OnInit {
     }
 
     save(param) {
-        if (!this.iscustomerselected) {
+        if (!this.is_customer_selected) {
             this.presentAlert('Select customer to proceed !!!');
             return false;
         }
@@ -444,7 +457,7 @@ export class ProcessEnquiryPage implements OnInit {
             this.enqDetailsOrig.customerDetails[0].customer_id !==
             this.customer_data.id
         ) {
-            this.updateCustomerDetailsinEnquiry();
+            this.updateCustomerDetailsInEnquiry();
         }
 
         if (!this.submitForm.valid) {
@@ -470,7 +483,7 @@ export class ProcessEnquiryPage implements OnInit {
             .subscribe((data: any) => {
                 this.spinner.hide();
                 if (data.body.result === 'success') {
-                    if (param === 'additem') {
+                    if (param === 'add-item') {
                         this.clicked = false;
                         //	this.openAddItem();
                     } else {
@@ -529,7 +542,7 @@ export class ProcessEnquiryPage implements OnInit {
     }
 
     moveToSale() {
-        if (!this.iscustomerselected) {
+        if (!this.is_customer_selected) {
             this.presentAlert('Select customer to proceed !!!');
             return false;
         }
@@ -538,7 +551,7 @@ export class ProcessEnquiryPage implements OnInit {
             this.enqDetailsOrig.customerDetails[0].customer_id !==
             this.customer_data.id
         ) {
-            this.updateCustomerDetailsinEnquiry();
+            this.updateCustomerDetailsInEnquiry();
         }
 
         //main (2) secondary button submit
@@ -547,7 +560,7 @@ export class ProcessEnquiryPage implements OnInit {
         this.spinner.show();
 
         const formToMoveSale = {
-            enquries: this.submitForm.value.enquiries,
+            enquiries: this.submitForm.value.enquiries,
             user_id: this.user_data.user_id,
         };
 
@@ -566,9 +579,9 @@ export class ProcessEnquiryPage implements OnInit {
             });
     }
 
-    updateCustomerDetailsinEnquiry() {
+    updateCustomerDetailsInEnquiry() {
         this._commonApiService
-            .updateCustomerDetailsinEnquiry(this.customer_data.id, this.enqid)
+            .updateCustomerDetailsInEnquiry(this.customer_data.id, this.enq_id)
             .subscribe((data: any) => {
                 if (data.body.result === 'success') {
                     // do nothing
@@ -585,14 +598,14 @@ export class ProcessEnquiryPage implements OnInit {
     }
 
     async presentAlertConfirm() {
-        const atleastOneValidEntry = this.submitForm.value.enquiries.filter(
-            (e) => e.giveqty !== 0
+        const atLeastOneValidEntry = this.submitForm.value.enquiries.filter(
+            (e) => e.give_quantity !== 0
         );
 
-        if (atleastOneValidEntry.length === 0) {
-            // attn move all to backorder to be implemented
+        if (atLeastOneValidEntry.length === 0) {
+            // attn move all to back order to be implemented
             this.moveToSaleFinalConfirm(
-                'Only Backorders, Nothing to move to sale. Continue?',
+                'Only Back orders, Nothing to move to sale. Continue?',
                 'Continue'
             );
         } else {
@@ -601,31 +614,6 @@ export class ProcessEnquiryPage implements OnInit {
                 'Yes, Move to Sale'
             );
         }
-
-        // const alert = await this.alertController.create({
-        // 	header: 'Confirm!',
-        // 	message: 'Are you sure, Orders processing completed?',
-        // 	buttons: [
-        // 		{
-        // 			text: 'Cancel',
-        // 			role: 'cancel',
-        // 			cssClass: 'secondary',
-        // 			handler: (blah) => {
-        // 				console.log('Confirm Cancel: blah');
-        // 			},
-        // 		},
-        // 		{
-        // 			text: 'Yes, Move to Sale',
-        // 			handler: () => {
-        // 				console.log('Confirm Okay');
-        // 				this.executeDeletes();
-        // 				this.moveToSale();
-        // 			},
-        // 		},
-        // 	],
-        // });
-
-        // await alert.present();
     }
 
     async moveToSaleFinalConfirm(param, action) {
@@ -693,10 +681,10 @@ export class ProcessEnquiryPage implements OnInit {
             .deleteEnquiryDetails({
                 id: elem.id,
                 enquiry_id: elem.enquiry_id,
-                qty: elem.askqty,
+                qty: elem.ask_quantity,
                 product_id: elem.product_id,
                 notes: elem.notes,
-                autidneeded: true,
+                audit_needed: true,
             })
             .subscribe((data: any) => {
                 if (data.body.result === 'success') {
@@ -765,7 +753,7 @@ export class ProcessEnquiryPage implements OnInit {
                     text: 'Yes, go ahead',
                     handler: () => {
                         console.log('Confirm Okay');
-                        this.save('additem');
+                        this.save('add-item');
                     },
                 },
             ],
@@ -773,34 +761,6 @@ export class ProcessEnquiryPage implements OnInit {
 
         await alert.present();
     }
-
-    // openAddItem() {
-    // 	const dialogConfig = new MatDialogConfig();
-    // 	dialogConfig.disableClose = true;
-    // 	dialogConfig.autoFocus = true;
-    // 	dialogConfig.width = '80%';
-    // 	dialogConfig.height = '80%';
-    // 	dialogConfig.data = {
-    // 		enquiry_id: this.enqid,
-    // 		center_id: this.user_data.center_id,
-    // 		customer_id: this.enqDetailsOrig.customerDetails[0].customer_id,
-    // 	};
-
-    // 	const dialogRef = this.dialog.open(AddMoreEnquiryComponent, dialogConfig);
-
-    // 	dialogRef
-    // 		.afterClosed()
-    // 		.pipe(
-    // 			filter((val) => !!val),
-    // 			tap((val) => {
-    // 				this.init();
-    // 				this.reloadEnqDetails();
-    // 				this._cdr.markForCheck();
-    // 				this.clicked = false;
-    // 			})
-    // 		)
-    // 		.subscribe();
-    // }
 
     addCustomer() {
         const dialogConfig = new MatDialogConfig();
@@ -827,16 +787,16 @@ export class ProcessEnquiryPage implements OnInit {
                 if (data !== 'close') {
                     this._commonApiService
                         .getCustomerDetails(data.body.id)
-                        .subscribe((custData: any) => {
-                            this.customer_data = custData[0];
+                        .subscribe((customerData: any) => {
+                            this.customer_data = customerData[0];
 
-                            this.customername = custData[0].name;
-                            this.iscustomerselected = true;
+                            this.customer_name = customerData[0].name;
+                            this.is_customer_selected = true;
 
-                            this.setCustomerInfo(custData[0], 'tab');
+                            this.setCustomerInfo(customerData[0], 'tab');
 
                             this.submitForm.patchValue({
-                                customerctrl: custData[0],
+                                customer_ctrl: customerData[0],
                             });
 
                             this.isCLoading = false;
@@ -845,7 +805,7 @@ export class ProcessEnquiryPage implements OnInit {
                             this._cdr.markForCheck();
                         });
                 } else {
-                    this.iscustomerselected = false;
+                    this.is_customer_selected = false;
                     this.autoTrigger1.closePanel();
 
                     this._cdr.markForCheck();
@@ -876,33 +836,7 @@ export class ProcessEnquiryPage implements OnInit {
 
     reset() {}
 
-    ngAfterViewInit() {
-        this.autoTrigger1 &&
-            this.autoTrigger1.panelClosingActions.subscribe((x) => {
-                if (this.autoTrigger1.activeOption) {
-                    this.submitForm.patchValue({
-                        customerctrl: this.autoTrigger1.activeOption.value,
-                    });
-                    this.setCustomerInfo(
-                        this.autoTrigger1.activeOption.value,
-                        'tab'
-                    );
-                }
-            });
-    }
-
-    exportToExcel() {
-        const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(
-            this.epltable.nativeElement
-        );
-        ws['!cols'] = [];
-        ws['!cols'][1] = { hidden: true };
-        ws['!cols'][4] = { hidden: true };
-
-        const wb: xlsx.WorkBook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-        xlsx.writeFile(wb, 'epltable.xlsx');
-    }
+    exportToExcel() {}
 
     logScrolling(event) {
         if (this.autoTrigger1 && this.autoTrigger1.panelOpen) {
@@ -958,58 +892,36 @@ export class ProcessEnquiryPage implements OnInit {
             product_id: formObject.product_id,
             product_code: formObject.product_code,
             product_desc: formObject.description,
-            qty: formObject.packetsize,
-            packetsize: formObject.packetsize,
+            qty: formObject.packet_size,
+            packet_size: formObject.packet_size,
             unit_price: formObject.unit_price,
             mrp: formObject.mrp,
             status: 'P',
             stock_id: formObject.stock_id,
             available_stock: formObject.available_stock,
-            rackno: formObject.rackno,
+            rack: formObject.rack,
         });
     }
 
-    // enquiry_id: [this.enqid, Validators.required],
-    // 		customer: ['', Validators.required],
-    // 		center_id: ['', Validators.required],
-    // 		productctrl: [null, [RequireMatch]],
-    // 		remarks: [''],
-
-    // 		tempdesc: [''],
-    // 		tempmrp: [''],
-
-    // 		tempqty: [
-    // 			'1',
-
-    // 		],
-
-    // 		productarr: this._fb.array([]),
-    // enquiry_id, product_id, askqty, product_code, notes, status
-
     onSubmit() {
-        // if (!this.submitForm1.valid) {
-        // 	return false;
-        // }
-
         const form = {
-            center_id: this.user_data.center_id,
-            enquiry_id: +this.enqid,
-
-            askqty: this.submitForm1.value.tempqty,
-            product_code: this.submitForm1.value.productctrl.product_code,
-            notes: this.submitForm1.value.tempdesc,
+            enquiry_id: +this.enq_id,
+            product_id: this.submitForm1.value.product_ctrl.product_id,
+            ask_quantity: this.submitForm1.value.temp_quantity,
+            product_code: this.submitForm1.value.product_ctrl.product_code,
+            notes: this.submitForm1.value.temp_desc,
             status: 'O',
-            created_by: this.user_data.user_id,
         };
 
         this._commonApiService.addMoreEnquiry(form).subscribe((data: any) => {
             this.submitForm1.reset();
             this.myForm1.resetForm();
             this.submitForm1.patchValue({
-                enquiry_id: this.enqid,
+                enquiry_id: this.enq_id,
                 center_id: this.user_data.center_id,
             });
-            this.reloadEnqDetails('loadingnow');
+            this.reloadEnqDetails('loading_now');
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             this.plist && this.plist.nativeElement.focus();
             this.openSnackBar('Item added to Order queue', '');
 
@@ -1047,7 +959,7 @@ export class ProcessEnquiryPage implements OnInit {
                     dialogConfigSuccess.height = '25%';
                     dialogConfigSuccess.data = 'Product added successfully';
 
-                    const dialogRef = this._dialog.open(
+                    this._dialog.open(
                         SuccessMessageDialogComponent,
                         dialogConfigSuccess
                     );
@@ -1058,27 +970,29 @@ export class ProcessEnquiryPage implements OnInit {
     setItemDesc1(event, from) {
         if (from === 'tab') {
             this.submitForm1.patchValue({
-                tempdesc: event.description,
-                tempqty: event.qty === 0 ? 1 : event.qty,
+                temp_desc: event.product_description,
+                temp_quantity: event.packet_size === 0 ? 1 : event.packet_size,
             });
             this.lineItemData = event;
-            this.selected_description = event.description;
+            this.selected_description = event.product_description;
             this.selected_mrp = event.mrp;
-
+            this._cdr.markForCheck();
             //this.qty && this.qty.nativeElement.focus();
         } else {
             this.submitForm1.patchValue({
-                tempdesc: event.option.value.description,
-                tempqty:
-                    event.option.value.qty === 0 ? 1 : event.option.value.qty,
+                temp_desc: event.option.value.product_description,
+                temp_quantity:
+                    event.option.value.packet_size === 0
+                        ? 1
+                        : event.option.value.packet_size,
             });
             this.lineItemData = event.option.value;
-            this.selected_description = event.option.value.description;
+            this.selected_description = event.option.value.product_description;
             this.selected_mrp = event.option.value.mrp;
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             this.qty && this.qty.nativeElement.focus();
+            this._cdr.markForCheck();
         }
-
-        this._cdr.markForCheck();
     }
 
     openSnackBar(message: string, action: string) {

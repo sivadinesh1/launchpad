@@ -1,97 +1,99 @@
-.screen-header {
-	display: flex;
-	justify-content: space-between;
-	width: 100%;
-	color: #222;
-	font-weight: 500;
-
-	font-size: 0.9rem;
+.si-screen-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    color: #222;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #e2e2e2;
+    padding-bottom: 16px;
+    background-color: #fff;
 }
 
 .customer-info {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	padding: 5px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 5px 0;
 }
 
 .header {
-	display: grid;
-	grid-template-columns: 40px 90px 1fr 50px 80px 50px 40px 80px;
-	padding: 6px;
-	font-size: 12px;
-	background-color: #c2c2c2;
+    display: grid;
+    grid-template-columns: 40px 90px 1fr 50px 80px 50px 40px 80px;
+    padding: 6px;
+    font-size: 12px;
+    background-color: #c2c2c2;
 }
 
 .list-item {
-	display: grid;
-	grid-template-columns: 40px 90px 1fr 50px 80px 50px 40px 80px;
-	padding: 6px;
-	font-size: 12px;
+    display: grid;
+    grid-template-columns: 40px 90px 1fr 50px 80px 50px 40px 80px;
+    padding: 6px;
+    font-size: 12px;
 }
 
 .action-row {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 10px 0 5px 6px;
-	border-bottom: 1px solid #e2e2e2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0 5px 6px;
+    border-bottom: 1px solid #e2e2e2;
 }
 
 .content {
-	display: grid;
+    display: grid;
 
-	grid-template-columns: 40px 90px 1fr 60px 60px 60px 1fr 60px;
+    grid-template-columns: 40px 90px 1fr 60px 60px 60px 1fr 60px;
 
-	gap: 2px;
-	align-items: center;
-	width: 100%;
-	padding: 8px 0;
-	color: #666;
-	font-weight: 400;
-	font-size: 14px;
-	background-color: #f5f5f5;
-	border-bottom: 2px solid rgb(173, 173, 173);
+    gap: 2px;
+    align-items: center;
+    width: 100%;
+    padding: 8px 0;
+    color: #666;
+    font-weight: 400;
+    font-size: 14px;
+    background-color: #f5f5f5;
+    border-bottom: 2px solid rgb(173, 173, 173);
 }
 
 .list-item {
-	display: grid;
+    display: grid;
 
-	grid-template-columns: 40px 90px 1fr 60px 60px 60px 1fr 60px;
-	gap: 2px;
+    grid-template-columns: 40px 90px 1fr 60px 60px 60px 1fr 60px;
+    gap: 2px;
 
-	align-items: end;
-	align-self: center;
-	width: 100%;
-	font-size: 12px;
-	border-bottom: 1px solid #e0d9d9;
+    align-items: end;
+    align-self: center;
+    width: 100%;
+    font-size: 12px;
+    border-bottom: 1px solid #e0d9d9;
 }
 
 .txt-pad {
-	padding: 8px;
+    padding: 8px;
 }
 
 .headstyl-left {
-	color: #666;
-	font-weight: 500;
-	font-size: 16px;
-	text-align: left;
+    color: #666;
+    font-weight: 500;
+    font-size: 16px;
+    text-align: left;
 }
 
 .headstyl-right {
-	color: #666;
-	font-weight: 500;
-	font-size: 16px;
-	text-align: right;
+    color: #666;
+    font-weight: 500;
+    font-size: 16px;
+    text-align: right;
 }
 
 .headstyl-center {
-	color: #666;
-	font-weight: 500;
-	font-size: 16px;
-	text-align: center;
+    color: #666;
+    font-weight: 500;
+    font-size: 16px;
+    text-align: center;
 }
 
 .num-format-cell-style {
-	align-self: center;
-	padding-right: 10px;
+    align-self: center;
+    padding-right: 10px;
 }

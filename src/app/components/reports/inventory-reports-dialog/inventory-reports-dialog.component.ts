@@ -29,7 +29,7 @@ export class InventoryReportsDialogComponent implements OnInit {
     resultList = [];
 
     product_code;
-    center_id;
+    product_description;
     product_id;
     data;
     constructor(
@@ -40,13 +40,12 @@ export class InventoryReportsDialogComponent implements OnInit {
         private dialogRef: MatDialogRef<InventoryReportsDialogComponent>
     ) {
         this.product_code = data.product_code;
-        this.center_id = data.center_id;
+
+        this.product_description = data.product_description;
         this.product_id = data.product_id;
 
         this._commonApiService
             .fetchProductInventoryReports({
-                center_id: this.center_id,
-                product_code: this.product_code,
                 product_id: this.product_id,
             })
             .subscribe((data1: any) => {
@@ -72,65 +71,4 @@ export class InventoryReportsDialogComponent implements OnInit {
     close() {
         this.dialogRef.close();
     }
-
-    // openDialog(
-    //     action,
-    //     invoice,
-    //     sale_id,
-    //     purchase_id,
-    //     customer_id,
-    //     vendor_id
-    // ): void {
-    //     if (action.startsWith('Sale')) {
-    //         this.openSaleDialog({
-    //             id: sale_id,
-    //             center_id: this.center_id,
-    //             customer_id,
-    //         });
-    //     } else if (action.startsWith('Purchase')) {
-    //         this.openPurchaseDialog({
-    //             id: purchase_id,
-    //             center_id: this.center_id,
-    //             vendor_id,
-    //         });
-    //     }
-    // }
-
-    // openSaleDialog(row): void {
-    //     const dialogConfig = new MatDialogConfig();
-    //     dialogConfig.disableClose = true;
-    //     dialogConfig.autoFocus = true;
-    //     dialogConfig.width = '50%';
-    //     dialogConfig.height = '100%';
-    //     dialogConfig.data = row;
-    //     dialogConfig.position = { top: '0', right: '0' };
-
-    //     const dialogRef = this._dialog.open(
-    //         SalesInvoiceDialogComponent,
-    //         dialogConfig
-    //     );
-
-    //     dialogRef.afterClosed().subscribe((result) => {
-    //         console.log('The dialog was closed');
-    //     });
-    // }
-
-    // openPurchaseDialog(row): void {
-    //     const dialogConfig = new MatDialogConfig();
-    //     dialogConfig.disableClose = true;
-    //     dialogConfig.autoFocus = true;
-    //     dialogConfig.width = '50%';
-    //     dialogConfig.height = '100%';
-    //     dialogConfig.data = row;
-    //     dialogConfig.position = { top: '0', right: '0' };
-
-    //     const dialogRef = this._dialog.open(
-    //         PurchaseEntryDialogComponent,
-    //         dialogConfig
-    //     );
-
-    //     dialogRef.afterClosed().subscribe((result) => {
-    //         console.log('The dialog was closed');
-    //     });
-    // }
 }

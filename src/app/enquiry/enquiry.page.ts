@@ -428,6 +428,11 @@ export class EnquiryPage implements AfterViewInit {
         control.push(
             this._fb.group({
                 checkbox: [false],
+                product_id: [
+                    this.submitForm.value.product_ctrl === null
+                        ? ''
+                        : this.submitForm.value.product_ctrl.product_id,
+                ],
                 product_code: [
                     this.submitForm.value.product_ctrl === null
                         ? ''

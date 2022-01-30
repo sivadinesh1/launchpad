@@ -77,7 +77,6 @@ export class PendingReceivablesPage implements OnInit {
         private _fb: FormBuilder
     ) {
         this._route.data.subscribe((data) => {
-            debugger;
             this.pending_receivables_array = data.pending_receivables_data.body;
         });
 

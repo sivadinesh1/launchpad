@@ -322,7 +322,7 @@ export class SearchSaleOrderPage implements OnInit {
         });
         this.offset = 0;
         this.is_loaded = false;
-        this._cdr.detectChanges();
+
         this.search('');
     }
 
@@ -890,9 +890,8 @@ export class SearchSaleOrderPage implements OnInit {
     doInfinite(ev: any) {
         console.log('scrolled down!!', ev);
 
-        this.offset += 20;
-
         if (this.full_count > this.filteredValues.length) {
+            this.offset += 20;
             this.is_loaded = false;
             this.search(ev);
         } else {

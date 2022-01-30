@@ -1,195 +1,176 @@
 <!-- Enquiry processing page - add more products or remove products from the enquiry -->
 <ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
-    <div class="screen-header" style="padding-bottom: 16px">
-        <div>
-            <span
-                style="color: #310ac0; cursor: pointer"
-                (click)="openEnquiry()"
-                >Back to Enquiry Summary</span
-            >
-            /
-            <span style="color: #797979">Order Processing #{{enqid}}</span>
-        </div>
-        <div>&nbsp;</div>
-    </div>
     <form [formGroup]="submitForm" #myForm="ngForm">
-        <div class="topcontainer">
-            <div>
-                <div class="cust-header">
-                    <div>
-                        <mat-form-field
-                            style="width: 320px; padding-right: 10px"
-                        >
-                            <input
-                                matInput
-                                [matAutocomplete]="auto"
-                                formControlName="customerctrl"
-                                #typehead1
-                                required
-                                matTooltipPosition="after"
-                            />
-                            <button
-                                mat-button
-                                matSuffix
-                                mat-icon-button
-                                type="button"
-                                (click)="clearInput()"
-                            >
-                                <mat-icon>close</mat-icon>
-                            </button>
-                            <mat-label class="placeholder"
-                                >Select or Add Customer</mat-label
-                            >
+        <div class="top-container">
+            <div class="pe-screen-header" style="padding-bottom: 16px">
+                <div>
+                    <span
+                        style="
+                            font-size: 18px;
+                            letter-spacing: 1px;
+                            color: #4e53b7;
+                        "
+                        >Enquiry Processing #{{enq_id}}</span
+                    >
+                </div>
+                <div>
+                    <button
+                        style="border-radius: 0px"
+                        appPreventDoubleClick
+                        class="cursor"
+                        type="button"
+                        [throttleTime]="500"
+                        type="button"
+                        mat-stroked-button
+                        tabindex="-1"
+                        (click)="exportToExcel()"
+                    >
+                        <mat-icon>cloud_download</mat-icon>
+                        &nbsp;Download
+                    </button>
+                </div>
+            </div>
 
-                            <mat-autocomplete
-                                #auto="matAutocomplete"
-                                [displayWith]="displayFn"
-                                (optionSelected)="setCustomerInfo($event, 'click')"
-                            >
+            <div class="customer-header">
+                <div>
+                    <mat-form-field style="width: 480px; padding-right: 10px">
+                        <input
+                            matInput
+                            [matAutocomplete]="auto"
+                            formControlName="customer_ctrl"
+                            #typeHead1
+                            required
+                            matTooltipPosition="after"
+                        />
+                        <button
+                            mat-button
+                            matSuffix
+                            mat-icon-button
+                            type="button"
+                            (click)="clearInput()"
+                        >
+                            <mat-icon>close</mat-icon>
+                        </button>
+                        <mat-label class="placeholder"
+                            >Select or Add Customer</mat-label
+                        >
+
+                        <mat-autocomplete
+                            #auto="matAutocomplete"
+                            [displayWith]="displayFn"
+                            (optionSelected)="setCustomerInfo($event, 'click')"
+                        >
+                            <mat-option
+                                *ngIf="isCLoading"
+                                class="is-loading"
+                                style="width: 280px"
+                                ><mat-spinner diameter="20"></mat-spinner
+                            ></mat-option>
+                            <ng-container *ngIf="!isCLoading">
                                 <mat-option
-                                    *ngIf="isCLoading"
-                                    class="is-loading"
-                                    style="width: 280px"
-                                    ><mat-spinner diameter="20"></mat-spinner
-                                ></mat-option>
-                                <ng-container *ngIf="!isCLoading">
-                                    <mat-option
-                                        *ngFor="let customer of customer_lis"
-                                        [value]="customer"
+                                    *ngFor="let customer of customer_lis"
+                                    [value]="customer"
+                                    style="
+                                        height: 70px;
+                                        border-bottom: 1px solid lightsteelblue;
+                                    "
+                                >
+                                    <div
                                         style="
-                                            height: 70px;
-                                            border-bottom: 1px solid
-                                                lightsteelblue;
+                                            display: grid;
+                                            grid-template-columns: 1fr;
                                         "
                                     >
-                                        <div
-                                            style="
-                                                display: grid;
-                                                grid-template-columns: 1fr;
-                                            "
-                                        >
-                                            <div>
-                                                <div
-                                                    style="
-                                                        font-size: 15px;
-                                                        padding: 2px;
-                                                        line-height: 1em;
-                                                    "
-                                                >
-                                                    {{ customer.name }}
-                                                </div>
-                                                <div
-                                                    style="
-                                                        font-size: 14px;
-                                                        padding: 2px;
-                                                        line-height: 1em;
-                                                        color: grey;
-                                                    "
-                                                >
-                                                    {{ customer.address1 }}
-                                                </div>
-                                                <div
-                                                    style="
-                                                        font-size: 14px;
-                                                        padding: 2px;
-                                                        line-height: 1em;
-                                                        color: grey;
-                                                    "
-                                                >
-                                                    {{ customer.address2 }},{{
-                                                    customer.district }}
-                                                </div>
+                                        <div>
+                                            <div
+                                                style="
+                                                    font-size: 15px;
+                                                    padding: 2px;
+                                                    line-height: 1em;
+                                                "
+                                            >
+                                                {{ customer.name }}
+                                            </div>
+                                            <div
+                                                style="
+                                                    font-size: 14px;
+                                                    padding: 2px;
+                                                    line-height: 1em;
+                                                    color: grey;
+                                                "
+                                            >
+                                                {{ customer.address1 }}
+                                            </div>
+                                            <div
+                                                style="
+                                                    font-size: 14px;
+                                                    padding: 2px;
+                                                    line-height: 1em;
+                                                    color: grey;
+                                                "
+                                            >
+                                                {{ customer.address2 }},{{
+                                                customer.district }}
                                             </div>
                                         </div>
-                                    </mat-option>
-                                </ng-container>
-                            </mat-autocomplete>
-                            <mat-error
-                                *ngIf="submitForm.controls['customerctrl'].hasError('required')"
+                                    </div>
+                                </mat-option>
+                            </ng-container>
+                        </mat-autocomplete>
+                        <mat-error
+                            *ngIf="submitForm.controls['customer_ctrl'].hasError('required')"
+                        >
+                            Please enter a value
+                        </mat-error>
+                        <mat-error
+                            *ngIf="submitForm.controls['customer_ctrl'].hasError('incorrect')"
+                        >
+                            Customer does not exist
+                        </mat-error>
+                        <mat-hint *ngIf="is_customer_selected">
+                            <span
+                                (click)="openDialog($event)"
+                                style="
+                                    font-size: 12px;
+                                    color: #310ac0;
+                                    cursor: pointer;
+                                "
+                                >View Customer Details</span
                             >
-                                Please enter a value
-                            </mat-error>
-                            <mat-error
-                                *ngIf="submitForm.controls['customerctrl'].hasError('incorrect')"
-                            >
-                                Customer does not exist
-                            </mat-error>
-                            <mat-hint *ngIf="iscustomerselected">
-                                <span
-                                    (click)="openDialog($event)"
-                                    style="
-                                        font-size: 12px;
-                                        color: #310ac0;
-                                        cursor: pointer;
-                                    "
-                                    >View Customer Details</span
-                                >
-                            </mat-hint>
-                        </mat-form-field>
-                    </div>
-
+                        </mat-hint>
+                    </mat-form-field>
                     <div
-                        *ngIf="iscustomerselected"
+                        *ngIf="is_customer_selected"
                         style="
                             font-size: 12px;
                             color: #666666;
                             padding: 0.5rem 0.5rem 0.5rem 0px;
                         "
                     >
-                        <div style="font-weight: 500; font-size: 14px">
-                            BILLING ADDRESS
-                        </div>
-                        <div>{{customer_data.address1 | nullquote}}</div>
-                        <div>{{customer_data.address2 | nullquote}}</div>
-
-                        <div>
-                            {{customer_data.district | nullquote}},
-                            {{customer_data.pin | nullquote}}
-                        </div>
-                    </div>
-
-                    <div
-                        *ngIf="iscustomerselected"
-                        style="
-                            padding: 0.5rem 0.5rem 0.5rem 0px;
-                            font-size: 12px;
-                            color: #666666;
-                        "
-                    >
-                        <div style="font-weight: 500; font-size: 14px">
-                            SHIPPING ADDRESS
-                        </div>
-                        <div>{{customer_data.address1 | nullquote}}</div>
-                        <div>{{customer_data.address2 | nullquote}}</div>
-
-                        <div>
-                            {{customer_data.district | nullquote}},
-                            {{customer_data.pin | nullquote}}
-                        </div>
-                        <div></div>
-                    </div>
-                    <div
-                        *ngIf="iscustomerselected"
-                        style="
-                            padding: 0.5rem 0.5rem 0.5rem 0px;
-                            font-size: 12px;
-                            color: #666666;
-                        "
-                    >
-                        <div style="font-weight: 500; font-size: 14px">
-                            Remarks
-                        </div>
-                        <div *ngIf="enqDetailsOrig?.enquiryDetails">
-                            {{enqDetailsOrig?.enquiryDetails[0]?.remarks || ''}}
-                        </div>
+                        {{customer_data.address1 | nullquote}},
+                        {{customer_data.address2 | nullquote}}
+                        {{customer_data.district | nullquote}},
+                        {{customer_data.pin | nullquote}}
                     </div>
                 </div>
 
-                <div></div>
+                <div
+                    *ngIf="is_customer_selected"
+                    style="
+                        padding: 0.5rem 0.5rem 0.5rem 0px;
+                        font-size: 12px;
+                        color: #666666;
+                    "
+                >
+                    <div style="font-weight: 500; font-size: 14px">Remarks</div>
+                    <div *ngIf="enqDetailsOrig?.enquiryDetails">
+                        {{enqDetailsOrig?.enquiryDetails[0]?.remarks || ''}}
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div #epltable style="padding-bottom: 200px">
+        <div style="padding-bottom: 200px">
             <table>
                 <thead>
                     <tr class="content">
@@ -303,11 +284,10 @@
 
                 <tbody>
                     <div formArrayName="enquiries">
-                        <!-- <div *ngFor="let item of submitForm.controls.enquiry?.value;  let idx = index" [ngClass]="{'make-gold': item.processed === 'YS' }"> -->
                         <div
                             *ngFor="let item of enquiries.controls;  let idx = index"
                         >
-                            <tr [formGroupName]="idx" class="list-item">
+                            <tr [formGroupName]="idx" class="pe-list-item">
                                 <td style="text-align: left; padding-left: 5px">
                                     <div style="text-align: left">
                                         {{idx + 1}}
@@ -341,7 +321,7 @@
                                                     matInput
                                                     [matAutocomplete]="auto1"
                                                     formControlName="product_code"
-                                                    #typehead
+                                                    #typeHead
                                                     #plist
                                                     matTooltipPosition="after"
                                                     placeholder="Item Code"
@@ -376,7 +356,7 @@
                                                         *ngIf="productList$[idx] |async as results"
                                                     >
                                                         <mat-option
-                                                            *ngFor="let product of results"
+                                                            *ngFor="let product of results.result"
                                                             [value]="product"
                                                             style="
                                                                 padding-top: 15px;
@@ -500,7 +480,7 @@
                                     </span>
                                 </td>
                                 <td style="text-align: left; padding-left: 5px">
-                                    {{item.value.rackno}}
+                                    {{item.value.rack}}
                                 </td>
 
                                 <td
@@ -516,7 +496,7 @@
                                         <input
                                             matInput
                                             type="number"
-                                            formControlName="giveqty"
+                                            formControlName="give_quantity"
                                             [readOnly]="status !== 'E'"
                                             class="cursor"
                                             required
@@ -536,7 +516,7 @@
                                         padding-right: 5px;
                                     "
                                 >
-                                    {{item.value.askqty}}
+                                    {{item.value.ask_quantity}}
                                 </td>
                                 <td style="text-align: center">
                                     <mat-slide-toggle
@@ -565,8 +545,8 @@
                             <input
                                 matInput
                                 [matAutocomplete]="auto2"
-                                formControlName="productctrl"
-                                #typehead2
+                                formControlName="product_ctrl"
+                                #typeHead2
                                 #plist
                                 matTooltipPosition="after"
                                 tabindex="1"
@@ -682,12 +662,12 @@
                             </mat-autocomplete>
 
                             <mat-error
-                                *ngIf="submitForm1.controls['productctrl'].hasError('incorrect')"
+                                *ngIf="submitForm1.controls['product_ctrl'].hasError('incorrect')"
                             >
                                 Invalid product code
                             </mat-error>
                             <mat-error
-                                *ngIf="submitForm1.controls['productctrl'].hasError('required')"
+                                *ngIf="submitForm1.controls['product_ctrl'].hasError('required')"
                             >
                                 Please select a value
                             </mat-error>
@@ -698,7 +678,7 @@
                             <input
                                 matInput
                                 type="text"
-                                formControlName="tempdesc"
+                                formControlName="temp_desc"
                                 required
                                 tabindex="2"
                             />
@@ -706,7 +686,7 @@
                                 >Item Description/Notes</mat-placeholder
                             >
                             <mat-error
-                                *ngIf="submitForm1.controls['tempdesc'].hasError('required')"
+                                *ngIf="submitForm1.controls['temp_desc'].hasError('required')"
                             >
                                 Please enter a value
                             </mat-error>
@@ -722,7 +702,7 @@
                                 min="1"
                                 max="9999"
                                 tabindex="4"
-                                formControlName="tempqty"
+                                formControlName="temp_quantity"
                                 required
                                 #qty
                                 (keydown.enter)="onSubmit()"
@@ -754,50 +734,11 @@
             <div class="footer" *ngIf="status !== 'E'">
                 <div style="display: flex">
                     <span style="padding: 0px 10px">
-                        <div *ngIf="status === 'E'">
-                            <div style="font-size: 12px; color: #797979">
-                                Status:
-                            </div>
-                            <div style="font-size: 24px">Executed</div>
-                        </div>
-                        <div *ngIf="status === 'D'">
-                            <div style="font-size: 12px; color: #797979">
-                                Status:
-                            </div>
-                            <div style="font-size: 24px">Draft</div>
-                        </div>
-                        <div *ngIf="status === 'O'">
-                            <div style="font-size: 12px; color: #797979">
-                                Status:
-                            </div>
-                            <div style="font-size: 24px">New</div>
-                        </div>
-                    </span>
-                    <span style="padding: 0px 10px">
                         <div style="font-size: 12px; color: #797979">
                             # Items
                         </div>
                         <div style="font-size: 24px">
                             {{this.submitForm.value.enquiries.length || 0 }}
-                        </div>
-                    </span>
-                    <span
-                        style="
-                            padding: 0px 10px;
-                            display: grid;
-                            align-content: flex-end;
-                        "
-                    >
-                        <div style="font-size: 24px; display: flex">
-                            <img
-                                matTooltip="Download"
-                                matTooltipClass="tooltip"
-                                src="/assets/images/svg/direct-download.svg"
-                                style="cursor: pointer"
-                                width="32px"
-                                height="32px"
-                                (click)="exportToExcel()"
-                            />
                         </div>
                     </span>
                 </div>

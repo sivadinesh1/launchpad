@@ -30,6 +30,7 @@ import { User } from 'src/app/models/User';
 import * as moment from 'moment';
 import { IonContent } from '@ionic/angular';
 import { SearchCustomersComponent } from 'src/app/components/search-customers/search-customers.component';
+import { HelperUtilsService } from 'src/app/services/helper-utils.service';
 
 @Component({
     selector: 'app-open-enquiry',
@@ -70,18 +71,10 @@ export class OpenEnquiryPage implements OnInit {
     customer$: Observable<Customer[]>;
     enquiries$: Observable<any>;
 
-    newEnquiries$: Observable<any>;
-
-    invoiceReadyEnquiries$: Observable<any>;
-    fullfilledEnquiries$: Observable<any>;
-
-    filteredEnquiries$: Observable<any>;
-
     filteredCustomer: Observable<any>;
     customer_lis: Customer[];
 
     status: any;
-    back_order_lst: any;
 
     isCustomDateFilter = false;
 
@@ -93,6 +86,8 @@ export class OpenEnquiryPage implements OnInit {
     is_loaded = false;
     all_caught_up = '';
 
+    filter_text = 'All';
+
     constructor(
         private _cdr: ChangeDetectorRef,
         private _commonApiService: CommonApiService,
@@ -100,7 +95,8 @@ export class OpenEnquiryPage implements OnInit {
         private _router: Router,
         private _route: ActivatedRoute,
         private _dialog: MatDialog,
-        private _authService: AuthenticationService
+        private _authService: AuthenticationService,
+        public _helperUtilsService: HelperUtilsService
     ) {
         this.submitForm = this._fb.group({
             customer_id: 'all',
@@ -152,6 +148,8 @@ export class OpenEnquiryPage implements OnInit {
     ngOnInit() {}
 
     async init() {
+        this.offset = 0;
+
         this._commonApiService
             .getAllActiveCustomers()
             .subscribe((data: any) => {
@@ -167,7 +165,7 @@ export class OpenEnquiryPage implements OnInit {
                         )
                     );
             });
-        this.search('O', '');
+        this.search('');
         this._cdr.markForCheck();
     }
 
@@ -188,8 +186,9 @@ export class OpenEnquiryPage implements OnInit {
         this._cdr.markForCheck();
     }
 
-    async search(param, event) {
+    async search(event) {
         //main search
+        this.is_loaded = false;
 
         this.enquiries$ = this._commonApiService.searchEnquiries({
             customer_id: this.submitForm.value.customer_id,
@@ -201,106 +200,24 @@ export class OpenEnquiryPage implements OnInit {
             length: this.length,
         });
 
-        this.filteredEnquiries$ = this.enquiries$;
-
-        const value = await lastValueFrom(this.filteredEnquiries$);
+        const value = await lastValueFrom(this.enquiries$);
 
         if (event === '') {
             this.full_count = value.full_count;
 
             this.tempListArray = value.result;
-
-            if (param === 'O') {
-                this.filteredValues = value.result.filter(
-                    (data: any) =>
-                        data.e_status === 'O' || data.e_status === 'D'
-                );
-            } else if (param === 'E') {
-                this.filteredValues = value.result.filter(
-                    (data: any) =>
-                        data.e_status === 'E' || data.e_status === 'X'
-                );
-            } else {
-                this.filteredValues = value.result.filter(
-                    (data: any) => data.e_status === param
-                );
-            }
-
-            // to calculate the count on each status
-            // this.newEnquiries$ = this.enquiries$.pipe(
-            //     map((arr: any) =>
-            //         arr.filter((f) => f.e_status === 'O' || f.e_status === 'D')
-            //     )
-            // );
-
-            // this.draftEnquiries$ = this.enquiries$.pipe(
-            // 	map((arr: any) => arr.filter((f) => f.e_status === 'D'))
-            // );
-            // this.invoiceReadyEnquiries$ = this.enquiries$.pipe(
-            //     map((arr: any) => arr.filter((f) => f.e_status === 'P'))
-            // );
-            // this.fullfilledEnquiries$ = this.enquiries$.pipe(
-            //     map((arr: any) =>
-            //         arr.filter((f) => f.e_status === 'E' || f.e_status === 'X')
-            //     )
-            // );
+            this.filteredValues = value.result;
+            this.is_loaded = true;
+            this._cdr.detectChanges();
         } else {
             this.full_count = value.full_count;
 
-            // this.filteredValues = this.tempListArray.concat(
-            //     value.result.filter((data: any) => data.status === 'C')
-            // );
-
-            if (param === 'O') {
-                this.filteredValues = this.tempListArray.concat(
-                    value.filter(
-                        (data: any) =>
-                            data.e_status === 'O' || data.e_status === 'D'
-                    )
-                );
-            } else if (param === 'E') {
-                this.filteredValues = this.tempListArray.concat(
-                    value.filter(
-                        (data: any) =>
-                            data.e_status === 'E' || data.e_status === 'X'
-                    )
-                );
-            } else {
-                this.filteredValues = this.tempListArray.concat(
-                    value.filter((data: any) => data.e_status === param)
-                );
-            }
-
-            // to calculate the count on each status
-            // this.newEnquiries$ = this.enquiries$.pipe(
-            //     map((arr: any) =>
-            //         arr.filter((f) => f.e_status === 'O' || f.e_status === 'D')
-            //     )
-            // );
-
-            // this.invoiceReadyEnquiries$ = this.enquiries$.pipe(
-            //     map((arr: any) => arr.filter((f) => f.e_status === 'P'))
-            // );
-            // this.fullfilledEnquiries$ = this.enquiries$.pipe(
-            //     map((arr: any) =>
-            //         arr.filter((f) => f.e_status === 'E' || f.e_status === 'X')
-            //     )
-            // );
+            this.filteredValues = this.tempListArray.concat(value.result);
 
             this.tempListArray = this.filteredValues;
-
+            this.is_loaded = true;
             event.target.complete();
-            this._cdr.detectChanges();
         }
-
-        this._cdr.markForCheck();
-    }
-
-    populateBackOrders() {
-        this._commonApiService.getBackOder().subscribe((data: any) => {
-            this.back_order_lst = data;
-            this._cdr.markForCheck();
-        });
     }
 
     processEnquiry(item) {
@@ -328,34 +245,6 @@ export class OpenEnquiryPage implements OnInit {
 
     selectedCustomer($event) {
         this.selectedCust = $event.source.value;
-    }
-
-    async tabClick($event) {
-        if (this.filteredEnquiries$ !== undefined) {
-            const value = await lastValueFrom(this.filteredEnquiries$);
-
-            if ($event.index === 0 || $event === 0) {
-                this.filteredValues = value.filter(
-                    (data: any) =>
-                        data.e_status === 'O' || data.e_status === 'D'
-                );
-            } else if ($event.index === 1 || $event === 1) {
-                this.filteredValues = value.filter(
-                    (data: any) => data.e_status === 'P'
-                );
-            } else if ($event.index === 2 || $event === 2) {
-                this.filteredValues = value.filter(
-                    (data: any) =>
-                        data.e_status === 'E' || data.e_status === 'X'
-                );
-            }
-
-            if ($event.index === 3 || $event === 3) {
-                this.populateBackOrders();
-            }
-
-            this._cdr.markForCheck();
-        }
     }
 
     delete(enquiry: Enquiry) {
@@ -404,7 +293,7 @@ export class OpenEnquiryPage implements OnInit {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
-        dialogConfig.width = '50%';
+        dialogConfig.width = '60%';
         dialogConfig.height = '100%';
         dialogConfig.data = row;
         dialogConfig.position = { top: '0', right: '0' };
@@ -427,8 +316,8 @@ export class OpenEnquiryPage implements OnInit {
         this.submitForm.patchValue({
             customer_id: item.id,
         });
-        this.is_loaded = false;
-        this.search('O', '');
+
+        this.search('');
     }
 
     customDateFilter() {
@@ -448,9 +337,9 @@ export class OpenEnquiryPage implements OnInit {
             from_date: this.from_date,
         });
         this.offset = 0;
-        this.is_loaded = false;
+
         this._cdr.detectChanges();
-        this.search('O', '');
+        this.search('');
     }
 
     ScrollToTop() {
@@ -478,8 +367,8 @@ export class OpenEnquiryPage implements OnInit {
         // patch it up with from & to date, via patch value
 
         this.offset = 0;
-        this.is_loaded = false;
-        this.search('O', '');
+
+        this.search('');
     }
     customerSearchReset() {
         this.clearInput();
@@ -488,8 +377,8 @@ export class OpenEnquiryPage implements OnInit {
         this.customerSearchReset();
         this.child.clearCustomerInput();
         this.clear();
-        this.is_loaded = false;
-        this.search('O', '');
+
+        this.search('');
     }
 
     clear() {
@@ -498,6 +387,7 @@ export class OpenEnquiryPage implements OnInit {
 
         this.submitForm.patchValue({
             customer_id: 'all',
+            status: 'all',
             customer_ctrl: 'All Customers',
             from_date: this.from_date,
             to_date: new Date(),
@@ -509,25 +399,32 @@ export class OpenEnquiryPage implements OnInit {
     }
 
     statusFilterChanged(status) {
+        if (status === 'all') {
+            this.filter_text = 'All';
+        } else if (status === 'P') {
+            this.filter_text = 'INVOICE READY';
+        } else if (status === 'X') {
+            this.filter_text = 'CANCELLED';
+        } else if (status === 'E') {
+            this.filter_text = 'CLOSED';
+        }
+
         this.submitForm.patchValue({
             status,
-            invoice_no: '',
         });
         this._cdr.markForCheck();
-        this.is_loaded = false;
+
         this.offset = 0;
-        this.search('O', '');
+        this.search('');
     }
 
     doInfinite(ev: any) {
-        console.log('scrolled down!!', ev);
-
-        this.offset += 20;
-
-        if (this.full_count > this.filteredValues.length) {
+        if (this.full_count >= this.filteredValues.length) {
+            this.offset += 20;
             this.is_loaded = false;
-            this.search('O', ev);
+            this.search(ev);
         } else {
+            this.is_loaded = true;
             this.all_caught_up = 'You have reached the end of the list';
             ev.target.complete();
             this._cdr.detectChanges();

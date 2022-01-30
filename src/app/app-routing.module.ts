@@ -28,6 +28,13 @@ const routes: Routes = [
                         (m) => m.EnquiryPageModule
                     ),
             },
+            {
+                path: 'back-order',
+                loadChildren: () =>
+                    import('./enquiry/back-order/back-order.module').then(
+                        (m) => m.BackOrderPageModule
+                    ),
+            },
 
             {
                 path: 'enquiry/open-enquiry/:status/:timeline',
@@ -37,13 +44,6 @@ const routes: Routes = [
                     ),
             },
 
-            // {
-            //     path: 'search-purchase',
-            //     loadChildren: () =>
-            //         import(
-            //             './purchase/search-purchase/search-purchase.module'
-            //         ).then((m) => m.SearchPurchasePageModule),
-            // },
             {
                 path: 'search-purchase-order',
                 loadChildren: () =>
@@ -51,13 +51,7 @@ const routes: Routes = [
                         './purchase/search-purchase-order/search-purchase-order.module'
                     ).then((m) => m.SearchPurchaseOrderPageModule),
             },
-            // {
-            //     path: 'purchase/:edit/:purchaseid',
-            //     loadChildren: () =>
-            //         import('./purchase/purchase.module').then(
-            //             (m) => m.PurchasePageModule
-            //         ),
-            // },
+
             {
                 path: 'purchase/:edit/:purchase-id',
                 loadChildren: () =>
@@ -72,13 +66,7 @@ const routes: Routes = [
                         './purchase/purchase-order/purchase-order.module'
                     ).then((m) => m.PurchaseOrderPageModule),
             },
-            // {
-            //   path: 'search-sales',
-            //   loadChildren: () =>
-            //     import('./sales/search-sales/search-sales.module').then(
-            //       (m) => m.SearchSalesPageModule
-            //     ),
-            // },
+
             {
                 path: 'search-sales',
                 loadChildren: () =>
@@ -189,7 +177,7 @@ const routes: Routes = [
             },
 
             {
-                path: 'enquiry/process-enquiry/:enqid',
+                path: 'enquiry/process-enquiry/:enq_id',
                 loadChildren: () =>
                     import(
                         './enquiry/process-enquiry/process-enquiry.module'
@@ -393,13 +381,6 @@ const routes: Routes = [
                 './admin/customer/ledger-customer/ledger-customer.module'
             ).then((m) => m.LedgerCustomerPageModule),
     },
-    // {
-    //     path: 'financial-customer',
-    //     loadChildren: () =>
-    //         import(
-    //             './admin/customer/financial-customer/financial-customer.module'
-    //         ).then((m) => m.FinancialCustomerPageModule),
-    // },
 
     {
         path: 'general-settings',
