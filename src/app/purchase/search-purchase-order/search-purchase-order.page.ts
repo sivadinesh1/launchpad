@@ -108,6 +108,7 @@ export class SearchPurchaseOrderPage implements OnInit {
     length = 20;
     all_caught_up = '';
     is_loaded = false;
+    filter_text = 'ALL';
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -439,6 +440,7 @@ export class SearchPurchaseOrderPage implements OnInit {
     }
 
     reset() {
+        this.filter_text = 'ALL';
         this.offset = 0;
         this.vendorSearchReset();
         this.child.clearVendorInput();
@@ -671,6 +673,7 @@ export class SearchPurchaseOrderPage implements OnInit {
             this.submitForm.patchValue({
                 invoice_no: result,
             });
+            this.filter_text = 'PO# ' + result;
             this.offset = 0;
             this.is_loaded = false;
             this.search('');

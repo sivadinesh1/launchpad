@@ -1465,22 +1465,22 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
                 }
 
                 this._cdr.markForCheck();
-            },
-            (error) => {
-                this.spinner.hide();
-                this.clicked = false;
-                this.cancel();
-
-                this.formRef.resetForm();
-
-                this.submitForm.patchValue({
-                    invoice_date: new Date(),
-                });
-                this._cdr.markForCheck();
-                this.presentAlert(
-                    'Error: Something went wrong Contact Admin!!!'
-                );
             }
+            // (error) => {
+            //     this.spinner.hide();
+            //     this.clicked = false;
+            //     this.cancel();
+
+            //     this.formRef.resetForm();
+
+            //     this.submitForm.patchValue({
+            //         invoice_date: new Date(),
+            //     });
+            //     this._cdr.markForCheck();
+            //     this.presentAlert(
+            //         'Error: Something went wrong Contact Admin!!!'
+            //     );
+            // }
         );
     }
 
@@ -1892,11 +1892,6 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
         return obj && obj.product_code ? obj.product_code : undefined;
     }
 
-    // getLength() {
-    //     const control = this.submitForm.controls.product_arr as FormArray;
-    //     return control.length;
-    // }
-
     searchProducts() {
         let inv_dt = '';
         if (this.submitForm.value.invoice_date === null) {
@@ -1947,10 +1942,10 @@ export class SaleOrderPage implements ComponentCanDeactivate, AfterViewInit {
 
         let inv_dt = '';
         if (this.submitForm.value.invoice_date === null) {
-            inv_dt = moment().format('DD-MM-YYYY');
+            inv_dt = moment().format('YYYY-MM-DD');
         } else {
             inv_dt = moment(this.submitForm.value.invoice_date).format(
-                'DD-MM-YYYY'
+                'YYYY-MM-DD'
             );
         }
 

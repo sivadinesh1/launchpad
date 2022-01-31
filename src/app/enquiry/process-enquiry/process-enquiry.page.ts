@@ -888,16 +888,18 @@ export class ProcessEnquiryPage implements OnInit, AfterViewInit {
     }
 
     populateFormValues(index, formObject) {
+        debugger;
         this.enquiries.controls[index].patchValue({
             product_id: formObject.product_id,
             product_code: formObject.product_code,
-            product_desc: formObject.description,
+            product_desc: formObject.product_description,
             qty: formObject.packet_size,
             packet_size: formObject.packet_size,
             unit_price: formObject.unit_price,
             mrp: formObject.mrp,
             status: 'P',
-            stock_id: formObject.stock_id,
+            // stock_id: formObject.stock_id,
+            stock_id: null,
             available_stock: formObject.available_stock,
             rack: formObject.rack,
         });

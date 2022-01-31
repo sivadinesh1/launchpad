@@ -139,6 +139,7 @@ export class SearchSaleOrderPage implements OnInit {
     length = 20;
     is_loaded = false;
     all_caught_up = '';
+    filter_text = 'ALL';
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -336,6 +337,10 @@ export class SearchSaleOrderPage implements OnInit {
 
     async search(event) {
         try {
+            if (event === '') {
+                this.offset = 0;
+            }
+
             this.sales$ = this._commonApiService.searchSales({
                 center_id: this.user_data.center_id,
                 customer_id: this.submitForm.value.customer_id,
@@ -511,16 +516,19 @@ export class SearchSaleOrderPage implements OnInit {
                     this._commonApiService
                         .deleteSaleMaster(item.id)
                         .subscribe((data1: any) => {
+                            this.init();
+                            this.openSnackBar('Deleted Successfully', '');
+                            // check if we need to have it or delete it
                             //  DELETE ITEM HISTORY RECORD FOR THIS SALE ID
-                            this._commonApiService
-                                .deleteItemHistory(item.id)
-                                .subscribe((data2: any) => {
-                                    this.openSnackBar(
-                                        'Deleted Successfully',
-                                        ''
-                                    );
-                                    this.init();
-                                });
+                            // this._commonApiService
+                            //     .deleteItemHistory(item.id)
+                            //     .subscribe((data2: any) => {
+                            //         this.openSnackBar(
+                            //             'Deleted Successfully',
+                            //             ''
+                            //         );
+                            //         this.init();
+                            //     });
                         });
                 }
             });
@@ -577,6 +585,16 @@ export class SearchSaleOrderPage implements OnInit {
     }
 
     statusFilterChanged(status) {
+        if (status === 'all') {
+            this.filter_text = 'ALL';
+        } else if (status === 'D') {
+            this.filter_text = 'DRAFT';
+        } else if (status === 'C') {
+            this.filter_text = 'INVOICED';
+        } else if (status === 'E') {
+            this.filter_text = 'CLOSED';
+        }
+
         this.submitForm.patchValue({
             status,
             invoice_no: '',
@@ -831,7 +849,7 @@ export class SearchSaleOrderPage implements OnInit {
 
         const dialogRef = this._dialog1.open(SearchInvoiceNoComponent, {
             width: '250px',
-            data: { invoice_no: '' },
+            data: { invoice_no: '', label: 'Invoice #' },
 
             position: { left: `${rect.left}px`, top: `${rect.bottom - 50}px` },
         });
@@ -842,6 +860,8 @@ export class SearchSaleOrderPage implements OnInit {
             this.submitForm.patchValue({
                 invoice_no: result,
             });
+
+            this.filter_text = 'INV# ' + result;
             this.is_loaded = false;
             this.search('');
         });
@@ -860,6 +880,7 @@ export class SearchSaleOrderPage implements OnInit {
     }
 
     reset() {
+        this.filter_text = 'ALL';
         this.customerSearchReset();
         this.child.clearCustomerInput();
         this.clear();

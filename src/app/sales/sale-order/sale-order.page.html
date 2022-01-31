@@ -1193,7 +1193,6 @@
                         mat-stroked-button
                         type="button"
                         color="primary"
-                        [disabled]="clicked"
                         tabindex="-1"
                     >
                         Save Estimate
@@ -1210,7 +1209,6 @@
                         mat-stroked-button
                         type="button"
                         color="primary"
-                        [disabled]="clicked"
                         tabindex="-1"
                     >
                         Update Estimate
@@ -1227,7 +1225,6 @@
                         mat-raised-button
                         type="button"
                         color="primary"
-                        [disabled]="clicked"
                         tabindex="-1"
                     >
                         Generate Invoice
@@ -1244,30 +1241,10 @@
                         mat-raised-button
                         type="button"
                         color="primary"
-                        [disabled]="clicked"
                         tabindex="-1"
                     >
                         Update Invoice
                     </button>
-
-                    &nbsp;
-
-                    <!-- <button
-						*ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stockIssue')) "
-						style="border-radius: 0px"
-						appPreventDoubleClick
-						class="cursor"
-						(throttledClick)="presentConvertSaleConfirm()"
-						type="button"
-						[throttleTime]="500"
-						mat-raised-button
-						type="button"
-						color="primary"
-						[disabled]="clicked"
-						tabindex="17"
-					>
-						Convert to Sale Invoice
-					</button> -->
                 </div>
             </div>
         </ng-container>
@@ -1294,3 +1271,20 @@
         </mat-option>
     </mat-menu>
 </ion-content>
+
+<!-- <button
+    *ngIf="((submitForm?.get('status').value === 'D') && (selInvType === 'stockIssue')) "
+    style="border-radius: 0px"
+    appPreventDoubleClick
+    class="cursor"
+    (throttledClick)="presentConvertSaleConfirm()"
+    type="button"
+    [throttleTime]="500"
+    mat-raised-button
+    type="button"
+    color="primary"
+    [disabled]="clicked"
+    tabindex="17"
+>
+    Convert to Sale Invoice
+</button> -->

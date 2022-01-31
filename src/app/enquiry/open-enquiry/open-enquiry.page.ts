@@ -86,7 +86,7 @@ export class OpenEnquiryPage implements OnInit {
     is_loaded = false;
     all_caught_up = '';
 
-    filter_text = 'All';
+    filter_text = 'ALL';
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -374,6 +374,7 @@ export class OpenEnquiryPage implements OnInit {
         this.clearInput();
     }
     reset() {
+        this.filter_text = 'ALL';
         this.customerSearchReset();
         this.child.clearCustomerInput();
         this.clear();

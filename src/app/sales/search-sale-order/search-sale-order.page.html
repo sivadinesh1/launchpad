@@ -1,6 +1,6 @@
 <ion-content [scrollEvents]="true" (ionScroll)="logScrolling($event)">
     <div class="search-sale-header sso-sticky" style="padding: 1rem">
-        <div>SALE ORDERS</div>
+        <div>{{this.filter_text}} SALE ORDERS</div>
 
         <div class="full-download" style="display: flex; align-self: center">
             <button
